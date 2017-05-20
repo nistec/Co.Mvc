@@ -128,7 +128,7 @@ function getTaskModelName(model) {
         case 'T':
             return 'משימה';
         case 'E':
-            return 'כרטיס';
+            return 'סוגיה';
         case 'R':
             return 'תזכורות';
         case 'C':
@@ -265,7 +265,7 @@ app_tasks_active = {
                 localData: [
                       { id: '', name: "לא משויך", image: '../../Images/icons/settings-24.png', common: true },
                       { id: 'T', name: "משימה", image: '../../Images/icons/task-24.png' },
-                      { id: 'E', name: "כרטיס", image: '../../Images/icons/event-gold-24.png' },
+                      { id: 'E', name: "סוגיה", image: '../../Images/icons/event-gold-24.png' },
                       { id: 'R', name: "תזכורת", image: '../../Images/icons/comment-green-24.png' },
                       { id: 'S', name: "יומן", image: '../../Images/icons/vi-orange-24.png' }
                 ],

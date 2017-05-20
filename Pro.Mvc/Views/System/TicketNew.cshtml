@@ -2,7 +2,6 @@
 @{
     //ViewBag.Title = "System";
     Layout = "~/Views/Shared/_View.cshtml";
-    //int rcdid = Nistec.Types.ToInt(Request["id"]);
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
 }
 
@@ -97,7 +96,7 @@
 
 <div class="global-view">
     <div id="wiz-container" class="container">
-           <h3 id="hTitle" class="rtl">פתיחת כרטיס</h3>
+           <h3 id="hTitle" class="rtl">פתיחת סוגיה</h3>
             <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
                 @*<div id="fcWindow">*@
                 @*<div id="fcHeader">
@@ -106,7 +105,7 @@
                 <div id="fcBody">
 
                     <div id="accordion" class="tab-content" dir="rtl">
-                        <div id="hxp-0">כרטיס</div>
+                        <div id="hxp-0">סוגיה</div>
                         <div id="exp-0" style="padding:0;margin:0">
                             <div class="expander-entry" style="margin:10px">
                                 <form class="fcForm" id="fcForm" method="post" action="/System/UpdateNewTask">
@@ -178,19 +177,6 @@
                                                 פרטים נוספים
                                             </div>
                                             <div class="rtl" style="border:none">
-
-                                                @*<div class="form-group">
-                            <div class="field">
-                                מועד התחלה:
-                            </div>
-                            <input id="StartedDate" name="StartedDate" type="text" readonly="readonly" class="text-mid" />
-                        </div>
-                        <div class="form-group">
-                            <div class="field">
-                                מועד סיום:
-                            </div>
-                            <input id="EndedDate" name="EndedDate" type="text" readonly="readonly" class="text-mid" />
-                        </div>*@
                                                 <div id="Project_Id-container" class="form-group">
                                                     <div id="Project_Id-name" class="field">
                                                         פרוייקט :

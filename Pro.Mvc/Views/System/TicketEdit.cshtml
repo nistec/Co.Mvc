@@ -13,16 +13,16 @@
     @Scripts.Render("~/bundles/jqxgrid")
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
-<script src="~/jqwidgets/jqxpopover.js"></script>
+    <script src="~/jqwidgets/jqxpopover.js"></script>
     <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
     <script type="text/javascript" src="~/Scripts/app/system/task-def.js"></script>
-<script src="~/Scripts/app/system/task-items.js"></script>
+    <script src="~/Scripts/app/system/task-items.js"></script>
 
     <script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
     <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
     
-<script src="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.js"></script>
-<link href="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.css" rel="stylesheet" />
+    <script src="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.js"></script>
+    <link href="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.css" rel="stylesheet" />
     <style type="text/css">
         input {
             direction: rtl;
@@ -126,15 +126,13 @@
 
 <div class="global-view">
     <div id="wiz-container" class="container">
-
-        <div id="wiz-1" class="wiz-tab active">
-            <h3 id="hTitle" class="rtl">כרטיס</h3>
+            <h3 id="hTitle" class="rtl">סוגיה</h3>
             <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
                 
                 <div id="fcBody">
 
                     <div id="accordion" class="tab-content" dir="rtl">
-                        <div id="hxp-0">כרטיס</div>
+                        <div id="hxp-0">סוגיה</div>
                         <div id="exp-0" style="padding:0;margin:0">
                             <div class="expander-entry" style="margin:10px">
                                 <form class="fcForm" id="fcForm" method="post" action="/System/UpdateTask">
@@ -334,24 +332,7 @@
 
                 </div>
             </div>   
-        </div>
-        <div id="wiz-2" class="wiz-tab">
-            <h3 id="wiz-2-title" class="rtl">
-                עריכת משימה
-            </h3>
-            <div id="divPartial2" class="wiz-partial"></div>
-            <div class="rtl">
-                <a id="task-item-update" class="btn-default btn7 w-60" href="#">עדכון</a>
-                <a id="task-item-cancel" class="btn-default btn7 w-60" href="#">ביטול</a>
-            </div>
-        </div>
-        <div id="wiz-3" class="wiz-tab">
-            <div class="rtl">
-                <a class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">חזרה</a>
-            </div>
-            <div id="divPartial3"></div>
-        </div>
-     </div>
+    </div>
 </div>
 <!--end of content-wrapper-->
 
