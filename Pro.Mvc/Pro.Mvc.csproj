@@ -1801,9 +1801,6 @@
     <Content Include="Templates\5street\images\share.png" />
     <Content Include="Templates\5street\registry.css" />
     <Content Include="Templates\5street\registry.js" />
-    <None Include="connections.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="Uploads\mifkad\html5reset-1.6.1.css" />
     <Content Include="Uploads\mifkad\logo.gif" />
     <Content Include="Uploads\mifkad\registry.js" />
@@ -1952,6 +1949,7 @@
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\Logoff.cshtml" />
     <Content Include="Views\Common\_MemberDlg.cshtml" />
+    <Content Include="connections.config" />
     <None Include="Views\Home\_exclude\demoform.cshtml" />
     <Content Include="Scripts\plagins\popbox\api.html" />
     <Compile Include="Controllers\AccountController.cs" />

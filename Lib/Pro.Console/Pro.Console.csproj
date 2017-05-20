@@ -63,7 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="connections.config" />
+    <None Include="connections.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Channels\Nistec.Channels\Nistec.Channels.csproj">
