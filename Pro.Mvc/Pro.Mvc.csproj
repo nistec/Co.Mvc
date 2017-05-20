@@ -1949,7 +1949,6 @@
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\Logoff.cshtml" />
     <Content Include="Views\Common\_MemberDlg.cshtml" />
-    <Content Include="connections.config" />
     <None Include="Views\Home\_exclude\demoform.cshtml" />
     <Content Include="Scripts\plagins\popbox\api.html" />
     <Compile Include="Controllers\AccountController.cs" />
