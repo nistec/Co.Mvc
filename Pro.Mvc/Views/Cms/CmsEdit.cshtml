@@ -1,0 +1,228 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    Page.Title = "Cms";
+    int pid = Nistec.Types.ToInt(Request.QueryString["pid"]);
+    int sid = Nistec.Types.ToInt(Request.QueryString["sid"]);
+    string pagename = ViewBag.PageName;
+}
+@section head {
+
+    <style type="text/css">
+        label {
+        width:100px;
+        }
+    </style>
+}
+@section scripts {
+@Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/jqwidgets/jqxdatatable.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxcolorpicker.js"></script>
+<script type="text/javascript" src="~/Scripts/app/app-cms.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            var topSource =
+            {
+                dataType: "json",
+                dataFields: [
+                    { name: 'MenuId' },
+                    { name: 'MenuTitle' }
+                ],
+                type: 'POST',
+                data: { 'SiteId': '@sid' },
+                async: false,
+                url: '@Url.Action("GetSiteMenuTop", "Cms")'
+            };
+            var topAdapter = new $.jqx.dataAdapter(topSource);
+            $("#TopMenu").jqxComboBox(
+            {
+                rtl: true,
+                source: topAdapter,
+                width: 240,
+                displayMember: 'MenuTitle',
+                valueMember: 'MenuId'
+            });
+
+            var footerSource =
+            {
+                dataType: "json",
+                dataFields: [
+                    { name: 'MenuId' },
+                    { name: 'MenuTitle' }
+                ],
+                type: 'POST',
+                data: { 'SiteId': '@sid' },
+                async: false,
+                url: '@Url.Action("GetSiteMenuFooter", "Cms")'
+            };
+            var footerAdapter = new $.jqx.dataAdapter(footerSource);
+            $("#FooterMenu").jqxComboBox(
+            {
+                rtl: true,
+                source: footerAdapter,
+                width: 240,
+                displayMember: 'MenuTitle',
+                valueMember: 'MenuId'
+            });
+
+
+            editCmsPage('@sid', '@pid');
+
+
+            function editCmsPage(sid, pid) {
+
+                if (sid <= 0) {
+                    return;
+                }
+                var pageName;
+                var pageCategory;
+                var topMenu;
+                var footerMenu;
+
+                // create editor.
+                $('#editor').jqxEditor({
+                    height: '500px',
+                    width: '800px',
+                    rtl: true
+                    //theme: 'arctic'
+                    //stylesheets: ['editor.css']
+                });
+
+
+                var source =
+                {
+                    dataType: "json",
+                    datafields:
+                    [
+                        { name: 'PageId', type: 'number' },
+                        { name: 'PageName', type: 'string' },
+                        { name: 'PageContent', type: 'string' },
+                        { name: 'PageCategory', type: 'number' },
+                        { name: 'TopMenu', type: 'string' },
+                        { name: 'FooterMenu', type: 'string' }
+                    ],
+                    id: 'PageId',
+                    data: { SiteId: sid, PageId: pid },
+                    type: 'POST',
+                    url: cmsActionLink('GetCmsPage', 'Cms')
+                };
+                var dataAdapter = new $.jqx.dataAdapter(source, {
+                    loadComplete: function (record) {
+                        if (record) {
+                            $('#editor').val(htmlDecode(record.PageContent));
+                            $('#PageId').val(record.PageId);
+                            $('#PageName').val(record.PageName);
+                            $('#PageCategory').val(record.PageCategory);
+                            $('#TopMenu').val(record.TopMenu);
+                            $('#FooterMenu').val(record.FooterMenu);
+                        }
+                    },
+                    loadError: function (jqXHR, status, error) {
+                    },
+                    beforeLoadComplete: function (records) {
+                    }
+                });
+                dataAdapter.dataBind();
+
+                //tools:'bold italic underline | format font size | color background | left center right | outdent indent | ul ol | image | link | clean | html',
+
+                $("#btnUpdtate").on('click', function () {
+                    var pageid = $('#PageId').val();
+                    var pageName = $('#PageName').val();
+                    var pageCategory = $('#PageCategory').val();
+                    var topMenu = $('#TopMenu').val();
+                    var footerMenu = $('#FooterMenu').val();
+                    var contant = htmlEncode($('#editor').val());
+                    sendCommand({ 'SiteId': sid, 'PageId': pid, 'PageName': pageName, 'PageCategory': pageCategory, 'TopMenu': topMenu, 'FooterMenu': footerMenu, 'PageContent': contant });
+
+                });
+
+                $("#btnCancel").on('click', function () {
+                    window.location.href = "CmsSite?sid=" + sid;
+                });
+
+                var sendCommand = function (rowdata) {
+
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'POST',
+                        url: cmsActionLink('CmsPageUpdate', 'Cms'),
+                        data: rowdata,
+                        success: function (data, status, xhr) {
+                            dataAdapter.dataBind();
+                            alert('עודכן בהצלחה');
+                        },
+                        error: function () {
+                            alert('אירעה שגיאה, לא עודכנו נתונים');
+                        }
+                    });
+                };
+
+            }
+        });
+
+    </script>
+
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+@Html.ActionLink("Manager", "Manager", "Admin")>
+@Html.ActionLink("Main", "Main", "Admin")>
+<a href="javascript:parent.history.back()">Cms</a> >
+@ViewContext.RouteData.Values["action"].ToString()
+</div>
+
+<hgroup class="title">
+
+    <h3 class="rightPan">עריכת תוכן.</h3>
+
+</hgroup>
+
+
+<div class="clear"></div>
+
+<div class="global-view">
+    <div class="container-rtl">
+
+        <div>
+            <a href="CmsSite?sid=@sid">Cms Site '@sid'</a>
+        </div>
+        <h4>Page: @pid</h4>
+        <div style="margin: 10px">
+                    <ul>
+                        <li>
+                            <label>Page Name</label>
+                            <input type="text" id="PageName" value="" />
+                        </li>
+                        <li>
+                            <label>Page Category</label>
+                            <input type="text" id="PageCategory" value="" disabled="disabled" />
+                        </li>
+                        <li>
+                            <label>Top Menu</label>
+                            <div id="TopMenu" ></div>
+                        </li>
+                        <li>
+                            <label>Footer Menu</label>
+                            <div id="FooterMenu" ></div>
+                        </li>
+                    </ul>
+                </div>
+        <div>
+                <div id="editorHtml">
+                    <textarea id="editor"></textarea>
+                </div>
+                <p></p>
+                
+                <div style="margin: 10px">
+                    <input type="hidden" id="PageId" value="" disabled="disabled" />
+                    <input type="button" id="btnCancel" value="ביטול" />
+                    <input type="button" id="btnUpdtate" value="עדכון" />
+                </div>
+            </div>
+
+    </div>
+</div>

@@ -1,0 +1,154 @@
+﻿@model ProSystem.Data.Entities.TaskQuery
+@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    ViewBag.Title = "Tasks";
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/tasks-grid.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
+
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+
+        .jqx-grid-cell {
+            border: none;
+        }
+        .wiz-tab {
+            display:none;
+        }
+        .wiz-tab.active {
+             display: block;
+        }
+
+    </style>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    var task_grid;
+    var wizard;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        // prepare the data
+        
+        wizard = new app_wiztabs();
+        //wizard.displayStep(0);
+
+        task_grid = app_tasks_grid.load(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
+
+        app_jqxgrid.gridFilterRtl(this, $("#grid-toolbar"), columnList, dateList);
+
+        });
+
+        function triggerCancelEdit() {
+            task_grid.end(false);
+        };
+        function triggerTaskCompleted(id) {
+            $("#jqxgrid").jqxGrid('source').dataBind();
+            $("#divPartial").html('');
+            //app_dialog.dialogIframClose();
+        };
+
+        //function triggerCategoriesComplete(memid) {
+        //    members_categoriesRefresh();
+        //    app_dialog.dialogClose(members_grid.NScustomers.categoriesDialog);
+        //};
+
+        //function members_categoriesRefresh() {
+        //    members_grid.categoriesRefresh();
+        //};
+        //function members_categoriesDelete(id, rcdid) {
+        //    members_grid.categoriesDelete(id, rcdid);
+        //}
+
+       
+        var columnList = [
+         { label: 'מספר משימה', value: 'TaskId', checked: false },
+         { label: 'סוג משימה', value: 'TaskTypeName', checked: false },
+         { label: 'פרוייקט', value: 'ProjectName', checked: false },
+         { label: 'סטאטוס', value: 'StatusName', checked: false },
+         { label: 'נושא', value: 'TaskSubject', checked: false }
+        ];
+        var dateList = [
+         { label: 'מועד לביצוע', value: 'DueDate', checked: false },
+         { label: 'מועד רישום', value: 'CreatedDate', checked: false },
+         { label: 'מועד התחלה', value: 'StartedDate', checked: false },
+         { label: 'מועד סיום', value: 'EndedDate', checked: false },
+         { label: 'מועד התחלה משוער', value: 'EstimateStartTime', checked: false }
+        ];
+
+    </script>
+}
+
+
+<div class="breadcrumbs">
+</div>
+<div class="top-space"></div>
+
+<div class="global-view">
+    <div id="wiz-container" class="container">
+        <div id="wiz-1" class="wiz-tab active">
+            <h3 class="rtl">רשימת משימות.</h3>
+            <div class="grid-wrap rtl">
+                <div id="grid-toolbar" class="grid-toolbar"></div>
+
+                <div id="jqxWidget">
+                    <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                </div>
+            </div>
+        </div>
+        <div id="wiz-2" class="wiz-tab">
+            <h3 class="rtl">משימה</h3>
+            <div id="divPartial"></div>
+        </div>
+
+           @*<div id="wizard">
+            <ul>
+                <li><a href="#wiz-1">1</a></li>
+                <li><a href="#wiz-2">2</a></li>
+            </ul>
+               <div id="wiz-1" class="ui-tabs-panel1">
+                   <h3 class="rtl">רשימת משימות.</h3>
+                   <div>
+                       <div class="grid-wrap rtl">
+                           <div id="grid-toolbar" class="grid-toolbar"></div>
+
+                           <div id="jqxWidget">
+                               <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               <div id="wiz-2" class="ui-tabs-panel1">
+                   <h3 class="rtl">משימה</h3>
+                   <div id="divPartial"></div>
+               </div>
+        </div>*@
+        @*<div id="wizard-steps" style="display:block">
+            <a href="#" class="btn-tab prev-tab ">הקודם</a>
+            <a href="#" class="btn-tab next-tab">הבא</a>
+            <a id="submit" href="#" class="btn-tab end-tab">סיום</a>
+            <input type="text" id="wizard-validation" readonly />
+        </div>*@
+     </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("System", "Tasks", 'en');
+</script>
+

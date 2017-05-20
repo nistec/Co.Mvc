@@ -1,0 +1,428 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    Page.Title = "Cms";
+}
+@section head {
+}
+@section scripts {
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+<script type="text/javascript" src="~/Scripts/app/app-cms.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var theme = 'Arctic';
+            JSON.useDateParser();
+
+
+            var categoryAdapter = createDropDownAdapter("Id", "Name", "SiteCategory", '/Cms/GetSiteCategories', 120);
+
+
+            var sendCommand = function (rowdata, command, commit) {
+
+                $.ajax({
+                    dataType: 'json',
+                    type: 'POST',
+                    url: '@Url.Action("CmsSiteUpdate", "Cms")',
+                    data: rowdata,
+                    success: function (data, status, xhr) {
+                        if (data.Commit) {
+                            //alert('עודכן בהצלחה');
+                            commit(true);
+                            dataAdapter.dataBind();
+                        }
+                        else {
+                            alert('לא עודכנו נתונים');
+                            $('#updateResult').val(data.Description);
+                            commit(false);
+                        }
+                    },
+                    error: function () {
+                        alert('אירעה שגיאה, לא עודכנו נתונים');
+                        commit(false);
+                    }
+                });
+            };
+            var source =
+            {
+
+                updaterow: function (rowid, rowdata, commit) {
+                    sendCommand(rowdata, 1, commit);
+                },
+                addrow: function (rowid, rowdata, position, commit) {
+                    sendCommand(rowdata, 0, commit);
+                },
+                deleterow: function (rowid, commit) {
+                    var rowdata = { 'SiteId': rowid }
+                    sendCommand(rowdata, 2, commit);
+                },
+                dataType: "json",
+                datafields:
+                [
+                   { name: 'SiteId', type: 'number' },
+                   { name: 'SiteName', type: 'string' },
+                   { name: 'SiteCategory', type: 'number' },
+                   { name: 'AccountId', type: 'number' },
+                   { name: 'Platform', type: 'number' },
+                   { name: 'Header', type: 'string' },
+                   { name: 'Footer', type: 'string' },
+                   { name: 'SiteTitle', type: 'string' },
+                   { name: 'Description', type: 'string' },
+                   { name: 'Keywords', type: 'string' },
+                   { name: 'RemovePowerBy', type: 'bool' },
+                   { name: 'Creation', type: 'date' },
+                   { name: 'Expiration', type: 'date' }
+
+                ],
+                data: {},
+                id: 'UserId',
+                type: 'POST',
+                url: '@Url.Action("GetSitesGrid", "Cms")'
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                contentType: "application/json; charset=utf-8",
+                loadError: function (jqXHR, status, error) {
+                    //alert("dataAdapter failed: " + error);
+                },
+                loadComplete: function (data) {
+                    //alert("dataAdapter is Loaded");
+                }
+            });
+            dataAdapter.dataBind();
+            var editrow = -1;
+            // initialize jqxGrid
+            $("#jqxgrid").jqxGrid(
+            {
+                rtl: true,
+                width: '80%',
+                autoheight: true,
+                source: dataAdapter,
+                localization: getLocalization('he'),
+                pageable: false,
+                showtoolbar: true,
+                rendertoolbar: function (toolbar) {
+                    var me = this;
+                    var container = $("<div style='margin: 5px;text-align:right'></div>");
+                    toolbar.append(container);
+                    container.append('<input id="addrowbutton" type="button" value="הוספה" />');
+                    container.append('<input style="margin-left: 5px;" id="deleterowbutton" type="button" value="מחיקה" title="מחיקת השורה המסומנת"/>');
+                    container.append('<input id="updaterowbutton" type="button" value="עריכה" title="עריכת השורה המסומנת"/>');
+                    container.append('<input id="refreshbutton" type="button" value="רענון" />');
+                    $("#addrowbutton").jqxButton();
+                    $("#deleterowbutton").jqxButton();
+                    $("#updaterowbutton").jqxButton();
+                    $("#refreshbutton").jqxButton();
+                    // update row.
+                    $("#updaterowbutton").on('click', function () {
+
+                        var selectedrowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+                        var rowscount = $("#jqxgrid").jqxGrid('getdatainformation').rowscount;
+                        if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
+                            $("#jqxgrid").jqxGrid('ensurerowvisible', selectedrowindex);
+                            // open the popup window when the user clicks a button.
+                            editrow = selectedrowindex;
+                            // get the clicked row's data and initialize the input fields.
+                            var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+
+                            $("#SiteId").val(dataRecord.SiteId);
+                            $("#SiteName").val(dataRecord.SiteName);
+                            $("#SiteCategory").val(dataRecord.SiteCategory);
+                            $("#AccountId").val(dataRecord.AccountId);
+                            //$("#Platform").val(dataRecord.Platform);
+                            //$("#Header").val(dataRecord.Header);
+                            //$("#Footer").val(dataRecord.Footer);
+                            $("#SiteTitle").val(dataRecord.SiteTitle);
+                            $("#Description").val(dataRecord.Description);
+                            $("#Keywords").val(dataRecord.Keywords);
+                            $("#RemovePowerBy").val(dataRecord.RemovePowerBy);
+                            $("#Creation").val(dataRecord.Creation);
+                            $("#Expiration").val(dataRecord.Expiration);
+                            //$("#popupWindow").jqxWindow('open');
+                            openEditor(1);
+                        }
+                    });
+                    // create new row.
+                    $("#addrowbutton").on('click', function () {
+                        // show the popup window.
+                        //$("#SiteId").val('');
+                        $("#SiteName").val('');
+                        $("#SiteCategory").val('');
+                        $("#AccountId").val('');
+                        //$("#Platform").val('');
+                        //$("#Header").val('');
+                        //$("#Footer").val('');
+                        $("#SiteTitle").val('');
+                        $("#Description").val('');
+                        $("#Keywords").val('');
+                        $("#RemovePowerBy").val(false);
+                        $("#Creation").val('');
+                        $("#Expiration").val('');
+                        openEditor(0);
+                    });
+                    // delete row.
+                    $("#deleterowbutton").on('click', function () {
+                        var selectedrowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+                        var rowscount = $("#jqxgrid").jqxGrid('getdatainformation').rowscount;
+                        if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
+                            var id = $("#jqxgrid").jqxGrid('getrowid', selectedrowindex);
+                            var result = confirm("האם למחוק?");
+                            if (result == true) {
+                                //Logic to delete the item
+                                var commit = $("#jqxgrid").jqxGrid('deleterow', id);
+                            }
+                        }
+                    });
+                    // refresh grid.
+                    $("#refreshbutton").on('click', function () {
+                        dataAdapter.dataBind();
+                    });
+                    var openEditor = function (mode) {
+                        $("#insertFlag").val(mode);
+                        var popw = '#popupWindow';
+
+                        // open the popup window when the user clicks a button.
+                        var offset = $("#jqxgrid").offset();
+                        $(popw).jqxWindow({ position: { x: parseInt(offset.left) + parseInt(offset.width) / 2, y: parseInt(offset.top) + 60 } });
+                        // show the popup window.
+                        $(popw).jqxWindow('open');
+                    };
+
+                },
+                columns: [
+                {
+                    text: 'קוד אתר', datafield: 'SiteId', width: 90, cellsalign: 'right', align: 'center',
+                    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                        return '<div style="text-align:center"><a href="CmsSite?sid=' + value + '" >הצג</a></div>';
+                    }
+                },
+                //{ text: 'קוד אתר', datafield: 'SiteId', width: 90, cellsalign: 'right', align: 'center'},
+                { text: 'שם האתר', datafield: 'SiteName', width: 150, cellsalign: 'right', align: 'center' },
+                { text: 'קטגוריה', datafield: 'SiteCategory', width: 120, cellsalign: 'right', align: 'center' },
+                { text: 'חשבון', datafield: 'AccountId', width: 90, cellsalign: 'right', align: 'center' },
+                { text: 'כותרת', datafield: 'SiteTitle', cellsalign: 'right', align: 'center' },
+                { text: 'קרדיט', datafield: 'RemovePowerBy', columntype: 'checkbox', width: 60, cellsalign: 'right', align: 'center' },
+                { text: 'נוצר ב', datafield: 'Creation', width: 120, cellsalign: 'right', align: 'center' }
+                ]
+            });
+            //$("#jqxgrid").on('cellselect', function (event) {
+            //    var column = $("#jqxgrid").jqxGrid('getcolumn', event.args.datafield);
+            //    var value = $("#jqxgrid").jqxGrid('getcellvalue', event.args.rowindex, column.datafield);
+            //    var displayValue = $("#jqxgrid").jqxGrid('getcellvalue', event.args.rowindex, column.displayfield);
+            //    //$("#eventLog").html("<div>Selected Cell<br/>Row: " + event.args.rowindex + ", Column: " + column.text + ", Value: " + value + ", Label: " + displayValue + "</div>");
+            //});
+            // initialize the input fields.
+            $("#SiteCategory").jqxDropDownList({ theme: theme }).width(150);
+            $("#RemovePowerBy").jqxCheckBox({ theme: theme });
+            $("#Expiration").jqxDateTimeInput({ formatString: 'dd/MM/yyyy' });
+
+            //================= popup Update ================.
+            $("#popupWindow").jqxWindow({
+                width: 400, resizable: false, isModal: true, autoOpen: false, cancelButton: $("#Cancel"), modalOpacity: 0.01
+            });
+            $("#popupWindow").on('open', function () {
+                $("#SiteName").jqxInput('selectAll');
+            });
+            $('#popupWindow').jqxValidator({
+                hintType: 'label',
+                animationDuration: 0,
+                rules: [
+                      { input: '#SiteName', message: 'נדרש שם האתר!', action: 'keyup, blur', rule: 'required' },
+                      { input: '#SiteName', message: 'שם האתר בין 3 ל 25 תוים לפחות!', action: 'keyup, blur', rule: 'length=3,12' },
+                      {
+                          input: '#SiteName', message: 'נדרש אותיות באנגלית בלבד!', action: 'valuechanged, blur', rule:
+                                  function (input, commit) {
+                                      var re = /[^A-Za-z]/g
+                                      return re.test(input.val());
+                                  }
+                      },
+                      { input: '#SiteTitle', message: 'נדרש כותרת!', action: 'keyup, blur', rule: 'required' },
+                      { input: '#SiteTitle', message: 'כותרת אותיות בלבד!', action: 'keyup', rule: 'notNumber' },
+                      { input: '#SiteTitle', message: 'כותרת בין 3 ל 50 תוים לפחות!', action: 'keyup', rule: 'length=3,12' },
+                      {
+                          input: '#SiteCategory', message: 'נדרש תפקיד!', action: 'select', rule: function (input) {
+                              var index = $("#SiteCategory").jqxDropDownList('getSelectedIndex');
+                              if (index >= 0) { return true; } return false;
+                          }
+                      }
+                ]
+            });
+            $('#popupWindow').on('validationSuccess', function (event) {
+                var row = {
+                    SiteId: $("#SiteId").val(),
+                    SiteName: $("#SiteName").val(),
+                    SiteCategory: $("#SiteCategory").val(),
+                    AccountId: $("#AccountId").val(),
+                    //Platform: $("#Platform").val(),
+                    //Header: $("#Header").val(),
+                    //Footer: $("#Footer").val(),
+                    SiteTitle: $("#SiteTitle").val(),
+                    Description: $("#Description").val(),
+                    Keywords: $("#Keywords").val(),
+                    RemovePowerBy: $("#RemovePowerBy").val(),
+                    Creation: $("#Creation").val(),
+                    Expiration: $("#Expiration").val()
+                };
+                if ($("#insertFlag").val() == '0') {
+                    $('#jqxgrid').jqxGrid('addrow', null, row);
+                }
+                else if (editrow >= 0) {
+                    var rowID = $('#jqxgrid').jqxGrid('getrowid', editrow);
+                    $('#jqxgrid').jqxGrid('updaterow', rowID, row);
+                }
+                $("#popupWindow").jqxWindow('hide');
+            });
+            $("#Cancel").jqxButton({ theme: theme });
+            $("#Save").jqxButton({ theme: theme });
+            // update the edited row when the user clicks the 'Save' button.
+            $("#Save").click(function () {
+                $('#popupWindow').jqxValidator('validate');
+
+            });
+
+        });
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+    @Html.ActionLink("Manager", "Manager", "Admin")>
+    @Html.ActionLink("Main", "Main", "Admin")>
+    <a href="javascript:parent.history.back()">Cms</a> >
+    @ViewContext.RouteData.Values["action"].ToString()
+</div>
+
+<hgroup class="title">
+    <h3 class="rightPan">עריכת תוכן-<span>אתרים</span></h3>
+
+</hgroup>
+<div class="clear"></div>
+
+<div class="global-view">
+
+    <div class="container-rtl">
+        <div class="grid-wrap">
+            <div id="jqxWidget">
+                <!--<input style="margin-right: 5px;" type="button" id="addrowbutton" value="הוספה" />-->
+                <div id="jqxgrid" style="position: relative; z-index: 1;"></div>
+                <div style="font-size: 12px; font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif; margin-top: 30px;">
+                    <div id="cellbegineditevent"></div>
+                    <div style="margin-top: 10px;" id="cellendeditevent"></div>
+                    <div id="popupWindow">
+                        <input type="hidden" id="insertFlag" value="0" />
+                        <input type="hidden" id="Creation" value="" />
+                        <div>עריכה</div>
+                        <div style="overflow: hidden; direction: rtl">
+
+                            <table style="border-spacing: 10px; border-collapse: separate; direction: rtl">
+                                <tr>
+                                    <td>קוד אתר:</td>
+                                    <td>
+                                        <input id="SiteId" type="text" disabled="disabled" style="direction: rtl; text-align: right;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>שם האתר:</td>
+                                    <td>
+                                        <input id="SiteName" type="text" style="direction: ltr; text-align: left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>חשבון:</td>
+                                    <td>
+                                        <input id="AccountId" type="text" style="direction: ltr; text-align: left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>קטגוריה:</td>
+                                    <td>
+                                        <div id="SiteCategory" style="direction: ltr; text-align: left; float: left"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>כותרת:</td>
+                                    <td>
+                                        <input id="SiteTitle" type="text" style="direction: ltr; text-align: left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>תאור:</td>
+                                    <td>
+                                        <input id="Description" type="text" style="direction: ltr; text-align: left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>מילות מפתח:</td>
+                                    <td>
+                                        <input id="Keywords" type="text" style="direction: ltr; text-align: left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>להסיר קרדיט?:</td>
+                                    <td>
+                                        <div id="RemovePowerBy" style="direction: rtl; text-align: right;"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>תוקף:</td>
+                                    <td>
+                                        <div id="Expiration"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td style="padding-top: 10px;">
+                                        <input id="Save" type="button" style="margin-right: 5px;" value="עדכון" />
+                                        <input id="Cancel" type="button" value="ביטול" /></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div id="updateResult"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h2>מערכת תוכן לניהול אתרים</h2>
+
+            <p>במערכת תוכן זו ניתן לערוך מספר אתרים כאשר המערכת כוללת חלוקה פיזית באופן הבא:</p>
+            <p>
+                <br />
+            </p>
+            <ul>
+                <li>אתר</li>
+                <li>עמוד (2 סוגים)</li>
+                <li>
+                    <ul>
+                        <li>מבנה קבוע (מיועד בעיקר בעלי עיצוב מובנה ללא יכולת להוסיף אלמנטים, כגון עמוד הבית, אודות, צור קשר וכו)</li>
+                        <li>מבנה דינאמי (מיועד לעמודי תוכן עם תוכן דינאמי הניתן לעריכה באמצעות עורך התוכן)</li>
+                    </ul>
+                </li>
+                <li>אזור</li>
+                <li>אלמנט (תוכן)</li>
+            </ul>
+            <p>
+                <font size="3">עריכת עמודים במבנה קבוע:</font>
+            </p>
+            <p>
+                <font size="2">כאן ניתן לערוך את התוכן לכל אלמנט בנפרד בין אם זה כותרת טקסט או לינק לקישור.</font>
+            </p>
+            <p>
+                <br />
+            </p>
+            <p>
+                <font size="3">עריכת עמודים במבנה דינאמי:</font>
+            </p>
+            <p>
+                <font size="2">כאן ניתן ליצור עמודי תוכן המקושרים באמצעות לינק מתוך העמודים השונים במערכת,</font>
+            </p>
+            <p>
+                <font size="2">או ע"י הוספת לינק בתפריט העליון ו או התחתון שבעמוד הראשי.</font>
+            </p>
+            <p>
+                <font size="2"><br/></font>
+            </p>
+        </div>
+    </div>
+</div>

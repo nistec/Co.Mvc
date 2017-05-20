@@ -1,0 +1,33 @@
+﻿
+
+Account using Signup no payment
+===============================
+Members	=>	Member_Signup	=>	Member_Validity
+
+Action		RecordId	SignupId	Vid			Campaign
+signup		1			1			2016		1
+recharge	1			1			2017		1
+
+
+
+
+Account using Signup and payment and validity by month
+======================================================
+Members	=>	Member_Signup	=>	Payment	=>	Member_Validity
+
+Action		RecordId	SignupId	PayId		Vid			Campaign
+signup		1			1			1			2016		1
+recharge	1			1			2			2017		1
+
+
+
+Account using Signup and payment and validity by fix date
+=========================================================
+Members	=>	Member_Signup	=>	Payment	=>	Member_Validity
+
+Action		RecordId	SignupId	PayId		Vid			Campaign
+signup		1			1			1			2016		1
+recharge	1			1			2			2017		2
+
+
+

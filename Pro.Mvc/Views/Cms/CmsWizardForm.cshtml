@@ -1,0 +1,389 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "CmsWizardForm";
+    var userRole = Nistec.Types.ToInt( ViewBag.UserRole);
+    string exportClass = userRole < 5 ? "hide" : "show";
+}
+
+@section head {
+
+
+  @Scripts.Render("~/bundles/jqx")
+<script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <style type="text/css">
+        table {
+            direction: rtl;
+        }
+
+        td {
+            padding-left:10px;
+            padding-top: 0px;
+            padding-bottom: 5px;
+        }
+        .ui-accordion-header-active {
+            background: #15C8D8;
+        }
+         #form-container {
+            margin-left: auto;
+            margin-right: 0;
+            max-width: 500px;
+            direction: rtl;
+        }
+        .expander-item {
+            padding: 0;
+            margin: 0;
+            /*direction: rtl;
+            max-width: 400px;*/
+        }
+        .expander-entry {
+            margin: 5px;
+            /*direction:rtl;*/
+        }
+        .headline {
+            color: #32A7C0;
+            font-weight: bold;
+        }
+        input.edit {
+            width:150px;
+        }
+        #wizard-validation {background-color:transparent;}
+    </style>
+    @*<script>
+        $(function () {
+            $('#tab-query li:eq(0) a').tab('show');
+        });
+    </script>*@
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var me = this;
+            //$("#accordion").accordion({ heightStyle: "content"});
+            $('.text-content').jqxEditor({
+                //height: '200px',
+                //width: '100%',
+                //editable: dataModel.Option == 'e',
+                rtl: true,
+                tools: 'bold italic underline | color background | left center right'
+                //theme: 'arctic'
+                //stylesheets: ['editor.css']
+            });
+        
+        app_members.displayMemberFields();
+
+        var designAdapter = app_jqxcombos.createListAdapter("DesignId", "DesignName", "listDesign", '@Url.Action("GetListDesign", "Common")', 240, 200, true);
+        $('#listDesign').on('change', function (event) {
+            app_jqxcombos.listBoxToInput("listDesign", "Design");
+        });
+
+        $('#submit').on('click', function () {
+            //var action = $("#form").find('input[name=op]:checked').val();
+            //$("#form").attr('action', app.appPath() + action);
+
+            app_dialog.dialogIframe('/Cms/CmsWizardDisplay', "850", "600", 'עריכת טופס רישום', true);
+        });
+        $("input[name=op]:radio").change(function () {
+            //$("#rdDefault, #rdSms", "#rdMail").change(function () {
+            var action = $("#form").find('input[name=op]:checked').val();
+            $("#form").attr('action', app.appPath() + action);
+        });
+        $('#reset').on('click', function () {
+            location.reload();
+        });
+
+
+        //wizard ====================================
+        var $tabs = $('#wizard').tabs();
+        $('#wizard').css('height', '450px');
+        $('.prev-tab').hide();
+        $('.end-tab').hide();
+
+        $('.next-tab').click(function () {
+
+            var totalSize = $(".ui-tabs-panel").size() - 1;
+            var active = $('#wizard').tabs("option", "active");
+            //switch (active) {
+            //    case 0:
+            //        var value = $("#TotalCount").val();
+            //        if (value <= 0) {
+            //            return displayWizardValidation("אין נמענים לשליחה");
+            //        }
+            //        break;
+            //}
+            
+            var next = active + 1;
+            if (next >= totalSize) {
+                $('.next-tab').hide();
+                $('.end-tab').show();
+            }
+            $('.prev-tab').show();
+            $('#wizard').tabs({ active: next });
+            displayStep(next, totalSize);
+            return false;
+        });
+        $('.prev-tab').click(function () {
+            var active = $('#wizard').tabs("option", "active");
+            var prev = active - 1;
+            if (prev <= 0) {
+                $('.prev-tab').hide();
+            }
+            $('.end-tab').hide();
+            $('.next-tab').show();
+            $('#wizard-validation').val("");
+            $('#wizard').tabs({ active: prev });
+            displayStep(prev);
+            //$tabs.tabs('select', $(this).attr("rel"));
+            return false;
+        });
+        var displayStep = function (step, totalSize) {
+            step++;
+            if (totalSize === undefined)
+                totalSize = $(".ui-tabs-panel").size() - 1;
+            totalSize++;
+            $('#wizard-validation').val("שלב " + step + " מתוך " + totalSize);
+        }
+        var displayWizardValidation = function (message) {
+            $('#wizard-validation').val(message);
+            return false;
+        }
+        displayStep(0);
+
+       //end wizard =====================================
+    });
+
+        function getFormWizard() {
+
+            return $("#form");
+        }
+
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+</div>
+<div class="top-space"></div>
+
+<div class="global-view">
+    <div class="container-box">
+        <div class="box-title">
+            <h3>עריכת עמוד רישום</h3>
+        </div>
+
+        <div id="tag-form" class="rtl">
+            <div id="form">
+                <input type="hidden" id="Design" name="Design" />
+                <input type="hidden" id="ExType" />
+
+                <div id="wizard">
+                    <ul>
+                        <li><a href="#tab-1">1</a></li>
+                        <li><a href="#tab-2">2</a></li>
+                        <li><a href="#tab-3">3</a></li>
+                        <li><a href="#tab-4">4</a></li>
+                        <li><a href="#tab-5">5</a></li>
+                        <li><a href="#tab-6">6</a></li>
+                        <li><a href="#tab-7">7</a></li>
+                        <li><a href="#tab-8">8</a></li>
+                    </ul>
+                    <div id="tab-1" class="ui-tabs-panel">
+                        <h3>בחירת עיצוב</h3>
+                        <div id="exp-1" style="padding:0;margin:0">
+                            <div class="expander-entry">
+                                <div>
+                                    <label class="headline">בחירת עיצוב</label>
+                                    <div id="listDesign" name="listDesign"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-2" class="ui-tabs-panel">
+                        <h3>מקטע עליון</h3>
+                        <div id="exp-1" style="padding:0;margin:0">
+                            <div class="expander-entry">
+                                <div class="editor_html">
+                                    <textarea id="editor_Ph1" class="text-content" style="height:200px;width:400px;"></textarea>
+                                </div>
+                                <input type="button" id="submit_Ph1" value="עדכון" class="btn-default btn7 w-80" />
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-3" class="ui-tabs-panel">
+                        <h3>בחירת שדות</h3>
+                        <div id="exp-2" style="padding:0;margin:0">
+                            <div class="expander-entry">
+                                <table id="tbl-fields">
+                                    <tr>
+                                        <td>שם השדה</td>
+                                        <td>להציג</td>
+                                        <td>חובה</td>
+                                    </tr>
+                                    <tr id="MemberId" class="field" data-type="text">
+                                        <td><span>תעודת זהות</span></td>
+                                        <td><input type="checkbox" id="MemberId-Enabled" name="MemberId-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" id="MemberId-Required" name="MemberId-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="FirstName" class="field" data-type="text">
+                                        <td><span>שם פרטי</span></td>
+                                        <td><input type="checkbox" id="FirstName-Enabled" name="FirstName-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" id="FirstName-Required" name="FirstName-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="LastName" class="field" data-type="text">
+                                        <td><span>שם משפחה</span></td>
+                                        <td><input type="checkbox" id="LastName-Enabled" name="LastName-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" id="LastName-Required" name="LastName-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="CellPhone" class="field" data-type="text">
+                                        <td><span>טלפון נייד</span></td>
+                                        <td><input type="checkbox" id="CellPhone-Enabled" name="CellPhone-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" id="CellPhone-Required" name="CellPhone-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="Email" class="field" data-type="text">
+                                        <td><span>אימייל</span></td>
+                                        <td><input type="checkbox" id="Email-Enabled" name="Email-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" id="Email-Required" name="Email-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="Birthday" class="field" data-type="date">
+                                        <td><span>תאריך לידה</span></td>
+                                        <td><input type="checkbox" id="Birthday-Enabled" name="Birthday-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" id="Birthday-Required" name="Birthday-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="Address" class="field" data-type="text">
+                                        <td><span>כתובת</span></td>
+                                        <td><input type="checkbox" id="Address-Enabled" name="Address-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" id="Address-Required" name="Address-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="City" class="field" data-type="combo">
+                                        <td><span>עיר</span></td>
+                                        <td><input type="checkbox" id="City-Enabled" name="City-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" id="City-Required" name="City-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="ZipCode" class="field" data-type="text">
+                                        <td><span>מיקוד</span></td>
+                                        <td><input type="checkbox" id="ZipCode-Enabled" name="ZipCode-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" id="ZipCode-Required" name="ZipCode-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="Phone" class="field" data-type="text">
+                                        <td><span>טלפון</span></td>
+                                        <td><input type="checkbox" id="Phone-Enabled" name="Phone-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" id="Phone-Required" name="Phone-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="ReferralCode" class="field" data-type="text">
+                                        <td><span>קוד הפנייה</span></td>
+                                        <td><input type="checkbox" id="ReferralCode-Enabled" name="ReferralCode-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" id="ReferralCode-Required" name="ReferralCode-Required" class="required" /></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-4" class="ui-tabs-panel">
+                        <h3>בחירת שדות הרחבה</h3>
+                        <div id="exp-3" style="padding:0;margin:0">
+                            <div class="expander-entry">
+                                <table id="tbl-fields-ex">
+                                    <tr>
+                                        <td>שם השדה</td>
+                                        <td>להציג</td>
+                                        <td>חובה</td>
+                                    </tr>
+                                    <tr id="divExId" class="field-ex">
+                                        <td><span id="lblExId"></span></td>
+                                        <td><input type="checkbox" name="ExId-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" name="ExId-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="divField1" class="field-ex">
+                                        <td><span id="lblExField1"></span></td>
+                                        <td><input type="checkbox" name="ExField1-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" name="ExField1-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="divField2" class="field-ex">
+                                        <td><span id="lblExField2"></span></td>
+                                        <td><input type="checkbox" name="ExField2-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" name="ExField2-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="divField3" class="field-ex">
+                                        <td><span id="lblExField3"></span></td>
+                                        <td><input type="checkbox" name="ExField3-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" name="ExField3-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="divEnum1" class="field-ex">
+                                        <td><span id="lblExEnum1"></span></td>
+                                        <td><input type="checkbox" name="ExEnum1-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" name="ExEnum1-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="divEnum2" class="field-ex">
+                                        <td><span id="lblExEnum2"></span></td>
+                                        <td><input type="checkbox" name="ExEnum2-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" name="ExEnum2-Required" class="required" /></td>
+                                    </tr>
+                                    <tr id="divEnum3" class="field-ex">
+                                        <td><span id="lblExEnum3"></span></td>
+                                        <td><input type="checkbox" name="ExEnum3-Enabled" class="enabled" /></td>
+                                        <td><input type="checkbox" name="ExEnum3-Required" class="required" /></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-5" class="ui-tabs-panel">
+                        <h3>מקטע ביניים</h3>
+                        <div id="exp-1" style="padding:0;margin:0">
+                            <div class="expander-entry">
+                                <div class="editor_html">
+                                    <textarea id="editor_Ph2" class="text-content" style="height:200px;width:400px;"></textarea>
+                                </div>
+                                <input type="button" id="submit_Ph2" value="עדכון" class="btn-default btn7 w-80" />
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-6" class="ui-tabs-panel">
+                        <h3>מקטע תחתון</h3>
+                        <div id="exp-1" style="padding:0;margin:0">
+                            <div class="expander-entry">
+                                <div class="editor_html">
+                                    <textarea id="editor_Ph3" class="text-content" style="height:200px;width:400px;"></textarea>
+                                </div>
+                                <input type="button" id="submit_Ph3" value="עדכון" class="btn-default btn7 w-80" />
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-7" class="ui-tabs-panel">
+                        <h3>הגדרות</h3>
+                        <div id="exp-1" style="padding:0;margin:0">
+                            <div class="expander-entry">
+                                <div class="editor_html">
+                                    
+                                </div>
+                                <input type="button" id="submit_Ph3" value="עדכון" class="btn-default btn7 w-80" />
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-8" class="ui-tabs-panel">
+                        <h3>סיום</h3>
+                        <div class="expander-entry">
+                            <div>
+                                <input type="button" id="submit" value="הצג" class="btn-default btn7 w-80" />
+                                <input type="reset" value="נקה" class="btn-default btn7 w-80" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wizard-steps">
+                    <a href="#" class="btn-tab prev-tab ">הקודם</a>
+                    <a href="#" class="btn-tab next-tab">הבא</a>
+                    <a id="submit" href="#" class="btn-tab end-tab">סיום</a>
+                    <input type="text" id="wizard-validation" readonly />
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liCms");
+    app_menu.breadcrumbs("Crm", "CmsWizardForm", 'en');
+</script>
+
+
+
+

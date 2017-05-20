@@ -1,0 +1,71 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    Page.Title = "Cms";
+}
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+<script src="~/Scripts/app/app-jqx-1.0.js"></script>
+<script src="~/Scripts/app/app-model-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/cms/cms_wizard-builder.js"></script>
+<script src="~/Templates/5street/registry.js"></script>
+<link href="~/Templates/5street/registry.css" rel="stylesheet" />
+    <style type="text/css">
+        html body {
+            margin: 0;
+            padding: 0;
+        }
+
+        label {
+            width: 100px;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .show {
+            display: block;
+        }
+
+        #editorHtml {
+            width: 400px;
+        }
+    </style>
+}
+@section scripts {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            var def = new app_cms_wizard_builder();
+
+        });
+
+    </script>
+
+}
+
+<div class="clear"></div>
+
+<div id="global-view" class="global-view">
+    <div id="container" class="container-rtl">
+
+        <h4></h4>
+        <div>
+            <form id="form1">
+                <div id="editorHtml">
+
+                </div>
+                <p></p>
+                <div style="margin: 10px">
+                    <input type="hidden" id="AccountId" value="" />
+                    <input type="hidden" id="PageType" value="" />
+                    <input type="button" id="btnUpdtate" value="עדכון" />
+                </div>
+            </form>
+        </div>
+        <div id="divSave">
+            <input type="button" value="שמירה במערכת התוכן" id="btnSave" />
+        </div>
+     </div>
+</div>

@@ -1,0 +1,218 @@
+﻿@model Pro.Data.Registry.RegistryPage
+@{
+    ViewBag.Title = "Registry";
+    Layout = "~/Views/Shared/_ViewRegistry.cshtml";
+ 
+}
+
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+<script src="~/Scripts/bootstrap/bootstrap.min.js"></script>
+<link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="~/Scripts/app/registry/registry.css">
+    <script src="~/Scripts/app/registry/registry.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/model/signup-def.js"></script>
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #main-page {
+            width: 100%;
+            display: block;
+            border: 1px solid red;
+        }
+
+        #main-container {
+            margin-right: auto;
+            margin-left: auto;
+            width: 400px;
+            border: 1px solid green;
+        }
+
+        #jqxWidget {
+            /*margin: 0 auto;*/
+            margin-right: 10px;
+            display: block;
+            direction: rtl;
+        }
+    </style>
+
+@Html.Raw(Model.HScript)
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var def = new app_signup_def(JSON.parse('@Model.AccountId'));
+
+            $('#reset').on('click', function () {
+                location.reload();
+            });
+
+            $('#accSubmit').on('click', function (e) {
+
+                e.preventDefault();
+                def.doSubmit();
+            });
+
+            $('#accCancel').on('click', function (e) {
+                $('#accForm')[0].reset();
+                $('#accForm').jqxValidator('hide');
+            });
+
+
+            @*$("#cmsHeader").text(@Model.Header);
+            $("#cmsFooter").html(htmlDecode(@Model.Footer));
+            $("#cmsPlaceHolder1").html(htmlDecode(@Model.PlaceHolder1));
+            $("#cmsPlaceHolder2").html(htmlDecode(@Model.PlaceHolder2));
+            $("#cmsPlaceHolder3").html(htmlDecode(@Model.PlaceHolder3));*@
+
+        });
+
+    </script>
+
+}
+
+@section cmsHeader {
+
+    <div id="cmsHeader">
+        @Html.Raw(Model.Header)
+    </div>
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="jqxWidget">
+                <div id="accWindow">
+                    <div id="accHeader">
+                        <h4 id="accTitle" style="font-weight: bold;">@Model.Title</h4>
+                    </div>
+                    <div id="accBody">
+                        <form class="accForm" id="accForm" method="post" action="/Registry/UpdateMemberSignup">
+                            @Html.AntiForgeryToken()
+                            <div style="direction: rtl; text-align: right">
+
+                                <input type="hidden" id="RecordId" name="RecordId" value="0" />
+                                <input type="hidden" id="AccountId" name="AccountId" value="@Model.AccountId" />
+                                <input type="hidden" id="Categories" name="Categories" value="" />
+
+                                <div id="tab-personal">
+                                    <div class="form-group">
+                                        <div class="column">
+                                            תעודת זהות :
+                                        </div>
+                                        <input id="MemberId" name="MemberId" type="text" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="column">
+                                            שם פרטי :
+                                        </div>
+                                        <input id="FirstName" name="FirstName" type="text" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="column">
+                                            שם משפחה :
+                                        </div>
+                                        <input id="LastName" name="LastName" type="text" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="column">
+                                            כתובת :
+                                        </div>
+                                        <input id="Address" name="Address" type="text" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="column">
+                                            עיר :
+                                        </div>
+                                        <div id="City" name="City"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="column">
+                                            מגדר:
+                                        </div>
+                                        <div id="Gender" name="Gender"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="column">
+                                            תאריך לידה:
+                                        </div>
+                                        <div id="Birthday" name="Birthday"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="column">
+                                            טלפון נייד:
+                                        </div>
+                                        <input id="CellPhone" name="CellPhone" type="text" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="column">
+                                            טלפון:
+                                        </div>
+                                        <input id="Phone" name="Phone" type="text" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="column">
+                                            דאר אלקטרוני:
+                                        </div>
+                                        <input id="Email" name="Email" type="text" class="text-mid" />
+                                    </div>
+                                </div>
+                                <div id="tab-notes">
+                                    <div class="form-group">
+                                        <div class="column">
+                                            קוד הפנייה:
+                                        </div>
+                                        <input id="ReferralCode" name="ReferralCode" type="text" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input id="AutoCharge" name="AutoCharge" type="checkbox" /> <span>מאשר חיוב חוזר</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <input id="CreditCardOwner" name="CreditCardOwner" type="checkbox" /> <span>בעלים כרטיס אשראי</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <input id="ConfirmAgreement" name="ConfirmAgreement" type="checkbox" /> <span>אישור הצהרה</span>
+                                    </div>
+                                </div>
+
+                                <div style="height: 5px"></div>
+                                <div>
+                                    <input id="accSubmit" class="btn-default btn7" type="button" value="עדכון" />
+                                    <input id="accCancel" class="btn-default btn7" type="button" value="ניקוי" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="cmsPh1">
+                        @Html.Raw(Model.Ph1)
+                    </div>
+                    <div id="cmsPh2">
+                        @Html.Raw(Model.Ph2)
+                   </div>
+                    <div id="cmsPh3">
+                        @Html.Raw(Model.Ph3)
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+    <!--end of content-wrapper-->
+@section cmsFooter {
+    @Html.Raw(Model.Footer)
+}
+<script type="text/javascript">
+        @Html.Raw(Model.AnalyticsGoogleScript);
+        @Html.Raw(Model.AnalyticsFacebookScript);
+</script>

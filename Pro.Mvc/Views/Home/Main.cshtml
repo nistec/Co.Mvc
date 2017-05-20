@@ -1,0 +1,127 @@
+﻿@{
+    
+    Layout = "~/Views/Shared/_View.cshtml";
+    ViewBag.Title = "Main";
+    string UserName = ViewBag.UserName;
+    
+}
+
+@section head {
+      @Scripts.Render("~/bundles/jqx")
+      <script type="text/javascript" src="~/Scripts/app/cms.js"></script>
+    <style type="text/css">
+        p {
+        font-family:Arial;
+        }
+        .title {
+            font-family: Arial;
+        }
+         span {
+            font-family: Arial;
+        }
+    </style>
+}
+@section featured {
+    
+}
+ 
+@section scripts {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            
+
+            if ('@ViewBag.UserRole' > 5) {
+                var link = app_const.adminLink;
+                $('#mngr').append(link);
+            }
+        });
+    </script>
+}
+
+
+
+<div class="global indent">
+
+    <!--content-->
+    <div class="container rtl">
+        <h2 id="cms_1-text-main-1" class="indent center">מערכת ניהול</h2>
+        <div class="spacer-10"></div>
+        <div class="row">
+            <div class="services-box">
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="thumb-pad4">
+                        <div class="thumbnail">
+                            <div class="badge-rtl"><span class="fa fa-users"></span></div>
+                            <div class="caption">
+                                <p id="cms_2-text-main" class="title">איתור מנויים</p>
+                                <p id="cms_3-html-main">איתור מנויים לפי חתך</p>
+                                <a id="cms_4-link-main" href="~/Crm/MembersQuery" class="btn-default btn1">הצג <span></span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thumb-pad4">
+                        <div class="thumbnail">
+                            <div class="badge-rtl"><span class="fa fa-search"></span></div>
+                            <div class="caption">
+                                <p id="cms_5-text-main" class="title">טעינה מקובץ</p>
+                                <p id="cms_6-html-main">טעינת מנויים מקובץ חיצוני.</p>
+                                <a id="cms_7-link-main" href="~/Crm/MembersUpload" class="btn-default btn1">הצג <span></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="thumb-pad4">
+                        <div class="thumbnail">
+                            <div class="badge-rtl"><span class="fa fa-briefcase"></span></div>
+                            <div class="caption">
+                                <p id="cms_8-text-main" class="title">הוספת מנוי</p>
+                                <p id="cms_9-html-main">הוספת מנוי חדש.</p>
+                                <a id="cms_10-link-main" href="~/Crm/MemberEdit" class="btn-default btn1">הצג <span></span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thumb-pad4">
+                        <div class="thumbnail">
+                            <div class="badge-rtl"><span class="fa fa-folder-open"></span></div>
+                            <div class="caption">
+                                <p id="cms_11-text-main" class="title">דוחות</p>
+                                <p id="cms_12-html-main">דוחות כללים.</p>
+                                <a id="cms_13-link-main" href="#" class="btn-default btn1">הצג <span></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12">
+                    <div class="thumb-pad4">
+                        <div class="thumbnail">
+                            <div class="badge-rtl"><span class="fa fa-eye"></span></div>
+                            <div class="caption">
+                                <p id="cms_14-text-main" class="title">רשימת מנויים</p>
+                                <p id="cms_15-html-main">הגדת רשימת המנויים כולל אפשרויות סינון.</p>
+                                <a id="cms_16-link-main" href="~/Crm/Members" class="btn-default btn1">הצג <span></span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thumb-pad4">
+                        <div class="thumbnail">
+                            <div class="badge-rtl"><span class="fa fa-comments"></span></div>
+                            <div class="caption">
+                                <p id="cms_17-text-main" class="title">תשלומים</p>
+                                <p id="cms_18-html-main">פירוט תשלומים כולל אפשרויות סינון.</p>
+                                <a id="cms_19-link-main" href="~/Crm/Payments" class="btn-default btn1">הצג <span></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="text-align:center">
+        <ul>
+            <li id="mngr"></li>
+        </ul>
+    </div>
+  </div>

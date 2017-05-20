@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B84526D5-435E-4D56-B323-DBFFAFE54940}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Pro.Lib</RootNamespace>
+    <AssemblyName>Pro.Lib</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebMatrix.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Api\PaymentBroker.cs" />
+    <Compile Include="Api\PaymentChrageItem.cs" />
+    <Compile Include="Api\PaymentItem.cs" />
+    <Compile Include="Api\PaymentApi.cs" />
+    <Compile Include="Api\StatusContract.cs" />
+    <Compile Include="Common\Enums.cs" />
+    <Compile Include="Db\AppSettings.cs" />
+    <Compile Include="Db\DbLogs.cs" />
+    <Compile Include="Db\DbLookups.cs" />
+    <Compile Include="Db\DbProxy.cs" />
+    <Compile Include="Db\ProCommands.cs" />
+    <Compile Include="Db\DbServices.cs" />
+    <Compile Include="Entities\AccountProperty.cs" />
+    <Compile Include="Entities\Admin\AccountsView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\EntityCacheGroups.cs" />
+    <Compile Include="Entities\Props\CategoryView.cs" />
+    <Compile Include="Entities\Reports.cs" />
+    <Compile Include="Entities\MembersFields.cs" />
+    <Compile Include="Entities\MembersPayment.cs" />
+    <Compile Include="Entities\MembersSignup.cs" />
+    <Compile Include="Entities\PropsEnum\IEntityEnum.cs" />
+    <Compile Include="Entities\Props\CampaignView.cs" />
+    <Compile Include="Entities\Props\ExEnums.cs" />
+    <Compile Include="Entities\Props\PriceView.cs" />
+    <Compile Include="Entities\Props\RegionView.cs" />
+    <Compile Include="Entities\Props\StatusView.cs" />
+    <Compile Include="Entities\Props\RoleView.cs" />
+    <Compile Include="Entities\TargetView.cs" />
+    <Compile Include="Entities\Lists.cs" />
+    <Compile Include="Query\CategoryMergeQuery.cs" />
+    <Compile Include="Sender\ApiRequest.cs" />
+    <Compile Include="Sender\DataContract\DataAuth.cs" />
+    <Compile Include="Sender\DataContract\MailMessageContract.cs" />
+    <Compile Include="Sender\DataContract\MsgTarget.cs" />
+    <Compile Include="Sender\DataContract\RequestContract.cs" />
+    <Compile Include="Sender\DataContract\SmsMessageContract.cs" />
+    <Compile Include="Query\QueryBase.cs" />
+    <Compile Include="Query\SendReportQuery.cs" />
+    <Compile Include="Query\PaymentQuery.cs" />
+    <Compile Include="Query\ReportQuery.cs" />
+    <Compile Include="Registry\CmsRegistry.cs" />
+    <Compile Include="Sender\ApiResult.cs" />
+    <Compile Include="Sender\HttpSender.cs" />
+    <Compile Include="Sender\Auth.cs" />
+    <Compile Include="Sender\MailSender.cs" />
+    <Compile Include="Sender\SmsSender.cs" />
+    <Compile Include="Query\SignupQuery.cs" />
+    <Compile Include="Registry\CmsContext.cs" />
+    <Compile Include="Registry\InputFieldsCreator.cs" />
+    <Compile Include="Upload\FieldsMap.cs" />
+    <Compile Include="Upload\IntegrationFields.cs" />
+    <Compile Include="Upload\_stg\ColumnStg.cs" />
+    <Compile Include="Upload\UploadManager.cs" />
+    <Compile Include="Upload\_stg\ColumnMap.cs" />
+    <Compile Include="Upload\UploadMap.cs" />
+    <Compile Include="Upload\IntegrationStg.cs" />
+    <Compile Include="Upload\UploadMembersView.cs" />
+    <Compile Include="Upload\UploadMembers.cs" />
+    <Compile Include="Upload\UploadException.cs" />
+    <Compile Include="Upload\UploadState.cs" />
+    <Compile Include="Upload\UploadSumarize.cs" />
+    <Compile Include="Upload\UploadReader.cs" />
+    <Compile Include="Upload\UploadFiles.cs" />
+    <Compile Include="Entities\Props\GenderView.cs" />
+    <Compile Include="Query\MemberQuery.cs" />
+    <Compile Include="Db\DalTrace.cs" />
+    <Compile Include="Db\DalPro.cs" />
+    <Compile Include="Db\DbConfig.cs" />
+    <Compile Include="Entities\PropsEnum\EntityEnumsView.cs" />
+    <Compile Include="Entities\Props\BranchView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\Props\ChargeView.cs" />
+    <Compile Include="Entities\Props\CityView.cs" />
+    <Compile Include="Entities\PropsEnum\EntityEnum.cs" />
+    <Compile Include="Entities\MemberCategories.cs" />
+    <Compile Include="Entities\Props\PlaceView.cs" />
+    <Compile Include="Entities\Members.cs" />
+    <Compile Include="Db\DbPro.cs" />
+    <Compile Include="Entities\IEntityProp.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\Pro.Lib.en.Designer.cs" />
+    <Compile Include="Resources\Pro.Lib.he-IL.Designer.cs" />
+    <Compile Include="Entities\EntityPro.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="TraceHelper.cs" />
+    <Compile Include="Upload\_stg\UploadStg.cs" />
+    <Compile Include="Web\RouteInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Pro.Lib.en.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Pro.Lib.he-IL.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Media\" />
+    <Folder Include="obj\" />
+    <Folder Include="Upload\_ex\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Api\Member flow.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Channels\Nistec.Channels\Nistec.Channels.csproj">
+      <Project>{0839a364-a34d-4143-ad4c-aef4c7b232ac}</Project>
+      <Name>Nistec.Channels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Data\Nistec.Data\Nistec.Data.csproj">
+      <Project>{d5fd6c68-86ea-48bf-8f6d-29ce57419500}</Project>
+      <Name>Nistec.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Imex\Nistec.Imex.csproj">
+      <Project>{d88a851b-a6d6-4f42-85d4-b1caf36fdacc}</Project>
+      <Name>Nistec.Imex</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Lib\Nistec.Lib.csproj">
+      <Project>{54f52ed5-aecd-47c6-93d8-7b3358ba7f8c}</Project>
+      <Name>Nistec.Lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Logger\Nistec.Logger.csproj">
+      <Project>{e510dd2c-859c-476c-9901-60edfc5e71f1}</Project>
+      <Name>Nistec.Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Web\Nistec.Web.csproj">
+      <Project>{8c4cff01-180e-41a1-9234-0c1b1e207ae5}</Project>
+      <Name>Nistec.Web</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

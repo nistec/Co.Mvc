@@ -1,0 +1,149 @@
+﻿@{
+    Layout = "~/Views/_View.cshtml";
+    Page.Title = "Building";
+    var DB = Database.Open("cnn_Trace");
+    var Grid = new WebGrid(DB.Query("SELECT * FROM Trace_Act"));
+}
+@section head {
+    <link rel="stylesheet" href="~/Content/grid.css" type="text/css" />
+    <style type="text/css">
+        .MyTable {
+            margin: 4px;
+            border-collapse: collapse;
+            width: 800px;
+        }
+
+        .columnHead {
+            background-color: #E8E8E8;
+            font-weight: bold;
+            color: #FFF;
+            text-align: center;
+        }
+
+        .MyTable th, .MyTable td {
+            border: 1px solid #C0C0C0;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .altRow {
+            background-color: #E8E8E8;
+            color: #000;
+        }
+    </style>
+}
+
+
+<hgroup class="title">
+    <h3 class="rightPan">איתור פרסום.</h3>
+</hgroup>
+<div class="clear"></div>
+<div class="global-view">
+    <div class="container">
+
+
+        <div class="rightPan" dir="rtl" style="width:40%">
+
+            <div class="form-group">
+                <label class="column">
+                    סוג עסקה:</label>
+                <select>
+                    <option>מכירה</option>
+                    <option>השכרה</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="column">
+                    סוג נכס:</label>
+                <select>
+                    <option>משרדים</option>
+                    <option>תעשיה</option>
+                    <option>מסחר</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="column">
+                    אזור:</label>
+                <select>
+                    <option>מרכז</option>
+                    <option>דרום</option>
+                    <option>צפון</option>
+                    <option>שפלה</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="column">
+                    שטח הנכס - מ"ר:</label>
+                <div style="display: inline">
+                    מ-: 
+                    <input type="text" class="text-short" />
+                    עד:
+                    <input type="text" class="text-short" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="column">
+                    מחיר:</label>
+                <div style="display: inline">
+                    מ-: 
+                    <input type="text" class="text-short" />
+                    עד:
+                    <input type="text" class="text-short" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="column">
+                    שם מבנה:</label>
+                <input type="text" class="text-mid" />
+            </div>
+            <div class="form-group">
+                <label class="column">
+                    כתובת:</label>
+                <input type="text" class="text-mid" />
+            </div>
+            <div class="form-group">
+                <label class="column">
+                    נכסים שלי:</label>
+                <input type="checkbox" />
+            </div>
+            <div class="form-group">
+                <label class="column">
+                    נכסים בניהול נתם:</label>
+                <input type="checkbox" />
+            </div>
+            <div style="height: 5px"></div>
+            <div class="leftPan">
+                <input type="button" value="הצג" onclick="location.href = 'ReportGrid'" />
+                <input type="button" value="נקה" />
+            </div>
+
+            @*               <div style="width:200px"> <input type="search" placeholder="חיפוש" /></div>*@
+
+
+
+
+
+        </div>
+        <!--end of rightPan-->
+
+
+        <div dir="rtl" style="clear: both">
+           @* 
+            @Grid.GetHtml(
+        tableStyle: "MyTable",
+        headerStyle: "columnHead",
+        alternatingRowStyle: "altRow",
+        columns: Grid.Columns(
+        Grid.Column("RowId", "Row Id"),
+                    Grid.Column("Related", "Related"),
+                    Grid.Column("Mode", "Mode"),
+                    Grid.Column("Method", "Method"),
+                    Grid.Column("ActTime", "Act Time"),
+                    Grid.Column("Status", "Status")))*@
+        </div>
+
+    </div>
+</div>
+
+

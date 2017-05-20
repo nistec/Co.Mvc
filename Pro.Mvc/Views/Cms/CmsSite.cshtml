@@ -1,0 +1,156 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    Page.Title = "Cms";
+    int sid = Nistec.Types.ToInt( Request.QueryString["sid"]);
+}
+@section head {
+}
+@section scripts {
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/jqwidgets/jqxdatatable.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxcolorpicker.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-cms.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            var selectedSite = '@sid';
+            editCmsSingleSite(selectedSite)
+
+            function editCmsSingleSite(sid) {
+
+                var source =
+                {
+                    dataType: "json",
+                    datafields:
+                    [
+                        { name: 'SiteId', type: 'number' },
+                        { name: 'PageId', type: 'number' },
+                        { name: 'PageName', type: 'string' },
+                        { name: 'PageTitle', type: 'string' },
+                        { name: 'PageCategory', type: 'number' },
+                        { name: 'PageState', type: 'number' }
+                    ],
+                    id: 'PageId',
+                    data: { 'SiteId': sid },
+                    type: 'POST',
+                    url: '@Url.Action("GetCmsPages", "Cms")'
+                };
+
+                var dataAdapter = new $.jqx.dataAdapter(source);
+                var selectedKey = 0;
+                $("#dataTable").jqxDataTable(
+                {
+                    width: 400,
+                    source: dataAdapter,
+                    rtl: true,
+                    sortable: true,
+                    pageable: true,
+                    pageSize: 20,
+                    pagerButtonsCount: 5,
+                    enableHover: false,
+                    selectionMode: 'none',
+
+                    rendered: function () {
+                        //$(".button").jqxLinkButton({ width: '100', height: '25' });
+                    },
+                    columns: [
+                          {
+                              text: 'Cms Pages', align: 'left', dataField: 'PageId',
+                              // row - row's index.
+                              // column - column's data field.
+                              // value - cell's value.
+                              // rowData - rendered row's object.
+                              cellsRenderer: function (row, column, value, rowData) {
+                                  var container = "<div class='rtl'>";
+                                  var item = "<div class='section_item'>";
+                                  var info = "<div class='section_info'>";
+                                  info += "<div><i>" + rowData.PageId + "</i> - Page: " + rowData.PageName + " - Category: " + getCmsPageCategory(rowData.PageCategory) + "</div>";
+                                  info += "</div>";
+                                  var button;
+
+                                  if (rowData.PageCategory == 2)
+                                      button = "<a class='button' href='CmsEdit?sid=" + sid + "&pid=" + rowData.PageId + "' >Edit</a>"
+                                  else
+                                      button = "<a class='button' href='CmsItems?sid=" + sid + "&pid=" + rowData.PageId + "' >Edit</a>"
+
+                                  var buttonDisplay = "<a class='button' href='javascript:cmsDisplayPage(\"" + rowData.PageName + "\")' >תצוגה</a>";
+                                  //var buttonDisplay = "<a class='button' href='CmsItems?sid=" + sid + "&pid=" + rowData.PageId + "' >Edit</a>"
+
+
+                                  item += info;
+                                  item += button;
+
+                                  if (rowData.PageCategory == 0)
+                                      item += buttonDisplay;
+
+                                  item += "</div>";
+                                  container += item;
+                                  container += "</div>";
+                                  return container;
+                              }
+
+                          }
+                    ]
+                });
+
+                $("#dataTable").on('rowSelect', function (event) {
+                    // event arguments
+                    var args = event.args;
+                    // row index
+                    var index = args.index;
+                    // row data
+                    var rowData = args.row;
+                    // row key
+                    selectedKey = args.key;
+                });
+            }
+        });
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+@Html.ActionLink("Manager", "Manager", "Admin")>
+@Html.ActionLink("Main", "Main", "Admin")>
+<a href="javascript:parent.history.back()">Cms</a> >
+@ViewContext.RouteData.Values["action"].ToString()
+</div>
+
+<hgroup class="title">
+
+    <h3 class="rightPan">מערכת תוכן - רשימת עמודים.</h3>
+
+</hgroup>
+
+
+<div class="clear"></div>
+
+<div class="global-view">
+    <div class="container-rtl">
+        Site:@sid
+        <div style="margin-top: 10px;" id="listSite"></div>
+
+        <div style="margin-top: 20px;position:relative;z-index:1;" id="dataTable"></div>
+       <h2>מערכת תוכן - רשימת עמודים</h2>
+        <p>
+            רשימה זו מכילה את עמודי האינטרנט שבאתר.
+            <br />
+            לעריכת העמוד הרצוי יש ללחוץ על כפתור עריכה
+            <br />
+            לתצוגת העמוד יש ללחוץ על כפתור תצוגה.
+            <br />
+            קיימים מספר סוגי עמודים:
+            <br />
+            עמוד במבנה קבוע(Inline)
+            <br />
+            עמוד מאסטר(Master)
+            <br />
+            עמוד דינאמי(Dynamic)
+            <br />
+
+        </p>
+    </div>
+</div>

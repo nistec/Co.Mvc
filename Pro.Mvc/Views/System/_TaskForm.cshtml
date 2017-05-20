@@ -1,0 +1,161 @@
+﻿@model Pro.Mvc.Models.EditTaskModel
+@{
+   
+    //ViewBag.Title = "System";
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    //int rcdid = Nistec.Types.ToInt(Request["taskid"]);
+    //int id = Nistec.Types.ToInt(Request["id"]);
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/task-items.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+        /*.pasive {display:none;}*/
+    </style>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    //var timer_grid;
+        var form_def;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        var model = JSON.parse('@dataModel');
+                
+        //if (model.Option == 'a')
+        //    $('.edit').css('display','none')
+
+        form_def = new app_tasks_form_def(model, JSON.parse('@userInfo'));
+
+        //var source = [
+        //{text: "ממתין",value: 0}, 
+        //{text: "בוצע", value: 1 }
+        //];
+
+        //app_jqx.createDropDown("#DoneStatus", source);//, width, tagTargetOnChange);
+            
+
+        $('#reset').on('click', function () {
+            location.reload();
+        });
+
+        $('#fcSubmit').on('click', function (e) {
+            e.preventDefault();
+            form_def.doSubmit();
+        });
+
+        $('#fcClear').on('click', function (e) {
+            $('#fcForm')[0].reset();
+            $('#fcForm').jqxValidator('hide');
+        });
+
+        $('#fcCancel').on('click', function (e) {
+            form_def.doCancel();
+        });
+
+    });
+
+    //function triggerTaskCompleted(id) {
+    //    $("#jqxgrid").jqxGrid('source').dataBind();
+    //    $("#divPartial").html('');
+    //    //app_dialog.dialogIframClose();
+    //};
+    //function triggerSubmit() {
+    //    form_def.doSubmit();
+    //}
+
+</script>
+}
+
+<div style="margin: 0px;">
+    <div class="container">
+            @*<h3 class="rtl">הערה</h3>*@
+            <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+                <div id="fcWindow">
+                    <div id="fcHeader">
+                        <span id="fcTitle" style="font-weight: bold;">טופס מעקב ביצוע</span>
+                    </div>
+                    <div id="fcBody">
+                        <form class="fcForm" id="fcForm" method="post" action="/System/TaskFormUpdate">
+                            <div style="direction: rtl; text-align: right">
+                                <input type="hidden" id="ItemId" name="ItemId" value="0" />
+                                <input type="hidden" id="Task_Id" name="Task_Id" value="0" />
+                                <input type="hidden" id="UserId" name="UserId" value="" />
+                                <input type="hidden" id="AssignBy" name="AssignBy" value="" />
+                                <div style="height:5px"></div>
+                                <div id="tab-content" class="tab-content" dir="rtl">
+                                    <div id="fcTitle" style="font-weight: bold;">לביצוע</div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            נושא:
+                                        </div>
+                                        <textarea id="ItemText" name="ItemText" class="text-content" readonly="@(Model.Option != "a" ? true : false)"></textarea>
+                                    </div>
+                                    <div class="form-group @(Model.Id == 0 ? "pasive" : null)">
+                                        <div class="form-group">
+                                            <div class="field">
+                                                נוצר בתאריך:
+                                            </div>
+                                            <input id="ItemDate" name="ItemDate" type="text" readonly="readonly" class="text-mid" />
+                                        </div>
+                                        <div id="fcTitle" style="font-weight: bold;">בוצע</div>
+                                        <div id="divDoneDate" class="form-group">
+                                            <div class="field">
+                                                מועד סיום:
+                                            </div>
+                                            <input id="DoneDate" name="DoneDate" type="text" readonly="readonly" class="text-mid" />
+                                            @*<div id="DoneDate" name="DoneDate"></div>*@
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                הערות ביצוע:
+                                            </div>
+                                            <textarea id="DoneComment" name="DoneComment" class="text-content" readonly="@(Model.Option != "e" ? true : false)"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                בוצע: <input id="DoneStatus" name="DoneStatus" type="checkbox" disabled="@(Model.Option != "e" ? true : false)" />
+                                            </div>
+
+                                            @*<div id="DoneStatus" name="DoneStatus"></div>*@
+                                        </div>
+                                        <div id="divDisplayName" class="form-group">
+                                            <div class="field">
+                                                בוצע ע"י:
+                                            </div>
+                                            <input id="DisplayName" name="DisplayName" type="text" readonly="readonly" class="text-mid" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a id="fcSubmit" class="btn-default btn7 w-60" href="#">עדכון</a>
+                                    <a id="fcCancel" class="btn-default btn7 w-60" href="#">ביטול</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+    </div>
+</div>
+        <!--end of content-wrapper-->

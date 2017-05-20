@@ -1,0 +1,59 @@
+﻿@model Pro.Data.Registry.RegistryPage
+@{
+    Layout = "~/Views/Shared/_ViewRegistry.cshtml";
+    string ismemeber = Request["m"];
+    var SignKey = Pro.Data.Entities.SignupContext.CreateSignKey(Model.AccountId);
+}
+
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+    @Html.Raw(Model.HScript)
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var def = new registry_custom_ex();
+        });
+    </script>
+@Html.Raw(Model.HiddenScript)
+}
+@section cmsHeader {
+    <div id="cmsHeader">
+        @Html.Raw(Model.Header)
+    </div>
+}
+
+<input type="hidden" id="model-account" value="@Model.AccountId" />
+
+<!--begin of content-wrapper-->
+
+<div id="stp-1" class="stp1">
+    @Html.Raw(Model.Ph1)
+    <div class="form">
+        <form id="form1" method="post" action="">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="AccountId" name="AccountId" value="@Model.AccountId" />
+            <input type="hidden" id="SignKey" name="SignKey" value="@SignKey" />
+            @Html.Raw(Model.Body)
+        </form>
+    </div>
+</div>
+<div id="stp-2" class="stp1">
+    <div class="form">
+        <form id="form2" method="post" action="">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="AccountId" name="AccountId" value="@Model.AccountId" />
+            <input type="hidden" id="SignKey" name="SignKey" value="@SignKey" />
+            @Html.Raw(Model.Ph2)
+        </form>
+    </div>
+</div>
+
+@Html.Raw(Model.Ph3)
+
+<!--end of content-wrapper-->
+@section cmsFooter {
+    @Html.Raw(Model.Footer)
+}
+

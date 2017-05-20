@@ -1,0 +1,47 @@
+﻿@model Pro.Data.Registry.RegistryPage
+@{
+    Layout = "~/Views/Shared/_ViewRegistry.cshtml";
+}
+
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+    @Html.Raw(Model.HScript)
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            @*var def = new app_signup_def(JSON.parse('@Model.AccountId'));*@
+        });
+    </script>
+@Html.Raw(Model.HiddenScript)
+}
+
+    <div id="cmsHeader">
+        @Html.Raw(Model.Header)
+    </div>
+
+<input type="hidden" id="model-account" value="@Model.AccountId" />
+
+<!--begin of content-wrapper-->
+<div id ="cmsBody">
+    @Html.Raw(Model.Body)
+</div>
+
+<div id="cmsPh1">
+    @Html.Raw(Model.Ph1)
+</div>
+<div id="cmsPh2">
+    @Html.Raw(Model.Ph2)
+</div>
+<div id="cmsPh3">
+    @Html.Raw(Model.Ph3)
+</div>
+
+<!--end of content-wrapper-->
+
+    <div id="cmsFooter">
+        @Html.Raw(Model.Footer)
+    </div>
+
+

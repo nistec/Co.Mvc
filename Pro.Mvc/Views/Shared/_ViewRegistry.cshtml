@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="building">
+    <meta name="keywords" content="building">
+    <meta name="author" content="myt">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="cms" content="Nistec v-4.0.2" data-virtual="" data-site="0">
+    <title>@ViewBag.Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.base.css" type="text/css" />
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.arctic.css" type="text/css" />
+    <link rel="stylesheet" href="~/Scripts/jq/ui/1.9.2/css/jquery-ui.css" type="text/css" />
+    <link href="~/Content/fonts/font-awesome.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/Scripts/globalization/globalize.js"></script>
+    <script type="text/javascript" src="~/Scripts/globalization/Localization.js"></script>
+    <script type="text/javascript" src="~/Scripts/JsonDateExtensions.js"></script>
+    <!--JS-->
+    @*<script src="~/Scripts/modernizr-2.8.3.js"></script>*@
+    <script src="~/Scripts/jq/jquery.min.js"></script>
+    <script src="~/Scripts/jq/ui/1.9.2/jquery-ui.min.js"></script>
+    <script src="~/Scripts/jq/ui/1.10.4/i18n/jquery.ui.datepicker-he.min.js"></script>
+    
+     @*<script src="~/Scripts/plagins/popbox/bpopup.js"></script>
+     <link rel="stylesheet" href="~/Scripts/plagins/popbox/bpopup.css" type="text/css" />
+
+    <script src="~/Scripts/bootstrap/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">
+
+    <script src="~/Scripts/plagins/cssmenu/cssmenu.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/cssmenu/cssmenu-rtl.css">*@
+
+    @*<link rel="stylesheet" href="~/Scripts/app/registry/registry.css">
+    <script src="~/Scripts/app/registry/registry.js"></script>*@
+
+    <script src="~/Scripts/app/app-model-1.0.js"></script>
+    <script src="~/Scripts/app/app-jqx-1.0.js"></script>
+    <script src="~/Scripts/app/app-global.js"></script>
+    <script src="~/Scripts/app/dateFormat.js"></script>
+
+    <script src="~/Scripts/plagins/vex/vex.combined.min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/vex/css/vex.css" />
+    <link rel="stylesheet" href="~/Scripts/plagins/vex/css/vex-theme-os.css" />
+
+    <script>
+        vex.defaultOptions.className = 'vex-theme-os';
+    </script>
+
+
+
+    @RenderSection("head", required: false)
+
+</head>
+<body>
+
+    <!--header-->
+    <header>
+        <div id="stuck_container">
+            <div class="menuBox">
+                <div id="cssmenu_wrapper" class="container">
+                    @RenderSection("cmsHeader", required: false)
+                    @*<h1 class="navbar-brand navbar-brand_"><a href="~/Home/index">
+                        <img src="~/images/logo-small.png" alt=""></a></h1>*@
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="body">
+        @RenderSection("featured", required: false)
+        <section class="content-wrapper main-content clear-fix">
+            @RenderBody()
+        </section>
+    </div>
+
+    <!--footer-->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    @RenderSection("cmsFooter", required: false)
+                </div>
+            </div>
+            <div class="top-box"></div>
+        </div>
+        <!-- {%FOOTER_LINK} -->
+    </footer>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

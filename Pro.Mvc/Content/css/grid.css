@@ -1,0 +1,18 @@
+﻿
+.listing-border { background: #fd7d0f;}
+.gridhead { background:#FFAA5F;  font: bold 13px Arial, Helvetica, sans-serif !important; color:#000000; text-decoration: none; height: 27px; text-align: left;}
+.gridhead th a {text-decoration:none;color:#000000;}
+.gridhead th a:hover {text-decoration:underline;color:#FF0000;}
+.td-dark { background: #ffffff; height: 20px; }
+.td-light { background: #FFE2BF; height: 20px; }
+.paging { background: #fd7d0f;text-align: right;color:#000000;}
+.paging span { font: bold 12px Arial, Helvetica, sans-serif; color:#FFFFFF; margin-right: 3px; padding: 1px 3px 1px 3px }
+.paging a { font: bold 12px Arial, Helvetica, sans-serif; color:#000000; text-decoration: none; margin-right: 3px; border: 1px solid #ffffff; background: #fd7d0f; padding: 1px 3px 1px 3px }
+.paging a:hover { font: bold 12px Arial, Helvetica, sans-serif; color:#000000; text-decoration: none; border: 1px solid #ffffff; background: #ffffff; }
+/*.colFirstName{width:18%;text-align:left;}
+.colLastName{width:18%;text-align:left;}
+.colPhone{width:14%;text-align:left;}
+.colEmail{width:19%;text-align:left;}
+.colContactType{width:18%;text-align:left;}
+.colOperation{width:50px;text-align:center;}*/
+

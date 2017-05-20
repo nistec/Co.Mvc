@@ -1,0 +1,38 @@
+﻿
+select {
+    text-align: right;
+    direction: rtl;
+}
+input {
+    text-align: right;
+    direction: rtl;
+}
+
+/* Entity table html */
+.styledTable {
+    direction: rtl;
+    text-align: right;
+    border-spacing: 5px;
+}
+
+.styledTableHeader {
+    background-color: #0094ff;
+    color: #fff;
+    padding-left: 20px;
+    text-align: right;
+}
+
+.styledTableHeader {
+    background-color: #0094ff;
+    color: #fff;
+    text-align: right;
+}
+
+.styledRowKey {
+    padding-left: 20px;
+    text-align: right;
+}
+
+.styledRowValue {
+    text-align: right;
+}

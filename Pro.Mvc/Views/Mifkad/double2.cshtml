@@ -1,0 +1,126 @@
+﻿@model Pro.Data.Registry.RegistryMain
+@{
+    ViewBag.Title = "Mifkad";
+    Layout = "~/Views/Mifkad/_ViewRegistry.cshtml";
+}
+
+@section cmsHeader {
+
+<div id="cmsHeader">
+    @*@Html.Raw(Model.Header)*@
+</div>
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/model/signup-def.js"></script>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            @*var def = new app_signup_def(JSON.parse('@Model.AccountId'));*@
+ 
+        });
+
+    </script>
+}
+<!--begin of content-wrapper-->
+<div class="basad">בס"ד</div>
+<div class="logo">
+    <p><a href="Index" class="footer-btn">חזרה לעמוד הראשי</a></p>
+    <img src="~/Content/Mifkad/images/logo.gif" alt="logo" />
+</div>
+<div class="stp1">
+    <h1>בקשה להתקבל כחבר המפלגה</h1>
+    <h3><span>אנא הקלידו פרטיים אישיים של בן הזוג</span> (שלב 2 מתוך 4):</h3>
+    <p class="remark">* שדה חובה</p>
+    <div class="form">
+        <form>
+            <div class="lable">
+                <div class="right">*שם משפחה</div>
+                <div class="left">Last Name*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="LastName" name="LastName" />
+            <div class="lable">
+                <div class="right">*שם פרטי</div>
+                <div class="left">First Name*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" />
+            <div class="lable">
+                <div class="right">*ת.ז.</div>
+                <div class="left">Identification Number*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="MemberId" name="MemberId" />
+            <div class="lable">
+                <div class="right">*טלפון נייד</div>
+                <div class="left">Mobile Number*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="CellPhone" name="CellPhone" />
+            <div class="lable">
+                <div class="right">טלפון בבית</div>
+                <div class="left">Home Number</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="Phone" name="Phone" />
+            <div class="lable">
+                <div class="right">*אימייל</div>
+                <div class="left">Email*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="Email" name="Email" />
+            <div class="lable">
+                <div class="right">*כתובת (רחוב ומספר) </div>
+                <div class="left">Address*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="Address" name="Address" />
+            <div class="lable">
+                <div class="right">*עיר</div>
+                <div class="left">City*</div>
+                <div class="clear"></div>
+            </div>
+            <div id="City" name="City"></div>
+            <div class="lable">
+                <div class="right">*מין</div>
+                <div class="left">Gender*</div>
+                <div class="clear"></div>
+            </div>
+            <div id="Gender" name="Gender"></div>
+            <div class="lable">
+                <div class="right">*ת. לידה לועזי</div>
+                <div class="left">Date of Birth*</div>
+                <div class="clear"></div>
+            </div>
+            <div id="Birthday" name="Birthday"></div>
+            <div class="lable">
+                <div class="right">ת.לידה עברי</div>
+                <div class="left">Hebrew Date of Birth</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="LastName" name="HebrewBirthday" />
+            <input type="button" class="btn" value="המשך" />
+        </form>
+    </div>
+</div>
+
+<!--end of content-wrapper-->
+
+@section cmsFooter {
+<p>
+    נתקלת בבעיה? שלח לנו מייל לכתובת <a href="mailto:vaadatbchirotby@gmail.com">vaadatbchirotby@gmail.com</a>
+    <br>
+    עם שם ומספר נייד ונחזור אליך
+</p>
+<p class="powered">powered by My T Interactive Ltd</p>
+
+}
+<script type="text/javascript">
+        @Html.Raw(Model.Script)
+</script>

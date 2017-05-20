@@ -1,0 +1,76 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "Crm";
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+
+    @Scripts.Render("~/bundles/jqxgrid")
+<script type="text/javascript" src="~/Scripts/app/model/generic/_baseEntity-def.js"></script>
+<script type="text/javascript" src="~/Scripts/app/model/generic/category-def.js"></script>
+<script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+
+   <style type="text/css">
+       .input{direction:rtl;text-align:right; height:24px;}
+    </style>
+}
+@section scripts {
+ <script type="text/javascript">
+     $(document).ready(function () {
+         var theme = 'Arctic';
+         JSON.useDateParser();
+
+         var def = new app_category_def(JSON.parse('@userInfo'));
+        
+     });
+    </script>
+}
+<div class="breadcrumbs">
+</div>
+<div class="global-view">
+    <div class="container-box">
+        <h3 class="rtl">הגדרות כלליות-<span>סיווגים</span></h3>
+        <div class="grid-wrap rtl">
+             <div id="jqxWidget" style="max-width:500px">
+                 <a href="CategoryQuery">מיזוג מנויים לסיווג</a>
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                 
+                 <div style="font-size: 12px; font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif; margin-top: 30px;">
+                     <div class="note-edit">לעריכת שורה: לחיצה כפולה על השורה הרצויה</div>
+            
+            <div id="popupWindow">
+                
+            <div>עריכה</div>
+            <div style="overflow: hidden;direction:rtl">
+                <input type="hidden" id="insertFlag" value="0" />
+                <form id="form" action="./">
+                    <table style="border-spacing: 10px;border-collapse: separate;direction:rtl">
+                        <tr id="trcode">
+                            <td align="right">קוד סיווג:</td>
+                            <td align="left"><input id="PropId" readonly="readonly" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right">שם סיווג:</td>
+                            <td align="left"><input id="PropName" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right"></td>
+                            <td style="padding-top: 10px;" align="right">
+                                <input style="margin-right: 5px;" type="button" id="Save" value="עדכון" />
+                                <input id="Cancel" type="button" value="ביטול" />
+                            </td>
+                        </tr>
+                    </table>
+              </form>
+            </div>
+       </div>
+       </div>
+             </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liEntity");
+    app_menu.breadcrumbs("Crm", "DefCategory", 'en');
+</script>

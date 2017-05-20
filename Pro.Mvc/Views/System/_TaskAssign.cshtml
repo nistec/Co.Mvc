@@ -1,0 +1,140 @@
+﻿@model Pro.Mvc.Models.EditTaskModel
+@{
+   
+    //ViewBag.Title = "System";
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    //int rcdid = Nistec.Types.ToInt(Request["taskid"]);
+    //int id = Nistec.Types.ToInt(Request["id"]);
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/task-items.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+    </style>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    //var assign_grid;
+    var assign_def;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        var model = JSON.parse('@dataModel');
+
+        assign_def = new app_tasks_assign_def(model, JSON.parse('@userInfo'));
+
+        $('#reset').on('click', function () {
+            location.reload();
+        });
+
+        $('#fcSubmit').on('click', function (e) {
+            e.preventDefault();
+            assign_def.doSubmit();
+        });
+
+        $('#fcClear').on('click', function (e) {
+            $('#fcForm')[0].reset();
+            $('#fcForm').jqxValidator('hide');
+        });
+
+        $('#fcCancel').on('click', function (e) {
+            assign_def.doCancel();
+        });
+
+    });
+
+    //function triggerTaskCompleted(id) {
+    //    $("#jqxgrid").jqxGrid('source').dataBind();
+    //    $("#divPartial").html('');
+    //    //app_dialog.dialogIframClose();
+    //};
+    //function triggerSubmit() {
+    //    assign_def.doSubmit();
+    //}
+
+</script>
+}
+
+<div style="margin: 0px;">
+    <div class="container">
+            @*<h3 class="rtl">הערה</h3>*@
+            <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+                <div id="fcWindow">
+                    <div id="fcHeader">
+                        <span id="fcTitle" style="font-weight: bold;">העברות</span>
+                    </div>
+                    <div id="fcBody">
+                        <form class="fcForm" id="fcForm" method="post" action="/System/TaskAssignAdd">
+                            <div style="direction: rtl; text-align: right">
+                                <input type="hidden" id="AssignId" name="AssignId" value="0" />
+                                <input type="hidden" id="AssignedBy" name="AssignedBy" value="0" />
+                                @*<input type="hidden" id="UserId_AssignedTo" name="AssignId" value="0" />*@
+                                <input type="hidden" id="Task_Id" name="Task_Id" value="0" />
+                                <input type="hidden" id="UserId" name="UserId" value="" />
+                                <div style="height:5px"></div>
+                                <div id="tab-content" class="tab-content" dir="rtl">
+
+                                    <div class="form-group @(Model.Option == "e" ? "pasive" : null)">
+                                        <div class="field">
+                                            העבר אל:
+                                        </div>
+                                        <div id="AssignedTo" name="AssignedTo"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            נושא:
+                                        </div>
+                                        <textarea id="AssignSubject" name="AssignSubject" class="text-content-mid"></textarea>
+                                    </div>
+                                    <div class="form-group @(Model.Option == "a" ? "pasive" : null)">
+                                        <div class="field">
+                                            הועבר מ:
+                                        </div>
+                                        <textarea id="AssignedByName" name="AssignedByName" class="text-content-mid"></textarea>
+                                    </div>
+                                    <div class="form-group @(Model.Option == "a" ? "pasive" : null)">
+                                        <div class="field">
+                                            הועבר אל:
+                                        </div>
+                                        <textarea id="AssignedToName" name="AssignedToName" class="text-content-mid"></textarea>
+                                    </div>
+                                    <div class="form-group @(Model.Option == "a" ? "pasive" : null)">
+                                        <div class="field">
+                                            מועד העברה:
+                                        </div>
+                                        <div id="AssignDate" name="AsignDate"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a id="fcSubmit" class="btn-default btn7 w-60" href="#">עדכון</a>
+                                    <a id="fcCancel" class="btn-default btn7 w-60" href="#">ביטול</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+    </div>
+</div>
+        <!--end of content-wrapper-->
+

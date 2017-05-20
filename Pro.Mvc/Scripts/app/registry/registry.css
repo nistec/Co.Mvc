@@ -1,0 +1,40 @@
+html {
+    -webkit-text-size-adjust: none; /* Prevent font scaling in landscape */
+}
+
+.wrap {
+	max-width:960px;
+	margin:0 auto;
+}
+
+a { text-decoration:none; }
+
+.clear { clear:both;}
+.ltr {direction:ltr;}
+
+body
+{
+	font-size:100%;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	background-color:#ffffff;
+	direction:rtl;
+}
+
+/*::::::::::::::::::::::::::::::::: START STYLING ::::::::::::::::::::::::::::::::::::*/
+
+#cmsHeader {
+}
+#cmsBody {
+}
+#cmsPh1{
+
+}
+#cmsPh2{
+
+}
+#cmsPh3{
+
+}
+#cmsFooter {
+}

@@ -1,0 +1,109 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "SendQuery";
+    var userRole = ViewBag.UserRole;
+    string exportClass = userRole < 5 ? "hide" : "shoe";
+}
+
+@section head {
+
+
+    @Scripts.Render("~/bundles/jqx")
+    
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var me = this;
+
+            $("#ReportType").jqxDropDownList({ source: reportList, width: 200, height: 25, rtl: true, placeHolder: "סוג דוח" });
+            $(".input-radio").checkboxradio();
+            //$('input[type=radio][name=Platform]').change(function () {
+
+            //    if (this.value == 'rtl') {
+            //        $('#editor').jqxEditor({ rtl: true });
+            //    }
+            //    else if (this.value == 'ltr') {
+            //        $('#editor').jqxEditor({ rtl: false });
+            //    }
+            //});
+
+
+            $('#SendDateFrom').jqxDateTimeInput({ showCalendarButton: true, width: '150px', rtl: true });
+            $('#SendDateTo').jqxDateTimeInput({ showCalendarButton: true, width: '150px', rtl: true });
+
+            $('#SendDateFrom').val('');
+            $('#SendDateTo').val('');
+
+        });
+        var reportList = [
+          { label: 'פירוט נמענים', value: 'SendReport', checked: false }
+        ];
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+</div>
+
+<div class="top-space"></div>
+
+<div class="global-view">
+    <div class="container-box"  >
+
+        <h3 class="rtl">דוחות דיוור</h3>
+
+        <form id="form" action="/Crm/SendReport" method="post">
+            @*<input type="hidden" id="AuthAccountId" name="AuthAccountId" />*@
+
+            <div id="tab-adv">
+                <div id="ReportType" name="ReportType"></div>
+                <div style="height:10px"></div>
+                <fieldset>
+                    <label for="allCell">סלולאר</label>
+                    <input type="radio" id="allCell" name="Platform" value="1" checked class="input-radio" />
+                    <label for="allEmail">דואר אלקטרוני</label>
+                    <input type="radio" id="allEmail" name="Platform" value="2" class="input-radio" />
+                </fieldset>
+
+                <ul>
+                    @*<li class="headline">סוג דיוור</li>
+                    <li><input type="radio" id="allCell" name="Platform" value="1" />&nbsp;<span>דיוור לסלולאר</span></li>
+                    <li><input type="radio" id="allEmail" name="Platform" value="2" />&nbsp;<span>דיוור למייל</span></li>*@
+
+                    <li class="headline">נמען</li>
+                    <li><input type="text" name="Target" style="width:220px" maxlength="100" /></li>
+                    @*<li class="headline">טלפון נייד</li>
+                    <li><input type="text" name="CellPhone" style="width:120px" maxlength="15" /></li>*@
+                    <li class="headline">מועד שליחה</li>
+                    <li>
+                        <div style="vertical-align:top">
+                            <span>מ:</span><br />
+                            <div id="SendDateFrom" name="SendDateFrom"></div><br />
+                            <span>עד:</span><br />
+                            <div id="SendDateTo" name="SendDateTo"></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div style="height:10px"></div>
+            <div>
+                <input type="radio" id="rdDefault" name="op" value="/Crm/SendReport" checked="checked" />&nbsp;<span>הצגת נמענים למסך</span>
+                <div class="@exportClass"><input type="radio" id="rdExport" name="op" value="/Crm/SendExport" />&nbsp;<span>ייצוא לקובץ</span></div>
+            </div>
+            <div style="height:10px"></div>
+            <div>
+                <input type="submit" value="הצג" class="btn-default btn2" />
+                <input type="reset" value="נקה" class="btn-default btn2" />
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liCom");
+    app_menu.breadcrumbs("Crm", "SendQuery", "en");
+</script>
+
+
+

@@ -1,0 +1,229 @@
+﻿@model Pro.Mvc.Models.UploadFileModel
+@{
+
+    ViewBag.Title = "Crm";
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+
+    int accountId = Model.AccountId;
+    int fileId = Model.FileId;
+    string propertyType =Model.FileName;
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script src="~/jqwidgets/jqxsplitter.js"></script>
+    <script src="~/Scripts/plagins/colorbox/jquery.colorbox-min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/colorbox/colorbox.css" />
+
+    <script src="~/Scripts/plagins/uploader/js/vendor/jquery.ui.widget.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.iframe-transport.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.fileupload.js"></script>
+
+    <link rel="stylesheet" href="~/Scripts/plagins/uploader/css/jquery.fileupload.css">
+
+}
+
+@section scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.group1').colorbox({ rel: 'group1' });
+
+            $('#uploadBid').val('@accountId');
+            $('#uploadUid').val('@fileId');
+            $('#uploadPt').val('@propertyType');
+            //$("#fileremove").prop('disabled', true);
+            $("#spnRemove").hide();
+                        
+ 
+
+            $("#fileremove").on('click', function (event) {
+                //e.preventDefault();
+                var mediaId=$('#uploadMid').val();
+                if (confirm("האם למחוק? קובץ " + mediaId)) {
+                    doRemove();
+                }
+            });
+
+            
+            function getImgUrl() {
+                return '@Url.Content("~/Uploads/files")';
+            };
+
+            function getImgTumb(picUrl) {
+                var imgurl = '@Url.Content("~/Images/doc.jpg")';
+                var imgtumb = $('<span><img src="' + imgurl + '" style="max-width:80px; height:auto;"/></span>');
+                return imgtumb;
+            };
+            function getImgTag(mediaType, picUrl) {
+                var imgurl = '@Url.Content("~/Uploads/doc")' + '/' + picUrl;
+                var imgtag = $('<div style="margin: 10px;"><b>מסמך:</b><br/></div><div><a href="' + imgurl + '">לצפיה</a></div>');
+                return imgtag;
+            };
+
+           
+            var updatePanel = function (item) {
+
+                var mediaId = item.value;
+                var picUrl = item.label;
+                var mediaType = getMediaType(picUrl);
+
+
+                $('#uploadMid').val(mediaId);
+                $('#uploadMtype').val(mediaType);
+                $('#uploadPath').val(picUrl);
+
+                var container = $('<div style="margin: 5px;"></div>')
+
+                container.append('<br/>');
+                var imgurl = '@Url.Content("~/Uploads/files")' + '/' + picUrl;
+                var imgtag = $('<div style="margin: 10px;"><b>מסמך:</b><br/></div><div><a href="' + imgurl + '">לצפיה</a></div>');
+                container.append(imgtag);
+
+                $("#ContentPanel").html(container.html());
+
+            };
+
+            var picuuid;
+            var doUpload = function (data) {
+                $.each(data.files, function (index, file) {
+                    var extension = getFileExtension(file.name);
+                    var uuid = generateUUID('16');
+                    var fname = $('#uploadBid').val() + '_' + $('#uploadUid').val() + '_' + $('#uploadPt').val() + '_' + $('#picid').val() + '.' + extension;
+                    $('<p/>').text(file.name).appendTo('#files');
+                    $('#files' + picnum).prepend($('<img>', { style: 'max-width:80px;height:auto', src: '@Url.Content("~/Uploads/media")' + '/' + fname }))//file.name }))
+                 });
+             };
+            var doPprogress = function (data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .progress-bar').css(
+                    'width',
+                    progress + '%'
+                );
+            };
+            var resetPprogress = function () {
+                $('#progress .progress-bar').css(
+                    'width', '0%'
+                );
+            };
+            var getKeys = function (obj) {
+                var keys = [];
+                for (var key in obj) {
+                    keys.push(key);
+                }
+                return keys;
+            }
+            $('#fileupload').fileupload({
+                url: '@Url.Action("MediaUpload", "Media")',//Url.Content("~/Ws/UploadFiles.asmx/MediaUpload")',
+                 formData: {
+                     param1: $('#uploadBid').val(),
+                     param2: $('#uploadUid').val(),
+                     param3: $('#uploadPt').val()
+                 },
+                 //dataType: 'json',
+                 done: function (e, data) {
+                     //var keys = Object.keys(data);
+                     alert(data.textStatus);
+                     resetPprogress();
+                     mediaAdapter.dataBind();
+                 },
+                 error: function (jqXHR, status, error) {
+                     alert(error);
+                 },
+                 progressall: function (e, data) {
+                     doPprogress(data);
+                 }
+             }).prop('disabled', !$.support.fileInput)
+                 .parent().addClass($.support.fileInput ? undefined : 'disabled')
+                 .bind('fileuploadsubmit', function (e, data) {
+                     resetPprogress();
+                     //picuuid = generateUUID('16');
+                     //data.formData = {
+                     //    param1: $('#uploadBid').val(),
+                     //    param2: $('#uploadUid').val(),
+                     //    param3: $('#uploadPt').val()
+                     //};
+                 });
+
+            //$('#imgremove').click(function (e) {
+            //    e.preventDefault();
+            //    doRemove();
+            //});
+            var doRemove = function () {
+                var id = $('#uploadMid').val();
+                var filename = $('#uploadPath').val();
+                var mediaType = $('#uploadMtype').val();
+
+                $.ajax({
+                    url: '@Url.Action("MediaRemove","Media")',//Url.Content("~/Ws/UploadFiles.asmx/MediaRemove")',
+                    type: "POST",
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    data: "{'id':'" + id + "', 'mediaType' : '" + mediaType + "', 'filename':'" + filename + "'}",
+                    success: function (data) {
+                        if (data) {
+                            alert(data.Message);
+
+                        }
+                        //alert('הקובץ הוסר');
+                        $('#files').html('');
+                        mediaAdapter.dataBind();
+                    },
+                    error: function (jqXHR, status, error) {
+                        alert(error);
+                    }
+                });
+            };
+
+        });
+
+    </script>
+}
+
+ <div style="margin:20px;">
+
+        <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+            <h3 class="rightPan">מדיה.</h3>
+            <div id="splitter">
+                <div style="overflow: hidden;">
+                    <div style="border: none;" id="MediaList">
+                    </div>
+                </div>
+                <div style="overflow: auto;" id="ContentPanel">
+                </div>
+            </div>
+            <div id="uploader">
+                <div style="width: 250px">
+                    <span>Select files...</span>
+                    <input type="hidden" id="uploadBid" value="" />
+                    <input type="hidden" id="uploadUid" value="" />
+                    <input type="hidden" id="uploadPt" value="" />
+                    <input type="hidden" id="uploadMid" value="" />
+                    <input type="hidden" id="uploadMtype" value="" />
+                    <input type="hidden" id="uploadPath" value="" />
+                    <input type="hidden" id="uploadUuid" value="" />
+                    <div style="padding: 10px">
+                        <span class="btn btn-success fileinput-button">
+                            <i class="glyphicon glyphicon-plus"><span>הוספת תמונה</span></i>
+                            <input id="fileupload" type="file" name="files[]" multiple>
+                        </span>
+                        <span id="spnRemove" class="btn btn-success fileinput-button">
+                            <i class="glyphicon glyphicon-minus"><span>הסרת תמונה</span></i>
+                            <input id="fileremove" type="button" value="הסרת תמונה"/>
+                        </span>
+                        
+                        <br>
+                        <div id="progress" class="progress">
+                            <div class="progress-bar progress-bar-success"></div>
+                        </div>
+                        <div id="files" class="files"></div>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+<!--end of content-wrapper-->

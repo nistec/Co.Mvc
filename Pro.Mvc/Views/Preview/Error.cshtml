@@ -1,0 +1,23 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+@{
+    Layout = "~/Views/Shared/_ViewRegistry.cshtml";
+    ViewBag.Title = "Error";
+}
+
+<div class="global" style="text-align: center">
+    <div class="center-box">
+        <div class="container">
+            <img src="~/Images/warning.png" alt="Error" />
+            <h1>אירעה שגיאה בילתי צפויה</h1>
+            <p>
+                @ViewBag.Message
+            </p>
+        </div>
+
+
+        <div class="footer">
+            
+        </div>
+
+    </div>
+</div>

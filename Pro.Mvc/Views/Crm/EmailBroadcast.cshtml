@@ -1,0 +1,385 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "Email";
+}
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+<script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+<script type="text/javascript" src="~/jqwidgets/jqxcolorpicker.js"></script>
+   <script type="text/javascript" src="~/Scripts/app/dateFormat.js"></script>
+   @*<script type="text/javascript" src="~/Scripts/plagins/blockUI.js"></script>
+   <script type="text/javascript" src="~/Scripts/jq/jquery.ui.1.11.1.js"></script>
+   <link rel="stylesheet" href="~/Scripts/jq/css/jquery-ui.css" type="text/css" />*@
+
+    <style type="text/css">
+        .styledTable {
+            direction:rtl; text-align:right;
+        }
+        .styledTableHeader {background-color:#0094ff;color:#fff;padding-left:20px;text-align:right;
+        }
+        .styledTableHeader {background-color:#0094ff;color:#fff;text-align:right;
+        }
+        .styledRowKey {padding-left:20px;text-align:right;
+        }
+        .styledRowValue {text-align:right;
+        }
+        #wizard-validation {
+            background-color: transparent;
+        }
+
+    </style>
+}
+
+@section scripts {
+    <script type="text/javascript">
+      
+        $(document).ready(function () {
+            JSON.useDateParser();
+            var theme = 'Arctic';
+
+            $('#editor').jqxEditor({
+                height: '500px',
+                width: '89%',
+                rtl: true
+                //theme: 'arctic'
+                //stylesheets: ['editor.css']
+            });
+
+            $('#btnShow').hide();
+
+            $(".input-radio").checkboxradio();
+            $('input[type=radio][name=Dir]').change(function () {
+
+                if (this.value == 'rtl') {
+                    $('#editor').jqxEditor({ rtl: true });
+                }
+                else if (this.value == 'ltr') {
+                    $('#editor').jqxEditor({ rtl: false });
+                }
+            });
+
+            var designAdapter = app_jqxcombos.createListAdapter("DesignId", "DesignName", "listDesign", '@Url.Action("GetListDesign", "Common")', 240, 200, true);
+            $('#listDesign').on('change', function (event) {
+                app_jqxcombos.listBoxToInput("listDesign", "Design");
+            });
+
+            //app_jqx_list.categoryComboAdapter();
+            app_jqx_list.categoryCheckListAdapter("listCategory", "Category");
+            $("#listCategory").jqxListBox({height:200});
+            $('#listCategory').on('checkChange', function (event) {
+                app_jqxcombos.listCheckBoxToInput("listCategory", "Category", "allCategory");
+                getTargetsCount();
+            });
+            $("#allCategory").change(function () {
+                if (this.checked)
+                {
+                    $("#listCategory").jqxListBox('uncheckAll'); 
+                }
+                getTargetsCount();
+            });
+
+            $("#PersonalDisplay").jqxListBox({ source: personalList, width: 200, height: 200, checkboxes: true, rtl: true});
+  
+      
+        //initialize validator.
+        $('#form').jqxValidator({
+            rtl: true,
+            hintType: 'label',
+            animationDuration: 0,
+            rules: [
+                    {
+                        input: '#TotalCount', message: 'אין נמענים לשליחה!', action: 'keyup, blur', rule: function () {
+                            var value = $("#TotalCount").val();
+                            return value > 0;
+                        }
+                    },
+                     {input: '#Subject', message: 'חובה לציין נושא!', action: 'keyup, blur', rule: 'required'  }
+                    //{
+                    //    input: '#editor', message: 'חובה לציין נוסח הודעה!', action: 'keyup, blur', rule: function () {
+
+                    //        return app.htmlText($("#editor").val()).length>0;
+                            
+                    //    }
+                    //}
+            ]
+        });
+
+        $('#submit').on('click', function (e) {
+            var count= $("#TotalCount").val();
+            var validationResult = function (isValid) {
+                if (isValid) {
+                    var html = $("#editor").val();
+                    var text = app.htmlText(html);
+                    if (text.length <= 1) {
+                        $('#wizard-validation').val("נא לציין נוסח ההודעה");
+                        isValid = false;
+                    }
+                    else {
+                        $("#Message").val(encodeURIComponent(html));
+                    }
+                }
+                if (isValid) {
+                    app_dialog.confirm("הדיוור יישלח ל " + count + " נמענים, האם להמשיך ?",
+                        callBack = function () {
+                            app_dialog.dialogProgress(null, 'Send Broadcast');
+                            $('#form').submit();
+                    });
+                }
+            }
+            $('#form').jqxValidator('validate', validationResult);
+        });
+
+        $('#reset').on('click', function (e) {
+            location.reload();
+        });
+
+        $('#btnShow').on('click', function (e) {
+            var cat;
+            if ($('#allCategory').prop('checked'))
+                cat = "all";
+            else
+                cat = $("#Category").val();
+
+            if (cat == null || cat == "")
+               app_dialog.alert("נא לסמן סיווג");
+            else if ($("#TotalCount").val() > 0)
+                app_dialog.dialogIframe('/Common/_Targets?mode=catmail&cat=' + cat, "580", "500","רשימת נמענים לדיוור");
+
+        });
+
+        //wizard ====================================
+        var $tabs = $('#wizard').tabs();
+        $('#wizard').css('height','600px');
+        $('.prev-tab').hide();
+        $('.end-tab').hide();
+
+        $('.next-tab').click(function () {
+
+            var totalSize = $(".ui-tabs-panel").size() - 1;
+            var active = $('#wizard').tabs("option", "active");
+            switch (active) {
+                case 0:
+                    //if (0 !== 0) {
+                    //    return displayWizardValidation("נא לציים עיצוב");
+                    //}
+                    break;
+                case 1:
+                    var value = $("#TotalCount").val();
+                    if (value <= 0) {
+                        return displayWizardValidation("אין נמענים לשליחה");
+                    }
+                    break;
+                case 2:
+                    var value = $("#Subject").val();
+                    if ($("#Subject").val().length <= 0) {
+                        return displayWizardValidation("נא לציין נושא");
+                    }
+                    break;
+            }
+            //$('#wizard-validation').val("");
+            var next = active + 1;
+            if (next >= totalSize) {
+                $('.next-tab').hide();
+                $('.end-tab').show();
+            }
+            $('.prev-tab').show();
+            $('#wizard').tabs({ active: next });
+            displayStep( next, totalSize);
+            return false;
+        });
+        $('.prev-tab').click(function () {
+            var active = $('#wizard').tabs("option", "active");
+            var prev = active - 1;
+            if (prev <= 0) {
+                $('.prev-tab').hide();
+            }
+            $('.end-tab').hide();
+            $('.next-tab').show();
+            $('#wizard-validation').val("");
+            $('#wizard').tabs({ active: prev });
+            displayStep(prev);
+            //$tabs.tabs('select', $(this).attr("rel"));
+            return false;
+        });
+        var displayStep = function (step, totalSize) {
+            step++;
+            if (totalSize === undefined)
+                totalSize = $(".ui-tabs-panel").size() - 1;
+            totalSize++;
+            $('#wizard-validation').val("שלב " + step + " מתוך " + totalSize);
+        }
+        var displayWizardValidation = function (message) {
+            $('#wizard-validation').val(message);
+            return false;
+        }
+        displayStep(0);
+
+       //end wizard =====================================
+ 
+        //$("#IsAll").change(function () {
+        //    getTargetsCount();
+        //});
+        //$('#Category').on('select', function (event) {
+        //    getTargetsCount();
+        //});
+        //$('#listCategory').on('change', function (event) {
+        //    getTargetsCount();
+        //});
+     });
+ 
+        function setTargetsCount(value) {
+
+            $("#TotalCount").val(value);
+            if (value > 0)
+                $('#btnShow').show();
+            else
+                $('#btnShow').hide();
+        }
+
+
+        function getTargetsCount(isAll) {
+            var cat;
+            if ($('#allCategory').prop('checked'))
+                cat = "all";
+            else
+                cat = $("#Category").val();
+
+            if (cat != null && cat != "") {
+
+                $.ajax({
+                    url: '/Common/GetTargetsCount',
+                    type: 'post',
+                    dataType: 'json',
+                    data: { 'mode': 'catmail', 'cat': cat },
+                    success: function (data) {
+                        setTargetsCount(data);
+                    },
+                    error: function (jqXHR, status, error) {
+                       alert(error);
+                    }
+                });
+            }
+            else {
+                setTargetsCount(0);
+            }
+        }
+
+        var personalList = [
+       { label: 'ת.ז', value: 'MemberId', checked: false },
+       { label: 'שם פרטי', value: 'FirstName', checked: false },
+       { label: 'שם משפחה', value: 'LastName', checked: false },
+       { label: 'טלפון נייד', value: 'CellPhone', checked: false },
+       { label: 'דואר אלקטרוני', value: 'Email', checked: false }
+        ];
+ 
+
+</script>
+
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+</div>
+
+<div class="global-view">
+    <div class="container-box">
+        <h3 class="rtl">שליחת דואר אלקטרוני</h3>
+        <div style="height: 10px;">
+
+        </div>
+
+        
+            <div id="tag-form">
+
+                <form class="form" id="form" method="post" action="@Url.Action("SendMailCategory", "Crm")">
+                    <input type="hidden" id="Message" name="Message" />
+                    <div id="wizard">
+
+                        <ul>
+                            <li><a href="#tab-1">1</a></li>
+                            <li><a href="#tab-2">2</a></li>
+                            <li><a href="#tab-3">3</a></li>
+                            <li><a href="#tab-4">4</a></li>
+                        </ul>
+                        <div id="tab-1" class="ui-tabs-panel">
+                            <h3>עיצוב</h3>
+                            <div id="listDesign"></div>
+                            <input type="hidden" id="Design" name="Design" />
+                        </div>
+                        <div id="tab-2" class="ui-tabs-panel">
+                            <h3>נמענים</h3>
+                            <div>
+                                <div class="form-group">
+                                    סיווגים:
+                                    <div id="listCategory"></div>
+                                    <input type="hidden" id="Category" name="Category" />
+                                    <input type="checkbox" id="allCategory" name="allCategory" /><span>  </span><span>שלח לכל המנויים</span>
+                                </div>
+                                <div class="form-group">
+                                    סה"כ נמענים:<input type="number" id="TotalCount" readonly class="text-short" style="border:none" />
+                                    <a id="btnShow" href="#" class="btn-tab">הצג נמענים</a>
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-3" class="ui-tabs-panel">
+                            <h3>נושא ופרסונאליזציה</h3>
+                            <div class="form-group">
+                                <div class="column">
+                                    נושא:
+                                </div>
+                                <input type="text" id="Subject" name="Subject" class="text-wide" />
+                            </div>
+                            <div class="form-group">
+                                <div class="column">
+                                    בחירת שדות פרסונאליים:
+                                </div>
+                                <div id="PersonalDisplay" name="PersonalDisplay"></div>
+                            </div>
+                            <p style="text-align: right; padding: 10px;max-height:100px;overflow:auto;">
+                                <span>לשליחת הודעה פרסונאלית יש לבחור את השדה מהרשימה (פרסונאלי) ולציין בגוף ההודעה במיקום הרצוי את שם השדה בתוך סוגריים מרובעים לדוגמא:</span>
+                                <br />
+                                <span>לדוגמא: [שם פרטי] שלום רב</span>
+
+                            </p>
+                        </div>
+                        <div id="tab-4" class="ui-tabs-panel">
+                            <h3>עריכת תוכן</h3>
+                            <div class="form-group">
+                                <div class="column">
+                                    @*נוסח:*@
+                                    <fieldset>
+                                        <label for="rtl">ימין לשמאל</label>
+                                        <input type="radio" id="rtl" name="Dir" value="rtl" checked class="input-radio" />
+                                        <label for="ltr">שמאל לימין</label>
+                                        <input type="radio" id="ltr" name="Dir" value="ltr" class="input-radio" />
+                                    </fieldset>
+                                </div>
+                                <textarea id="editor"></textarea>
+                            </div>
+                            
+                            @*<div>
+                <input id="submit" type="submit" value="שליחה" class="btn-default btn2" />
+                <input id="reset" type="reset" value="רענון" class="btn-default btn2" />
+            </div>*@
+                        </div>
+
+                    </div>
+                    <div id="wizard-steps">
+                        <a href="#" class="btn-tab prev-tab ">הקודם</a>
+                        <a href="#" class="btn-tab  next-tab">הבא</a>
+                        <a id="submit" href="#" class="btn-tab  end-tab">סיום</a>
+                        <input type="text" id="wizard-validation" readonly />
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="progressbar"></div>
+<!--end of content-wrapper-->
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liCom");
+    app_menu.breadcrumbs("Crm", "EmailBroadcast", 'en');
+</script>
+

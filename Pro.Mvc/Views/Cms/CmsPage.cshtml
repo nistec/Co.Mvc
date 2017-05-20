@@ -1,0 +1,53 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Cms";
+    var pid = Nistec.Types.ToInt(Request["i"]);
+}
+
+@section head {
+
+   <style type="text/css">
+        #cms_container {
+            direction:rtl;
+        color:#000000;
+        }
+    </style>
+ 
+}
+
+@section featured {
+
+}
+
+@section scripts {
+@Scripts.Render("~/bundles/jqx")
+<script type="text/javascript" src="~/jqwidgets/jqxdatatable.js"></script>
+<script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+<script type="text/javascript" src="~/jqwidgets/jqxcolorpicker.js"></script>
+<script type="text/javascript" src="~/Scripts/app/app-cms.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            //setActiveMenu('liPortfolio');
+            renderCmsPage('@pid');
+        });
+
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+@Html.ActionLink("Home", "index", "Home")>
+@Html.ActionLink("Main", "Main", "Home")>
+<a href="javascript:parent.history.back()">Cms</a> >
+@ViewContext.RouteData.Values["action"].ToString()
+</div>
+
+      <section id="cms">
+        <div class="container">
+
+            <div id="cms_container">
+
+            </div>
+        </div>
+    </section><!--/#cms-item-->

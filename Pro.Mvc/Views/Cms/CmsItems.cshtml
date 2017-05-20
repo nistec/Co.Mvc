@@ -1,0 +1,476 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    Page.Title = "Cms";
+    int pid = Nistec.Types.ToInt(Request.QueryString["pid"]);
+    int sid = Nistec.Types.ToInt(Request.QueryString["sid"]);
+    string pagename = ViewBag.PageName;
+}
+@section head {
+
+}
+
+@section scripts {
+@Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/jqwidgets/jqxdatatable.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxcolorpicker.js"></script>
+<script type="text/javascript" src="~/Scripts/app/app-cms.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var pid = '@pid'
+            var sid = '@sid'
+            //editCmsItems(pid);
+
+            if (pid <= 0) {
+                return;
+            }
+
+            // create window.
+            $('#window').jqxWindow({
+                autoOpen: false, width: 810, position: 'top, center', height: 480, maxWidth: 960, resizable: false,
+                initContent: function () {
+
+                }
+            });
+
+            // create editor.
+            $('#editor').jqxEditor({
+                height: 400,
+                width: 800,
+                rtl: true
+                //theme: 'arctic'
+                //stylesheets: ['editor.css']
+            });
+
+            var source =
+             {
+                 dataType: "json",
+                 async: false,
+                 datafields:
+                 [
+                     { name: 'ItemId', type: 'string' },
+                     { name: 'PageId', type: 'number' },
+                     { name: 'Section', type: 'string' },
+                     { name: 'ItemContent', type: 'string' },
+                     { name: 'ItemType', type: 'string' },
+                     { name: 'ItemAttr', type: 'string' }
+                 ],
+                 id: 'ItemId',
+                 data: { PageId: pid },
+                 type: 'POST',
+                 url: cmsActionLink('GetCmsItems', 'Cms'),
+             };
+
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            var selectedKey;
+            var selectedContent;
+            var selectedSection;
+            var selectedType;
+            var selectedAttr;
+
+            // create grid.
+            $("#dataTable").jqxDataTable(
+            {
+                width: 800,
+                pagerButtonsCount: 4,
+                pageable: true,
+                altRows: true,
+                source: dataAdapter,
+                sortable: true,
+                rendered: function () {
+
+                    //$(".section_button").jqxButton();
+
+                    $(".section_button").click(function () {
+                        var i = 1;
+                        var maxAttr = 3;
+                        var winheight = 480;
+
+                        if (selectedType == 'attr') {
+                            winheight = 200;
+                            $('#titleAttr').val(selectedContent);
+                            $('#lblAttr' + i).html(obj.id);
+                            $('#valAttr' + i).val(obj.val);
+
+                            for (i = 1; i <= maxAttr; i++) {
+                                $('#liAttr' + i).hide();
+                            }
+                            i = 1;
+                            if (selectedAttr) {
+                                $.each(JSON.parse(selectedAttr), function (idx, obj) {
+                                    if (i <= maxAttr) {
+                                        $('#lblAttr' + i).html(obj.id);
+                                        $('#valAttr' + i).val(obj.val);
+                                        $('#liAttr' + i).show();
+                                    }
+                                });
+                            }
+                            $('#editorHtml').hide();
+                            $('#editorText').hide();
+                            $('#editorAttr').show();
+                            $('#editorLink').hide();
+                        }
+                        else if (selectedType == 'link') {
+                            winheight = 240;
+                            $('#valLinkTitle').val(selectedContent);
+                            $('#valLink').val(selectedAttr);
+                            $('#editorHtml').hide();
+                            $('#editorText').hide();
+                            $('#editorAttr').hide();
+                            $('#editorLink').show();
+                        }
+                        else if (selectedType == 'style') {
+                            winheight = 200;
+                            $('#valText').val(selectedAttr);
+                            $('#lblText').html(selectedType);
+                            $('#editorHtml').hide();
+                            $('#editorText').show();
+                            $('#editorAttr').hide();
+                            $('#editorLink').hide();
+                        }
+                        else if (selectedType == 'text'
+                            || selectedType == 'image'
+                            || selectedType == 'input'
+                            || selectedType == 'href') {
+
+                            winheight = 200;
+                            $('#valText').val(selectedContent);
+                            $('#lblText').html(selectedType);
+                            $('#editorHtml').hide();
+                            $('#editorText').show();
+                            $('#editorAttr').hide();
+                            $('#editorLink').hide();
+                        }
+                        else {
+                            winheight = 480;
+                            $('#editorLink').hide();
+                            $('#editorAttr').hide();
+                            $('#editorText').hide();
+                            $('#editorHtml').show();
+                            $('#editor').val(htmlDecode(selectedContent));
+                            $('#editor').jqxEditor({
+                                height: 400,
+                                width: 800,
+                                rtl: true
+                                //theme: 'arctic'
+                                //stylesheets: ['editor.css']
+                            });
+                        }
+                        $('#ItemId').val(selectedKey);
+                        $('#ItemType').val(selectedType);
+                        $('#Section').val(selectedSection);
+                        $('#window').jqxWindow('open');
+                        $('#window').jqxWindow('height', winheight);
+                    });
+                },
+                columns: [
+                  { text: 'Section', align: 'left', dataField: 'Section', width: 150, cellsalign: 'left' },
+                  { text: 'Item Type', align: 'left', dataField: 'ItemType', width: 90, cellsalign: 'left' },
+                  {
+                      text: 'Item', align: 'left', dataField: 'ItemId', width: 200, cellsalign: 'left',
+                      // row - row's index.
+                      // column - column's data field.
+                      // value - cell's value.
+                      // rowData - rendered row's object.
+                      cellsRenderer: function (row, column, value, rowData) {
+                          var container = "<div>";
+                          var item = "<div class='section_item'>";
+                          var info = "<div class='section_info'>";
+                          info += "<div title='" + rowData.ItemId + "'><i>" + rowData.ItemId + "</i></div>";
+                          var button = "<button class='section_button'>Edit</button>";
+                          item += info;
+                          item += button;
+                          item += "</div>";
+                          container += item;
+                          container += "</div>";
+                          return container;
+                      }
+                  },
+                  {
+                      text: 'Content', align: 'left', dataField: 'ItemContent', cellsalign: 'left',
+                      cellsRenderer: function (row, column, value, rowData) {
+                          var container = "<div>";
+                          var content = "<div class='section_content'>" + htmlDecode(rowData.ItemContent) + "</div>";
+                          container += content;
+                          container += "</div>";
+                          return container;
+                      }
+                  }
+                ]
+            });
+
+            // create buttons, listbox and the columns chooser dropdownlist.
+            $("#applyFilter").jqxButton();
+            $("#clearfilter").jqxButton();
+            $("#filterbox").jqxListBox({ checkboxes: true, width: 300, height: 250 });
+            $("#columnchooser").jqxDropDownList({
+                autoDropDownHeight: true, selectedIndex: 0, width: 300, height: 25,
+                source: [{ label: 'Section', value: 'Section' },
+                  { label: 'Item Type', value: 'ItemType' }
+                ]
+            });
+            // updates the listbox with unique records depending on the selected column.
+            var updateFilterBox = function (dataField) {
+                $("#dataTable").jqxDataTable('clearFilters');
+                var filterBoxAdapter = new $.jqx.dataAdapter(source,
+                {
+                    uniqueDataFields: [dataField],
+                    autoBind: true
+                });
+                var uniqueRecords = filterBoxAdapter.records;
+                uniqueRecords.splice(0, 0, '(Select All)');
+                $("#filterbox").jqxListBox({ source: uniqueRecords, displayMember: dataField });
+                $("#filterbox").jqxListBox('checkAll');
+            }
+            updateFilterBox('Section');
+            // handle select all item.
+            var handleCheckChange = true;
+            $("#filterbox").on('checkChange', function (event) {
+                if (!handleCheckChange)
+                    return;
+
+                if (event.args.label != '(Select All)') {
+                    // update the state of the "Select All" listbox item.
+                    handleCheckChange = false;
+                    $("#filterbox").jqxListBox('checkIndex', 0);
+                    var checkedItems = $("#filterbox").jqxListBox('getCheckedItems');
+                    var items = $("#filterbox").jqxListBox('getItems');
+                    if (checkedItems.length == 1) {
+                        $("#filterbox").jqxListBox('uncheckIndex', 0);
+                    }
+                    else if (items.length != checkedItems.length) {
+                        $("#filterbox").jqxListBox('indeterminateIndex', 0);
+                    }
+                    handleCheckChange = true;
+                }
+                else {
+                    // check/uncheck all items if "Select All" is clicked.
+                    handleCheckChange = false;
+                    if (event.args.checked) {
+                        $("#filterbox").jqxListBox('checkAll');
+                    }
+                    else {
+                        $("#filterbox").jqxListBox('uncheckAll');
+                    }
+                    handleCheckChange = true;
+                }
+            });
+            // handle columns selection.
+            $("#columnchooser").on('select', function (event) {
+                updateFilterBox(event.args.item.value);
+            });
+            // builds and applies the filter.
+            var applyFilter = function (dataField) {
+                $("#dataTable").jqxDataTable('clearFilters');
+                var filtertype = 'stringfilter';
+                if (dataField == 'date') filtertype = 'datefilter';
+                if (dataField == 'price' || dataField == 'quantity') filtertype = 'numericfilter';
+                // create a new group of filters.
+                var filtergroup = new $.jqx.filter();
+                // get listbox's checked items.
+                var checkedItems = $("#filterbox").jqxListBox('getCheckedItems');
+                if (checkedItems.length == 0) {
+                    var filter_or_operator = 1;
+                    var filtervalue = "Empty";
+                    var filtercondition = 'equal';
+                    var filter = filtergroup.createfilter(filtertype, filtervalue, filtercondition);
+                    filtergroup.addfilter(filter_or_operator, filter);
+                }
+                else {
+                    for (var i = 0; i < checkedItems.length; i++) {
+                        var filter_or_operator = 1;
+                        // set filter's value.
+                        var filtervalue = checkedItems[i].label;
+                        // set filter's condition.
+                        var filtercondition = 'equal';
+                        // create new filter.
+                        var filter = filtergroup.createfilter(filtertype, filtervalue, filtercondition);
+                        // add the filter to the filter group.
+                        filtergroup.addfilter(filter_or_operator, filter);
+                    }
+                }
+                // add the filters.
+                $("#dataTable").jqxDataTable('addFilter', dataField, filtergroup);
+                // apply the filters.
+                $("#dataTable").jqxDataTable('applyFilters');
+            }
+            // clears the filter.
+            $("#clearfilter").click(function () {
+                $("#dataTable").jqxDataTable('clearFilters');
+            });
+            // applies the filter.
+            $("#applyFilter").click(function () {
+                var dataField = $("#columnchooser").jqxDropDownList('getSelectedItem').value;
+                applyFilter(dataField);
+            });
+
+            //===============================================
+
+
+            $("#dataTable").on('rowSelect', function (event) {
+                // event arguments
+                var args = event.args;
+
+                // row index
+                var index = args.index;
+                // row data
+                var rowData = args.row;
+                // row key
+                selectedKey = args.key;
+                selectedContent = rowData.ItemContent;
+                selectedSection = rowData.Section;
+                selectedType = rowData.ItemType;
+                selectedAttr = rowData.ItemAttr;
+            });
+
+            $("#btnUpdtate").on('click', function () {
+                var itemid = $('#ItemId').val();
+                var itemtype = $('#ItemType').val();
+                var section = $('#Section').val();
+                var contant;
+                var itemAttr;
+
+                if (itemtype == 'link') {
+                    contant = $('#valLinkTitle').val();
+                    itemAttr = $('#valLink').val();
+                }
+                else if (itemtype == 'style') {
+                    contant = '*';
+                    itemAttr = $('#valText').val();
+                }
+                else if (itemtype == 'text' || itemtype == 'image' || itemtype == 'input' || itemtype == 'href') {
+                    contant = $('#valText').val();
+                    itemAttr = null;
+                }
+                else {
+                    contant = htmlEncode($('#editor').val());
+                    itemAttr = null;
+                }
+
+                sendCommand({ 'SiteId': sid, 'PageId': pid, 'ItemId': itemid, 'Section': section, 'ItemContent': contant, 'ItemType': itemtype, 'ItemAttr': itemAttr });
+                $('#window').jqxWindow('close');
+            });
+
+            $("#btnCancel").on('click', function () {
+                $('#window').jqxWindow('close');
+            });
+
+            var sendCommand = function (rowdata) {
+
+                $.ajax({
+                    dataType: 'json',
+                    type: 'POST',
+                    url: cmsUrl('/Cms/CmsItemUpdate'),
+                    data: rowdata,
+                    success: function (data, status, xhr) {
+                        dataAdapter.dataBind();
+                    },
+                    error: function () {
+                        alert('אירעה שגיאה, לא עודכנו נתונים');
+                    }
+                });
+            };
+        });
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+@Html.ActionLink("Manager", "Manager", "Admin")>
+@Html.ActionLink("Main", "Main", "Admin")>
+<a href="javascript:parent.history.back()">Cms</a> >
+@ViewContext.RouteData.Values["action"].ToString()
+</div>
+
+<hgroup class="title">
+
+    <h3 class="rightPan">עריכת תוכן.</h3>
+
+</hgroup>
+
+
+<div class="clear"></div>
+
+<div class="global-view">
+    <div class="container">
+
+        <div>
+            <a href="CmsSite?sid=@sid">Cms Site</a>
+            <h4>Page: @pid - <a href="javascript:cmsDisplayPage('@pagename')">תצוגה</a></h4>
+        </div>
+
+
+
+
+    <div id='jqxWidget'>
+        <div style="float: left; width:320px">
+            <div>Filter By:</div>
+            <div id="columnchooser"></div>
+            <div style="margin-top: 10px;" id="filterbox"></div>
+            <div style="margin-top: 10px;">
+                <input type="button" id="applyFilter" value="Apply Filter" />
+                <input type="button" id="clearfilter" value="Clear Filter" />
+            </div>
+        </div>
+        <div style="margin-top: 20px; position: relative; z-index: 1;direction:ltr" id="dataTable"></div>
+        <p>עריכת אלמנטים בעמוד</p>
+    </div>
+
+
+        <div id="window">
+            <div>
+            </div>
+            <div>
+                <div id="editorText">
+                    <label id="lblText">Text:</label><br />
+                    <input id="valText" type="text" value="" style="width: 80%" />
+                </div>
+                <div id="editorLink">
+                    <ul>
+                        <li>
+                            <label id="lblLinkTitle">Title:</label><br />
+                            <input id="valLinkTitle" type="text" value="" style="width: 80%" />
+                        </li>
+                        <li>
+                            <label id="lblLink">Link:</label><br />
+                            <input id="valLink" type="text" value="" style="width: 80%;direction:ltr" />
+                        </li>
+                    </ul>
+                </div>
+                <div id="editorAttr" style="display: none">
+                    <ul>
+                        <li>
+                            <label>Title:</label><br />
+                            <input id="titleAttr" type="text" value="" style="width: 80%" />
+                        </li>
+                        <li id="liAttr1">
+                            <label id="lblAttr1">Value:</label><br />
+                            <input id="valAttr1" type="text" value="value" style="width: 80%" />
+                        </li>
+                        <li id="liAttr2">
+                            <label id="lblAttr2">Value:</label><br />
+                            <input id="valAttr2" type="text" value="value" style="width: 80%" />
+                        </li>
+                        <li id="liAttr3">
+                            <label id="lblAttr3">Value:</label><br />
+                            <input id="valAttr3" type="text" value="value" style="width: 80%" />
+                        </li>
+                    </ul>
+                </div>
+                <div id="editorHtml">
+                    <textarea id="editor"></textarea>
+                </div>
+                <p></p>
+                <div style="margin: 10px">
+                    <input type="text" id="ItemId" value="" disabled="disabled" />
+                    <input type="text" id="ItemType" value="" disabled="disabled" />
+                    <input type="hidden" id="Section" />
+                    <input type="button" id="btnCancel" value="ביטול" />
+                    <input type="button" id="btnUpdtate" value="עדכון" />
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>

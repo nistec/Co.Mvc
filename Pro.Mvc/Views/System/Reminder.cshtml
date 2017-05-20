@@ -1,0 +1,252 @@
+﻿@model Pro.Mvc.Models.EditTaskModel
+@{
+    //ViewBag.Title = "System";
+    Layout = "~/Views/Shared/_View.cshtml";
+    var dataModel = @Html.Raw(Json.Encode(Model)); 
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+    
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/reminder.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+
+    <script src="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.js"></script>
+    <link href="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.css" rel="stylesheet" />
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /*.jqx-grid-cell {
+            border: none;
+        }
+
+        .wiz-tab {
+            display: none;
+        }
+
+            .wiz-tab.active {
+                display: block;
+            }*/
+        #accordion {
+            max-width: 800px;
+        }
+        #TaskBody {
+            text-align: right;
+            padding-right: 1px;
+            min-height:60px;
+            max-height: 200px;
+            overflow-x: auto;
+            /*overflow-y: no-display;*/
+            height: 100%;
+            width: 100%;
+            border: solid 1px #dbd6d6;
+            direction: rtl;
+        }
+    </style>
+
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var wizard;
+    var task_def;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        var uinfo = JSON.parse('@userInfo');
+
+        //wizard = new app_wiztabs();
+        //wizard.displayStep(1);
+
+
+        task_def = app_reminder.init(JSON.parse('@dataModel') , uinfo, 'R');
+
+
+        $('#reset').on('click', function () {
+            location.reload();
+        });
+
+        $('#fcClear').on('click', function (e) {
+            //app_messenger.Post("הודעה");
+            $('#fcForm')[0].reset();
+            $('#fcForm').jqxValidator('hide');
+        });
+
+        $('#fcCancel').on('click', function (e) {
+            task_def.doCancel();
+        });
+        $('#fcSubmit').on('click', function (e) {
+            task_def.doSubmit();
+        });
+    });
+      
+    </script>
+}
+
+<div class="breadcrumbs">
+</div>
+
+
+<div class="global-view">
+    <div id="wiz-container" class="container">
+
+            <h3 id="hTitle" class="rtl">תזכורת</h3>
+            <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+                <div id="fcBody">
+                    <div id="accordion" class="tab-content" dir="rtl">
+                        <div id="hxp-0">תזכורת</div>
+                        <div id="exp-0" style="padding:0;margin:0">
+                            <div class="expander-entry" style="margin:10px">
+                                <form class="fcForm" id="fcForm" method="post" action="/System/ReminderUpdate">
+                                    <input type="hidden" id="TaskKey" name="TaskKey" value="@Model.PId" />
+                                    <input type="hidden" id="TaskId" name="TaskId" value="0" />
+                                    <input type="hidden" id="TaskModel" name="TaskModel" value="R" />
+                                    <input type="hidden" id="AccountId" name="AccountId" value="" />
+                                    <input type="hidden" id="UserId" name="UserId" value="" />
+                                    <input type="hidden" id="TeamId" name="TeamId" value="" />
+                                    <input type="hidden" id="Task_Parent" name="Task_Parent" value="" />
+                                    <input type="hidden" id="TaskStatus" name="TaskStatus" value="1" />
+                                    <input type="hidden" id="Task_Type" name="Task_Type" value="0" />
+
+                                    <div id="tab-content" class="tab-content" dir="rtl">
+                                        <div class="form-group">
+                                            <div class="field">
+                                                נושא:
+                                            </div>
+                                            <input id="TaskSubject" name="TaskSubject" type="text" style="width:80%;" />
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                תיאור:
+                                            </div>
+                                            <div id="TaskBody" name="TaskBody" class="text-content" contenteditable="true"></div>
+                                        </div>
+                                         <div class="form-group">
+                                            <div class="field">
+                                                תאריך לביצוע:
+                                            </div>
+                                            <div id="DueDate" name="DueDate"></div>
+                                        </div>
+
+                                        <div class="form-group pasive">
+                                            <div class="field">
+                                                צבע :
+                                            </div>
+                                            <select id="ColorFlag" name="ColorFlag">
+                                                <option value="#7bd148">Green</option>
+                                                <option value="#5484ed">Bold blue</option>
+                                                <option value="#a4bdfc">Blue</option>
+                                                <option value="#46d6db">Turquoise</option>
+                                                <option value="#7ae7bf">Light green</option>
+                                                <option value="#51b749">Bold green</option>
+                                                <option value="#fbd75b">Yellow</option>
+                                                <option value="#ffb878">Orange</option>
+                                                <option value="#ff887c">Red</option>
+                                                <option value="#dc2127">Bold red</option>
+                                                <option value="#dbadff">Purple</option>
+                                            </select>
+                                        </div>
+
+
+                                        <div id="jqxExp-1">
+                                            <div>
+                                                פרטים נוספים
+                                            </div>
+                                            <div class="rtl" style="border:none">
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        תזכורת עבור:
+                                                    </div>
+                                                    <div id="AssignTo"></div>
+                                                </div>
+                                                <div id="Project_Id-container" class="form-group">
+                                                    <div id="Project_Id-name" class="field">
+                                                        פרוייקט :
+                                                    </div>
+                                                    <input id="Project_Id" name="Project_Id" type="hidden" />
+                                                    <input id="Project_Id-display" type="text" class="text-mid" readonly />
+                                                    <a href="#" id="Project_Id-button" class="@(Model.Option == "g" ? "item-pasive" : null)" style="font-size:16px"><i class="fa fa-search"></i></a>
+                                                    <script type="text/javascript">
+                                                        var project_dlg;
+                                                        $('#Project_Id-button').on('click', function (event) {
+                                                            if (project_dlg == null) {
+                                                                project_dlg = new app_ComboDlg('#Project_Id');
+                                                                project_dlg.init("ProjectId", "ProjectName", '/System/Lookup_DisplayList', 'project_name');
+                                                            }
+                                                            project_dlg.display();
+                                                        });
+                                                    </script>
+                                                </div>
+                                                <div id="ClientId-container" class="form-group">
+                                                    <div id="ClientId-name" class="field">
+                                                        לקוח\מנוי:
+                                                    </div>
+                                                    <input type="hidden" id="ClientId" name="ClientId" value="0" />
+                                                    <input type="hidden" id="ClientDetails" name="ClientDetails" />
+                                                    <input id="ClientId-display" type="text" class="text-mid" readonly />
+                                                    <a href="#" id="ClientId-button" class="@(Model.Option == "g" ? "item-pasive" : null)" style="font-size:16px"><i class="fa fa-search"></i></a>
+                                                    <script type="text/javascript">
+                                                        var client_dlg;
+                                                        $('#ClientId-button').on('click', function (event) {
+                                                            if (client_dlg == null) {
+                                                                client_dlg = new app_ComboDlg('#ClientId', "#ClientDetails");//function (item) {
+                                                                //    $("#ClientDetails").val(item.label);
+                                                                //});
+                                                                client_dlg.init("Value", "Label", '/Common/Lookup_DisplayList', 'member_display');
+                                                            }
+                                                            client_dlg.display();
+                                                        });
+                                                    </script>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        אופן התזכור:
+                                                    </div>
+                                                    <select id="RemindPlatform">
+                                                        <option selected value="0">מערכת</option>
+                                                        <option value="1">מסרון</option>
+                                                        <option value="2">דואר אלקטרוני</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="height: 5px"></div>
+                                        <div>
+                                            <input id="fcSubmit" class="btn-default btn7 w-80" type="button" value="עדכון" />
+                                            <input id="fcCancel" class="btn-default btn7 w-80" type="button" value="ביטול" />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+   
+     </div>
+</div>
+<!--end of content-wrapper-->
+
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
+</script>
+
+
+

@@ -1,0 +1,218 @@
+﻿@{
+
+    ViewBag.Title = "Crm";
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    int rcdid = Nistec.Types.ToInt(Request["id"]);
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+    
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/crm/members-def.js"></script>
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+
+}
+
+@section scripts {
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+
+       
+        var def = new app_members_def('@rcdid', JSON.parse('@userInfo'),true);
+
+        $('#reset').on('click', function () {
+            location.reload();
+        });
+
+
+        $('#accSubmit').on('click', function (e) {
+            e.preventDefault();
+            def.doSubmit();
+        });
+
+        $('#accCancel').on('click', function (e) {
+            $('#accForm')[0].reset();
+            $('#accForm').jqxValidator('hide');
+        });
+    });
+
+  
+</script>
+}
+
+<div style="margin: 0px;">
+    <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+        <div id="accWindow">
+            <div id="accHeader">
+                <span id="accTitle" style="font-weight: bold;">הגדרת מנוי</span>
+            </div>
+            <div id="accBody">
+                <form class="accForm" id="accForm" method="post" action="/Common/UpdateMember">
+                    <div style="direction: rtl; text-align: right">
+                        <input type="hidden" id="ExType" />
+                        <input type="hidden" id="RecordId" name="RecordId" value="0" />
+                        <input type="hidden" id="AccountId" name="AccountId" value="" />
+                        <input type="hidden" id="Categories" name="Categories" value="" />
+
+                        <ul id="tab-query" class="nav nav-tabs">
+                            <li class="active"><a href="#tab-personal" data-toggle="tab">פרטים אישיים</a></li>
+                            <li><a href="#tab-general" data-toggle="tab">כללי</a></li>
+                            <li><a href="#tab-notes" data-toggle="tab">הערות</a></li>
+                        </ul>
+                        <div style="height:5px"></div>
+                        <div id="tab-content" class="tab-content" dir="rtl">
+                            <div class="tab-pane fade in active" id="tab-personal">
+                                <div class="form-group">
+                                    <label class="column">
+                                        תעודת זהות :
+                                    </label>
+                                    <input id="MemberId" name="MemberId" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        שם פרטי :
+                                    </label>
+                                    <input id="FirstName" name="FirstName" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        שם משפחה :
+                                    </label>
+                                    <input id="LastName" name="LastName" type="text" class="text-mid" />
+                                </div>
+                                @*<div class="form-group">
+                                    <label class="column">
+                                        שם האב :
+                                    </label>
+                                    <input id="FatherName" name="FatherName" type="text" class="text-mid" />
+                                </div>*@
+                                <div class="form-group">
+                                    <label class="column">
+                                        כתובת :
+                                    </label>
+                                    <input id="Address" name="Address" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        עיר :
+                                    </label>
+                                    <div id="City" name="City"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        מגדר:
+                                    </label>
+                                    <div id="Gender" name="Gender"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        תאריך לידה:
+                                    </label>
+                                    <div id="Birthday" name="Birthday" ></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        טלפון נייד:
+                                    </label>
+                                    <input id="CellPhone" name="CellPhone" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        טלפון:
+                                    </label>
+                                    <input id="Phone" name="Phone" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        דאר אלקטרוני:
+                                    </label>
+                                    <input id="Email" name="Email" type="text" class="text-mid" />
+                                </div>
+                            </div>
+                            <div class="tab-pane fade in" id="tab-general">
+                                <div class="form-group">
+                                    <label class="column">
+                                        סניף :
+                                    </label>
+                                    <div id="Branch" name="Branch"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        סווג :
+                                    </label>
+                                    <div id="listCategory" name="listCategory" style="padding: 10px" data-type="checklist"></div>
+                                </div>
+                                <div id="divEnum1" class="form-group">
+                                    <label id="lblEnum1" class="column">                                     
+                                    </label>
+                                    <div id="ExEnum1" name="ExEnum1"></div>
+                                </div>
+                                <div id="divEnum2" class="form-group">
+                                    <label id="lblEnum2" class="column">
+                                    </label>
+                                    <div id="ExEnum2" name="ExEnum2"></div>
+                                </div>
+                                <div id="divEnum3" class="form-group">
+                                    <label id="lblEnum3" class="column">
+                                    </label>
+                                    <div id="ExEnum3" name="ExEnum3"></div>
+                                </div>
+                                <div id="divExId" class="form-group">
+                                    <label id="lblExId" class="column">
+                                    </label>
+                                    <input type="text" name="ExId" class="text-mid" maxlength="50" />
+                                </div>
+                                <div id="divField1" class="form-group">
+                                    <label id="lblExField1" class="column">
+                                    </label>
+                                    <input type="text" id="ExField1" name="ExField1" class="text-mid" maxlength="250" />
+                                </div>
+                                <div id="divField2" class="form-group">
+                                    <label id="lblExField2" class="column">
+                                    </label>
+                                    <input type="text" id="ExField2" name="ExField2" class="text-mid" maxlength="250" />
+                                </div>
+                                <div id="divField3" class="form-group">
+                                    <label id="lblExField3" class="column">
+                                    </label>
+                                    <input type="text" id="ExField3" name="ExField3" class="text-mid" maxlength="250" />
+                                </div>
+                             </div>
+                            <div class="tab-pane fade in" id="tab-notes">
+                                <div class="form-group">
+                                    <label class="column">
+                                        הערות:
+                                    </label>
+                                    <textarea id="Note" name="Note" rows="3" cols="60"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        מועד הצטרפות:
+                                    </label>
+                                    <input id="JoiningDate" name="JoiningDate" type="text" class="text-mid" readonly="readonly" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        מועד עדכון:
+                                    </label>
+                                    <input id="LastUpdate" name="LastUpdate" type="text" readonly="readonly" class="text-mid" />
+                                </div>
+
+                            </div>
+                        </div>
+                        <div style="height: 5px"></div>
+                        <div>
+                            <input id="accSubmit" class="btn-default btn7" type="button" value="עדכון" />
+                            <input id="accCancel" class="btn-default btn7" type="button" value="ניקוי" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--end of content-wrapper-->

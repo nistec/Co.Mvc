@@ -1,0 +1,121 @@
+﻿@model ProSystem.Data.Entities.MediaSystem
+@{
+
+    ViewBag.Title = "Files";
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    //int buildingId = Model.BuildingId;
+    //int propertyId = Model.UnitId;
+    //string propertyType =Model.PropertyType;
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script src="~/jqwidgets/jqxsplitter.js"></script>
+    <script src="~/Scripts/plagins/colorbox/jquery.colorbox-min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/colorbox/colorbox.css" />
+    <script type="text/javascript" src="~/Scripts/app/app-media.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/vendor/jquery.ui.widget.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.iframe-transport.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.fileupload.js"></script>
+    
+    <link rel="stylesheet" href="~/Scripts/plagins/uploader/css/jquery.fileupload.css">
+
+}
+
+@section scripts {
+
+    <script type="text/javascript">
+        var def;
+        $(document).ready(function () {
+            $('.group1').colorbox({ rel: 'group1'});
+            def = app_media.load(JSON.parse('@dataModel'));
+
+            $("#spnRemove").hide();
+            $("#splitter").jqxSplitter({
+                width: '100%', height: '200px',
+                panels: [
+                   { size: "50%", min: "10%", collapsible: false },
+                   { size: '50%', min: "5%"}]
+
+                //panels: [{ size: '50%' }]
+            });
+
+            $('#MediaList').on('select', function (event) {
+                def.updatePanel(event.args.item);
+                //$("#fileremove").prop('disabled', false);
+                $("#spnRemove").show();
+            });
+
+            $('#fileremove').click(function (e) {
+                //e.preventDefault();
+                //var fileId = $('#uploadMid').val();
+                //var filename = $('#uploadPath').val();
+                //var mediaType = $('#uploadMtype').val();
+                def.doRemove();//fileId, mediaType, filename);
+            });
+            $('#filerefresh').click(function (e) {
+                def.doRefresh();
+            });
+        });
+
+    </script>
+}
+
+ <div style="margin:20px;">
+     
+        <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+            @*<a href="#" id="filerefresh">רענון</a>*@
+            @*<h3 class="rightPan">מדיה</h3>*@
+            <div id="splitter">
+                <div style="overflow:hidden;" id="MediaPanel">
+                    <div style="border: none;" id="MediaList">
+                    </div>
+                </div>
+                <div style="overflow: auto;" id="ContentPanel">
+                </div>
+            </div>
+           @*<div style="height:5px; width:100%;clear:both;"></div>*@
+            <div id="uploader" style="width:100%;display:block;">
+                <div style="width: 90%">
+                    @*<span>Select files...</span>*@
+
+    @*<input type="hidden" id="uploadRefId" value="Model.RefId" />
+    <input type="hidden" id="uploadRefType" value="Model.RefType" />
+    <input type="hidden" id="uploadFolder" value="Model.Folder" />
+    <input type="hidden" id="uploadUserId" value="Model.UserId" />
+
+    <input type="hidden" id="uploadMediaType" value="" />
+    <input type="hidden" id="uploadPid" value="" />
+    <input type="hidden" id="uploadFileName" value="" />
+    <input type="hidden" id="uploadFilePath" value="" />
+    <input type="hidden" id="uploadFileId" value="" />*@
+
+                    <div class="@(Model.ReadOnly == true ? "item-pasive" : null)" style="padding: 10px">
+                        <span class="btn btn-success fileinput-button">
+                            <i class="glyphicon glyphicon-plus"><span>הוספת קובץ</span></i>
+                            <input id="fileupload" type="file" name="files[]" multiple>
+                        </span>
+                        <span id="spnRemove" class="btn btn-success fileinput-button">
+                            <i class="glyphicon glyphicon-minus"><span>הסרת קובץ</span></i>
+                            <input id="fileremove" type="button" value="הסרת קובץ" />
+                        </span>
+                        <span id="spnRefresh" class="btn btn-success fileinput-button">
+                            <i class="glyphicon glyphicon-minus"><span>רענון</span></i>
+                            <input id="filerefresh" type="button" value="רענון" />
+                        </span>
+                        <br>
+                        <div id="progress" class="progress">
+                            <div class="progress-bar progress-bar-success"></div>
+                        </div>
+
+                    </div>
+                    <div id="files" class="files"></div>
+                 <div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end of content-wrapper-->

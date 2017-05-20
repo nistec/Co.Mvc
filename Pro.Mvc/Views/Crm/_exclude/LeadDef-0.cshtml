@@ -1,0 +1,149 @@
+﻿@{
+    Layout = "~/Views/_View.cshtml";
+    Page.Title = "Building";
+    string UserName = ViewBag.UserName;
+}
+@section head {
+}
+
+<hgroup class="title">
+    <h3 class="rightPan">הגדרת לקוח.</h3>
+   <div style="text-align:right; font-size:130%; font-weight:bold"><span>שם הסוכן : </span><span>@UserName</span></div>
+</hgroup>
+
+<div class="clear"></div>
+<div class="global-view">
+    <div class="container">
+
+        <form action="" method="post">
+
+            <div>
+                <div style="height: 380px;">
+
+                    <div class="leftPan">
+
+                        <div class="form-group">
+                            <p>
+                                הערות:
+                            </p>
+                            <textarea rows="3" cols="60"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                קוד פעולה:</label>
+                            <input type="text" class="form-control" disabled="disabled" style="width:200px" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                תאריך יצירה:</label>
+                            <input type="text" class="form-control"  disabled="disabled" style="width:200px"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                תאריך עדכון:</label>
+                            <input type="text" class="form-control" disabled="disabled"  style="width:200px"/>
+                        </div>
+                        <div style="height: 10px"></div>
+                        <div class="form-group">
+                            <input type="button" value="עדכון" class="btn-default btn2" />
+                        </div>
+                    </div>
+                    <div class="rightPan">
+                        
+                        <div class="form-group">
+                            <label class="column">
+                                פרטי הלקוח:</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                סיכום תיווך:</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                סוג הנכס:</label>
+                             <select style="width:100%">
+                                    <option>משרדים</option>
+                                    <option>תעשיה</option>
+                                    <option>מסחר</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                סוג עסקה:</label>
+                            <select name="deal_type" dir="rtl" style="width:100%">
+                                        <option value="2">מכירה</option>
+                                        <option value="3">השכרה</option>
+                                    </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                גודל רצוי:</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                אזור רצוי:</label>
+                             <select name="area" dir="rtl" style="width:100%">
+                                        <option value="1" selected="selected">מרכז</option>
+                                        <option value="6">שרון</option>
+                                        <option value="2">צפון</option>
+                                        <option value="4">ירושלים</option>
+                                        <option value="3">דרום</option>
+                                        <option value="5">שפלה</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                תקציב למ"ר:</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                מועד כניסה רצוי:</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                מספר חניות רצוי:</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                משך חוזה רצוי:</label>
+                            <input type="text" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                סטטוס:</label>
+                            <select name="Status">
+                                <option value="0">ממתין</option>
+                                <option value="1">בטיפול</option>
+                            </select>
+                        </div>
+                         <div class="form-group">
+                            <label class="column">
+                            </label>
+                            <input type="checkbox" value="כן" />
+                            <span>פעיל</span>
+                            <input type="checkbox" />
+                            <span>עותק ממסמך תיווך חתום</span>
+                        </div>
+
+                        <div class="form-group">
+                            <input name="AgentId" type="hidden" class="form-control" />
+                            <input type="hidden" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" />
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

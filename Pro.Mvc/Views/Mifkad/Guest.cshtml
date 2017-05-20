@@ -1,0 +1,43 @@
+﻿@model Pro.Data.Registry.RegistryMain
+@{
+    ViewBag.Title = "Mifkad";
+    Layout = "_ViewRegistry.cshtml";
+}
+
+@section cmsHeader {
+
+<div id="cmsHeader">
+    @Html.Raw(Model.Header)
+</div>
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/model/signup-def.js"></script>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var def = new app_signup_def(JSON.parse('@Model.AccountId'));
+ 
+        });
+
+    </script>
+}
+<!--begin of content-wrapper-->
+
+<!--end of content-wrapper-->
+@section scripts {
+    <script type="text/javascript">
+        @Html.Raw(Model.Script)
+    </script>
+}
+@section cmsFooter {
+   <div id="cmsFooter">
+         @Html.Raw(Model.Footer)
+   </div>
+
+}

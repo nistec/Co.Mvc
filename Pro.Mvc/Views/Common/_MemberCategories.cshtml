@@ -1,0 +1,166 @@
+﻿@{
+
+    ViewBag.Title = "Members";
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    int rcdid = Nistec.Types.ToInt(Request.QueryString["id"]);
+ 
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            
+            var rcdid = '@rcdid';
+            $('#MemberRecord').val(rcdid);
+
+            var dataSource =
+               {
+                   dataType: "json",
+                   dataFields: [
+                       { name: 'PropId' },
+                       { name: 'PropName' }
+                   ],
+                   type: 'POST',
+                   url: '@Url.Action("GetCategoriesView", "Common")'
+               };
+
+            var dataAdapter = new $.jqx.dataAdapter(dataSource, {
+                async: false,
+                //contentType: "application/json; charset=utf-8",
+                loadError: function (jqXHR, status, error) {
+                    //alert("categoriesAdapter failed: " + error);
+                },
+                loadComplete: function (data) {
+                    //alert("categoriesAdapter is Loaded");
+                }
+            });
+            //categoriesAdapter.dataBind();
+
+
+            $("#CategoriesType").jqxListBox(
+            {
+                rtl: true,
+                source: dataAdapter,
+                width: 500,
+                height: 210,
+                multiple: true,
+                checkboxes: true,
+                displayMember: 'PropName',
+                valueMember: 'PropId'
+            });
+            $('#CategoriesType').on('checkChange', function (event) {
+                app_jqxcombos.listCheckBoxToInput("CategoriesType", "Categories");
+            });
+
+            var view_source =
+                {
+                    datatype: "json",
+                    datafields: [
+                            { name: 'PropId', type: 'number' },
+                            { name: 'MemberRecord', type: 'number' }
+                    ],
+                    id: 'MemberId',
+                    data: { 'rcdid': '@rcdid'},
+                    type: 'POST',
+                    url: '@Url.Action("GetMemberCategories", "Crm")'
+                };
+
+                var srcMemberType;
+
+                var viewAdapter = new $.jqx.dataAdapter(view_source, {
+                    async: false,
+                    loadComplete: function (records) {
+                        if (records) {
+
+                            var categoriesType = app_jqxcombos.getDataCheckedList(records, "PropId");
+                            app_jqxcombos.selectCheckList("CategoriesType", categoriesType);
+                            $("#categoriesHeader").append("<h4>הגדרת סיווג</h4>");
+
+                        }
+                    },
+                    loadError: function (jqXHR, status, error) {
+                       app_dialog.alert('Error: ' + error);
+                    },
+                    beforeLoadComplete: function (records) {
+                    }
+                });
+                viewAdapter.dataBind();
+            //}
+
+
+            //categories dialog
+
+                $('#categoriesSubmit').on('click', function (e) {
+                    $.ajax({
+                        url: '@Url.Action("UpdateMemberCategories", "Crm")',
+                        type: 'post',
+                        dataType: 'json',
+                        data: $('#categoriesForm').serialize(),
+                        success: function (data) {
+                           app_dialog.alert(data.Message);
+                            if (data.Status >= 0) {
+                                var rcdid = $('#MemberRecord').val();
+                                window.parent.triggerCategoriesComplete(rcdid);
+                                $('#categoriesForm')[0].reset();
+                                $('#MemberRecord').val(rcdid);
+                            }
+                        },
+                        error: function (jqXHR, status, error) {
+                           app_dialog.alert(error);
+                        }
+                    });
+                });
+
+            $('#categoriesCancel').on('click', function (e) {
+                var rcdid = $('#MemberRecord').val();
+                $('#categoriesForm')[0].reset();
+                $('#categoriesForm').jqxValidator('hide');
+                $('#MemberRecord').val(rcdid);
+
+            });
+        });
+
+    </script>
+}
+
+<div style="margin: 0px;">
+
+    <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+        <div id="categoriesWindow">
+            <div id="categoriesHeader">
+            </div>
+            <div id="categoriesBody">
+                <form class="categoriesForm" id="categoriesForm" method="post" action="/Crm/UpdateMemberCategories">
+                    <input type="hidden" id="Categories" name="Categories" />
+                    <div style="direction: rtl; text-align: right">
+                        <div class="form-group">
+                            <label class="column">
+                                ת.ז :</label>
+                            <input id="MemberRecord" name="MemberRecord" readonly="true" type="text" class="text-mid" />
+                        </div>
+                             <div class="form-group">
+                                <label class="column">
+                                    קבוצות סיווג:</label>
+                                <div id="CategoriesType" name="CategoriesType" style="padding: 0px" data-type="checklist">
+                                </div>
+                            </div>
+                        <div style="height: 5px"></div>
+                        <div>
+                            <input id="categoriesSubmit" class="btn-default btn7" type="button" value="עדכון" />
+                            <input id="categoriesCancel" class="btn-default btn7" type="button" value="ביטול" />
+                            <!--<input class="btn-default btn2" type="button" value="הוספת אנשי קשר" />-->
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--end of content-wrapper-->

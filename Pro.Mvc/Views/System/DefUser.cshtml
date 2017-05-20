@@ -1,0 +1,273 @@
+﻿@model Pro.Data.Entities.Props.UserView
+@{ 
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "UserInfo";
+    var userInfo = @Html.Raw(Json.Encode(Model));
+}
+
+@section head {
+@Scripts.Render("~/bundles/jqx")
+
+    <style type="text/css">
+        .headline {
+            color: #0094ff;
+            font-weight: bold;
+        }
+    </style>
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+        var me = this;
+        
+        app_jqx_list.userRoleComboAdapter();
+        $("#UserRole").jqxDropDownList({ disabled: true });
+        $("#IsBlocked").jqxCheckBox();
+        app_jqxform.loadDataForm("form", JSON.parse('@userInfo'));
+
+
+        //================= popup Update ================.
+        //$("#popupWindow").jqxWindow({
+        //    width: 300, resizable: false, isModal: true, autoOpen: false, cancelButton: $("#Cancel"), modalOpacity: 0.01
+        //});
+        //$("#popupWindow").on('open', function () {
+        //    $("#UserName").jqxInput('selectAll');
+        //});
+        $('#form').jqxValidator({
+            hintType: 'label',
+            animationDuration: 0,
+            rules: [
+                  { input: '#PropName', message: 'נדרש שם משתמש!', action: 'keyup, blur', rule: 'required' },
+                  { input: '#PropName', message: 'שם משתמש בין 3 ל 12 תוים לפחות!', action: 'keyup, blur', rule: 'length=3,12' },
+                  {
+                      input: '#PropName', message: 'נדרש אותיות באנגלית בלבד!', action: 'valuechanged, blur', rule:
+                              function (input, commit) {
+                                  var re = /^[A-Za-z][A-Za-z0-9]*$/
+                                  return re.test(input.val());
+                              }
+                  },
+                  { input: '#DisplayName', message: 'נדרש פרטי משתמש!', action: 'keyup, blur', rule: 'required' },
+                  { input: '#DisplayName', message: 'פרטי משתמש אותיות בלבד!', action: 'keyup', rule: 'notNumber' },
+                  { input: '#DisplayName', message: 'פרטי משתמש בין 3 ל 12 תוים לפחות!', action: 'keyup', rule: 'length=3,12' },
+                  { input: '#Email', message: 'נדרש כתובת אימייל!', action: 'keyup, blur', rule: 'required' },
+                  { input: '#Email', message: 'אימייל לא תקין!', action: 'keyup', rule: 'email' },
+                  //{ input: '#UserRole', message: 'נדרש תפקיד!', action: 'valuechanged, blur', rule: 'required' },
+                  {
+                      input: '#UserRole', message: 'נדרש תפקיד!', action: 'keyup, select', rule: function (input) {
+                          var index = $("#UserRole").jqxDropDownList('getSelectedIndex');
+                          if (index >= 0) { return true; } return false;
+                      }
+                  },
+                  { input: '#Phone', message: 'נדרש טלפון נייד!', action: 'keyup, blur', rule: 'required' },
+                  {
+                      input: '#Phone', message: 'טלפון נייד אינו תקין!', action: 'valuechanged, blur', rule: 
+                              function (input, commit) {
+                                  var re = /^(|\()(0|972)(\d{1}|\d{2})(|[\)\/\.-])([0-9]{7})$/
+                                  return re.test(input.val());
+                              }
+                  }
+            ]
+        });
+        $('#form').on('validationSuccess', function (event) {
+            var row = {
+                UserId: $("#PropId").val(), UserName: $("#PropName").val(), UserRole: $("#UserRole").val(),
+                Email: $("#Email").val(), Phone: $("#Phone").val(),
+                AccountId: 1, Lang: $("#Lang").val(),
+                Evaluation: 0, IsBlocked: $("#IsBlocked").val(),
+                DisplayName: $("#DisplayName").val()
+            };
+            if ($("#insertFlag").val() == '0') {
+                $('#jqxgrid').jqxGrid('addrow', null, row);
+            }
+            else if (editrow >= 0) {
+                var rowID = $('#jqxgrid').jqxGrid('getrowid', editrow);
+                $('#jqxgrid').jqxGrid('updaterow', rowID, row);
+            }
+            //$("#popupWindow").jqxWindow('hide');
+        });
+        $("#Cancel").jqxButton({disabled:true});
+        $("#Save").jqxButton({ disabled: true });
+        // update the edited row when the user clicks the 'Save' button.
+        $("#Save").click(function () {
+            $('#form').jqxValidator('validate');
+             
+        });
+         
+        //================= popup Pass ================.
+        $("#popupPass").jqxWindow({
+            width: 250, resizable: false, isModal: true, autoOpen: false, cancelButton: $("#CancelUps"), modalOpacity: 0.01
+        });
+        $("#popupPass").on('open', function () {
+            $("#Ups").jqxInput('selectAll');
+        });
+        $("#CancelUps").jqxButton();
+        $("#SaveUps").jqxButton();
+        // update the edited row when the user clicks the 'Save' button.
+        $("#SaveUps").click(function () {
+            $('#popupPass').jqxValidator('validate');
+        });
+        $('#popupPass').jqxValidator({
+            hintType: 'label',
+            animationDuration: 0,
+            rules: [
+                  { input: '#Ups', message: 'נדרש סיסמה!', action: 'keyup, blur', rule: 'required' },
+                  { input: '#Ups', message: 'סיסמה בין 4 ל 12 תוים!', action: 'keyup, blur', rule: 'length=4,12' },
+                  {
+                      input: '#Ups', message: 'נדרש אותיות באנגלית בלבד ללא רווחים!', action: 'valuechanged, blur', rule:
+                               function (input, commit) {
+                                   var re = /^[a-z0-9]*$/i;// /[^A-Za-z]/g
+                                   return re.test(input.val());
+                               }
+                  },
+                  { input: '#UpsConfirm', message: 'נדרש אישור סיסמה!', action: 'keyup, blur', rule: 'required' },
+                  {
+                      input: '#UpsConfirm', message: 'אישור סיסמה אינו תואם לסיסמה!', action: 'keyup, focus', rule: function (input, commit) {
+                          // call commit with false, when you are doing server validation and you want to display a validation error on this field. 
+                          if (input.val() === $('#Ups').val()) {
+                              return true;
+                          }
+                          return false;
+                      }
+                  }
+            ]
+        });
+        $('#popupPass').on('validationSuccess', function (event) {
+            if (editrow >= 0) {
+                var rowID = $('#jqxgrid').jqxGrid('getrowid', editrow);
+                updateups(rowID);
+            }
+            $("#popupPass").jqxWindow('hide');
+        });
+        var updateups = function (id) {
+            //alert(rowdata.UserName);
+            $.ajax({
+                dataType: 'json',
+                type: 'POST',
+                url: '@Url.Action("UserUpsUpdate", "Admin")',
+                data: { 'UserId': id, 'Ups': $("#Ups").val(), 'command': 1 },
+                success: function (data, status, xhr) {
+                    if (data == '1') {
+                        alert('עודכן בהצלחה');
+                    }
+                    else
+                        alert('לא עודכנו נתונים');
+                    commit(true);
+                },
+                error: function () {
+                    alert('אירעה שגיאה, לא עודכנו נתונים');
+                    commit(false);
+                }
+            });
+        };
+         
+    });
+
+
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+</div>
+
+<div class="top-space"></div>
+
+<div class="global-view">
+    <div class="container-box">
+
+        <h3 class="rtl">פרטים אישיים</h3>
+        
+        <form id="form" action="DefUserUpdate" method="post">
+            <input type="hidden" id="Items" name="Items" />
+            <div id="popupWindow">
+                <div></div>
+                <div style="overflow: hidden;direction:rtl">
+                    <input type="hidden" id="AccountId" value="1" />
+                    <input type="hidden" id="Lang" value="" />
+                    <input type="hidden" id="Evaluation" value="0" />
+                    <input type="hidden" id="Creation" value="" />
+                   <div>
+                        <div>קוד משתמש:</div>
+                        <div><input id="PropId" name="PropId" type="text" disabled style="direction:rtl;text-align:right;" /></div>
+                    </div>
+                    <div>
+                        <div>שם משתמש:</div>
+                        <div><input id="PropName" name="PropName" type="text" style="direction:ltr;text-align:left;" /></div>
+                    </div>
+                    <div>
+                        <div>פרטים:</div>
+                        <div><input id="DisplayName" name="DisplayName" type="text" style="direction:rtl;text-align:right;" /></div>
+                    </div>
+                    <div>
+                        <div>אימייל:</div>
+                        <div><input id="Email" name="Email" type="text" style="direction:ltr;text-align:left;" /></div>
+                    </div>
+                    <div>
+                        <div>טלפון:</div>
+                        <div><input id="Phone" name="Phone" type="text" style="direction:ltr;text-align:left;" /></div>
+                    </div>
+                    <div>
+                        <div>תפקיד:</div>
+                        <div><div id="UserRole" name="UserRole"></div></div>
+                    </div>
+                    <div>
+                        <div>חסום:</div>
+                        <div><div id="IsBlocked" name="IsBlocked" style="direction:rtl;text-align:right;"></div></div>
+                    </div>
+                    <div>
+                        <div></div>
+                        <div style="padding-top: 10px;">
+                            <input id="Save" type="button" style="margin-right: 5px;" value="עדכון" disabled />
+                            <input id="Cancel" type="button" value="ביטול" disabled />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+        <div id="popupPass" class="rtl">
+            <div>עריכת סיסמה</div>
+            <div style="overflow: hidden;">
+                <input type="hidden" id="insertUps" value="0" />
+               <div>
+                    <div>קוד משתמש:</div>
+                    <div><input id="MemberId" type="text" disabled="disabled" style="direction:rtl;text-align:right;" /></div>
+                </div>
+                <div>
+                    <div>פרטים:</div>
+                    <div><input id="MemberName" type="text" disabled="disabled" style="direction:rtl;text-align:right;" /></div>
+                </div>
+                <div>
+                    <div>סיסמה:</div>
+                    <div><input id="Ups" type="password" style="direction:ltr;text-align:left;" /></div>
+                </div>
+                <div>
+                    <div>אישור סיסמה:</div>
+                    <div><input id="UpsConfirm" type="password" style="direction:ltr;text-align:left;" /></div>
+                </div>
+
+                <div>
+                    <div>שחזור:</div>
+                    <div><div id="IsReset" style="direction:rtl;text-align:right;"></div></div>
+                </div>
+                <div>
+                    <div></div>
+                    <div style="padding-top: 10px;">
+                        <input id="SaveUps" type="button" style="margin-right: 5px;" value="עדכון" />
+                        <input id="CancelUps" type="button" value="ביטול" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("System", "DefUser", 'en');
+</script>
+
+
+

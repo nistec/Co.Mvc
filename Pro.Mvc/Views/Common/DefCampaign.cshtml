@@ -1,0 +1,109 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "Crm";
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/Scripts/app/model/generic/_baseEntity-def.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/model/generic/campaign-def.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+
+    <style type="text/css">
+        .input {
+            direction: rtl;
+            text-align: right;
+            height: 24px;
+        }
+    </style>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            JSON.useDateParser();
+
+            var def = new app_campaign_def(JSON.parse('@userInfo'));
+
+        });
+    </script>
+}
+
+<div class="breadcrumbs">
+</div>
+
+<div class="global-view">
+    <div class="container-box">
+        <h3 class="rtl">הגדרות כלליות-<span>קמפיין</span></h3>
+        <div class="grid-wrap rtl">
+
+            <div id="jqxWidget">
+                <!--<input style="margin-right: 5px;" type="button" id="addrowbutton" value="הוספה" />-->
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+
+                <div style="font-size: 12px; font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif; margin-top: 30px;">
+                    <div class="note-edit">לעריכת שורה: לחיצה כפולה על השורה הרצויה</div>
+                    <div class="note-edit">חובה לסמן קמפיין אחד פעיל</div>
+
+                    <div id="popupWindow">
+                        
+                        <div>עריכה</div>
+                        <div style="overflow: hidden;direction:rtl">
+                            <input type="hidden" id="insertFlag" value="0" />
+                                <form id="form" action="./">
+                                    <div id="trcode">
+                                        <div align="right">קוד קמפיין:</div>
+                                        <div align="right"><input type="text" id="PropId" readonly="readonly" class="input" /></div>
+                                    </div>
+                                    <div>
+                                        <div align="right">שם קמפיין:</div>
+                                        <div align="right"><input type="text" id="PropName" class="input" /></div>
+                                    </div>
+                                    <div>
+                                        <div align="right">פעיל:</div>
+                                        <div align="right" id="IsActive"></div>
+                                    </div>
+                                    <div>
+                                        <div align="right">תוקף בחודשים:</div>
+                                        <div align="right"><input id="ValidityMonth" type="number" class="input" /></div>
+                                    </div>
+                                    <div>
+                                        <div align="right">תוקף קבוע:</div>
+                                        <div align="right" id="ValidityDate"></div>
+                                    </div>
+                                   <div>
+                                        <div align="right">הפרש תקף בימים:</div>
+                                       <div align="right"><input id="ValidDiff" type="number" class="input" /></div>
+                                    </div>
+                                    <div>
+                                        <div align="right">קטגוריה ברירת מחדל:</div>
+                                        <div align="right" id="DefaultCategory" class="input"></div>
+                                    </div>
+                                    <div>
+                                        <div align="right">האם לחייב כרטיס אשראי:</div>
+                                        <div align="right" id="IsSignupCredit" class="input"></div>
+                                    </div>
+
+
+                                    <div>
+                                        <div align="right"></div>
+                                        <div style="padding-top: 10px;" align="right">
+                                            <input style="margin-right: 5px;" type="button" id="Save" value="עדכון" />
+                                            <input id="Cancel" type="button" value="ביטול" />
+                                        </div>
+                                    </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liEntity");
+    app_menu.breadcrumbs("Crm", "DefCampaign", 'en');
+</script>

@@ -1,0 +1,98 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "Crm";
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/Scripts/app/system/ad-def.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+
+    <style type="text/css">
+        .input {
+            direction: rtl;
+            text-align: right;
+            height: 24px;
+        }
+    </style>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var theme = 'Arctic';
+            $('#jqxTabs').jqxTabs({ width: '100%', height: 320, position: 'top', rtl: true });
+            JSON.useDateParser();
+            var def = new app_ad_def(JSON.parse('@userInfo'));
+        });
+    </script>
+}
+<div class="breadcrumbs">
+</div>
+<div class="global-view">
+    <div class="container-box">
+        <h3 class="rtl">הגדרות משתמשים-<span>קבוצות</span></h3>
+        <div class="grid-wrap rtl">
+            <div id="jqxWidget" style="max-width:700px">
+                @*<a href="CategoryQuery">מיזוג משתמשים לקבוצה</a>*@
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+
+                <div id='jqxTabs'>
+                    <ul>
+                        <li id="liUsers">משתמשים</li>
+                        <li>הרשאות</li>
+                    </ul>
+                    <div>
+                        <div id="jqxgrid2" style="position:relative;z-index:1;"></div>
+                     </div>
+                    <div>
+                        <div id="jqxgrid3" style="position:relative;z-index:1;"></div>
+                        <h1 style="text-align:center;margin-top:20px">לא פעיל</h1>
+                    </div>
+                </div>
+                <div id="jqxgrid2_bar" class="rtl" style="float:right;display:block;">
+                    <p id="pHelp"></p>
+                    <input id="jqxgrid2_Show" type="button" value="הצג משתמשים להוספה" />
+                    <input id="jqxgrid2_Update" type="button" value="עדכון" />
+                    <input id="jqxgrid2_Cancel" type="button" value="ביטול" />
+                    <input id="CurrentId" type="hidden" value="-1" />
+                </div>
+                <div style="font-size: 12px; font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif; margin-top: 30px;">
+                    @*<div class="note-edit">לעריכת שורה: לחיצה כפולה על השורה הרצויה</div>*@
+
+                    <div id="popupWindow">
+
+                        <div>עריכה</div>
+                        <div style="overflow: hidden;direction:rtl">
+                            <input type="hidden" id="insertFlag" value="0" />
+                            <form id="form" action="./">
+                                <input id="AccountId" type="hidden" />
+                                <table style="border-spacing: 10px;border-collapse: separate;direction:rtl">
+                                    <tr id="trcode">
+                                        <td align="right">קוד קבוצה:</td>
+                                        <td align="left"><input id="PropId" readonly="readonly" class="input" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right">שם קבוצה:</td>
+                                        <td align="left"><input id="PropName" class="input" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="right"></td>
+                                        <td style="padding-top: 10px;" align="right">
+                                            <input style="margin-right: 5px;" type="button" id="Save" value="עדכון" />
+                                            <input id="Cancel" type="button" value="ביטול" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("System", "AdDef", 'en');
+</script>

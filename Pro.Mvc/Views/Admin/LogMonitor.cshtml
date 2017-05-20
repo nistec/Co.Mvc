@@ -1,0 +1,245 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    ViewBag.Title = "LogMonitor";
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+    </style>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    var members_grid;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var search_field;
+        var slf = this;
+
+        var source =
+           {
+               datatype: "json",
+               type: 'POST',
+               datafields: [
+                   { name: 'LogId' },
+                   { name: 'Action' },
+                   { name: 'Folder' },
+                   { name: 'LogText' },
+                   { name: 'LogType' },
+                   { name: 'Client' },
+                   { name: 'Referrer' },
+                   { name: 'LogTime', type: 'date' }
+               ],
+               async: true,
+               url: '@Url.Action("GetLogMonitor", "Admin")',
+               //data:{},
+               //pagenum: 0,
+               pagesize: 20,
+               root: 'Rows',
+               pager: function (pagenum, pagesize, oldpagenum) {
+                   console.log(pagenum);
+                   // callback called when a page or page size is changed.
+               },
+               //filter: function () {
+               //    // update the grid and send a request to the server.
+               //    $("#jqxgrid").jqxGrid('updatebounddata');
+               //},
+               //sort: function () {
+               //    // update the grid and send a request to the server.
+               //    $("#jqxgrid").jqxGrid('updatebounddata');
+               //},
+               beforeprocessing: function (data) {
+                   this.totalrecords = data.TotalRows;
+               }
+           };
+
+        var getTotalRows = function (data) {
+            if (data) {
+                return dataTotalRows(data);
+            }
+            return 0;
+        }
+
+        var dataAdapter = new $.jqx.dataAdapter(source
+            //{
+            //    formatData: function (data) {
+            //        return app_jqxgrid.formatSearchAdapter(data, $("#fieldsOption").val(), $("#searchField").val());
+            //        //switch (search_field) {
+            //        //    case 'Action':
+            //        //        data.Action_startsWith = $("#searchField").val(); break;
+            //        //    case 'Folder':
+            //        //        data.Folder_startsWith = $("#searchField").val(); break;
+            //        //    case 'LogType':
+            //        //        data.LogType_startsWith = $("#searchField").val(); break;
+            //        //}
+            //        ////data.name_startsWith = $("#searchField").val();
+            //        //return data;
+            //    }
+            //}
+        );
+        $("#jqxgrid").jqxGrid(
+        {
+            width: '80%',
+            source: dataAdapter,
+            virtualmode: true,
+            rendergridrows: function (obj) {
+                return dataAdapter.records;
+            },
+            pageable: true,
+            pagermode: 'simple',
+            sortable: true,
+            columns: [
+                { text: 'LogId', datafield: 'LogId', width: 100 },
+                { text: 'Action', datafield: 'Action', width: 100 },
+                { text: 'Folder', datafield: 'Folder', width: 100 },
+                { text: 'LogText', datafield: 'LogText'},
+                { text: 'LogType', datafield: 'LogType', width: 100 },
+                { text: 'Client', datafield: 'Client' },
+                { text: 'Referrer', datafield: 'Referrer'},
+                { text: 'LogTime', datafield: 'LogTime', cellsformat: 'dd/MM/yyyy hh:mm:ss', width: 170 }
+            ],
+            showtoolbar: true,
+            autoheight: false,
+            scrollmode: 'logical',
+            //filterable: true,
+            columnsresize: true,
+            enablebrowserselection: true,
+            rowdetails: true,
+            rowdetailstemplate: { rowdetails: "<div style='margin: 10px;'><ul style='margin-left: 10px;'><li>Log Text</li></ul><div class='notes'></div></div>", rowdetailsheight: 200 },
+            initrowdetails: initrowdetails = function (index, parentElement, gridElement, datarecord) {
+                
+                var tabsdiv = $($(parentElement).children()[0]);
+                if (tabsdiv != null) {
+                    var notes = tabsdiv.find('.notes');
+                    //var container = $("<div style='overflow: hidden; position: relative; margin: 5px;float:right;'></div>");
+                    var notescontainer = $('<div style="white-space: normal; margin: 5px;"><span>' + datarecord.LogText + '</span></div>');
+                    $(notes).append(notescontainer);
+                    $(tabsdiv).jqxTabs({ width: '95%', height: 170 });
+                }
+            },
+            rendertoolbar: function (toolbar) {
+
+                app_jqxgrid.gridSearchLtr(this, toolbar, listSource);
+                /*
+                var me = this;
+                var container = $("<div style='margin: 5px;'></div>");
+                var span = $("<span style='float: left; margin-top: 5px; margin-right: 4px;'>Search : </span>");
+                var list = $("<select id='fieldsOption' style='float: left; margin-top: 5px; margin-right: 4px;'><option>Action</option><option>Folder</option><option>LogText</option><option>LogType</option><option>Client</option><option>Referrer</option></select>")
+                .on('change', function (e) {
+                    e.preventDefault();
+                    slf.search_field = this.value;
+                });
+
+
+                var input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='searchField' type='text' style='height: 23px; float: left; width: 223px;' />");
+                var clearfilter = $("<input id='clearfilter' type='button' />");
+                var applyfilter = $("<input id='applyfilter' type='button' />");
+
+                // clears the filter.
+                $("#clearfilter").click(function () {
+                    $("#jqxgrid").jqxGrid('clearfilters');
+                });
+                // applies the filter.
+                $("#applyfilter").click(function () {
+                    var dataField = $("#fieldsOption").val();//$("#columnchooser").jqxDropDownList('getSelectedItem').value;
+                    var filterValue = $("#searchField").val();
+                    app_jqxgrid.applyFilter(dataField);
+                });
+
+                toolbar.append(container);
+
+                container.append(span);
+                container.append(list);
+                container.append(input);
+                //if (theme != "") {
+                //    input.addClass('jqx-widget-content-' + theme);
+                //    input.addClass('jqx-rc-all-' + theme);
+                //}
+                var oldVal = "";
+                input.on('keydown', function (event) {
+                    if (input.val().length >= 2) {
+                        if (me.timer) {
+                            clearTimeout(me.timer);
+                        }
+                        if (oldVal != input.val()) {
+                            me.timer = setTimeout(function () {
+                                app_jqxgrid.autosearchFilter($("#fieldsOption").val(), $("#searchField").val());
+                                //$("#jqxgrid").jqxGrid('updatebounddata');
+                            }, 1000);
+                            oldVal = input.val();
+                        }
+                    }
+                    else {
+                        $("#jqxgrid").jqxGrid('updatebounddata');
+                    }
+                });
+                */
+            }
+        });
+
+
+      //field list
+      var listSource = [
+     { label: 'LogId', value: 'LogId', checked: false },
+     { label: 'Action', value: 'Action', checked: true },
+     { label: 'Folder', value: 'Folder', checked: true },
+     { label: 'LogText', value: 'LogText', checked: true },
+     { label: 'LogType', value: 'LogType', checked: true },
+     { label: 'Client', value: 'Client', checked: false },
+     { label: 'Referrer', value: 'Referrer', checked: false },
+     { label: 'LogTime', value: 'LogTime', checked: true }
+      ];
+      
+ //     var listSource = [
+ //{ label: 'מס', value: 'LogId', checked: false },
+ //{ label: 'פעולה', value: 'Action', checked: true },
+ //{ label: 'תיקיה', value: 'Folder', checked: true },
+ //{ label: 'טקסט', value: 'LogText', checked: true },
+ //{ label: 'סוג', value: 'LogType', checked: true },
+ //{ label: 'כתובת', value: 'Client', checked: false },
+ //{ label: 'מקור פנייה', value: 'Referrer', checked: false },
+ //{ label: 'זמן הפעולה', value: 'LogTime', checked: true }
+ //     ];
+
+      app_jqxgrid.gridFieldsFilter(listSource);
+ 
+    });
+
+    </script>
+}
+
+
+@section featured {
+
+
+}
+
+<div class="breadcrumbs">
+</div>
+
+<div class="top-space"></div>
+
+<div class="global">
+    <div class="container" style="margin-left:10%">
+        <h3>Log Monitor</h3>
+        <div class="grid-wrap">
+            <span>Choos columns to display:</span>  <div id="gridFields"></div>
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+

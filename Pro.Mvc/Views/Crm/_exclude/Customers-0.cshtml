@@ -1,0 +1,86 @@
+﻿@{
+    Layout = "~/Views/_View.cshtml";
+    Page.Title = "Building";
+    string UserName = ViewBag.UserName;
+}
+@section head {
+}
+
+<hgroup class="title">
+    <h3 class="rightPan">הגדרת לקוח.</h3>
+            <div style="text-align:right; font-size:130%; font-weight:bold"><span>שם הסוכן : </span><span>@UserName</span></div>
+
+</hgroup>
+
+<div class="clear"></div>
+<div class="global-view">
+    <div class="container">
+        <form action="" method="post">
+            <div>
+                <div style="height: 380px;">
+                    <div class="form-group">
+                        <label class="column">
+                            שם חברה:</label>
+                        <input type="text" class="text-mid" />
+                    </div>
+                    <div class="form-group">
+                        <label class="column">
+                            סוג לקוח:</label>
+                        <select class="text-mid">
+                            <option value="1">לקוח</option>
+                            <option value="2">בעלים</option>
+                            <option value="3">משקיע</option>
+                            <option value="4">דייר</option>
+                            <option value="5">בעל מקצוע</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="column">
+                            כתובת:</label>
+                        <input type="text" class="text-mid" />
+                    </div>
+                    <div class="form-group">
+                        <label class="column">
+                            עיר:</label>
+                        <input type="text" class="text-mid" />
+                    </div>
+                    <div class="form-group">
+                        <label class="column">
+                            מספר טלפון:</label>
+                        <input type="text" class="text-mid" />
+                    </div>
+                    <div class="form-group">
+                        <label class="column">
+                            מספר פקס:</label>
+                        <input type="text" class="text-mid" />
+                    </div>
+                    <div class="form-group">
+                        <label class="column">
+                            אינטרנט:</label>
+                        <input type="text" class="text-mid" />
+                    </div>
+                    <div class="form-group">
+                        <label class="column">
+                            הערות:</label>
+                        <input type="text" class="text-mid" />
+                    </div>
+                    <div class="form-group">
+                        <label class="column">
+                            פעיל:</label>
+                        <input type="checkbox" value="כן" />
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" class="text-mid" />
+                    </div>
+                    <div style="height: 5px"></div>
+                    <div>
+                        <input class="btn-default btn2" type="button" value="עדכון" />
+                        <input class="btn-default btn2" type="button" value="הוספת אנשי קשר" />
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

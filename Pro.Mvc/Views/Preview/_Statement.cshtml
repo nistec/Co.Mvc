@@ -1,0 +1,45 @@
+﻿@model Pro.Data.Registry.RegistryPage
+@{
+    ViewBag.Title = "Registry";
+    Layout = null;// "~/Views/Shared/_ViewRegistry.cshtml";
+}
+
+@section head {
+    
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+
+    </script>
+}
+<!--begin of content-wrapper-->
+
+@section cmsHeader {
+    <div id="cmsHeader">
+        @Html.Raw(Model.Header)
+    </div>
+}
+
+<div id="cmsBody">
+    @Html.Raw(Model.Body)
+</div>
+@*
+    <div style="height: 5px"></div>
+    <div>
+        <input id="btnConfirm" class="btn-default btn7" type="button" value="אישור" />
+        <input id="btnCancel" class="btn-default btn7" type="button" value="ביטול" />
+    </div>
+
+    <!--end of content-wrapper-->
+    @section cmsFooter {
+        @Html.Raw(Model.Footer)
+    }
+    <script type="text/javascript">
+            @Html.Raw(Model.AnalyticsGoogleScript);
+            @Html.Raw(Model.AnalyticsFacebookScript);
+    </script>
+*@

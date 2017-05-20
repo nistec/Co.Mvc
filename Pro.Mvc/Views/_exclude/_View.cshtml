@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="building">
+    <meta name="keywords" content="building">
+    <meta name="author" content="myt">
+    <meta name="format-detection" content="telephone=no" />
+    <title>@ViewBag.Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <!--CSS-->
+    <link rel="stylesheet" href="~/Content/css/style.css">
+    <link rel="stylesheet" href="~/Content/css/stuck.css">
+    <link rel="stylesheet" href="~/Content/css/cssmenu-rtl.css">
+    <link rel="stylesheet" href="~/Content/fonts/font-awesome.css">
+    <link rel="stylesheet" href="~/Content/css/view-form.css" type="text/css" />
+
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.base.css" type="text/css" />
+@*    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.apireference.css" type="text/css"/>*@
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.arctic.css" type="text/css" />
+
+    <script type="text/javascript" src="~/Scripts/globalization/globalize.js"></script>
+    <script type="text/javascript" src="~/Scripts/globalization/Localization.js"></script>
+    <script type="text/javascript" src="~/Scripts/JsonDateExtensions.js"></script>
+
+
+    <!--JS-->
+    <script src="~/Scripts/jq/jquery.min.js"></script>
+     @*<script src="~/Scripts/jq/ui/1.9.2/jquery-ui.min.js"></script>
+     <link rel="stylesheet" href="~/Scripts/jq/ui/1.9.2/css/jquery-ui.css" type="text/css" />*@
+
+     <script src="~/Scripts/jq/plagins/popbox/bpopup.js"></script>
+     <link rel="stylesheet" href="~/Scripts/jq/plagins/popbox/bpopup.css" type="text/css" />
+
+    <!--<script src="~/Scripts/jq/jquery.easing.1.3.js"></script>-->
+    <!--<script src="~/Scripts/jq/jquery.mobilemenu.js"></script>-->
+    <!--<script src="~/Scripts/jquery.mobile.customized.min.js"></script>-->
+
+    <script src="~/Scripts/bootstrap/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">
+
+    <!--<script src="~/Scripts/tmstickup.js"></script>-->
+    <!--<script src="~/Scripts/tm-scripts.js"></script>-->
+    <script src="~/Scripts/plagins/cssmenu.js"></script>
+    <script src="~/Scripts/plagins/modal.js"></script>
+
+    <script src="~/Scripts/mc/mc-all.js"></script>
+
+
+    @RenderSection("head", required: false)
+
+</head>
+<body>
+
+    <!--header-->
+    <header>
+        <div id="stuck_container">
+            <div class="menuBox">
+                <div id="cssmenu_wrapper" class="container">
+                    <h1 class="navbar-brand navbar-brand_"><a href="~/Home/index">
+                        <img src="~/images/logo-small.png" alt=""></a></h1>
+                    <div id="cssmenu">
+                        <ul>
+                            <li class="active"><a href="~/Home/index" title="ראשי">ראשי</a></li>
+                            <li class="has-sub"><a href="#" title="נכסים">
+                                <span>נכסים</span></a>
+                                <ul>
+                                    <li><a href="~/Building/UnitQuery" title="איתור נכסים">
+                                        <img src="~/Images/icons/item.png" alt="" />איתור נכסים</a></li>
+                                    <!--<li><a href="~/Building/BuildingQuery" title="איתור בניין">
+                                        <img src="~/Images/icons/item.png" alt="" />איתור בניין</a></li>
+                                    -->
+                                    <li><a href="~/Building/BuildingDef?id=0" title="רישום בניין חדש">
+                                        <img src="~/Images/icons/item.png" alt="" />רישום בניין חדש</a></li>
+                                    <li><a href="~/Building/Investment" title="השקעות">
+                                        <img src="~/Images/icons/item.png" alt="" />השקעות-רישום ואיתור</a></li>
+                                     <li><a href="~/Reports/ReportDlg" title="דוח נכסים">
+                                        <img src="~/Images/icons/item.png" alt="" />דוחות נכסים</a></li>
+                                    <!--
+                                    <li><a href="~/Crm/Advertise?adsid=0" title="פרסום חדש">
+                                        <img src="~/Images/icons/item.png" alt="" />פרסום חדש</a></li>
+                                     -->
+                                    <li><a href="~/Crm/AdsGrid?id=0&op=all" title="פרסום פעיל">
+                                        <img src="~/Images/icons/item.png" alt="" />פרסום פעיל</a></li>
+                                    <!--
+                                    <li><a href="~/Building/BuildingFloor" title="הגדרת קומה">
+                                        <img src="~/Images/icons/item.png" alt="" />הגדרת קומה</a></li>
+                                    <li><a href="~/Building/BuildingWizard" title="אשף בניית בניין">
+                                        <img src="~/Images/icons/item.png" alt="" />אשף בניית בניין</a></li>
+                                    <li><a href="~/Properties/ProprtyTypes" title="סוגי נכסים"><span>
+                                        <img src="~/Images/icons/item.png" alt="" />סוגי נכסים</span></a>
+                                    </li>
+                                    <li><a href="~/Properties/RegionTypes" title="אזורים">
+                                        <img src="~/Images/icons/item.png" alt="" />אזורים</a></li>
+                                    <li><a href="~/Properties/DealTypes" title="סוגי עסקאות">
+                                        <img src="~/Images/icons/item.png" alt="" />סוגי עסקאות</a></li>
+                                     -->
+                                </ul>
+                            </li>
+                            <li class="has-sub"><a href="#" title="הלקוחות שלי">
+                                <span>הלקוחות שלי</span></a>
+                                <ul>
+                                    <li><a href="~/Crm/Customers" title="לקוחות">
+                                        <img src="~/Images/icons/item.png" alt="" />לקוחות</a></li>
+                                   @*<li><a href="~/Crm/CustomerQuery" title="איתור לקוחות">
+                                        <img src="~/Images/icons/item.png" alt="" />איתור לקוחות</a></li>
+                                    <li><a href="~/Crm/LeadDef" title="הוספת לקוח">
+                                        <img src="~/Images/icons/item.png" alt="" />הוספת לקוח</a></li>*@
+                                    <li><a href="~/Crm/Leads" title="רשימת משימות"><span>
+                                        <img src="~/Images/icons/item.png" alt="" />רשימת משימות</span></a>
+                                    </li>
+                                    @*<li><a href="~/Crm/LeadsFollow" title="מעקב"><span>
+                                        <img src="~/Images/icons/item.png" alt="" />מעקב</span></a>
+                                    </li>*@
+                                    <li><a href="#" title="טופס תיווך"><span>
+                                        <img src="~/Images/icons/item.png" alt="" />טופס תיווך</span></a></li>
+                                    <li><a href="#" title="חיוב לקוח"><span>
+                                        <img src="~/Images/icons/item.png" alt="" />חיוב לקוח</span></a></li>
+
+                                    <!--
+                                    <li><a href="~/Reports/BuildingDlg" title="דוח לבניין">
+                                        <img src="~/Images/icons/item.png" alt="" />דוח לבניין</a></li>
+                                    <li><a href="#" title="דוח פעילות">
+                                        <img src="~/Images/icons/item.png" alt="" />דוח פעילויות</a></li>
+                                    <li><a href="~/Reports/StatisticDlg" title="סטטיסטיקה"><span>
+                                        <img src="~/Images/icons/item.png" alt="" />דוחות סטטיסטיים</span></a>
+                                    </li>
+                                    -->
+                                </ul>
+                            </li>
+                            <li class="has-sub"><a href="#" title="לקוחות נת"ם"><span>לקוחות נת"ם</span></a>
+                                <ul>
+                                    <li><a href="~/Crm/Customers" title="לקוחות">
+                                        <img src="~/Images/icons/item.png" alt="" />לקוחות</a></li>
+                                    <li><a href="~/Crm/CustomerDef?id=0" title="הוספת לקוח">
+                                        <img src="~/Images/icons/item.png" alt="" />הוספת לקוח</a></li>
+                                    <!--
+                                    <li><a href="~/Ads/Advertise" title="פרסום חדש">
+                                        <img src="~/Images/icons/item.png" alt="" />פרסום חדש</a></li>
+                                    <li><a href="~/Ads/AdsList" title="פרסום פעיל">
+                                        <img src="~/Images/icons/item.png" alt="" />פרסום פעיל</a></li>
+                                    <li><a href="~/Ads/AdsConfirmList" title="ממתינים לאישור">
+                                        <img src="~/Images/icons/item.png" alt="" />ממתינים לאישור</a></li>
+                                    <li><a href="~/Ads/AdsGrid" title="דוח פרסום">
+                                        <img src="~/Images/icons/item.png" alt="" />דוח פרסום</a></li>
+                                    <li><a href="~/Grid" title="מדדים"><span>
+                                        <img src="~/Images/icons/item.png" alt="" />מדדים</span></a>
+                                    </li>
+                                        -->
+                                </ul>
+                            </li>
+                            <!--
+                           <li class="has-sub"><a href="#" title="קשרי לקוחות">
+                                <span>קשרי לקוחות</span></a>
+                                <ul>
+                                    <li><a href="~/Crm/Customers" title="לקוחות">
+                                        <img src="~/Images/icons/item.png" alt="" />לקוחות</a></li>
+                                    <li><a href="~/Crm/CustomersGrid" title="איתור לקוח">
+                                        <img src="~/Images/icons/item.png" alt="" />איתור לקוח</a></li>
+                                    <li><a href="~/Crm/ContactsGrid" title="אנשי קשר">
+                                        <img src="~/Images/icons/item.png" alt="" />אנשי קשר</a></li>
+                                    <li><a href="~/Crm/Contacts" title="הוספת אנשי קשר"><span>
+                                        <img src="~/Images/icons/item.png" alt="" />הוספת אנשי קשר</span></a>
+                                    </li>
+                                    <li><a href="~/Crm/Leads" title="קשרי לקוחות"><span>
+                                        <img src="~/Images/icons/item.png" alt="" />קשרי לקוחות</span></a>
+                                    </li>
+                                    <li><a href="~/Crm/LeadsFollow" title="מעקב"><span>
+                                        <img src="~/Images/icons/item.png" alt="" />מעקב</span></a>
+                                    </li>
+                                </ul>
+                            </li>
+                                -->
+                            <!--<li class="has-sub"><a href="#" title="מנהל מערכת">
+                                <span>מנהל מערכת</span></a>
+                                <ul>
+                                    <li><a href="~/Admin/UserInfo?userId=0" title="משתמש חדש">
+                                        <img src="~/Images/icons/item.png" alt="" />משתמש חדש</a></li>
+                                    <li><a href="~/Admin/UsersList" title="איתור משתמש">
+                                        <img src="~/Images/icons/item.png" alt="" />איתור משתמש</a></li>
+                                    <li><a href="~/Admin/UserPerms" title="הרשאות">
+                                        <img src="~/Images/icons/item.png" alt="" />הרשאות</a></li>
+                                    <li><a href="~/Admin/LogonGrid" title="דוח כניסות">
+                                        <img src="~/Images/icons/item.png" alt="" />דוח כניסות</a></li>
+                                    <li><a href="~/Admin/SysProperties" title="הגדרות כלליות"><span>
+                                        <img src="~/Images/icons/item.png" alt="" />הגדרות כלליות</span></a>
+                                    </li>
+                                </ul>
+                            </li>-->
+                            <li class="last"><a href="#" title="ראשי">יציאה</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="body">
+        @RenderSection("featured", required: false)
+        <section class="content-wrapper main-content clear-fix">
+            @RenderBody()
+        </section>
+    </div>
+
+    <!--footer-->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="follow_icon">
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon1.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon2.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon3.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon4.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon5.png" alt=""></a></li>
+                    </ul>
+                    <p>&copy; <em id="copyright-year"></em><a href="index-5.html">Privacy policy</a></p>
+                </div>
+            </div>
+            <div class="top-box"></div>
+        </div>
+        <!-- {%FOOTER_LINK} -->
+    </footer>
+    @*@Scripts.Render("~/bundles/jqwidgets")*@
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,245 @@
+﻿@{
+
+    ViewBag.Title = "Crm";
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    int rcdid = Nistec.Types.ToInt(Request["id"]);
+
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var id = '@rcdid';
+
+            var me = this;
+
+           
+            var branchAdapter = createComboAdapter("PropId", "PropName", "Branch", '@Url.Action("GetBranchView", "Common")', 0, 120, false);
+
+            var statusAdapter = createComboAdapter("PropId", "PropName", "Role", '@Url.Action("GetRoleView", "Common")', 0, 0, false);
+
+            var cityAdapter = createComboAdapter("PropId", "PropName", "City", '@Url.Action("GetCityView", "Common")', 0, 120, false);
+
+            $('#reset').on('click', function () {
+                location.reload();
+            });
+
+            //===========================================================================
+
+            var view_source =
+           {
+               datatype: "json",
+               async: false,
+               id: 'RecordId',
+               data: { 'id': '@rcdid' },
+               type: 'POST',
+               url: '@Url.Action("GetManagementEdit", "Common")'
+           };
+
+            var viewAdapter = new $.jqx.dataAdapter(view_source, {
+                loadComplete: function (record) {
+                    if (record) {
+                        app_jqxform.loadDataForm("accForm", record);
+                    }
+                },
+                loadError: function (jqXHR, status, error) {
+                },
+                beforeLoadComplete: function (records) {
+                }
+            });
+            viewAdapter.dataBind();
+
+
+            //account dialog
+            $('#accForm').jqxValidator({
+                rtl: true,
+                //hintType: 'label',
+                animationDuration: 0,
+                rules: [
+                      { input: '#FirstName', message: 'חובה לציין שם פרטי!', action: 'keyup, blur', rule: 'required' },
+                      { input: '#LastName', message: 'חובה לציין שם משפחה!', action: 'keyup, blur', rule: 'required' },
+                      { input: '#Address', message: 'חובה לציין כתובת!', action: 'keyup, blur', rule: 'required' },
+                      {
+                          input: "#City", message: 'חובה לציין עיר!', action: 'keyup, select', rule: function (input, commit) {
+                              var index = $("#City").jqxComboBox('getSelectedIndex');
+                              return index != -1;
+                          }
+                      },
+                      //{
+                      //    input: '#City', message: 'חובה לציין עיר!', action: 'select, change', rule: function (input) {
+                      //        var val = $("#City").jqxComboBox('val');
+                      //        alert(val);
+                      //        if (val == "") {
+                      //            return false;
+                      //        }
+                      //        return true;
+                      //        //var index = $("#City").jqxComboBox('getSelectedIndex');
+                      //        //alert(index);
+                      //        //return (index >= 0);// { return true; } return false;
+                      //    }
+                      //},
+                      //{ input: '#City', message: 'חובה לציין עיר!', action: 'keyup, blur', rule: 'required' },
+                      //{ input: '#Email', message: 'אימייל לא תקין!', action: 'keyup', rule: 'email' },
+                      {
+                          input: '#CellPhone', message: 'טלפון נייד אינו תקין!', action: 'valuechanged, blur', rule:
+                                    function (input, commit) {
+                                        var val = input.val();
+                                        var re = /^(|\()(0|972)(\d{1}|\d{2})(|[\)\/\.-])([0-9]{7})$/
+                                        return val ? re.test(val) : true;
+                                    }
+                      },
+                      {
+                          input: '#Phone', message: 'טלפון אינו תקין!', action: 'valuechanged, blur', rule:
+                                    function (input, commit) {
+                                        var val = input.val();
+                                        var re = /^(|\()(0|972)(\d{1}|\d{2})(|[\)\/\.-])([0-9]{7})$/
+                                        return val ? re.test(val) : true;
+                                    }
+                      }
+                ]
+            });
+
+
+            $('#accSubmit').on('click', function (e) {
+
+                e.preventDefault();
+                var actionurl = '@Url.Action("UpdateMember", "Common")';// $('#accForm').attr('action');
+
+                var validationResult = function (isValid) {
+                    if (isValid) {
+                        $.ajax({
+                            url: actionurl,
+                            type: 'post',
+                            dataType: 'json',
+                            data: $('#accForm').serialize(),
+                            success: function (data) {
+                                alert(data.Message);
+                                if (data.Status >= 0) {
+                                    window.parent.triggerMemberComplete(data.OutputId);
+                                    $('#accForm')[0].reset();
+                                    //$('#RecordId').val(data.OutputId);
+                                }
+                            },
+                            error: function (jqXHR, status, error) {
+                                alert(error);
+                            }
+                        });
+                    }
+                }
+                $('#accForm').jqxValidator('validate', validationResult);
+
+            });
+
+            $('#accCancel').on('click', function (e) {
+                $('#accForm')[0].reset();
+                $('#accForm').jqxValidator('hide');
+            });
+        });
+
+    </script>
+}
+
+<div style="margin: 0px;">
+    <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+        <div id="accWindow">
+            <div id="accHeader">
+                <span id="accTitle" style="font-weight: bold;">הגדרת מנוי</span>
+            </div>
+            <div id="accBody">
+                <form class="accForm" id="accForm" method="post" action="~/Common/UpdateMember">
+                    <div style="direction: rtl; text-align: right">
+
+                        <input type="hidden" id="RecordId" name="RecordId" value="0" />
+                        <input type="hidden" id="AccountId" name="AccountId" value="" />
+                        <div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        תעודת זהות :
+                                    </label>
+                                    <input id="MemberId" name="MemberId" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        שם פרטי :
+                                    </label>
+                                    <input id="FirstName" name="FirstName" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        שם משפחה :
+                                    </label>
+                                    <input id="LastName" name="LastName" type="text" class="text-mid" />
+                                </div>
+                                 <div class="form-group">
+                                    <label class="column">
+                                        כתובת :
+                                    </label>
+                                    <input id="Address" name="Address" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        עיר :
+                                    </label>
+                                    <div id="City" name="City"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        טלפון נייד:
+                                    </label>
+                                    <input id="CellPhone" name="CellPhone" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        טלפון:
+                                    </label>
+                                    <input id="Phone" name="Phone" type="text" class="text-mid" />
+                                </div>
+                                <!--
+                                <div class="form-group">
+                                    <label class="column">
+                                        דאר אלקטרוני:
+                                    </label>
+                                    <input id="Email" name="Email" type="text" class="text-mid" />
+                                </div>
+                            </div>-->
+                                <div class="form-group">
+                                    <label class="column">
+                                        סניף :
+                                    </label>
+                                    <div id="Branch" name="Branch"></div>
+                                </div>
+                                 <div class="form-group">
+                                    <label class="column">
+                                        תפקיד :
+                                    </label>
+                                    <div id="Role" name="Role"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        מועד עדכון:
+                                    </label>
+                                    <input id="LastUpdate" name="LastUpdate" type="text" readonly="readonly" class="text-mid" />
+                                </div>
+
+                        </div>
+                        <div style="height: 5px"></div>
+                        <div>
+                            <input id="accSubmit" class="btn-default btn7" type="button" value="עדכון" />
+                            <input id="accCancel" class="btn-default btn7" type="button" value="ניקוי" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--end of content-wrapper-->

@@ -1,0 +1,30 @@
+﻿body {
+    font-family: Arial;
+}
+
+.rtl {
+direction:rtl;
+}
+.center {
+text-align:center;
+}
+.spacer-10 {
+height:10px;
+}
+.thumb-pad4 .thumbnail .badge-rtl {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    box-shadow: none;
+    border: none;
+    color: #ffffff;
+    font-size: 36px;
+    border-radius: 100%;
+    background: #4cddf3;
+    width: 79px;
+    height: 79px;
+    line-height: 79px;
+    float: right;
+    margin-left: 26px;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+}

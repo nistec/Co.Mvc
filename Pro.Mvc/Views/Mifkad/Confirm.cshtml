@@ -1,0 +1,148 @@
+﻿@model Pro.Data.Registry.RegistryPage
+@{
+    ViewBag.Title = "Mifkad";
+    Layout = "_ViewRegistry.cshtml";
+
+
+    //string receipt = "#";
+
+
+    //string headers = String.Empty;
+
+    //string ID = "9999";
+    //decimal Payed = 0;
+    ////string contact = null;
+    //string Contact = null;
+    //string Email = null;
+    //string Phone = null;
+    //string TransIndex = null;
+    //string ConfirmationCode = null;
+    //string response = null;
+    //string Ccno = null;
+    //string UID = "";
+    //int SignupId = 0;
+        
+    
+    //using (StreamReader reader = new StreamReader(Request.InputStream))
+    //{
+    //    headers = reader.ReadToEnd();
+    //}
+
+ 
+    
+    //if (string.IsNullOrEmpty(headers))
+    //{
+    //    return;
+    //    //var args = Nistec.Generic.GenericArgs.ParseQueryString(headers);
+    //    //ID = Nistec.Types.NZ(args["myid"], "");
+    //    //SignupId = Nistec.Types.ToInt(args["uid"], 0);
+    //    //Payed = Nistec.Types.ToDecimal(args["sum"], 0);
+    //    //string contact = args["contact"];
+    //    //Contact = contact != null ? HttpUtility.UrlDecode(contact) : "";
+    //    //Email = args["email"];
+    //    //Phone = args["phone"];
+    //    //TransIndex = args["index"];
+    //    //ConfirmationCode = args["ConfirmationCode"];
+    //    //response = args["Response"];
+    //    //Ccno = args["ccno"];
+    //}
+   
+    //var args = Nistec.Generic.GenericArgs.ParseQueryString(headers);
+    //string ID = Nistec.Types.NZ(args["myid"], "");
+    //string contact = args["contact"];
+    //if (string.IsNullOrEmpty(ID))
+    //{
+    //    return;
+    //}
+        
+    //var pi = new Pro.Data.Entities.PaymentItem()
+    //{
+
+    //    ID = Nistec.Types.NZ(args["myid"], ""),
+    //    SignupId = Nistec.Types.ToInt(args["uid"], 0),
+    //    Payed = Nistec.Types.ToDecimal(args["sum"], 0),
+    //    Contact = contact != null ? HttpUtility.UrlDecode(contact) : "",
+    //    Email = args["email"],
+    //    Phone = args["phone"],
+    //    TransIndex = args["index"],
+    //    ConfirmationCode = args["ConfirmationCode"],
+    //    Response = args["Response"],
+    //    Ccno = args["ccno"]
+    //};
+    
+    //response = headers;
+    //int PayId = 0;
+    //Pro.Data.Entities.PaymentContext.PaymentConfirm(pi);
+    
+    //using (Netcell.Data.DalApi dal = new Netcell.Data.DalApi())
+    //{
+    //    dal.Bait_Payment(ref PayId, ID, Payed, TransIndex, ConfirmationCode, Contact, Ccno, response, UID, Email, Phone);
+    //}
+
+    //receipt = string.Format("Receipt?i={0}&pd={1}&c={2}&t={3}", ID, Payed, Contact, TransIndex);
+    //}
+    //receipt = string.Format("Receipt?i={0}&pd={1}&c={2}&t={3}", "1234", "23", "ניסים טרוגמן", "1234");
+    
+}
+
+@section cmsHeader {
+
+<div id="cmsHeader">
+    @Html.Raw(Model.Header)
+</div>
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/model/signup-def.js"></script>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            //var def = new app_signup_def(JSON.parse('@Model.AccountId'));
+ 
+        });
+
+    </script>
+}
+<!--begin of content-wrapper-->
+<div class="basad">בס"ד</div>
+<div class="logo">
+    <p><a href="pg0.html" class="footer-btn">חזרה לעמוד הראשי</a></p>
+    <img src="images/logo.gif" alt="logo" />
+</div>
+<div class="share">
+    <br>
+    <br>
+    <br>
+    <h1>
+        תודה רבה על התפקדותך
+        לתנועת הבית היהודי
+    </h1>
+    <p>
+        קבלה על התפקדותך תשלח
+        לכתובת הדואר האלקטרוני שהזנת
+    </p><br>
+    <br>
+    <br>
+    @Html.Raw(Model.Args)
+</div>
+<div class="footer">
+    <p>
+        נתקלת בבעיה? שלח לנו מייל לכתובת <a href="mailto:vaadatbchirotby@gmail.com">vaadatbchirotby@gmail.com</a>
+        <br>
+        עם שם ומספר נייד ונחזור אליך
+    </p>
+    <p class="powered">powered by My T Interactive Ltd</p>
+</div>
+<!--end of content-wrapper-->
+@section cmsFooter {
+    @Html.Raw(Model.Footer)
+}
+<script type="text/javascript">
+    @Html.Raw(Model.AnalyticsGoogleScript);
+    @Html.Raw(Model.AnalyticsFacebookScript);
+</script>

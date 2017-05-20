@@ -1,0 +1,238 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="building">
+    <meta name="keywords" content="building">
+    <meta name="author" content="myt">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="cms" content="Nistec v-4.0.2" data-virtual="" data-site="0">
+    <!--<base href="www.my-t.co.il/pro" data-virtual="/pro"/>-->  
+    <title>@ViewBag.Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <!--CSS-->
+    <link rel="stylesheet" href="~/Content/css/style.css">
+@*    <link rel="stylesheet" href="~/Content/css/stuck.css">*@
+@*    <link rel="stylesheet" href="~/Content/fonts/font-awesome.css">*@
+    <link rel="stylesheet" href="~/Content/css/view-form.css" type="text/css" />
+    <link rel="stylesheet" href="~/Content/css/style-rtl.css">
+
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.base.css" type="text/css" />
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.arctic.css" type="text/css" />
+
+    <script type="text/javascript" src="~/Scripts/globalization/globalize.js"></script>
+    <script type="text/javascript" src="~/Scripts/globalization/Localization.js"></script>
+    <script type="text/javascript" src="~/Scripts/JsonDateExtensions.js"></script>
+
+
+    <!--JS-->
+    <script src="~/Scripts/jq/jquery.min.js"></script>
+     <script src="~/Scripts/jq/ui/1.9.2/jquery-ui.min.js"></script>
+     <link rel="stylesheet" href="~/Scripts/jq/ui/1.9.2/css/jquery-ui.css" type="text/css" />
+
+     <script src="~/Scripts/plagins/popbox/bpopup.js"></script>
+     <link rel="stylesheet" href="~/Scripts/plagins/popbox/bpopup.css" type="text/css" />
+
+    <script src="~/Scripts/bootstrap/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">
+
+    <script src="~/Scripts/plagins/cssmenu/cssmenu.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/cssmenu/cssmenu-rtl.css">
+
+@*    <script src="~/Scripts/plagins/modal.js"></script>*@
+
+    <script src="~/Scripts/app/app-model-1.0.js"></script>
+    <script src="~/Scripts/app/app-jqx-1.0.js"></script>
+    <script src="~/Scripts/app/app-global.js"></script>
+    <script src="~/Scripts/app/dateFormat.js"></script>
+   
+    <script src="~/Scripts/plagins/vex/vex.combined.min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/vex/css/vex.css" />
+    <link rel="stylesheet" href="~/Scripts/plagins/vex/css/vex-theme-os.css" />
+        <script>
+            vex.defaultOptions.className = 'vex-theme-os';
+        </script>
+
+        @RenderSection("head", required: false)
+
+</head>
+<body>
+
+    <!--header-->
+    <header>
+        <div id="stuck_container">
+            <div class="menuBox">
+                <div id="cssmenu_wrapper" class="container">
+                    <h1 class="navbar-brand navbar-brand_"><a href="~/Home/index">
+                        <img src="~/images/logo.png" alt=""></a>
+                    </h1>
+                    <div id="cssmenu">
+                        <ul>
+                            <li id="liHome" class="active"><a href="~/Home/Main" title="ראשי">ראשי</a></li>
+                            <li id="liCrm" class="has-sub">
+                                <a href="#" title="מנויים">
+                                    <span>מערכת</span>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a href="~/Crm/MembersQuery" title="מנויים">
+                                            <img src="~/Images/icons/item.png" alt="" />איתור מנויים
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Crm/Members" title="מנויים">
+                                            <img src="~/Images/icons/item.png" alt="" />מנויים
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Crm/MemberEdit" title="הוספת מנוי">
+                                            <img src="~/Images/icons/item.png" alt="" />הוספת מנוי
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Crm/MembersUpload" title="קליטה מקובץ">
+                                            <img src="~/Images/icons/item.png" alt="" />קליטה מקובץ
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Crm/MembersRemove" title="הסרת מנויים">
+                                            <img src="~/Images/icons/item.png" alt="" />הסרת מנויים
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Crm/Payments" title="תשלומים">
+                                            <img src="~/Images/icons/item.png" alt="" />תשלומים
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Crm/SignupQuery" title="איתור נרשמים">
+                                            <img src="~/Images/icons/item.png" alt="" />איתור נרשמים
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li id="liCom" class="has-sub">
+                                <a href="#" title="הגדרות">
+                                    <span>תקשורת</span>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a href="~/Crm/SmsBroadcast">
+                                            <img src="~/Images/icons/item.png" alt="" />שליחת מסרון
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Crm/EmailBroadcast">
+                                            <img src="~/Images/icons/item.png" alt="" />שליחת אימייל
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li id="liEntity" class="has-sub">
+                                <a href="#" title="הגדרות">
+                                    <span>הגדרות</span>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a href="~/Common/DefPrice">
+                                            <img src="~/Images/icons/item.png" alt="" />מחירון
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Common/DefCampaign">
+                                            <img src="~/Images/icons/item.png" alt="" />קמפיין
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Common/DefEntity?entity=branch">
+                                            <img src="~/Images/icons/item.png" alt="" />הגדרות כלליות
+                                        </a>
+                                    </li>
+                                    @*<li>
+                                        <a href="~/Common/DefEntity?entity=category">
+                                            <img src="~/Images/icons/item.png" alt="" />סיווגים
+                                        </a>
+                                    </li>*@
+                                    <li>
+                                        <a href="~/Common/DefCity">
+                                            <img src="~/Images/icons/item.png" alt="" />יישובים
+                                        </a>
+                                    </li>
+                                    </ul>
+                                </li>
+                            @*<li id="liProperty" class="has-sub">
+                                        <a href="#" title="דמוגרפיה">
+                                            <span>דמוגרפיה</span>
+                                        </a>
+                                        <ul>
+ 
+                                            <li>
+                                                <a href="~/Common/DefEntity?entity=region">
+                                                    <img src="~/Images/icons/item.png" alt="" />אזורים
+                                                </a>
+                                            </li>
+                                           <li>
+                                                <a href="~/Common/DefEntity?entity=place">
+                                                    <img src="~/Images/icons/item.png" alt="" />ארצות מוצא
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="~/Common/DefEntity?entity=charge">
+                                                    <img src="~/Images/icons/item.png" alt="" />סוגי חיוב
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="~/Common/DefEntity?entity=status">
+                                                    <img src="~/Images/icons/item.png" alt="" />סטאטוסים
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>*@
+                            <li class="last"><a href="~/Home/Logoff" title="ראשי">יציאה</a></li>
+                            <li><a href="#" title="שם משתמש"><span>@ViewBag.UserName</span></a></li>
+                       </ul>
+</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div id="body">
+        @*<div class="title">
+             <div style="text-align:right; font-size:130%; font-weight:bold;direction:rtl"><span>שם משתמש : </span><span>@ViewBag.UserName</span></div>
+        </div>*@
+        @RenderSection("featured", required: false)
+        <section class="content-wrapper main-content clear-fix">
+            @RenderBody()
+        </section>
+    </div>
+
+    <!--footer-->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="follow_icon">
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon1.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon2.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon3.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon4.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon5.png" alt=""></a></li>
+                    </ul>
+                    <p>&copy; <em id="copyright-year"></em><a href="index-5.html">Privacy policy</a></p>
+                </div>
+            </div>
+            <div class="top-box"></div>
+        </div>
+        <!-- {%FOOTER_LINK} -->
+    </footer>
+    @*@Scripts.Render("~/bundles/jqwidgets")*@
+    @RenderSection("scripts", required: false)
+</body>
+</html>

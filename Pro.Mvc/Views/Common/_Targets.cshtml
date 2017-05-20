@@ -1,0 +1,139 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    ViewBag.Title = "Members";
+    var mode=Request["mode"];
+    var cat = Request["cat"];
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxgrid.export.js"></script> 
+
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+    </style>
+
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            JSON.useDateParser();
+            var theme = 'Arctic';
+            // prepare the data
+
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'Id', type: 'number' },
+                    { name: 'Target', type: 'string' },
+                    { name: 'Personal', type: 'string' },
+                    //{ name: 'Creation', type: 'date' },
+                    { name: 'AccountId', type: 'number' }
+                   // { name: 'UserId', type: 'number' }
+                    
+                ],
+                id: 'Id',
+                type:'POST',
+                url: '@Url.Action("GetTargets", "Common")',
+                data:{'mode':'@mode','cat':'@cat'},
+                //pagenum: 3,
+                pagesize: 12,
+                root: 'Rows',
+                beforeprocessing: function (data) {
+                    source.totalrecords = data.TotalRows;
+                },
+                pager: function (pagenum, pagesize, oldpagenum) {
+                    // callback called when a page or page size is changed.
+                },
+                sort: function () {
+                    // update the grid and send a request to the server.
+                    $("#jqxgrid").jqxGrid('updatebounddata', 'sort');
+                },
+                filter: function () {
+                    $("#jqxgrid").jqxGrid('updatebounddata', 'filter');
+                }
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                async:false,
+                loadComplete: function (data) { },
+                loadError: function (xhr, status, error) { alert(' status: ' + status + '\n error ' + error) }
+            });
+        
+            // create Tree Grid
+            $("#jqxgrid").jqxGrid(
+            {
+                width: '100%',
+                //height:'500',
+                autoheight: true,
+                rtl: true,
+                source: dataAdapter,
+                localization: getLocalization('he'),
+                virtualmode: true,
+                rendergridrows: function (obj) {
+                    return obj.data;
+                },
+                pageable: true,
+                pagermode: 'simple',
+                sortable: true,
+                showfilterrow: true,
+                filterable: true,
+                columns: [
+                  { text: 'מזהה', dataField: 'Id', filterable: false, width: 100, cellsalign: 'right', align: 'center' },
+                  { text: 'נמען', dataField: 'Target', filtercondition: 'CONTAINS',  cellsalign: 'right', align: 'center' },
+                  { text: 'פרטים', dataField: 'Personal', filtercondition: 'CONTAINS', cellsalign: 'right', align: 'center' }
+                  //{ text: 'משתמש', dataField: 'UserId', filterable: false, width: 80, cellsalign: 'right', align: 'center' },
+                  //{ text: 'נוצר', type: 'date', dataField: 'Creation', filterable: false, width: 120, cellsformat: 'd', cellsalign: 'right', align: 'center' }
+                ]
+            });
+            //$('#btnclearfilter').jqxButton({ width: '120', height: '30' });
+            $('#btnclearfilter').click(function () {
+                $("#jqxgrid").jqxGrid('clearfilters');
+            });
+
+            //$("#excelExport").jqxButton();
+            //$("#csvExport").jqxButton();
+            //$("#excelExport").click(function () {
+            //    alert('excelExport');
+            //    exportToCsv();
+            //    //$("#jqxgrid").jqxGrid('exportdata', 'xls', 'jqxGrid');
+            //});
+            
+
+        });
+
+        
+    </script>
+}
+
+
+@section featured {
+
+
+}
+
+<div class="clear"></div>
+
+<div class="global">
+    <div class="container">
+        @*<h4 class="rightPan">רשימת נמענים לדיוור.</h4>*@
+        <div class="grid-wrap">
+            <div style="display: inline; float: right">
+              
+            </div>
+
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                <input style="margin-top: 10px;" value="הסר סינון" id="btnclearfilter" type="button" />
+            </div>
+        </div>
+    </div>
+</div>
+

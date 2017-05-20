@@ -1,0 +1,159 @@
+﻿@model Pro.Mvc.Models.MediaModel
+@{
+
+    ViewBag.Title = "Media";
+    Layout = "~/Views/Shared/_View.cshtml";
+
+}
+
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <link rel="stylesheet" href="~/Scripts/jq/css/jquery-ui.css" type="text/css" />
+    <script type="text/javascript" src="~/Scripts/jq/jquery.ui.1.11.1.js"></script>
+    
+    <script src="~/jqwidgets/jqxsplitter.js"></script>
+    <script src="~/Scripts/plagins/colorbox/jquery.colorbox-min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/colorbox/colorbox.css" />
+
+    <script src="~/Scripts/plagins/uploader/js/vendor/jquery.ui.widget.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.iframe-transport.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.fileupload.js"></script>
+
+    <link rel="stylesheet" href="~/Scripts/plagins/uploader/css/jquery.fileupload.css">
+    <script src="~/Scripts/app/app-media.js"></script>
+
+}
+
+@section scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.group1').colorbox({ rel: 'group1' });
+
+            @*$('#uploadBid').val('@buildingId');
+            $('#uploadUid').val('@propertyId');
+            $('#uploadPt').val('@propertyType');*@
+            //$("#fileremove").prop('disabled', true);
+            $("#spnRemove").hide();
+
+            $("#splitter").jqxSplitter({ width: '100%', height: 500, panels: [{ size: '40%' }] });
+
+            var mediaSource =
+            {
+                dataType: "json",
+                //dataFields: [
+                //    { name: 'MediaId', type: 'number' },
+                //    { name: 'PropertyId', type: 'number' },
+                //    { name: 'BuildingId', type: 'number' },
+                //    { name: 'MediaType', type: 'string' },
+                //    { name: 'PropertyType', type: 'string' },
+                //    { name: 'MediaPath', type: 'string' }
+                //],
+                //id: 'MediaId',
+                type: 'POST',
+                data: { 'dir': '@Model.Folder' },
+                url: '@Url.Action("GetFileList", "Media")'
+            };
+            var mediaAdapter = new $.jqx.dataAdapter(mediaSource);
+            $("#MediaList").jqxListBox(
+            {
+                rtl: true,
+                source: mediaAdapter,
+                width: '100%',
+                height: '100%',
+                checkboxes: false,
+                displayMember: 'Name',
+                valueMember: 'Path',
+                selectedIndex: 0,
+                itemHeight: 50,
+                renderer: function (index, label, value) {
+                    //var datarecord = mediaAdapter[index];
+                    var table = '<table style="min-width: 130px;"><tr><td style="width: 40px;padding:2px;" rowspan="2">' + app_media.getImgTumb('@Model.BaseUrl', '@Model.Folder', label) + '</td><td>File : ' + value + '</td></tr></table>';
+                    return table;
+                }
+            });
+
+            $('#MediaList').on('select', function (event) {
+                app_media.updatePanel('@Model.BaseUrl', '@Model.Folder', event.args.item);
+                //$("#fileremove").prop('disabled', false);
+                $("#spnRemove").show();
+            });
+
+            $("#fileremove").on('click', function (event) {
+                //e.preventDefault();
+                var mediaId = $('#uploadMid').val();
+                if (confirm("האם למחוק? קובץ " + mediaId)) {
+                    app_media.doRemove();
+                }
+            });
+
+
+
+        });
+
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+</div>
+
+<div class="global-view">
+
+    <div class="container-rtl">
+        <div style="margin:20px;">
+
+            <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+                <h3 class="rtl">מדיה</h3>
+                <div id="splitter">
+                    <div style="overflow: hidden;">
+                        <div style="border: none;" id="MediaList">
+                        </div>
+                    </div>
+                    <div style="overflow: auto;" id="ContentPanel">
+                    </div>
+                </div>
+                <div id="uploader">
+                    <div style="width: 250px">
+                        @*<span>Select files...</span>*@
+                        @*<input type="hidden" id="uploadBid" value="" />
+                            <input type="hidden" id="uploadUid" value="" />
+                            <input type="hidden" id="uploadPt" value="" />
+                            <input type="hidden" id="uploadMid" value="" />*@
+                        <input type="hidden" id="uploadMtype" value="" />
+                        <input type="hidden" id="uploadPath" value="" />
+                        @*<input type="hidden" id="uploadUuid" value="" />*@
+                        <div style="padding: 10px">
+                            @*<span class="btn btn-success fileinput-button">*@
+                            <span class="btn-default btn7 w-80 fileinput-button">
+                                <i class="glyphicon glyphicon-plus"><span>הוספת קובץ</span></i>
+                                <input id="fileupload" type="file" name="files[]" multiple>
+                            </span>
+                            @*<span id="spnRemove" class="btn btn-success fileinput-button">*@
+                            <span id="spnRemove" class="btn-default btn7 w-80 fileinput-button">
+                                <i class="glyphicon glyphicon-minus"><span>הסרת קובץ</span></i>
+                                <input id="fileremove" type="button" value="הסרת תמונה" />
+                            </span>
+
+                            <br>
+                            <div id="progress" class="progress">
+                                <div class="progress-bar progress-bar-success"></div>
+                            </div>
+                            <div id="files" class="files"></div>
+                        </div>
+                        <div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end of content-wrapper-->
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liCms");
+    app_menu.breadcrumbs("Cms", "CmsMedia", 'en');
+</script>

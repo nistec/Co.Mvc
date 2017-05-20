@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+    <title>התפקדות לבית היהודי</title>
+    <meta name="description" content="myt">
+    <meta name="keywords" content="myt">
+    <meta name="author" content="myt">
+    <meta name="cms" content="Nistec v-4.0.2" data-virtual="" data-site="0">
+    
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <!--CSS-->
+    <link rel="stylesheet" href="~/Content/Mifkad/css/html5reset-1.6.1.css" />
+    <link rel="stylesheet" href="~/Content/Mifkad/css/style.css" />
+
+    @*<link rel="stylesheet" href="~/Content/css/style.css">
+    <link rel="stylesheet" href="~/Content/css/view-form.css" type="text/css" />
+    <link rel="stylesheet" href="~/Content/css/style-rtl.css">
+*@
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.base.css" type="text/css" />
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.arctic.css" type="text/css" />
+
+    <script type="text/javascript" src="~/Scripts/globalization/globalize.js"></script>
+    <script type="text/javascript" src="~/Scripts/globalization/Localization.js"></script>
+    <script type="text/javascript" src="~/Scripts/JsonDateExtensions.js"></script>
+
+
+    <!--JS-->
+    <script src="~/Scripts/jq/jquery.min.js"></script>
+     <script src="~/Scripts/jq/ui/1.9.2/jquery-ui.min.js"></script>
+     <link rel="stylesheet" href="~/Scripts/jq/ui/1.9.2/css/jquery-ui.css" type="text/css" />
+@*
+    <script src="~/Scripts/plagins/popbox/bpopup.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/popbox/bpopup.css" type="text/css" />*@
+
+    @*<script src="~/Scripts/bootstrap/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">*@
+
+    @*<script src="~/Scripts/plagins/cssmenu/cssmenu.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/cssmenu/cssmenu-rtl.css">*@
+
+
+    <script src="~/Scripts/app/app-model-1.0.js"></script>
+    <script src="~/Scripts/app/app-jqx-1.0.js"></script>
+    <script src="~/Scripts/app/app-global.js"></script>
+    <script src="~/Scripts/app/dateFormat.js"></script>
+
+
+    @RenderSection("head", required: false)
+
+</head>
+<body>
+
+    <!--header-->
+    <header>
+        <div id="stuck_container">
+            <div class="menuBox">
+                <div id="cssmenu_wrapper" class="container">
+                    @RenderSection("cmsHeader", required: false)
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="body">
+        @RenderSection("featured", required: false)
+        <section class="content-wrapper main-content clear-fix">
+            @RenderBody()
+        </section>
+    </div>
+
+    <!--footer-->
+    <div class="footer">
+      @RenderSection("cmsFooter", required: false)
+    </div>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

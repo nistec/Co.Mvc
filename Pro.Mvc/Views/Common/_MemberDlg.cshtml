@@ -1,0 +1,96 @@
+﻿@model Pro.Mvc.Models.EntityModel
+@{
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    ViewBag.Title = "Members";
+    var dataModel = @Html.Raw(Json.Encode(Model));
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxgrid.export.js"></script> 
+
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+    </style>
+
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            JSON.useDateParser();
+            var theme = 'Arctic';
+            // prepare the data
+            var selectedItem;
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'RecordId', type: 'number' },
+                    { name: 'DisplayName', type: 'string' },
+                    { name: 'AccountId', type: 'number' }
+                ],
+                //id: 'RecordId',
+                localdata: '@Model.Content'
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                async:false,
+                loadComplete: function (data) { },
+                loadError: function (xhr, status, error) { alert(' status: ' + status + '\n error ' + error) }
+            });
+        
+            app_jqxcombos.setComboSourceAdapter ("RecordId", "DisplayName", "jqList", dataAdapter, 240);//, dropDownHeight, async) {
+
+            $('#jqList').on('select', function (event) 
+            {
+                var args = event.args;
+                if (args) {
+                    // index represents the item's index.                       
+                    var index = args.index;
+                    var item = args.item;
+                    // get item's label and value.
+                    var label = item.label;
+                    var value = item.value;
+                    var type = args.type; // keyboard, mouse or null depending on how the item was selected.
+
+                    selectedItem = item;
+                }
+            }); 
+
+            $('#btnOk').on('click', function (event) 
+            {
+                parent.triggerMemberDlgCompleted(selectedItem);
+            }); 
+        }); 
+    </script>
+}
+
+
+@section featured {
+
+
+}
+
+<div class="clear"></div>
+
+<div class="global">
+    <div class="container">
+        <div class="grid-wrap">
+            <div style="display: inline; float: right">
+              בחירת לקוח\מנוי
+            </div>
+
+            <div id="jqxWidget">
+                <div id="jqList" style="position:relative;z-index:1;"></div>
+                <input style="margin-top: 10px;" value="אישור" id="btnOk" type="button" />
+            </div>
+        </div>
+    </div>
+</div>
+

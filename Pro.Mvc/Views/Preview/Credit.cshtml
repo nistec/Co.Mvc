@@ -1,0 +1,70 @@
+﻿@model Pro.Data.Registry.CreditPage
+@{
+    Layout = "~/Views/Shared/_ViewRegistry.cshtml";
+    //var iframeSrc = HttpUtility.HtmlEncode(Model.IframeSrc);//.Replace("&amp;","&");
+    //int CanPay = Model.CanPay;
+    //<iframe src="https://direct.tranzila.com/baityehudi/iframe.php?lang=il&currency=1&nologo=1&tranmode=AK&trid=50&sum=1.00&contact=nissim&email=nissim@myt.com&phone=0527464292&trBgColor=#d4e8f1&trTextColor=#000000&trButtonColor=#0076A8" class="payment"></iframe>
+
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+   
+
+    <style type="text/css">
+        div.payment-container {border:solid 1px #b9d9e6;
+        display: block;
+        margin: 0 auto;
+        height: 480px;
+        width: 600px;
+        text-align: center;
+        overflow: hidden;
+    }
+        iframe.payment {
+            border: none;
+            height: 455px;
+            width: 370px;
+            overflow: hidden;
+        }
+    </style>
+
+<div id="cmsHScript">
+    @Html.Raw(Model.HScript)
+</div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var def = new registry_credit();
+        });
+        @Html.Raw(Model.HiddenScript)
+    </script>
+}
+
+@section cmsHeader {
+    <div id="cmsHeader">
+        @Html.Raw(Model.Header)
+    </div>
+}
+<input type="hidden" id="model-account" value="@Model.AccountId" />
+
+<!--begin of content-wrapper-->
+<div id="cmsBody">
+    @Html.Raw(Model.Body)
+</div>
+
+<div class="credit">
+    <div class="form">
+        <iframe src="@Html.Raw(Model.IframeSrc)" class="payment"></iframe>
+    </div>
+</div>
+
+<!--end of content-wrapper-->
+@section cmsFooter {
+    <div id="cmsFooter">
+        @Html.Raw(Model.Footer)
+    </div>
+}
+

@@ -1,0 +1,373 @@
+﻿@model Pro.Data.Registry.CmsRegistryItem
+@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "CmsWizardPages";
+    var accountId = Nistec.Types.ToInt(ViewBag.AccountId);
+    var userRole = Nistec.Types.ToInt( ViewBag.UserRole);
+    string exportClass = userRole < 5 ? "hide" : "show";
+}
+
+@section head {
+
+
+  @Scripts.Render("~/bundles/jqx")
+  <script type="text/javascript" src="~/jqwidgets/jqxdatatable.js"></script>
+<script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+<script type="text/javascript" src="~/jqwidgets/jqxcolorpicker.js"></script>
+<script src="~/Scripts/app/cms/cms_page-edit.js"></script>
+
+    <style type="text/css">
+        /*.ui-accordion-header-active {
+            background: #15C8D8;
+        }
+        .ui-accordion .ui-accordion-header{ height:30px; font-size:80%; }*/
+         #form-container {
+            margin-left: auto;
+            margin-right: 0;
+            max-width: 500px;
+            direction: rtl;
+        }
+        .expander-item {
+            padding: 0;
+            margin: 0;
+            /*direction: rtl;
+            max-width: 400px;*/
+        }
+        .expander-entry {
+            margin: 5px;
+            /*direction:rtl;*/
+        }
+        .headline {
+            color: #32A7C0;
+            font-weight: bold;
+        }
+        .li-item {
+            background-color: #E8E8E8;
+            width: 70%;
+            height: 25px;
+            margin-bottom: 5px;
+            border: solid 1px #C7C7C7;
+            color: #15C8D8;
+        }
+        .li-item > a {
+            color: #05a0ae;
+        }
+            .li-item > a:hover {
+                color: #ff6a00;
+            }
+    </style>
+    @*<script>
+        $(function () {
+            $('#tab-query li:eq(0) a').tab('show');
+        });
+    </script>*@
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        var me = this;
+        $("#accordion").accordion({ heightStyle: "content" });
+
+        $('#AccountId').val('@Model.AccountId');
+        var def = new app_cms_pages('@accountId');
+
+
+        $('#btnHeader').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Head', 'Header');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnFooter').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Head', 'Footer');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnIndex').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Index', 'Body');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnAbout').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'About', 'Body');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnContact').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Contact', 'Body');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnConfirm').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Confirm', 'Body');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnFailure').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Failure', 'Body');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnCredit').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Credit', 'Body');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnStatement').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Statement', 'Body');
+            app_popup.cmsHtmlEditor(exid);
+        });
+
+        //preview
+        $('#btnIndexPreview').on('click', function () {
+            app_popup.cmsPreview('@Model.Folder', "Index");
+        });
+
+        $('#btnAboutPreview').on('click', function () {
+            app_popup.cmsPreview('@Model.Folder', "About");
+        });
+
+        $('#btnContactPreview').on('click', function () {
+            app_popup.cmsPreview('@Model.Folder', "Contact");
+        });
+
+        $('#btnConfirmPreview').on('click', function () {
+            app_popup.cmsPreview('@Model.Folder', "Confirm");
+        });
+
+        $('#btnFailurePreview').on('click', function () {
+            app_popup.cmsPreview('@Model.Folder',"Failure");
+        });
+
+        $('#btnCreditPreview').on('click', function () {
+            app_popup.cmsPreview('@Model.Folder',"Credit");
+        });
+
+        $('#btnStatementPreview').on('click', function () {
+            app_popup.cmsPreview('@Model.Folder', "_Statement");
+        });
+
+
+        $('#btnConfirmSettings').on('click', function () {
+            var exid = '';
+            app_popup.cmsPageSettings("Confirm");
+        });
+        $('#btnIndexSettings').on('click', function () {
+            var exid = '';
+            app_popup.cmsPageSettings("Index");
+        });
+
+        @*$('#btnPh1').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Main', 'Ph1');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnPh2').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Main', 'Ph2');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnPh3').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Main', 'Ph3');
+            app_popup.cmsHtmlEditor(exid);
+        });
+
+        $('#btnMain').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Main', 'Body');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnMainSettings').on('click', function () {
+            var exid = '';
+            app_popup.cmsPageSettings("Main");
+        });*@
+
+        $('#btnMainPreview').on('click', function () {
+            app_popup.cmsPreview('@Model.Folder', "Subscribe");
+        });
+
+ 
+
+
+        $('#btnInfoPh1').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Info', 'Ph1');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnInfoPh2').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Info', 'Ph2');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnInfoPh3').on('click', function () {
+            var exid = def.getExtId('@Model.AccountId', 'Info', 'Ph3');
+            app_popup.cmsHtmlEditor(exid);
+        });
+        $('#btnInfoPreview').on('click', function () {
+            app_popup.cmsPreview('@Model.Folder', "Info");
+        });
+        $('#btnInfoSettings').on('click', function () {
+            var exid = '';
+            app_popup.cmsPageSettings("Info");
+        });
+
+        var designAdapter = app_jqxcombos.createListAdapter("DesignId", "DesignName", "listDesign", '@Url.Action("GetListDesign", "Common")', 240, 200, true);
+        $('#listDesign').on('change', function (event) {
+            app_jqxcombos.listBoxToInput("listDesign", "Design");
+        });
+   
+        $("input[name=op]:radio").change(function () {
+            //$("#rdDefault, #rdSms", "#rdMail").change(function () {
+            var action = $("#form").find('input[name=op]:checked').val();
+            $("#form").attr('action', app.appPath() + action);
+        });
+        $('#reset').on('click', function () {
+            location.reload();
+        });
+
+    });
+
+    function getFormWizard() {
+
+        return $("#form");
+    }
+
+
+    function triggerCmsComplete() {
+        app_dialog.dialogIframClose();
+    }
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+</div>
+<div class="top-space"></div>
+
+<div class="global-view">
+    <div class="container-box">
+        <div class="box-title">
+            <h3>עריכת תוכן כללי</h3>
+        </div>
+
+        <div id="form-container">
+            <div id="form">
+                <input type="hidden" id="Design" name="Design" />
+                <input type="hidden" id="AccountId" />
+                <div id="accordion" class="tab-content1" dir="rtl">
+                    <h3>בחירת עיצוב</h3>
+                    <div id="exp-1" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <div>
+                                <label class="headline">בחירת עיצוב</label>
+                                <div id="listDesign" name="listDesign"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3>כותרות</h3>
+                    <div id="exp-2" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <ul>
+                                <li class="li-item"><a href="#" id="btnHeader">כותרת עליונה</a></li>
+                                <li class="li-item"><a href="#" id="btnFooter">כותרת תחתונה</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <h3>עמוד ראשי</h3>
+                    <div id="exp-3" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <ul>
+                                <li class="li-item"><a href="#" id="btnIndex">עורך תוכן</a></li>
+                                <li class="li-item"><a href="#" id="btnIndexSettings">הגדרות</a></li>
+                                <li class="li-item"><a href="#" id="btnIndexPreview">תצוגה</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    @*<h3>עמוד רישום</h3>
+                    <div id="exp-3" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <ul>
+                                <li class="li-item"><a href="#" id="btnPh1">מקטע עליון</a></li>
+                                <li class="li-item"><a href="#" id="btnMain">טופס רישום</a></li>
+                                <li class="li-item"><a href="#" id="btnPh2">מקטע ביניים</a></li>
+                                <li class="li-item"><a href="#" id="btnPh3">מקטע תחתון</a></li>
+                                <li class="li-item"><a href="#" id="btnMainSettings">הגדרות</a></li>
+                                <li class="li-item"><a href="#" id="btnMainPreview">תצוגה</a></li>
+                            </ul>
+                        </div>
+                    </div>*@
+                    <h3>עמוד תשלום</h3>
+                    <div id="exp-4" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <ul>
+                                <li class="li-item"><a href="#" id="btnCredit">עורך תוכן</a></li>
+                                <li class="li-item"><a href="#" id="btnCreditSettings">הגדרות</a></li>
+                                <li class="li-item"><a href="#" id="btnCreditPreview">תצוגה</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <h3>עמוד סיום</h3>
+                    <div id="exp-5" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <ul>
+                                <li class="li-item"><a href="#" id="btnConfirm">עורך תוכן</a></li>
+                                <li class="li-item"><a href="#" id="btnConfirmSettings">הגדרות</a></li>
+                                <li class="li-item"><a href="#" id="btnConfirmPreview">תצוגה</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <h3>עמוד כשלון</h3>
+                    <div id="exp-6" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <ul>
+                                <li class="li-item"><a href="#" id="btnFailure">עורך תוכן</a></li>
+                                <li class="li-item"><a href="#" id="btnFailurePreview">תצוגה</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <h3>עמוד אודות</h3>
+                    <div id="exp-7" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <ul>
+                                <li class="li-item"><a href="#" id="btnAbout">עורך תוכן</a></li>
+                                <li class="li-item"><a href="#" id="btnAboutPreview">תצוגה</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <h3>עמוד צור קשר</h3>
+                    <div id="exp-8" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <ul>
+                                <li class="li-item"><a href="#" id="btnContact">עורך תוכן</a></li>
+                                <li class="li-item"><a href="#" id="btnContactPreview">תצוגה</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <h3>הצהרה</h3>
+                    <div id="exp-9" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <ul>
+                                <li class="li-item"><a href="#" id="btnStatement">עורך תוכן</a></li>
+                                <li class="li-item"><a href="#" id="btnStatementPreview">תצוגה</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <h3>עמוד סטאטוס מנוי</h3>
+                    <div id="exp-10" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <ul>
+                                <li class="li-item"><a href="#" id="btnInfoPh1">מקטע עליון</a></li>
+                                <li class="li-item"><a href="#" id="btnInfoPh2">מקטע עליון פרטים</a></li>
+                                <li class="li-item"><a href="#" id="btnInfoPh3">מקטע תחתון</a></li>
+                                <li class="li-item"><a href="#" id="btnInfoSettings">הגדרות</a></li>
+                                <li class="li-item"><a href="#" id="btnInfoPreview">תצוגה</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    @*<h3>סיום</h3>
+                    <div id="exp-6" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <div>
+                                <input type="button" id="submit" value="הצג" class="btn-default btn2" />
+                                <input type="reset" value="נקה" class="btn-default btn2" />
+                            </div>
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liCms");
+    app_menu.breadcrumbs("Crm", "CmsWizardPages", 'en');
+</script>
+
+
+
+

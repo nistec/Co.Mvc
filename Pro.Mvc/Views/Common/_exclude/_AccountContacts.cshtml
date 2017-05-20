@@ -1,0 +1,106 @@
+﻿@{
+
+    ViewBag.Title = "Buildings";
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    int id = Nistec.Types.ToInt(Request["id"]);
+
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+ 
+}
+
+@section scripts {
+    <script type="text/javascript">
+
+        var NSaccountcontacts = {};
+
+        $(document).ready(function () {
+
+            var id = '@id';
+
+                //contacts
+                var nastedsource = {
+                    datafields: [
+                          { name: 'ContactId', type: 'number' },
+                          { name: 'AccountId', type: 'number' },
+                          { name: 'ContactName', type: 'string' },
+                          { name: 'Title', type: 'string' },
+                          { name: 'Email', type: 'string' },
+                          { name: 'Mobile', type: 'string' }
+                    ],
+                    datatype: "json",
+                    id: 'ContactId',
+                    type: 'POST',
+                    url: '@Url.Action("GetAcoountContacts", "Crm")',
+                    data: { 'accountId': id }
+                }
+
+                var nastedAdapter = new $.jqx.dataAdapter(nastedsource);
+                $("#jqxgrid").jqxGrid({
+                    source: nastedAdapter, width: '90%', height: 130,
+                    rtl: true,
+                    columns: [
+                      {
+                          text: 'פעולות', dataField: 'ContactId', width: 60, cellsalign: 'right', align: 'center',
+                          cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                              var accid = id;// $('#jqxgrid').jqxGrid('getrowdata', row).AccountId;
+                              //return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="#" onclick="contactEdit(' + value + ',' + accid + ');" >הצג</a> | <a href="#" onclick="contactDelete(' + value + ');">הסר</a></div>'
+                              return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="#" onclick="accountContacts_contactDelete(' + value + ');">הסר</a></div>'
+                          }
+                      },
+                      { text: 'שם איש קשר', datafield: 'ContactName', cellsalign: 'right', align: 'center' },
+                      { text: 'תפקיד', datafield: 'Title', width: 150, cellsalign: 'right', align: 'center' },
+                      { text: 'דואל', datafield: 'Email', width: 150, align: 'center' },
+                      { text: 'טלפון נייד', datafield: 'Mobile', width: 100, align: 'center' }
+                    ]
+                });
+
+                $('#btnAddItem').click(function () {
+                    //contactEdit(0, id);
+                    NSaccountcontacts.contactdialog=contactEdit(0, id, "d");
+                });
+                $('#btnRefresh').click(function () {
+                    nastedAdapter.dataBind();
+                });
+        });
+
+        function triggerContactComplete(accid) {
+            try {
+                var adapter = $("#jqxgrid").jqxGrid('source');
+                adapter.dataBind();
+                dialogClose(NSaccountcontacts.contactdialog);
+            }
+            catch (e) {
+
+            }
+        }
+        function accountContacts_contactDelete(id) {
+            contactDelete(id,false);
+            $("#jqxgrid").jqxGrid('source').dataBind();
+        }
+
+     </script>
+}
+
+<div style="margin: 5px;">
+
+    <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+        <div id="accWindow">
+            <div id="accHeader">
+            </div>
+            <div id="accBody">
+               <input value="הוספת איש קשר" id="btnAddItem" type="button" />
+               <input value="רענון" id="btnRefresh" type="button" />
+               <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--end of content-wrapper-->

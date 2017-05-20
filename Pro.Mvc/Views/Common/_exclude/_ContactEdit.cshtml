@@ -1,0 +1,188 @@
+﻿@{
+
+    ViewBag.Title = "Buildings";
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    int id = Nistec.Types.ToInt(Request["id"]);
+    int accid = Nistec.Types.ToInt(Request.QueryString["accid"]);
+    string op = Request.QueryString["op"];
+
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            
+            @*loadData('@id','@accid');
+
+            var loadData = function (id,accid) {*@
+
+                var view_source =
+                {
+                    datatype: "json",
+                    datafields: [
+                            { name: 'ContactId', type: 'number' },
+                            { name: 'AccountId', type: 'number' },
+                            { name: 'ContactName', type: 'string' },
+                            { name: 'Title', type: 'string' },
+                            { name: 'Email', type: 'string' },
+                            { name: 'Mobile', type: 'string' },
+                            { name: 'Details', type: 'string' }
+                    ],
+                    id: 'AccountId',
+                    data: { 'id': '@id' ,'accid': '@accid'},
+                    type: 'POST',
+                    url: '@Url.Action("GetContactEdit", "Common")'
+                };
+
+                var srcAccountType;
+
+                var viewAdapter = new $.jqx.dataAdapter(view_source, {
+                    loadComplete: function (record) {
+                        if (record) {
+                            srcAccountType = record.AccountType;
+
+                            $('#AccountId').val(record.AccountId);
+                            $('#ContactId').val(record.ContactId);
+                            $('#Title').val(record.Title);
+                            $('#ContactName').val(record.ContactName);
+                            $('#Email').val(record.Email);
+                            $('#Mobile').val(record.Mobile);
+                            $('#Details').val(record.Details);
+
+                            if ('@op' == 'p') {
+                                var title = "הגדרת אנשי קשר";
+                                $("#contactHeader").append("<h4>" + title + "</h4>");
+                            }
+                        }
+                    },
+                    loadError: function (jqXHR, status, error) {
+                    },
+                    beforeLoadComplete: function (records) {
+                    }
+                });
+                viewAdapter.dataBind();
+            //}
+
+
+            //contactount dialog
+            $('#contactForm').jqxValidator({
+                rtl: true,
+                hintType: 'label',
+                animationDuration: 0,
+                rules: [
+                      { input: '#ContactName', message: 'חובה לציין שם!', action: 'keyup, blur', rule: 'required' },
+                      { input: '#Title', message: 'חובה לציין תפקיד!', action: 'keyup, blur', rule: 'required' },
+                      { input: '#Email', message: 'אימייל לא תקין!', action: 'keyup', rule: 'email' },
+                      { input: '#Mobile', message: 'חובה לציין טלפון!', action: 'keyup, blur', rule: 'required' },
+                      {
+                          input: '#Mobile', message: 'טלפון נייד אינו תקין!', action: 'valuechanged, blur', rule:
+                                    function (input, commit) {
+                                        var val = input.val();
+                                        var re = /^(|\()(0|972)(\d{1}|\d{2})(|[\)\/\.-])([0-9]{7})$/
+                                        return val ? re.test(val) : true;
+                                    }
+                      }
+                ]
+            });
+
+            $('#contactSubmit').on('click', function (e) {
+                var validationResult = function (isValid) {
+                    if (isValid) {
+                        $.ajax({
+                            url: '@Url.Action("UpdateContact", "Common")',
+                            type: 'post',
+                            dataType: 'json',
+                            data: $('#contactForm').serialize(),
+                            success: function (data) {
+                                alert(data.Message);
+                                if (data.Status >= 0) {
+
+                                    //$('#contactWindow').jqxWindow('close');
+                                    var accid = $('#AccountId').val();
+                                    window.parent.triggerContactComplete(accid);
+                                    $('#contactForm')[0].reset();
+                                    $('#AccountId').val(accid);
+
+                                    //if (accType == "2")
+                                    //    ownerAdapter.dataBind();
+                                    //else if (accType == "6")
+                                    //    managementAdapter.dataBind();
+                                }
+                            },
+                            error: function (jqXHR, status, error) {
+                                alert(error);
+                            }
+                        });
+                    }
+                    else {
+                        e.preventDefault(); // t
+                    }
+                }
+                $('#contactForm').jqxValidator('validate', validationResult);
+
+            });
+
+            $('#contactCancel').on('click', function (e) {
+                $('#contactForm')[0].reset();
+                $('#contactForm').jqxValidator('hide');
+            });
+        });
+
+    </script>
+}
+
+<div style="margin: 0px;">
+
+    <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+        <div id="contactWindow">
+            <div id="contactHeader">
+            </div>
+            <div id="contactBody">
+                <form class="contactForm" id="contactForm" method="post" action="/Building/UpdateAccount" target="contact-iframe">
+                    <div style="direction: rtl; text-align: right">
+                        <input type="hidden" id="AccountId" name="AccountId" value="" />
+                        <div class="form-group">
+                            <label class="column">
+                                שם :</label>
+                            <input id="ContactName" name="ContactName" type="text" class="text-mid" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                תפקיד :</label>
+                            <input id="Title" name="Title" type="text" class="text-mid" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                טלפון נייד:</label>
+                            <input id="Mobile" name="Mobile" type="text" class="text-mid" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                דאר אלקטרוני:</label>
+                            <input id="Email" name="Email" type="text" class="text-mid" />
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                פרטים:</label>
+                            <input id="Details" name="Details" type="text" class="text-mid" />
+                        </div>
+                        <div style="height: 5px"></div>
+                        <div>
+                            <input id="contactSubmit" class="btn-default btn7" type="button" value="עדכון" />
+                            <input id="contactCancel" class="btn-default btn7" type="button" value="ביטול" />
+                            <!--<input class="btn-default btn2" type="button" value="הוספת אנשי קשר" />-->
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--end of content-wrapper-->

@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+
+<!--Custom-->
+
+    <div id="stp-1" class="stp1">
+        <h1 id="hIsmem">בקשה להתקבל כחבר המפלגה</h1>
+        <h3><span>אנא הקלידו פרטים אישיים</span> (שלב 1 מתוך 3):</h3>
+        <p class="remark">* שדה חובה</p>
+        <div class="form">
+            <form id="form1" method="post" action="">
+                @Html.AntiForgeryToken()
+                <div class="lable">
+                    <div class="right">*שם משפחה</div>
+                    <div class="left">Last Name*</div>
+                    <div class="clear"></div>
+                </div>
+                <input type="text" class="txt" id="LastName" name="LastName" />
+                <div class="lable">
+                    <div class="right">*שם פרטי</div>
+                    <div class="left">First Name*</div>
+                    <div class="clear"></div>
+                </div>
+                <input type="text" class="txt" id="FirstName" name="FirstName" />
+                <div class="lable">
+                    <div class="right">*ת.ז.</div>
+                    <div class="left">Identification Number*</div>
+                    <div class="clear"></div>
+                </div>
+                <input type="text" class="txt" id="MemberId" name="MemberId" />
+                <div class="lable">
+                    <div class="right">*טלפון נייד</div>
+                    <div class="left">Mobile Number*</div>
+                    <div class="clear"></div>
+                </div>
+                <input type="text" class="txt" id="CellPhone" name="CellPhone" />
+                <div class="lable">
+                    <div class="right">טלפון בבית</div>
+                    <div class="left">Home Number</div>
+                    <div class="clear"></div>
+                </div>
+                <input type="text" class="txt" id="Phone" name="Phone" />
+                <div class="lable">
+                    <div class="right">*אימייל</div>
+                    <div class="left">Email*</div>
+                    <div class="clear"></div>
+                </div>
+                <input type="text" class="txt" id="Email" name="Email" />
+                <div class="lable">
+                    <div class="right">*כתובת (רחוב ומספר) </div>
+                    <div class="left">Address*</div>
+                    <div class="clear"></div>
+                </div>
+                <input type="text" class="txt" id="Address" name="Address" />
+                <div class="lable">
+                    <div class="right">*עיר</div>
+                    <div class="left">City*</div>
+                    <div class="clear"></div>
+                </div>
+                <div id="City" name="City"></div>
+                <div class="lable">
+                    <div class="right">*מין</div>
+                    <div class="left">Gender*</div>
+                    <div class="clear"></div>
+                </div>
+                <div id="Gender" name="Gender"></div>
+                <div class="lable">
+                    <div class="right">*ת. לידה לועזי</div>
+                    <div class="left">Date of Birth*</div>
+                    <div class="clear"></div>
+                </div>
+                @*<div id="Birthday" name="Birthday" class="Birthday"></div>*@
+                <input type="text" id="Birthday" name="Birthday" class="txt" readonly />
+                <div class="lable">
+                    <div class="right">ת.לידה עברי</div>
+                    <div class="left">Hebrew Date of Birth</div>
+                    <div class="clear"></div>
+                </div>
+                <input type="text" class="txt" id="ExField1" name="ExField1" />
+                <input type="button" class="btn" id="Next1" value="המשך" />
+            </form>
+        </div>
+    </div>
+
+    <div id="stp-2" class="stp1">
+        <h3><span>הצהרת המתפקדים</span> (שלב 2 מתוך 3):</h3>
+        <form id="form2" method="post" action="@Url.Action("UpdateMemberSignup","Registry")" enctype="application/x-www-form-urlencoded">
+            <input type="hidden" id="AccountId" name="AccountId" value="@Model.AccountId" />
+            <input type="hidden" id="ExId" name="ExId" value="" />
+            <input type="hidden" id="SignupOrder" name="SignupOrder" value="1" />
+            <input type="hidden" id="SignKey" name="SignKey" value="@SignKey" />
+            <div class="form">
+                <div class="lable">
+                    <div class="right">*בעל כרטיס האשראי הינו</div>
+                    <div class="left">Credit card owner is*</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="input-bg" style="padding:8px 0; background-color:#fff;">
+                    <p><input name="__CreditCardOwner" value="1" type="radio" checked />המתפקד/ת.</p>
+                    <p><input name="__CreditCardOwner" value="2" type="radio" />בן/בת זוגו של המתפקד/ת.</p>
+                    <p><input name="__CreditCardOwner" value="3" type="radio" />הורה של המתפקד/ת (למתפקדים עד גיל 25 בלבד).</p>
+                    <p><input name="__CreditCardOwner" value="4" type="radio" />בנו/בתו של המתפקד/ת</p>
+                </div>
+                <input type="hidden" id="CreditCardOwner" name="CreditCardOwner">
+            </div>
+            <div class="form">
+                <p class="right">אני מאשר לחייב את חשבוני בדמי חבר שנתיים מתחדשים בסך</p>
+                <div class="clear"></div>
+                <div class="input-bg" style="padding:8px 0; background-color:#fff;">
+                    <p><input id="ItemId1" name="__ItemId" value="11" type="radio">45 ₪ (לצעיר/ה עד לגיל 25)</p>
+                    <p><input id="ItemId2" name="__ItemId" value="10" type="radio">45 ₪ (אזרח/ית ותיק/ה)</p>
+                    <p><input id="ItemId3" name="__ItemId" value="9" type="radio" checked>59 ₪ (ליחיד בגילאי 25-67)</p>
+                </div>
+                <input type="hidden" id="ItemId" name="ItemId">
+            </div>
+            <div class="form">
+                <div class="lable">
+                    <div class="right">קוד הפניה</div>
+                    <div class="left">Reference Code</div>
+                    <div class="clear"></div>
+                </div>
+                <input type="text" id="ReferralCode" name="ReferralCode" class="txt" style="margin-bottom: 2px;" />
+                <p class="remark right">אם יש בידך קוד הפניה, הזן אותו כאן</p>
+                <div class="clear"></div>
+            </div>
+            <div class="form">
+                <div class="disclaimer">
+                    <a id="aStatement" href="#" style="font-size:1.2em;">להצהרת המתפקד לחץ כאן</a>
+                    <input id="ConfirmAgreement" name="ConfirmAgreement" type="checkbox"><span>*אני מאשר שקראתי ומאשר את הצהרתי לעיל.</span>
+                </div>
+                <input type="button" class="btn" id="Submit" value="המשך לתשלום" style="padding:0; color:#fff;" />
+            </div>
+        </form>
+    </div>
+
+    <!--CustomEX-->
+
+
+   
+</body>
+</html>

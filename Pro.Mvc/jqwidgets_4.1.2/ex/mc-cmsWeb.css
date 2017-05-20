@@ -1,0 +1,30 @@
+﻿ html, body {
+            font-family: HelveticaNeue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica !important;
+            font-size: 12px !important;
+        }
+
+        div {
+            direction: rtl;
+        }
+        .section_content {
+            border:solid 1px #A0A0A0;
+        }
+        .section_item {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            min-height: 80px;
+        }
+        .section_info {
+            margin: 5px;
+            margin-left: 10px;
+            margin-bottom: 3px;
+        }
+        .section_button {
+            margin: 5px;
+            width: 80px;
+            left: -40px;
+            position: relative;
+            margin-left: 50%;
+            margin-bottom: 3px;
+        }

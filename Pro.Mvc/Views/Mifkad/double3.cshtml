@@ -1,0 +1,123 @@
+﻿@model Pro.Data.Registry.RegistryMain
+@{
+    ViewBag.Title = "Mifkad";
+    Layout = "~/Views/Mifkad/_ViewRegistry.cshtml";
+}
+
+@section cmsHeader {
+
+<div id="cmsHeader">
+    @*@Html.Raw(Model.Header)*@
+</div>
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/model/signup-def.js"></script>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            @*var def = new app_signup_def(JSON.parse('@Model.AccountId'));*@
+ 
+        });
+
+    </script>
+}
+<!--begin of content-wrapper-->
+<div class="basad">בס"ד</div>
+<div class="logo">
+    <p><a href="Index" class="footer-btn">חזרה לעמוד הראשי</a></p>
+    <img src="    images/logo.gif" alt="logo" />
+</div>
+<div class="stp1">
+    <h3><span>הצהרת המתפקדים</span> (שלב 3 מתוך 4):</h3>
+    <form>
+        <div class="form">
+            <div class="lable">
+                <div class="right">*בעל כרטיס האשראי הינו</div>
+                <div class="left">Credit card owner is*</div>
+                <div class="clear"></div>
+            </div>
+            <div class="input-bg" style="padding:8px 0;background-color:#fff;">
+                <p><input type="radio" checked />המתפקד/ת.</p>
+                <p><input type="radio" />בן/בת זוגו של המתפקד/ת.</p>
+                <p><input type="radio" />הורה של המתפקד/ת (למתפקדים עד גיל 25 בלבד).</p>
+                <p><input type="radio" />בנו/בתו של המתפקד/ת</p>
+            </div>
+        </div>
+        <div class="form">
+            <p class="right">אני מאשר לחייב את חשבוני בדמי חבר שנתיים בסך</p>
+            <div class="clear"></div>
+            <div class="input-bg" style="padding:8px 0; background-color:#fff;">
+                <p><input type="radio">89 ₪ לזוג לשנה</p>
+            </div>
+        </div>
+        <div class="form">
+            <form>
+                <div class="lable">
+                    <div class="right">קוד הפניה</div>
+                    <div class="left">Reference Code</div>
+                    <div class="clear"></div>
+                </div>
+                <input type="text" class="txt" style="margin-bottom: 2px;" />
+                <p class="remark right">אם יש בידך קוד הפניה, הזן אותו כאן</p>
+                <div class="clear"></div>
+            </form>
+        </div>
+        <div class="form">
+            <div class="disclaimer">
+                <a href="#" data-toggle="modal" data-target="#myModal" style="font-size:1.2em;">להצהרת המתפקד לחץ כאן</a>
+                <input type="checkbox">*אני מאשר שקראתי ומאשר את הצהרתי לעיל.
+            </div>
+            <input type="button" class="btn" value="המשך לתשלום" style="padding:0; color:#fff;" />
+        </div>
+    </form>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close pull-left" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">הצהרת המתפקד</h4>
+            </div>
+            <div class="modal-body">
+                <ol>
+                    <li>אני אזרח ישראל ותושב בה.</li>
+                    <li>אני בן 17 שנים לפחות.</li>
+                    <li>אינני חבר בכל מפלגה אחרת.</li>
+                    <li>אני מזדהה עם המפלגה, מטרותיה ומצעה הרעיוני.</li>
+                    <li>אני מקבל על עצמי את הוראות התקנון ומתחייב לפעול ולמלא אחר החלטות המוסדות המוסמכים של המפלגה.</li>
+                    <li>לא הורשעתי בפסק דין חלוט בעבירה שיש עמה קלון לכאורה, ולא נגזר עלי בעקבות ההרשעה עונש של מאסר בפועל לתקופה העולה על 3 חודשים.</li>
+                    <li>אני מסכים כי המפלגה תשמור את פרטי כרטיס האשראי ותגבה באמצעותם דמי חבר שנתיים כאשר יקבעו על ידי מוסדות המפלגה בהתאם לתקנון.</li>
+                    <li>אני מסכים כי המפלגה וגם מועמדים מטעמה רשאים לפנות אלי ולתת לי כל הודעה ומידע בענייני המפלגה באמצעות כלי תקשורת דיגיטליים לרבות דוא"ל וכן sms לפי הפרטים שמסרתי.</li>
+                    <li> תשלום דמי ההתפקדות בעבור אחר, שלא לפי הקבוע בתקנון, מהווה עבירה פלילית שעונשה שנת מאסר.</li>
+                </ol>
+                <br>
+                <p class="remark">* הבקשה מנוסחת בלשון זכר אולם גם לשון נקבה במשתמע</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<!--end of content-wrapper-->
+
+@section cmsFooter {
+<p>
+    נתקלת בבעיה? שלח לנו מייל לכתובת <a href="mailto:vaadatbchirotby@gmail.com">vaadatbchirotby@gmail.com</a>
+    <br>
+    עם שם ומספר נייד ונחזור אליך
+</p>
+<p class="powered">powered by My T Interactive Ltd</p>
+
+}
+<script type="text/javascript">
+        @Html.Raw(Model.Script)
+</script>

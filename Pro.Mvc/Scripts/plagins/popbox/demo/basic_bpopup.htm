@@ -1,0 +1,97 @@
+﻿
+<!doctype html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>bPopup || A jQuery modal popup plugin</title>
+  <link rel="stylesheet" href="bpopup.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="bpopup.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            $('#btn1').bind('click', function (e) {
+                e.preventDefault();
+                //$('#popup').bPopup();
+                popupDiv('#sample');
+                //popupAjax('api.html');
+                //popupImage('../../../../images/site/banner.png');
+            });
+
+
+            $('#btn2').bind('click', function (e) {
+                e.preventDefault();
+
+                popupMessage('dynamic content');
+                //var self = $(this) //button
+                //var content = $('.content');
+
+                //$('#popup2').bPopup({
+                //    follow: [false, false], //x, y
+                //    position: [150, 400], //x, y
+                //onOpen: function() {
+                //    content.html('dynamic content');
+                //},
+                //onClose: function() {
+                //    content.empty();
+                //}
+                //});
+            });
+            $('#btn3').bind('click', function (e) {
+                e.preventDefault();
+                popupIframe('http://dinbror.dk/blog', '900px', '400px','yes');
+                //$('#popup2').bPopup({
+                //content: 'iframe', //'ajax', 'iframe' or 'image'
+                //contentContainer: '.content',
+                //loadUrl: 'http://dinbror.dk/blog' //Uses jQuery.load()
+                //});
+            });
+
+         });
+    </script>
+
+</head>
+<body>
+
+<div id="sample">
+
+<h3 class="header">1. HELLO WORLD</h3>
+<span id="btn1" class="button small pop1">Pop it up</span>
+<span class="example">
+    <strong>Example 1, default: </strong>
+    <em>Simple jQuery modal popup with default settings (Hello World popup)</em>
+</span>
+
+<h3 class="header">2. CUSTOM SETTINGS</h3>
+<span id="btn2" class="button small pop1" data-bpopup='{"follow":[false,false],"position":[150,400]}'>Pop it up</span>
+<span class="example">
+    <strong>Example 2a, custom settings: </strong>
+    <em>Simple jQuery popup with custom settings (Lazy popup, not going anywhere)</em>
+</span>
+
+<h3 class="header">5. CONTENT</h3>
+<span id="btn3" class="button small pop2">Pop it up</span>
+<span class="example">
+    <strong>Example 5a, content: </strong>
+    <em>Simple jQuery popup that loads external html page with ajax. (Ajax popup)<br>
+    <span class="code-string">Be aware that due to browser security restrictions, most "Ajax" requests are subject to the same origin policy; the request can't successfully retrieve data from a different domain, subdomain, or protocol.</span></em>
+</span>
+
+
+<div id="popup">
+    <span class="button b-close"><span>X</span></span>
+    If you can't get it up use<br><span class="logo">bPopup</span>
+</div>
+<div id="popup2">
+    <span class="button b-close"><span>X</span></span>
+    <div class="content"></div>
+</div>
+
+<!--<div class="bMulti2">
+    <span class="button b-close"><span>X</span></span>
+    <div class="content"></div>
+</div>-->
+</div>
+</body>
+</html>

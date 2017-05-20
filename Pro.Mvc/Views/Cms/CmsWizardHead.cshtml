@@ -1,0 +1,169 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "CmsWizardHead";
+    var userRole = Nistec.Types.ToInt( ViewBag.UserRole);
+    var accountId = Nistec.Types.ToInt(ViewBag.AccountId);
+    string exportClass = userRole < 5 ? "hide" : "show";
+}
+
+@section head {
+
+
+  @Scripts.Render("~/bundles/jqx")
+  <script type="text/javascript" src="~/jqwidgets/jqxdatatable.js"></script>
+<script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+<script type="text/javascript" src="~/jqwidgets/jqxcolorpicker.js"></script>
+<script src="~/Scripts/app/cms/cms_page-edit.js"></script>
+    <style type="text/css">
+        .ui-accordion-header-active {
+            background: #15C8D8;
+        }
+        #form-container {
+            margin-left: auto;
+            margin-right: 0;
+            max-width: 820px;
+            direction: rtl;
+        }
+        .expander-item {
+            padding: 0;
+            margin: 0;
+            /*direction: rtl;
+            max-width: 400px;*/
+        }
+        .expander-entry {
+            margin: 5px;
+            /*direction:rtl;*/
+        }
+        .headline {
+            color: #32A7C0;
+            font-weight: bold;
+        }
+        input.edit {
+            width:150px;
+        }
+    </style>
+    @*<script>
+        $(function () {
+            $('#tab-query li:eq(0) a').tab('show');
+        });
+    </script>*@
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+        var me = this;
+        $("#accordion").accordion({ heightStyle: "content" });
+
+        //$('#btnHeader').on('click', function () {
+        //    var exid='';
+        //    app_popup.cmsHtmlEditor(exid);
+        //});
+        //$('#btnFooter').on('click', function () {
+        //    var exid='';
+        //    app_popup.cmsHtmlEditor(exid);
+        //});
+
+
+        // create editor.
+        $('.editor').jqxEditor({
+            height: '500px',
+            width: '800px',
+            rtl: true
+            //theme: 'arctic'
+            //stylesheets: ['editor.css']
+        });
+
+        var designAdapter = app_jqxcombos.createListAdapter("DesignId", "DesignName", "listDesign", '@Url.Action("GetListDesign", "Common")', 240, 200, true);
+        $('#listDesign').on('change', function (event) {
+            app_jqxcombos.listBoxToInput("listDesign", "DesignType");
+        });
+
+        $('#AccountId').val('@accountId');
+        var def = new app_cms_head_edit('@accountId');
+
+      });
+
+
+
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+</div>
+<div class="top-space"></div>
+
+<div class="global-view">
+    <div class="container-box">
+        <div class="box-title">
+            <h3>עריכת עמוד רישום</h3>
+        </div>
+
+        <div id="form-container">
+            <div id="form">
+                <input type="hidden" id="DesignType" name="Design" />
+                <input type="hidden" id="AccountId"  />
+                <div id="accordion" class="tab-content1" dir="rtl">
+                    <h3>בחירת עיצוב</h3>
+                    <div id="exp-1" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <div>
+                                <label class="headline">בחירת עיצוב</label>
+                                <div id="listDesign" name="listDesign"></div>
+                            </div>
+                            <div>
+                                <input type="button" id="updateDesign" value="עדכון" class="btn-default btn7" disabled="disabled" />
+                            </div>
+                        </div>
+                    </div>
+                    <h3>כותרת עליונה</h3>
+                    <div id="exp-2" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            @*<a href="#" id="btnHeader">עורך תוכן</a>*@
+
+                            <label class="headline">עורך תוכן</label>
+                            <div id="editorHtml">
+                                <textarea id="editorHeader" class="editor"></textarea>
+                            </div>
+                            <div>
+                                <input type="button" id="updateHeader" value="עדכון" class="btn-default btn7" disabled="disabled" />
+                                <input type="button" id="clearHeader" value="ניקוי" class="btn-default btn7" />
+                            </div>
+                        </div>
+                    </div>
+                    <h3>כותרת תחתונה</h3>
+                    <div id="exp-3" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            @*<a href="#" id="btnFooter">עורך תוכן</a>*@
+                            <label class="headline">עורך תוכן</label>
+                            <div id="editorHtml">
+                                <textarea id="editorFooter" class="editor"></textarea>
+                            </div>
+                            <div>
+                                <input type="button" id="updateFooter" value="עדכון" class="btn-default btn7" disabled="disabled" />
+                                <input type="button" id="clearFooter" value="ניקוי" class="btn-default btn7" />
+                            </div>
+                        </div>
+                    </div>
+                    @*<h3>סיום</h3>
+                    <div id="exp-4" style="padding:0;margin:0">
+                        <div class="expander-entry">
+                            <div>
+                                <input type="button" id="submit" value="הצג" class="btn-default btn2" />
+                                <input type="reset" value="נקה" class="btn-default btn2" />
+                            </div>
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liCms");
+    app_menu.breadcrumbs("Crm", "CmsWizardHead", 'en');
+</script>
+
+
+
+

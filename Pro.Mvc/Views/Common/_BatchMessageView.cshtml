@@ -1,0 +1,35 @@
+﻿@model Pro.Data.Entities.SendMessageView
+@{
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    
+   
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+    <style type="text/css">
+        #cmsBody{
+            direction:rtl;
+            width:90%;
+            margin:10px;
+        }
+    </style>
+}
+
+@section scripts {
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+
+    });
+ 
+</script>
+}
+
+<div id="cmsBody">
+    @Html.Raw(Model.View)
+</div>
+
+<!--end of content-wrapper-->

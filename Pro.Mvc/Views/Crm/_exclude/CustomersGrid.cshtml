@@ -1,0 +1,66 @@
+﻿@{
+    Layout = "~/Views/_View.cshtml";
+    Page.Title = "Building";
+    var DB = Database.Open("cnn_Trace");
+    var Grid = new WebGrid(DB.Query("SELECT * FROM Trace_Act"));
+}
+@section head {
+    <link rel="stylesheet" href="~/Content/grid.css" type="text/css" />
+    <style type="text/css">
+        .MyTable {
+            margin: 4px;
+            border-collapse: collapse;
+            width: 800px;
+        }
+
+        .columnHead {
+            background-color: #E8E8E8;
+            font-weight: bold;
+            color: #FFF;
+            text-align: center;
+        }
+
+        .MyTable th, .MyTable td {
+            border: 1px solid #C0C0C0;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .altRow {
+            background-color: #E8E8E8;
+            color: #000;
+        }
+    </style>
+}
+
+<hgroup class="title">
+    <h3 class="rightPan">לקוחות.</h3>
+</hgroup>
+
+<div class="rightPan">
+    <ul class="toolbar">
+        <li>
+            <input type="search" placeholder="חיפוש" /></li>
+        <li><a href="#">רענון</a></li>
+    </ul>
+</div>
+<div class="clear"></div>
+<div class="global-view">
+    <div class="container">
+        <div dir="rtl" style="clear: both">
+        @Grid.GetHtml(
+        tableStyle: "MyTable",
+        headerStyle: "columnHead",
+        alternatingRowStyle: "altRow",
+        columns: Grid.Columns(
+        Grid.Column("RowId", "קוד לקוח"),
+                //Grid.Column("Related", "Related"),
+                    Grid.Column("Mode", "סוג חשבון"),
+                    Grid.Column("Method", "שם לקוח"),
+                    Grid.Column("ActTime", "מועד עדכון"),
+                    Grid.Column("Status", "סטאטוס")
+        )
+    )
+    </div>
+</div>
+</div>

@@ -1,0 +1,55 @@
+﻿@model Pro.Data.Registry.RegistryMain
+@{
+    ViewBag.Title = "Mifkad";
+    Layout = "~/Views/Mifkad/_ViewRegistry.cshtml";
+}
+
+@section cmsHeader {
+
+<div id="cmsHeader">
+    @*@Html.Raw(Model.Header)*@
+</div>
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/model/signup-def.js"></script>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            @*var def = new app_signup_def(JSON.parse('@Model.AccountId'));*@
+ 
+        });
+
+    </script>
+}
+<!--begin of content-wrapper-->
+<div class="basad">בס"ד</div>
+<div class="logo">
+    <p><a href="Index" class="footer-btn">חזרה לעמוד הראשי</a></p>
+    <img src="~/Content/Mifkad/images/logo.gif" alt="logo" />
+</div>
+<div class="stp1">
+    <h3><span>פרטי כרטיס אשראי</span> (שלב 3 מתוך 3):</h3>
+    <div class="form">
+        <iframe width="370px" height="455px"></iframe>
+    </div>
+</div>
+<!--end of content-wrapper-->
+
+@section cmsFooter {
+<p>
+    נתקלת בבעיה? שלח לנו מייל לכתובת <a href="mailto:vaadatbchirotby@gmail.com">vaadatbchirotby@gmail.com</a>
+    <br>
+    עם שם ומספר נייד ונחזור אליך
+</p>
+<p class="powered">powered by My T Interactive Ltd</p>
+
+}
+<script type="text/javascript">
+        @Html.Raw(Model.Script)
+</script>

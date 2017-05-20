@@ -1,0 +1,259 @@
+﻿@model Pro.Data.Registry.RegistryPage
+@{
+    Layout = "~/Views/Shared/_ViewRegistry.cshtml";
+    var id=Request["id"];
+    var recordId = Model.Id;
+
+    var ds1 = @Html.Raw(Json.Encode(Model.Ds1));
+    //var ds1 = @Html.Raw(Model.Ds1);
+    
+    var ds2 = @Html.Raw(Json.Encode(Model.Ds2));
+}
+
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+<script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+<script type="text/javascript" src="~/jqwidgets/jqxdatatable.js"></script>
+<script src="~/Scripts/app/app-control-1.0.js"></script>
+<script src="~/Scripts/app/registry/member-info.js"></script>
+<link rel="stylesheet" href="~/Content/css/reset.css">
+<link rel="stylesheet" href="~/Content/css/style.css">
+@*<link rel="stylesheet" href="~/Content/css/view-form.css" type="text/css" />
+<link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />*@
+
+<style type="text/css">
+    #tabs {
+        max-width: 400px;
+        direction: rtl;
+        background: transparent;
+        border: none;
+        /*font-size: 80%;*/
+    }
+
+    #tab-head {
+        direction: rtl;
+        height: 34px;
+        background: #fff;
+    }
+    .form {
+        max-width: 420px;
+        margin: auto;
+        padding: 0.5em;
+    }
+    .pasive {
+      display:none
+    }
+    .rtl {
+        direction:rtl; text-align:right;
+    }
+    #root {
+        width: 420px;
+        margin: 0 auto;
+    }
+    #accHeader {
+        text-align: center;
+        color: red;
+        font-size: 120%;
+    }
+</style>
+
+
+    @Html.Raw(Model.HScript)
+}
+
+@section scripts {
+    <script type="text/javascript">
+    $(document).ready(function () {
+        //$("#tabs").tabs();
+        $("#tabs").jqxTabs({ width: '90%', rtl: true });
+
+        var def = new app_member_info('@Model.AccountId');
+        def.syncData('@ds1','@ds2')
+    });
+    </script>
+
+
+
+
+@Html.Raw(Model.HiddenScript)
+
+}
+
+    <div id="cmsHeader">
+        @Html.Raw(Model.Header)
+    </div>
+@Html.ValidationSummary(true)
+
+<div class="container">
+    <div class="row">
+        <div id="root">
+            <div id="accHeader">
+                <h4 id="accTitle" style="font-weight: bold;">@Model.Title</h4>
+                <p class="Error">  @ViewBag.ErrMessage </p>
+                <div class="@(recordId > 0 ? "pasive" : "")">
+                    <h2 style="text-align:center">לא נמצאו נתונים</h2>
+                    
+                </div>
+            </div>
+            
+            <div id="accBody" class="form  @(recordId > 0 ? "" : "pasive")" >
+                <div id="cmsPh2">
+                    @Html.Raw(Model.Ph2)
+                </div>
+                <form class="fcForm" id="fcForm" method="post">
+                    <div>
+                        <input type="hidden" id="ExType" />
+                        <input type="hidden" id="RecordId" name="RecordId" value="0" />
+                        <input type="hidden" id="AccountId" name="AccountId" value="" />
+                        <input type="hidden" id="Categories" name="Categories" value="" />
+                        <div id="tabs">
+                            <ul id="tab-head">
+                                <li class="active"><a href="#tab-personal" data-toggle="tab">פרטים אישיים</a></li>
+                                <li><a href="#tab-general" data-toggle="tab">כללי</a></li>
+                                <li><a href="#tab-notes" data-toggle="tab">היסטוריה</a></li>
+                            </ul>
+
+                            <div id="tab-personal" class="rtl">
+                                <div class="form-group">
+                                    <div class="field">
+                                        תעודת זהות :
+                                    </div>
+                                    <input id="MemberId" name="MemberId" type="text" class="text-mid" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        שם פרטי :
+                                    </div>
+                                    <input id="FirstName" name="FirstName" type="text" class="text-mid" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        שם משפחה :
+                                    </div>
+                                    <input id="LastName" name="LastName" type="text" class="text-mid" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        כתובת :
+                                    </div>
+                                    <input id="Address" name="Address" type="text" class="text-mid" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        עיר :
+                                    </div>
+                                    <input id="CityName" name="CityName" type="text" class="text-mid" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        מגדר:
+                                    </div>
+                                    <input id="GenderName" name="GenderName" type="text" class="text-mid" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        תאריך לידה:
+                                    </div>
+                                    <input id="Birthday" name="Birthday" type="text" class="text-mid" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        טלפון נייד:
+                                    </div>
+                                    <input id="CellPhone" name="CellPhone" type="text" class="text-mid" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        טלפון:
+                                    </div>
+                                    <input id="Phone" name="Phone" type="text" class="text-mid" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        דאר אלקטרוני:
+                                    </div>
+                                    <input id="Email" name="Email" type="text" class="text-mid" readonly />
+                                </div>
+                            </div>
+                            <div id="tab-general" class="rtl">
+                                <div class="form-group">
+                                    <div class="field">
+                                        סניף :
+                                    </div>
+                                    <input id="BranchName" name="BranchName" type="text" class="text-mid" readonly />
+                                </div>
+                                <div id="divEnum1" class="form-group">
+                                    <div id="lblEnum1" class="column">
+                                    </div>
+                                    <input id="ExEnum1Name" name="ExEnum1Name" type="text" class="text-mid" readonly />
+                                </div>
+                                <div id="divEnum2" class="form-group">
+                                    <div id="lblEnum2" class="column">
+                                    </div>
+                                    <input id="ExEnum2Name" name="ExEnum2Name" type="text" class="text-mid" readonly />
+                                </div>
+                                <div id="divEnum3" class="form-group">
+                                    <div id="lblEnum3" class="column">
+                                    </div>
+                                    <input id="ExEnum3Name" name="ExEnum3Name" type="text" class="text-mid" readonly />
+                                </div>
+                                <div id="divExId" class="form-group">
+                                    <div id="lblExId" class="column">
+                                    </div>
+                                    <input type="text" id="ExId" name="ExId" class="text-mid" maxlength="50" readonly />
+                                </div>
+                                <div id="divField1" class="form-group">
+                                    <div id="lblExField1" class="column">
+                                    </div>
+                                    <input type="text" id="ExField1" name="ExField1" class="text-mid" maxlength="250" readonly />
+                                </div>
+                                <div id="divField2" class="form-group">
+                                    <div id="lblExField2" class="column">
+                                    </div>
+                                    <input type="text" id="ExField2" name="ExField2" class="text-mid" maxlength="250" readonly />
+                                </div>
+                                <div id="divField3" class="form-group">
+                                    <div id="lblExField3" class="column">
+                                    </div>
+                                    <input type="text" id="ExField3" name="ExField3" class="text-mid" maxlength="250" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        מועד הצטרפות:
+                                    </div>
+                                    <input id="JoiningDate" name="JoiningDate" type="text" class="text-mid" readonly="readonly" />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        מועד עדכון:
+                                    </div>
+                                    <input id="LastUpdate" name="LastUpdate" type="text" readonly="readonly" class="text-mid" />
+                                </div>
+                            </div>
+                            <div id="tab-notes" class="rtl">
+                                <div class="grid-wrap rtl">
+                                    <div id="dataTable" style="position:relative;z-index:1;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="height: 5px"></div>
+                    </div>
+                </form>
+            </div>
+            <div style="text-align:center;">
+                <a class="btn-default btn7" href="/Registry/Info/@Model.Folder">חזרה</a>
+            </div>
+                <div id="cmsPh3">
+                    @Html.Raw(Model.Ph3)
+                </div>
+
+            </div>
+    </div>
+</div>
+
+<!--end of content-wrapper-->
+
+    <div id="cmsFooter">
+        @Html.Raw(Model.Footer)
+    </div>
+

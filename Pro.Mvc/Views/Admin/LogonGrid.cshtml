@@ -1,0 +1,65 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    Page.Title = "Admin";
+    var DB = Database.Open("cnn_pro");
+    var Grid = new WebGrid(DB.Query("SELECT * FROM webvw_UserEvaluation"));
+}
+@section head {
+    <link rel="stylesheet" href="~/Content/css/grid.css" type="text/css" />
+    <style type="text/css">
+        .gridTable {
+            margin: 4px;
+            border-collapse: collapse;
+            width: 800px;
+        }
+
+        .columnHead { 
+            font: bold 13px Arial, Helvetica, sans-serif !important;
+            background-color: #E8E8E8;
+            font-weight: bold;
+            color: #FFF;
+            text-align: center;
+        }
+
+        .gridTable th, .gridTable td {
+            border: 1px solid #C0C0C0;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .altRow {
+            background-color: #E8E8E8;
+            color: #000;
+        }
+    </style>
+}
+
+
+<hgroup class="title">
+    <h3 class="rightPan">מעקב כניסות.</h3>
+</hgroup>
+
+<div class="clear"></div>
+<div class="global-view">
+    <div class="container">
+        <ul class="toolbar">
+        @*<li>
+            <input type="search" placeholder="חיפוש" /></li>*@
+        <li><a href="#">רענון</a></li>
+    </ul>
+        <div dir="rtl" style="clear: both">
+            @Grid.GetHtml(
+        tableStyle: "gridTable",
+        headerStyle: "columnHead",
+        alternatingRowStyle: "altRow",
+        columns: Grid.Columns(
+        Grid.Column("UserId", "משתמש"),
+                    Grid.Column("DisplayName", "פרטים"),
+                    Grid.Column("UserName", "שם משתמש"),
+                    Grid.Column("LastLoggedIn", "מועד כניסה אחרון")
+        )
+    )
+        </div>
+
+    </div>
+</div>

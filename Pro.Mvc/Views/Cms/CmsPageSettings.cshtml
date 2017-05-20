@@ -1,0 +1,134 @@
+﻿@model Pro.Data.Registry.CmsPageSettings
+@{
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    Page.Title = "Cms";
+    string btnClass = (ViewBag.UserInfo.UserRole > 5) ? "show" : "hide";
+}
+@section head {
+
+    <style type="text/css">
+        html body {
+        margin:0;padding:0;
+        }
+        label {
+        width:100px;
+        }
+        #global-view {margin:0;padding:0;
+        }
+        #container {
+            margin: 0;
+            padding: 0;
+        }
+        .hide {
+            display: none;
+        }
+
+        .show {
+            display: block;
+        }
+    </style>
+}
+@section scripts {
+@Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/cms/cms_content-def.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxdatatable.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxcolorpicker.js"></script>
+<script type="text/javascript" src="~/Scripts/app/app-cms.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#HeadConfig").val(@Model.HeadConfig);
+            $("#Title").val('@Model.Title');
+            $("#FacebookCode").val('@Model.FacebookCode');
+            $("#GoogleAnalyticsCode").val('@Model.GoogleAnalyticsCode');
+            $("#GoogleAdsCode").val('@Model.GoogleAdsCode');
+            $("#GoogleAdsLabel").val('@Model.GoogleAdsLabel');
+            $("#FacebookCompletedCode").val('@Model.FacebookCompletedCode');
+
+            $("#btnUpdtate").on('click', function () {
+                var actionurl = $('#form').attr('action');
+                $.ajax({
+                    url: actionurl,
+                    type: 'post',
+                    dataType: 'json',
+                    data: $('#form').serialize(),
+                    success: function (data) {
+                        alert(data.Message);
+                        if (data.Status >= 0) {
+                            window.parent.triggerCmsComplete();
+                        }
+                    },
+                    error: function (jqXHR, status, error) {
+                        alert(error);
+                    }
+                });
+
+            });
+
+        });
+
+    </script>
+
+}
+
+
+<div id="global-view" class="global-view">
+    <div id="container" class="container-rtl">
+
+        <h3>Page: @Model.PageType</h3>
+ 
+        <div>
+           
+            <div style="margin: 10px">
+                <form id="form" method="post" action="/Cms/CmsPageSettingsUpdate">
+                    <input type="hidden" name="AccountId" id="AccountId" value="@Model.AccountId" />
+                    <input type="hidden" name="PageType" id="PageType" value="@Model.PageType" />
+
+                    <div>
+                        <fieldset>
+                            <label for="HeadConfig">כותרת עליונה ותחתונה</label>
+                            <select name="HeadConfig" id="HeadConfig">
+                                <option value="0">ללא</option>
+                                <option value="1">כותרת עליונה</option>
+                                <option value="2">כותרת תחתונה</option>
+                                <option value="3">כותרת עליונה ותחתונה</option>
+                            </select>
+                        </fieldset>
+                    </div>
+                    <div>
+                        <label for="Title">כותרת עמוד</label>
+                        <input type="text" name="Title" id="Title" class=" txt">
+                    </div>
+                    <div>
+                        <label for="GoogleAnalyticsCode">גוגל אנליטיקס</label>
+                        <input type="text" name="GoogleAnalyticsCode" id="GoogleAnalyticsCode" class=" txt">
+                    </div>
+                    <div>
+                        <label for="GoogleAdsCode">גוגל פרסום קוד</label>
+                        <input type="text" name="GoogleAdsCode" id="GoogleAdsCode" class=" txt">
+                    </div>
+                    <div>
+                        <label for="GoogleAdsLabel">גוגל פרסום תוית</label>
+                        <input type="text" name="GoogleAdsLabel" id="GoogleAdsLabel" class=" txt">
+                    </div>
+                    <div>
+                        <label for="FacebookCode">פייסבוק קוד</label>
+                        <input type="text" name="FacebookCode" id="FacebookCode" class=" txt">
+                    </div>
+                    <div>
+                        <label for="FacebookCompletedCode">פייסבוק סיום קוד</label>
+                        <input type="text" name="FacebookCompletedCode" id="FacebookCompletedCode" class=" txt">
+                    </div>
+                   <div>
+
+                        @*<input type="button" id="btnCancel" value="ביטול" />*@
+                        <input type="button" id="btnUpdtate" value="עדכון" class="@btnClass" />
+                    </div>
+                </form>
+           </div>
+        </div>
+
+    </div>
+</div>

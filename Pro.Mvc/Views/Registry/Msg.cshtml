@@ -1,0 +1,50 @@
+﻿@model Pro.Data.Registry.RegistryHead
+@{
+    ViewBag.Title = "Msg";
+    Layout = "~/Views/Shared/_ViewRegistry.cshtml";
+}
+
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+
+    @Html.Raw(Model.HScript)
+
+    <style type="text/css">
+        #cmsArgs {
+           margin:20px; text-align: center;
+        }
+    </style>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //var def = new registry_confirm();
+        });
+    </script>
+}
+
+@section cmsHeader {
+    <div id="cmsHeader">
+        @Html.Raw(Model.Header)
+    </div>
+}
+<input type="hidden" id="model-account" value="@Model.AccountId" />
+
+<!--begin of content-wrapper-->
+
+<div id="cmsArgs">
+    @Html.Raw(Model.Args)
+</div>
+
+<!--end of content-wrapper-->
+
+@section cmsFooter {
+    <div id="cmsFooter">
+        @Html.Raw(Model.Footer)
+    </div>
+}
+@*<script type="text/javascript">
+    @Html.Raw(Model.AnalyticsGoogleScript);
+    @Html.Raw(Model.AnalyticsFacebookScript);
+</script>*@

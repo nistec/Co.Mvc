@@ -1,0 +1,97 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "Crm";
+    string entity = Request["entity"];
+    string TagPropId = ViewBag.TagPropId;
+    string TagPropName = ViewBag.TagPropName;
+    string TagPropTitle = ViewBag.TagPropTitle;
+}
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+}
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var theme = 'Arctic';
+            JSON.useDateParser();
+
+            var entity = '@entity';
+            var tagPropId = '@TagPropId';
+            var tagPropName = '@TagPropName';
+            var tagPropTitle = '@TagPropTitle';
+
+            $('#tagPropTitle').html(tagPropTitle);
+            
+
+            // prepare the data
+            var source =
+            {
+                async: false,
+                dataType: "json",
+                datafields:
+                [
+                    { name: 'PropId', type: 'number' },
+                    { name: 'PropName', type: 'string' }
+                ],
+                id: 'PropId',
+                type: 'POST',
+                url: '@Url.Action("DefEntityView", "Common")',
+                data: { 'entity': entity }
+        };
+
+         var dataAdapter = new $.jqx.dataAdapter(source, {
+             //contentType: "application/json; charset=utf-8",
+             loadError: function (jqXHR, status, error) {
+                 alert("dataAdapter failed: " + error);
+             },
+             loadComplete: function (data) {
+                 //alert("dealAdapter is Loaded");
+             }
+         });
+
+         var editrow = -1;
+         // initialize jqxGrid
+         $("#jqxgrid").jqxGrid(
+         {
+             rtl: true,
+             width: 400,
+             //autoheight: true,
+             source: dataAdapter,
+             localization: getLocalization('he'),
+             pageable: false,
+             showtoolbar: true,
+             rendertoolbar: function (toolbar) {
+                 var me = this;
+                 var container = $("<div style='margin: 5px;text-align:right'></div>");
+                 toolbar.append(container);
+                 container.append('<input id="refreshbutton" type="button" value="רענון" />');
+                 $("#refreshbutton").jqxButton();
+                 // refresh grid.
+                 $("#refreshbutton").on('click', function () {
+                     dataAdapter.dataBind();
+                 });
+             },
+             columns: [
+               { text: tagPropId, datafield: 'PropId', width: 60, cellsalign: 'right', align: 'center' },
+               { text: tagPropName, datafield: 'PropName', cellsalign: 'right', align: 'center' },
+             ]
+         });
+     });
+    </script>
+}
+<hgroup class="title">
+    <h3 class="rightPan">הגדרות כלליות-<span id="tagPropTitle">סניף</span></h3>
+
+</hgroup>
+<div class="clear"></div>
+
+<div class="global-view">
+    <div class="container-rtl">
+        <div class="grid-wrap">
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position: relative; z-index: 1;"></div>
+            </div>
+        </div>
+    </div>
+</div>

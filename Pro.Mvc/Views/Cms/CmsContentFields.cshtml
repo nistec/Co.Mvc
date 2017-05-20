@@ -1,0 +1,91 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    Page.Title = "Cms";
+    string extid = Request.QueryString["extid"];
+    
+}
+@section head {
+
+    <style type="text/css">
+        html body {
+        margin:0;padding:0;
+        }
+        label {
+        width:100px;
+        }
+        #global-view {margin:0;padding:0;
+        }
+        #container {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+}
+@section scripts {
+@Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/cms/cms_content-def.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxdatatable.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxcolorpicker.js"></script>
+<script type="text/javascript" src="~/Scripts/app/app-cms.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            var def=new app_cms_content_def('@extid')
+
+        });
+
+    </script>
+
+}
+
+
+@*<hgroup class="title">
+
+    <h3 class="rightPan">עריכת תוכן.</h3>
+
+</hgroup>*@
+
+
+<div class="clear"></div>
+
+<div id="global-view" class="global-view">
+    <div id="container" class="container-rtl">
+
+        <h4>Page: @extid</h4>
+        @*<div style="margin: 0; display:none">
+
+            <ul>
+                <li>
+                    <label>Page Type</label>
+                    <input type="text" id="PageType" value="" readonly />
+                </li>
+                <li>
+                    <label>Field</label>
+                    <input type="text" id="Field" value="" readonly />
+                </li>
+                <li>
+                    <label>Content Type</label>
+                    <input type="text" id="ContentType" value="html" readonly />
+                </li>
+            </ul>
+        </div>*@
+        <div>
+            <div id="editorHtml">
+                <textarea id="editor"></textarea>
+            </div>
+            <p></p>
+
+            <div style="margin: 10px">
+                <input type="hidden" id="AccountId" value="" />
+                <input type="hidden" id="PageType" value="" />
+                <input type="hidden" id="Field" value="" />
+                <input type="hidden" id="ContentType" value="html" />
+                @*<input type="button" id="btnCancel" value="ביטול" />*@
+                <input type="button" id="btnUpdtate" value="עדכון" />
+            </div>
+        </div>
+
+    </div>
+</div>

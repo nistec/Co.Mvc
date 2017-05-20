@@ -1,0 +1,29 @@
+﻿@model Nistec.Web.Cms.CmsPageEdit
+@{
+    Layout = "~/Views/Admin/_ViewAdmin.cshtml";
+    Page.Title = "Cms page";
+}
+@section head {
+   
+     @Scripts.Render("~/bundles/jqx")
+     <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+
+}
+@section scripts {
+
+}
+
+<hgroup class="title">
+
+    <h3 class="rightPan">עריכת תוכן.</h3>
+
+</hgroup>
+<div class="clear"></div>
+
+<div class="global-view">
+    <div class="container">
+
+        <div style="margin-top: 60px;" id="dataTable"></div>
+
+    </div>
+</div>

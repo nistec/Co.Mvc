@@ -1,0 +1,33 @@
+﻿body {
+}
+.cd-side-nav {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s 0s, visibility 0s 0.2s;
+}
+.cd-side-nav.nav-is-visible {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s 0s, visibility 0s 0s;
+}
+
+@media only screen and (min-width: 768px) {
+  .cd-side-nav {
+    position: relative;
+    float: left;
+    width: 110px;
+    /* reset style */
+    visibility: visible;
+    opacity: 1;
+  }
+}
+ 
+@media only screen and (min-width: 768px) { 
+ .cd-main-content .content-wrapper { 
+ margin-left: 110px; 
+ } 
+} 

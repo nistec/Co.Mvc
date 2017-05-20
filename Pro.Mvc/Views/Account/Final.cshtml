@@ -1,0 +1,29 @@
+﻿@model Pro.Mvc.Models.FinalModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = Model.Title;
+    
+    string Title = Model.Title;
+    string Message = Model.Message;
+}
+
+
+<div class="global" style="text-align: center">
+    <div class="center-box">
+        <div class="container">
+            <img src="~/Images/@Model.Icon" alt="@Model.Alt" />
+            <h4>@Title</h4>
+            <p style="text-align:center; direction:rtl; font-family:Arial; font-size:16px;border:none; overflow:hidden">
+                @Message
+                <br />
+                <a href="~/home/Main">לדף הראשי</a>
+            </p>
+        </div>
+
+
+        <div class="footer">
+            
+        </div>
+
+    </div>
+</div>

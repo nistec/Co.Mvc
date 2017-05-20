@@ -1,0 +1,67 @@
+﻿@model Pro.Data.Registry.RegistryHead
+@{
+    ViewBag.Title = "Mifkad";
+    Layout = "_ViewRegistry.cshtml";
+
+}
+
+@section cmsHeader {
+
+<div id="cmsHeader">
+    @Html.Raw(Model.Header)
+</div>
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/model/signup-def.js"></script>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            //var def = new app_signup_def(JSON.parse('@Model.AccountId'));
+ 
+        });
+
+    </script>
+}
+<!--begin of content-wrapper-->
+<div class="basad">בס"ד</div>
+<div class="logo">
+    <p><a href="pg0.html" class="footer-btn">חזרה לעמוד הראשי</a></p>
+    <img src="images/logo.gif" alt="logo" />
+</div>
+<div class="share">
+    <br>
+    <br>
+    <br>
+    <h1>
+        תודה רבה על התפקדותך
+        לתנועת הבית היהודי
+    </h1>
+    <p>
+        @Html.Raw(Model.Args)
+    </p><br>
+    <br>
+    <br>
+    
+</div>
+<div class="footer">
+    <p>
+        נתקלת בבעיה? שלח לנו מייל לכתובת <a href="mailto:vaadatbchirotby@gmail.com">vaadatbchirotby@gmail.com</a>
+        <br>
+        עם שם ומספר נייד ונחזור אליך
+    </p>
+    <p class="powered">powered by My T Interactive Ltd</p>
+</div>
+<!--end of content-wrapper-->
+@section cmsFooter {
+    @Html.Raw(Model.Footer)
+}
+<script type="text/javascript">
+    @Html.Raw(Model.AnalyticsGoogleScript);
+    @Html.Raw(Model.AnalyticsFacebookScript);
+</script>

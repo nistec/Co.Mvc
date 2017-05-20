@@ -1,0 +1,149 @@
+﻿@{
+    Layout = "~/Views/Admin/_ViewAdmin.cshtml";
+    Page.Title = "Cms";
+}
+@section head {
+   
+     @Scripts.Render("~/bundles/jqx")
+     @Scripts.Render("~/bundles/jqxgrid")
+     <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+}
+@section scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#SectionContent').jqxEditor({ tools: 'bold italic underline | format font size | color background | left center right' });
+
+            var sections = [{ "SectionId": 1, "SectionName": "Nancy", "SectionContent": "<p>Davolio</p>", "PageId": 2 }, { "SectionId": 2, "SectionName": "Andrew", "SectionContent": "<p>Fuller</p>", "PageId": 2 }, { "SectionId": 3, "SectionName": "Janet", "SectionContent": "<p>Leverling</p>", "PageId": 2 }, { "SectionId": 4, "SectionName": "Margaret", "SectionContent": "<p>Peacock</p>", "PageId": 2 }, { "SectionId": 5, "SectionName": "Steven", "SectionContent": "<p>Buchanan</p>", "PageId": 2 }, { "SectionId": 6, "SectionName": "Michael", "SectionContent": "<p>Suyama</p>", "PageId": 5 }, { "SectionId": 7, "SectionName": "Robert", "SectionContent": "<p>King</p>", "PageId": 5 }, { "SectionId": 8, "SectionName": "Laura", "SectionContent": "<p>Callahan</p>", "PageId": 2 }, { "SectionId": 9, "SectionName": "Anne", "SectionContent": "<p>Dodsworth</p>", "PageId": 5 }];
+
+            //// prepare the data
+            var source =
+            {
+                dataType: "json",
+                dataFields: [
+                    { name: 'SectionId', type: 'number' },
+                    { name: 'PageId', type: 'number' },
+                    { name: 'SectionName', type: 'string' },
+                    { name: 'SectionContent', type: 'string' }
+                ],
+                hierarchy:
+                {
+                    keyDataField: { name: 'SectionId' },
+                    parentDataField: { name: 'PageId' }
+                },
+                id: 'SectionId',
+                localData: sections
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#treeGrid").jqxTreeGrid(
+            {
+                width: 850,
+                source: dataAdapter,
+                sortable: true,
+                altRows: true,
+                ready: function () {
+                    // called when the jqxTreeGrid is loaded.  
+                    $("#treeGrid").jqxTreeGrid('expandRow', 2);
+                    $("#treeGrid").jqxTreeGrid('expandRow', 5);
+                    $("#SectionId").jqxInput({ disabled: true, width: 150, height: 30 });
+                    $("#SectionName").jqxInput({ width: 150, height: 30 });
+                    $("#SectionContent").jqxInput({ source: SectionContent, width: 150, height: 30 });
+                    $("#save").jqxButton({ height: 30, width: 80 });
+                    $("#cancel").jqxButton({ height: 30, width: 80 });
+                    $("#cancel").mousedown(function () {
+                        $("#dialog").jqxWindow('close');
+                    });
+                    $("#save").mousedown(function () {
+                        $("#dialog").jqxWindow('close');
+                        var editRow = parseInt($("#dialog").attr('data-row'));
+                        var rowData = {
+                            SectionId: $("#SectionId").val(),
+                            SectionName: $("#SectionName").val(),
+                            SectionContent: $("#SectionContent").val()
+                        };
+                        $("#treeGrid").jqxTreeGrid('updateRow', editRow, rowData);
+                    });
+                    $("#dialog").on('close', function () {
+                        // enable jqxTreeGrid.
+                        $("#treeGrid").jqxTreeGrid({ disabled: false });
+                    });
+                    $("#dialog").jqxWindow({
+                        resizable: false,
+                        width: 400,
+                        position: { left: $("#treeGrid").offset().left + 75, top: $("#treeGrid").offset().top + 35 },
+                        autoOpen: false
+                    });
+                    $("#dialog").css('visibility', 'visible');
+                },
+                columns: [
+                  { text: 'Section Id', editable: false, dataField: 'SectionId', width: 150 },
+                  { text: 'Section Name', dataField: 'SectionName', width: 250 }
+                ]
+            });
+            $("#treeGrid").on('rowDoubleClick', function (event) {
+                var args = event.args;
+                var key = args.key;
+                var row = args.row;
+                // update the widgets inside jqxWindow.
+                $("#dialog").jqxWindow('setTitle', "Edit Row: " + row.SectionId);
+                $("#dialog").jqxWindow('open');
+                $("#dialog").attr('data-row', key);
+                $("#SectionId").val(row.SectionId);
+                $("#SectionName").val(row.SectionName);
+                $("#SectionContent").val(row.SectionContent);
+                // disable jqxTreeGrid.
+                $("#treeGrid").jqxTreeGrid({ disabled: true });
+            });
+        });
+    </script>
+
+}
+<hgroup class="title">
+    <h3 class="rightPan">הגדרות כלליות-<span>עריכת תוכן</span></h3>
+    
+</hgroup>
+<div class="clear"></div>
+
+<div class="global-view">
+    
+    <div class="container-rtl">
+        <div class="grid-wrap">
+             <div id="jqxWidget">
+    <div id="treeGrid"></div>
+    <div style="visibility: hidden;" id="dialog">
+        <div>Edit Dialog</div>
+        <div style="overflow: hidden;">
+            <table style="table-layout: fixed; border-style: none;">
+                <tr>
+                    <td align="right">Section Id:
+                    </td>
+                    <td align="left">
+                        <input id="SectionId" type="text" readonly="true" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">SectionName:
+                    </td>
+                    <td align="left">
+                        <input id="SectionName" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="SectionContent" ></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="right">
+                        <br />
+                        <button id="save">Save</button>
+                        <button style="margin-left: 5px;" id="cancel">Cancel</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+             </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+﻿@{
+    Layout = "~/Views/_View.cshtml";
+    Page.Title = "Building";
+    string UserName = ViewBag.UserName;
+
+    int id = Nistec.Types.ToInt(Request["id"]);
+    int acctype = Nistec.Types.ToInt(Request.QueryString["acctype"], 1);
+
+}
+
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/plagins/blockUI.js"></script>
+}
+@section scripts {
+
+ <script type="text/javascript">
+
+     var id = '@id';
+     var acctype = '@acctype';
+     $(document).ready(function () {
+         $('#iframe-def').attr({
+             src: '/Common/_AccountEdit?id=' + id + "&acctype=" + acctype
+         });
+                  
+      });
+      </script>
+}
+
+<div class="breadcrumbs">
+@Html.ActionLink("Home", "Index", "Home")>
+@Html.ActionLink("Main", "Main", "Home")>
+<a href="javascript:parent.history.back()">Crm</a> >
+@ViewContext.RouteData.Values["action"].ToString()
+</div>
+
+@*<hgroup class="title">
+    <h3 class="rightPan">הגדרת לקוח.</h3>
+            <div style="text-align:right; font-size:130%; font-weight:bold"><span>שם הסוכן : </span><span>@UserName</span></div>
+
+</hgroup>*@
+
+<div class="clear"></div>
+<div class="global-view">
+    <div class="container">
+       
+        <iframe id="iframe-def" src="/Common/_AccountEdit?id=0&acctype=1" width="100%" height="600" scrolling="no" frameborder="0">
+
+        </iframe>
+
+    </div>
+</div>
+

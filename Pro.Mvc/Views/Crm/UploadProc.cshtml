@@ -1,0 +1,147 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    ViewBag.Title = "Members";
+    string uk = Request["uk"];
+    
+    //model Pro.Mvc.Models.UploadProcModel
+}
+@section head {
+
+<script type="text/javascript" src="~/Scripts/app/dateFormat.js"></script>
+
+<style type="text/css">
+    input {
+        direction: rtl;
+        text-align: right;
+    }
+
+    .styledTable {
+        direction: rtl;
+        text-align: right;
+    }
+
+    .styledTableHeader {
+        background-color: #0094ff;
+        color: #fff;
+        padding-left: 20px;
+        text-align: right;
+    }
+
+    .styledTableHeader {
+        background-color: #0094ff;
+        color: #fff;
+        text-align: right;
+    }
+
+    .styledRowKey {
+        padding-left: 20px;
+        text-align: right;
+    }
+
+    .styledRowValue {
+        text-align: right;
+    }
+</style>
+}
+@section scripts {
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+
+        @*pro_doUploadProc('@Url.Action("DoUploadProc", "Crm")', '@uk', "#dataTable");*@
+
+        doUploadProc();
+ 
+    });
+
+        var showUploadProc = function (uploadKey) {
+
+            $.ajax({
+                url: '@Url.Action("DoUploadProc", "Crm")',
+                type: "POST",
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                data: "{'uploadKey':'" + uploadKey + "'}",
+                //data: { "uploadKey": "" + uploadKey + "" },
+                success: function (data) {
+                    if (data) {
+                        $("#dataTable").html(data.Message);
+
+                        if (data.Status < 0) {
+                            $("#procState").html("אירעה שגיאה");
+                        }
+                    }
+                },
+                error: function (jqXHR, status, error) {
+                    alert(error);
+                }
+            });
+        }
+
+
+
+        var doUploadProc = function () {
+            var uploadKey = '@uk';
+            $.ajax({
+                url: '@Url.Action("DoUploadProc", "Crm")',
+                type: "POST",
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                data: "{'uploadKey':'" + uploadKey + "'}",
+                //data: { "uploadKey": "" + uploadKey + "" },
+                success: function (data) {
+                    if (data) {
+                        $("#dataTable").html(data.Message);
+
+                        if (data.Status < 0) {
+                            //redirectTo('UploadProc?up=' + uploadKey);
+                            $("#procState").html("אירעה שגיאה");
+                            $("#loader").hide();
+                        }
+                        else if (data.Status == 10) {
+                            //redirectTo('UploadProc?up=' + uploadKey);
+                            $("#procState").html("הסתיים");
+                            $("#loader").hide();
+                        }
+                        else {
+                            $("#procState").html("נא להמתין");
+                            timedRefresh(30000)
+                        }
+                    }
+                },
+                error: function (jqXHR, status, error) {
+                    $("#loader").hide();
+                    alert(error);
+                }
+            });
+        };
+
+        function timedRefresh(timeoutPeriod) {
+            setTimeout(function () {
+                location.reload(true);
+            }, timeoutPeriod);
+        }
+        //timedRefresh(30000)
+
+</script>
+    }
+            <div class="clear"></div>
+            <div class="global-view">
+                <div class="container">
+                    <div style="float: right; direction:rtl">
+                        <h4>
+                            <span>סטאטוס טעינה</span>
+                            <span> - </span>
+                            <span id="procState"></span>
+                            <span id="loader">
+                                <img src="~/Content/css/images/loading.gif" />
+                            </span>
+                        </h4>
+                        <div id="dataTable"></div>
+                        
+                        
+                   </div>
+               </div>
+            </div>
+
+

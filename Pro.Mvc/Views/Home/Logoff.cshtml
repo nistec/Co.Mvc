@@ -1,0 +1,28 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Logoff";
+    
+    string Title = "יציאה";
+    string Message = "";
+}
+
+
+<div class="global" style="text-align: center">
+    <div class="center-box">
+        <div class="container">
+            <img src="~/Images/ok-alert.png" alt="Ok" />
+            <h4>@Title</h4>
+            <p style="text-align:center; direction:rtl; font-family:Arial; font-size:16px;border:none; overflow:hidden">
+                @Message
+                <br />
+                <a href="~/home/Main">לדף הראשי</a>
+            </p>
+        </div>
+
+
+        <div class="footer">
+            
+        </div>
+
+    </div>
+</div>

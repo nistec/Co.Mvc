@@ -1,0 +1,84 @@
+﻿@model Pro.Mvc.Models.RegisterModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Resgister";
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    
+}
+
+
+<div class="global">
+
+    <div class="center-box">
+        <div class="container">
+            <div dir="rtl" class="row">
+                <div class="col-lg-11 col-md-12 col-sm-12 col-lg-offset-1">
+                    <h2>הרשמה</h2>
+
+                    <section id="loginForm">
+                        @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true)
+                           <fieldset>
+                                <legend>פרטים אישיים</legend>
+                                <ul style="list-style:none; font-size:150%;width:100%">
+                                    <li>@Html.LabelFor(m => m.UserName)</li>
+                                    <li>
+
+                                        @Html.TextBoxFor(m => m.UserName)
+                                        @Html.ValidationMessageFor(m => m.UserName)
+                                    </li>
+                                    <li>@Html.LabelFor(m => m.DisplayName)</li>
+                                    <li>
+
+                                        @Html.PasswordFor(m => m.DisplayName)
+                                        @Html.ValidationMessageFor(m => m.DisplayName)
+                                    </li>
+                                    <li>@Html.LabelFor(m => m.Phone)</li>
+                                    <li>
+
+                                        @Html.PasswordFor(m => m.Phone)
+                                        @Html.ValidationMessageFor(m => m.Phone)
+                                    </li>
+                                </ul>
+                                <input class="btn-default btn2" type="submit" value="כניסה" />
+                            </fieldset>
+                            <fieldset>
+                                <legend>הזדהות</legend>
+                                <ul style="list-style:none; font-size:150%;width:100%">
+                                    <li>@Html.LabelFor(m => m.Email)</li>
+                                    <li>
+
+                                        @Html.TextBoxFor(m => m.Email)
+                                        @Html.ValidationMessageFor(m => m.Email)
+                                    </li>
+                                    <li>@Html.LabelFor(m => m.Password)</li>
+                                    <li>
+
+                                        @Html.PasswordFor(m => m.Password)
+                                        @Html.ValidationMessageFor(m => m.Password)
+                                    </li>
+                                    <li>@Html.LabelFor(m => m.ConfirmPassword)</li>
+                                    <li>
+
+                                        @Html.PasswordFor(m => m.ConfirmPassword)
+                                        @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                                    </li>
+                                </ul>
+                                <input class="btn-default btn2" type="submit" value="כניסה" />
+                            </fieldset>
+                        }
+                        <p class="error-bag">@ViewBag.Message</p>
+                    </section>
+                    <div id="cms_login_footer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

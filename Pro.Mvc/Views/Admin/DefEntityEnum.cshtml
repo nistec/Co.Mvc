@@ -1,0 +1,261 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    Page.Title = "Crm";
+    string entity = Request["entity"];
+    string TagPropId = ViewBag.TagPropId;
+    string TagPropName = ViewBag.TagPropName;
+    string TagPropTitle = ViewBag.TagPropTitle;
+}
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+}
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var theme = 'Arctic';
+            JSON.useDateParser();
+
+            var entity = '@entity';
+            var tagPropId = '@TagPropId';
+            var tagPropName = '@TagPropName';
+            var tagPropTitle = '@TagPropTitle';
+
+            $('#PropType').val(entity);
+            $('#tagPropId').html(tagPropId);
+            $('#tagPropName').html(tagPropName);
+            $('#tagPropTitle').html(tagPropTitle);
+            
+
+            // prepare the data
+            var source =
+            {
+                updaterow: function (rowid, rowdata, commit) {
+                    updateCommand(rowdata.PropId, rowdata.PropName, 1, commit);
+                },
+                addrow: function (rowid, rowdata, position, commit) {
+                    updateCommand(rowid, rowdata.PropName, 0, commit);
+                },
+                deleterow: function (rowid, commit) {
+                    updateCommand(rowid, null, 2, commit);
+                },
+                async: false,
+                dataType: "json",
+                datafields:
+                [
+                    { name: 'PropId', type: 'number' },
+                    { name: 'PropName', type: 'string' },
+                    { name: 'PropType', type: 'string' }
+                ],
+                id: 'PropId',
+                type: 'POST',
+                url: '@Url.Action("DefEntityEnumView", "Common")',
+                data: { 'entity': entity }
+        };
+
+         var updateCommand = function (id, name, command, commit) {
+             $.ajax({
+                 dataType: 'json',
+                 type: 'POST',
+                 url: '@Url.Action("DefEntityEnumUpdate", "Admin")',
+                 data: { 'PropId': id, 'PropName': name, 'PropType': entity, 'command': command },
+                     success: function (data, status, xhr) {
+                         if (data) {
+                             if (data.Status <= 0)
+                                 alert(data.Message);
+                             else
+                                 dataAdapter.dataBind();
+                         }
+                         else
+                             alert('לא עודכנו נתונים');
+                         if (!commit === undefined)
+                             commit(true);
+                     },
+                     error: function () {
+                         alert('אירעה שגיאה, לא עודכנו נתונים');
+                         if (!commit === undefined)
+                             commit(false);
+                     }
+                 });
+            };
+         var dataAdapter = new $.jqx.dataAdapter(source, {
+             //contentType: "application/json; charset=utf-8",
+             loadError: function (jqXHR, status, error) {
+                 alert("dataAdapter failed: " + error);
+             },
+             loadComplete: function (data) {
+                 //alert("dealAdapter is Loaded");
+             }
+         });
+
+         var editrow = -1;
+         // initialize jqxGrid
+         $("#jqxgrid").jqxGrid(
+         {
+             rtl: true,
+             width: 400,
+             //autoheight: true,
+             source: dataAdapter,
+             localization: getLocalization('he'),
+             pageable: false,
+             showtoolbar: true,
+             rendertoolbar: function (toolbar) {
+                 var me = this;
+                 var container = $("<div style='margin: 5px;text-align:right'></div>");
+                 toolbar.append(container);
+                 container.append('<input id="addrowbutton" type="button" value="הוספה" />');
+                 container.append('<input style="margin-left: 5px;" id="deleterowbutton" type="button" value="מחיקה" title="מחיקת השורה המסומנת"/>');
+                 container.append('<input id="updaterowbutton" type="button" value="עריכה" title="עריכת השורה המסומנת"/>');
+                 container.append('<input id="refreshbutton" type="button" value="רענון" />');
+                 $("#addrowbutton").jqxButton();
+                 $("#deleterowbutton").jqxButton();
+                 $("#updaterowbutton").jqxButton();
+                 $("#refreshbutton").jqxButton();
+                 // update row.
+                 $("#updaterowbutton").on('click', function () {
+
+                     var selectedrowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+                     doRowEdit(selectedrowindex);
+                 });
+                 // create new row.
+                 $("#addrowbutton").on('click', function () {
+                     // show the popup window.
+                     var offset = $("#jqxgrid").offset();
+                     $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 60, y: parseInt(offset.top) + 60 } });
+                     $("#popupWindow").jqxWindow('open');
+                     $("#insertFlag").val('0');
+                     $("#trcode").hide();
+                     $("#PropName").val('');
+                 });
+                 // delete row.
+                 $("#deleterowbutton").on('click', function () {
+                     var selectedrowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+                     var rowscount = $("#jqxgrid").jqxGrid('getdatainformation').rowscount;
+                     if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
+                         var id = $("#jqxgrid").jqxGrid('getrowid', selectedrowindex);
+                         var result = confirm("האם למחוק?");
+                         if (result == true) {
+                             //Logic to delete the item
+                             var commit = $("#jqxgrid").jqxGrid('deleterow', id);
+                         }
+                     }
+                 });
+                 // refresh grid.
+                 $("#refreshbutton").on('click', function () {
+                     dataAdapter.dataBind();
+                 });
+             },
+             columns: [
+               { text: tagPropId, datafield: 'PropId', width: 60, cellsalign: 'right', align: 'center' },
+               { text: tagPropName, datafield: 'PropName', cellsalign: 'right', align: 'center' },
+             ]
+         });
+         var doRowEdit = function (selectedrowindex) {
+
+             //var selectedrowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+             var rowscount = $("#jqxgrid").jqxGrid('getdatainformation').rowscount;
+             if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
+                 $("#jqxgrid").jqxGrid('ensurerowvisible', selectedrowindex);
+
+                 $("#insertFlag").val('1');
+                 $("#trcode").show();
+                 // open the popup window when the user clicks a button.
+                 editrow = selectedrowindex;
+                 var offset = $("#jqxgrid").offset();
+                 $("#popupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 60, y: parseInt(offset.top) + 60 } });
+                 // get the clicked row's data and initialize the input fields.
+                 var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+                 $("#PropId").val(dataRecord.PropId);
+                 $("#PropName").val(dataRecord.PropName);
+                 // show the popup window.
+                 $("#popupWindow").jqxWindow('open');
+             }
+         };
+         $('#jqxgrid').on('rowdoubleclick', function (event) {
+             var args = event.args;
+             var boundIndex = args.rowindex;
+             var visibleIndex = args.visibleindex;
+             doRowEdit(boundIndex);
+         });
+         // initialize the input fields.
+         $("#PropId").jqxInput({ theme: theme }).width(150);
+         $('#PropId').attr('disabled', 'disabled');
+         $("#PropName").jqxInput({ theme: theme }).width(150);
+         // initialize the popup window and buttons.
+         $("#popupWindow").jqxWindow({
+             width: 250, resizable: false, isModal: true, autoOpen: false, cancelButton: $("#Cancel"), modalOpacity: 0.01
+         });
+         $("#popupWindow").on('open', function () {
+             $("#PropName").jqxInput('selectAll');
+         });
+
+         $("#Cancel").jqxButton({ theme: theme });
+         $("#Save").jqxButton({ theme: theme });
+         // update the edited row when the user clicks the 'Save' button.
+         $("#Save").click(function () {
+             if ($("#insertFlag").val() == '0') {
+                 //var row = {
+                 //    PropId: $("#PropId").val(), PropName: $("#PropName").val()
+                 //};
+                 //$('#jqxgrid').jqxGrid('addrow', null, row);
+                 updateCommand(0, $("#PropName").val(), 0);
+                 $("#popupWindow").jqxWindow('hide');
+             }
+             else if (editrow >= 0) {
+                 var row = {
+                     PropId: $("#PropId").val(), PropName: $("#PropName").val()
+                 };
+                 var rowID = $('#jqxgrid').jqxGrid('getrowid', editrow);
+                 $('#jqxgrid').jqxGrid('updaterow', rowID, row);
+                 $("#popupWindow").jqxWindow('hide');
+             }
+         });
+     });
+    </script>
+}
+<hgroup class="title">
+    <h3 class="rightPan">הגדרות כלליות-<span id="tagPropTitle">סניף</span></h3>
+
+</hgroup>
+<div class="clear"></div>
+
+<div class="global-view">
+    <div class="container-rtl">
+        <div class="grid-wrap">
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position: relative; z-index: 1;"></div>
+                <div>לעריכת שורה: לחיצה כפולה על השורה הרצויה</div>
+
+                <div style="margin-top: 30px;">
+                    <div id="cellbegineditevent"></div>
+                    <div style="margin-top: 10px;" id="cellendeditevent"></div>
+                    <div id="popupWindow">
+                        <input type="hidden" id="insertFlag" value="0" />
+                        <input type="hidden" id="PropType" value="" />
+                        <div>עריכה</div>
+                        <div style="overflow: hidden; direction: rtl">
+                            <table style="border-spacing: 10px; border-collapse: separate; direction: rtl">
+                                <tr id="trcode">
+                                    <td  id="tagPropId">קוד סניף:</td>
+                                    <td>
+                                        <input id="PropId" style="direction: rtl; text-align: right;" /></td>
+                                </tr>
+                                <tr>
+                                    <td id="tagPropName">שם סניף:</td>
+                                    <td>
+                                        <input id="PropName" style="direction: rtl; text-align: right;" /></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="padding-top: 10px;">
+                                        <input style="margin-right: 5px;" type="button" id="Save" value="עדכון" />
+                                        <input id="Cancel" type="button" value="ביטול" /></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

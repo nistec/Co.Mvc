@@ -1,0 +1,255 @@
+﻿@model Pro.Data.Registry.RegistryPage
+@{
+    ViewBag.Title = "Mifkad";
+    Layout = "~/Views/Mifkad/_ViewRegistry.cshtml";
+    string ismemeber=Request["m"];
+}
+
+@section cmsHeader {
+
+<div id="cmsHeader">
+    @*@Html.Raw(Model.Header)*@
+</div>
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/model/signup-def.js"></script>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+ 
+            var def = new mifkad_double('@ismemeber');
+
+            @*var def = new app_signup_def(JSON.parse('@Model.AccountId'));*@
+ 
+        });
+
+    </script>
+}
+<!--begin of content-wrapper-->
+<div class="basad">בס"ד</div>
+<div class="logo">
+    <p><a href="Index" class="footer-btn">חזרה לעמוד הראשי</a></p>
+    <img src="~/Content/Mifkad/images/logo.gif" alt="logo" />
+</div>
+<div id="stp-1" class="stp1">
+    <h1 id="hIsmem">בקשה להתקבל כחבר המפלגה</h1>
+    <h3><span>אנא הקלידו פרטים אישיים</span> (שלב 1 מתוך 4):</h3>
+    <p class="remark">* שדה חובה</p>
+    <div class="form">
+        <form id="form1" method="post" action="">
+            <div class="lable">
+                <div class="right">*שם משפחה</div>
+                <div class="left">Last Name*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="LastName1" name="LastName1" />
+            <div class="lable">
+                <div class="right">*שם פרטי</div>
+                <div class="left">First Name*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" />
+            <div class="lable">
+                <div class="right">*ת.ז.</div>
+                <div class="left">Identification Number*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="MemberId1" name="MemberId1" />
+            <div class="lable">
+                <div class="right">*טלפון נייד</div>
+                <div class="left">Mobile Number*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="CellPhone1" name="CellPhone1" />
+            <div class="lable">
+                <div class="right">טלפון בבית</div>
+                <div class="left">Home Number</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="Phone1" name="Phone1" />
+            <div class="lable">
+                <div class="right">*אימייל</div>
+                <div class="left">Email*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="Email1" name="Email1" />
+            <div class="lable">
+                <div class="right">*כתובת (רחוב ומספר) </div>
+                <div class="left">Address*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="Address1" name="Address1" />
+            <div class="lable">
+                <div class="right">*עיר</div>
+                <div class="left">City*</div>
+                <div class="clear"></div>
+            </div>
+            <div id="City1" name="City1" class="City"></div>
+            <div class="lable">
+                <div class="right">*מין</div>
+                <div class="left">Gender*</div>
+                <div class="clear"></div>
+            </div>
+            <div id="Gender1" name="Gender1" class="Gender"></div>
+            <div class="lable">
+                <div class="right">*ת. לידה לועזי</div>
+                <div class="left">Date of Birth*</div>
+                <div class="clear"></div>
+            </div>
+            <div style="background-color:#fff; width:100%">
+                <div id="Birthday1" name="Birthday1" class="Birthday"></div>
+            </div>
+            <div class="lable">
+                <div class="right">ת.לידה עברי</div>
+                <div class="left">Hebrew Date of Birth</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="ExField1_1" name="ExField1_1" />
+            <input type="button" class="btn" id="Next1" value="המשך" />
+        </form>
+    </div>
+</div>
+
+<div id="stp-2" class="stp1">
+    <h1>בקשה להתקבל כחבר המפלגה</h1>
+    <h3><span>אנא הקלידו פרטיים אישיים של בן הזוג</span> (שלב 2 מתוך 4):</h3>
+    <p class="remark">* שדה חובה</p>
+    <div class="form">
+        <form id="form2" method ="post" action="">
+            <div class="lable">
+                <div class="right">*שם משפחה</div>
+                <div class="left">Last Name*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="LastName2" name="LastName2" />
+            <div class="lable">
+                <div class="right">*שם פרטי</div>
+                <div class="left">First Name*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" />
+            <div class="lable">
+                <div class="right">*ת.ז.</div>
+                <div class="left">Identification Number*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="MemberId2" name="MemberId2" />
+            <div class="lable">
+                <div class="right">*טלפון נייד</div>
+                <div class="left">Mobile Number*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="CellPhone2" name="CellPhone2" />
+            <div class="lable">
+                <div class="right">טלפון בבית</div>
+                <div class="left">Home Number</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="Phone2" name="Phone2" />
+            <div class="lable">
+                <div class="right">*אימייל</div>
+                <div class="left">Email*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="Email2" name="Email2" />
+            <div class="lable">
+                <div class="right">*כתובת (רחוב ומספר) </div>
+                <div class="left">Address*</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="Address2" name="Address2" />
+            <div class="lable">
+                <div class="right">*עיר</div>
+                <div class="left">City*</div>
+                <div class="clear"></div>
+            </div>
+            <div id="City2" name="City2" class="City"></div>
+            <div class="lable">
+                <div class="right">*מין</div>
+                <div class="left">Gender*</div>
+                <div class="clear"></div>
+            </div>
+            <div id="Gender2" name="Gender2" class="Gender"></div>
+            <div class="lable">
+                <div class="right">*ת. לידה לועזי</div>
+                <div class="left">Date of Birth*</div>
+                <div class="clear"></div>
+            </div>
+            <div style="background-color:#fff; width:100%">
+                <div id="Birthday2" name="Birthday2" class="Birthday"></div>
+            </div>
+            <div class="lable">
+                <div class="right">ת.לידה עברי</div>
+                <div class="left">Hebrew Date of Birth</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" class="txt" id="ExField1_2" name="ExField1_2" />
+            <input type="button" class="btn" id="Next2" value="המשך" />
+            </form>
+</div>
+</div>
+
+<div id="stp-3" class="stp1">
+    <h3><span>הצהרת המתפקדים</span> (שלב 3 מתוך 4):</h3>
+    <form id="form3" method="post" action="">
+        <input type="hidden" id="AccountId" name="AccountId" value="" />
+        <div class="form">
+            <div class="lable">
+                <div class="right">*בעל כרטיס האשראי הינו</div>
+                <div class="left">Credit card owner is*</div>
+                <div class="clear"></div>
+            </div>
+            <div class="input-bg" style="padding:8px 0;background-color:#fff;">
+                <p><input name="CreditCardOwner" value="0" type="radio" checked />המתפקד/ת.</p>
+                <p><input name="CreditCardOwner" value="1" type="radio" />בן/בת זוגו של המתפקד/ת.</p>
+                <p><input name="CreditCardOwner" value="2" type="radio" />הורה של המתפקד/ת (למתפקדים עד גיל 25 בלבד).</p>
+                <p><input name="CreditCardOwner" value="3" type="radio" />בנו/בתו של המתפקד/ת</p>
+            </div>
+        </div>
+        <div class="form">
+            <p class="right">אני מאשר לחייב את חשבוני בדמי חבר שנתיים בסך</p>
+            <div class="clear"></div>
+            <div class="input-bg" style="padding:8px 0; background-color:#fff;">
+                <p><input id="ItemId4"  name="ItemId" value="4" type="radio" checked>89 ₪ לזוג לשנה</p>
+            </div>
+        </div>
+        <div class="form">
+            <div class="lable">
+                <div class="right">קוד הפניה</div>
+                <div class="left">Reference Code</div>
+                <div class="clear"></div>
+            </div>
+            <input type="text" id="ReferralCode" name="ReferralCode" class="txt" style="margin-bottom: 2px;" />
+            <p class="remark right">אם יש בידך קוד הפניה, הזן אותו כאן</p>
+            <div class="clear"></div>
+        </div>
+        <div class="form">
+            <div class="disclaimer">
+                <a id="aStatement" href="#" style="font-size:1.2em;">להצהרת המתפקד לחץ כאן</a>
+                <input id="ConfirmAgreement" name="ConfirmAgreement" type="checkbox">*אני מאשר שקראתי ומאשר את הצהרתי לעיל.
+            </div>
+            <input type="button" class="btn" id="Submit" value="המשך לתשלום" style="padding:0; color:#fff;" />
+        </div>
+    </form>
+</div>
+<div class="footer">
+    <p>
+        נתקלת בבעיה? שלח לנו מייל לכתובת <a href="mailto:vaadatbchirotby@gmail.com">vaadatbchirotby@gmail.com</a>
+        <br>
+        עם שם ומספר נייד ונחזור אליך
+    </p>
+    <p class="powered">powered by My T Interactive Ltd</p>
+</div>
+<!--end of content-wrapper-->
+@section cmsFooter {
+    @Html.Raw(Model.Footer)
+}
+<script type="text/javascript">
+    @Html.Raw(Model.AnalyticsGoogleScript);
+    @Html.Raw(Model.AnalyticsFacebookScript);
+</script>

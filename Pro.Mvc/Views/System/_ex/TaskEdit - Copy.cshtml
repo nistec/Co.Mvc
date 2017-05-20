@@ -1,0 +1,230 @@
+﻿@{
+
+    //ViewBag.Title = "System";
+    Layout = "~/Views/Shared/_View.cshtml";
+    int rcdid = Nistec.Types.ToInt(Request["id"]);
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/system/task-def.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .jqx-grid-cell {
+            border: none;
+        }
+
+        .wiz-tab {
+            display: none;
+        }
+
+            .wiz-tab.active {
+                display: block;
+            }
+    </style>
+
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+        var wizard;
+        var def;
+
+        $(document).ready(function () {
+            JSON.useDateParser();
+            var theme = 'Arctic';
+            var taskid =@rcdid
+            wizard = new app_wiztabs();
+            //wizard.displayStep(0);
+
+            def = new app_task_def('@rcdid', JSON.parse('@userInfo'), true);
+
+            $('#reset').on('click', function () {
+                location.reload();
+            });
+
+            $('#fcSubmit').on('click', function (e) {
+                e.preventDefault();
+                def.doSubmit();
+            });
+
+            $('#fcClear').on('click', function (e) {
+                $('#fcForm')[0].reset();
+                $('#fcForm').jqxValidator('hide');
+            });
+
+            $('#fcCancel').on('click', function (e) {
+                def.doCancel();
+            });
+            $('#fcComment').on('click', function (e) {
+                def.doComment(taskid);
+            });
+            $('#fcAssign').on('click', function (e) {
+                def.doAssign(taskid);
+            });
+
+        });
+
+        function goPartial(step) {
+            wizard.displayStep(step);
+        }
+    </script>
+}
+
+<div class="breadcrumbs">
+</div>
+
+
+<div class="global-view">
+    <div id="wiz-container" class="container">
+        <div id="wiz-1" class="wiz-tab active">
+            <h3 class="rtl">משימה</h3>
+            <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+                <div id="fcWindow">
+                    @*<div id="fcHeader">
+                        <span id="fcTitle" style="font-weight: bold;">משימה</span>
+                    </div>*@
+                    <div id="fcBody">
+                        <form class="fcForm" id="fcForm" method="post" action="/System/UpdateTask">
+                            <div style="direction: rtl; text-align: right">
+                                <input type="hidden" id="TaskId" name="TaskId" value="0" />
+                                <input type="hidden" id="AccountId" name="AccountId" value="" />
+                                <input type="hidden" id="Employee_Id" name="Employee_Id" value="" />
+                                <input type="hidden" id="Task_Parent" name="Task_Parent" value="" />
+                                <div style="height:5px"></div>
+                                <div id="tab-content" class="tab-content" dir="rtl">
+
+                                    <div class="form-group">
+                                        <div class="field">
+                                            סוג :
+                                        </div>
+                                        <div id="Task_Type" name="Task_Type"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            נושא :
+                                        </div>
+                                        <input id="TaskSubject" name="TaskSubject" type="text" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            תוכן:
+                                        </div>
+                                        <textarea id="TaskBody" name="TaskBody" class="text-content"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="field">
+                                            פרוייקט :
+                                        </div>
+                                        <div id="Project_Id" name="Project_Id"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            זמן משוער בימים :
+                                        </div>
+                                        <input id="TaskEstimateDays" name="TaskEstimateDays" type="number" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            תאריך לביצוע:
+                                        </div>
+                                        <div id="DueDate" name="DueDate"></div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="field">
+                                            נוצר ב:
+                                        </div>
+                                        <input id="CreatedDate" name="CreatedDate" type="text" readonly="readonly" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            מועד התחלה:
+                                        </div>
+                                        <input id="StartDate" name="StartDate" type="text" readonly="readonly" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            מועד סיום:
+                                        </div>
+                                        <input id="EndDate" name="EndDate" type="text" readonly="readonly" class="text-mid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="checkbox" id="IsShare" name="IsShare" />&nbsp;<span>משותף</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            סטאטוס :
+                                        </div>
+                                        <input id="Status" name="Status" type="text" class="text-mid" />
+                                    </div>
+
+                                </div>
+                                <div style="height: 5px"></div>
+                                <div>
+                                    <input id="fcSubmit" class="btn-default btn7" type="button" value="עדכון" />
+                                    <input id="fcClear" class="btn-default btn7" type="button" value="ניקוי" />
+                                    <input id="fcCancel" class="btn-default btn7" type="button" value="ביטול" />
+                                    <input id="fcComment" class="btn-default btn7" type="button" value="הערות" />
+                                    <input id="fcAssign" class="btn-default btn7" type="button" value="היסטוריה" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="wiz-2" class="wiz-tab">
+            <div class="rtl">
+                <a class="btn-default btn7 w-60" href="javascript:goPartial(1);">חזרה</a>
+            </div>
+            <div id="divPartial2"></div>
+        </div>
+        <div id="wiz-3" class="wiz-tab">
+            <div class="rtl">
+                <a class="btn-default btn7 w-60" href="javascript:goPartial(1);">חזרה</a>
+            </div>
+            <div id="divPartial3"></div>
+        </div>
+        <div id="wiz-4" class="wiz-tab">
+            <h3 class="rtl">מעקב זמנים</h3>
+            <div id="divPartial4"></div>
+        </div>
+        <div id="wiz-5" class="wiz-tab">
+            <h3 class="rtl">הערות-עריכה</h3>
+            <div id="divPartial5"></div>
+        </div>
+        <div id="wiz-6" class="wiz-tab">
+            <h3 class="rtl">העברה</h3>
+            <div id="divPartial6"></div>
+        </div>
+        <div id="wiz-7" class="wiz-tab">
+            <h3 class="rtl">מעקב זמנים - עריכה</h3>
+            <div id="divPartial7"></div>
+        </div>
+    </div>
+</div>
+<!--end of content-wrapper-->
+
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("System", "Tasks", 'en');
+</script>
+
+
+

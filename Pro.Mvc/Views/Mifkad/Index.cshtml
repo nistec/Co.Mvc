@@ -1,0 +1,65 @@
+﻿@model Pro.Data.Registry.RegistryPage
+@{
+    ViewBag.Title = "Mifkad";
+    Layout = "~/Views/Mifkad/_ViewRegistry.cshtml";
+}
+
+<!--begin of content-wrapper-->
+<div class="basad">בס"ד</div>
+<div class="logo">
+    <img src="~/Content/Mifkad/images/logo.gif" alt="logo" />
+</div>
+
+<div class="stp1">
+    <div class="form">
+        <p>האם התפקדת בעבר למפלגת הבית היהודי?</p>
+        <label class="radio">
+            <input id="rYes" name="memq" type="radio" value="yes">
+            כן
+        </label>
+        <label class="radio">
+            <input id="rNo" name="memq" type="radio" value="no">
+            לא
+        </label>
+        <br>
+        <p><a id="aDouble" href="#" class="btn">להתפקדות <span style="text-decoration:underline;">זוגית</span> לבית היהודי</a></p>
+        <br>
+        <p><a id="aSingle" href="#" class="btn">להתפקדות <span style="text-decoration:underline;">יחיד</span> לבית היהודי</a></p>
+        <br><br>
+        <p><a href="#" class="link">להורדת טופס התפקדות ידני</a></p>
+        <p>להתפקדות באמצעות צ'ק, הוראת קבע וכרטיס אשראי</p>
+        <br><br>
+    </div>
+</div>
+
+@*@Html.Raw(Model.Body)*@
+
+<!--end of content-wrapper-->
+
+@section cmsFooter {
+ @Html.Raw(Model.Footer)
+}
+
+<script type="text/javascript">
+
+    @Html.Raw(Model.AnalyticsGoogleScript);
+    @Html.Raw(Model.AnalyticsFacebookScript);
+
+    //default
+    $("#aDouble").attr("href", "signup2?m=n")
+    $("#aSingle").attr("href", "signup1?m=n")
+
+
+    $('input[type=radio][name=memq]').change(function () {
+        if (this.value == 'yes') {
+            $("#aDouble").attr("href", "signup2?m=y")
+            $("#aSingle").attr("href", "signup1?m=y")
+        }
+        else if (this.value == 'no') {
+            $("#aDouble").attr("href", "signup2?m=n")
+            $("#aSingle").attr("href", "signup1?m=n")
+        }
+    });
+       
+
+</script>

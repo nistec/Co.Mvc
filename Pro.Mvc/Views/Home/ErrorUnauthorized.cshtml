@@ -1,0 +1,25 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+@{
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    ViewBag.Title = "Error";
+}
+
+<div class="global" style="text-align: center">
+    <div class="center-box">
+        <div class="container">
+            <img src="~/Images/warning.png" alt="Error" />
+            <h1>העמוד שניסית לגלוש אליו דורש הזדהות</h1>
+            <p>
+                @ViewBag.Message
+                <br />
+                <a href="~/home/index">לדף הבית</a>
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>נתקלת בבעיה? נא פנה לתמיכה <a href="tel:#">טלפון תמיכה</a></p>
+            
+        </div>
+
+    </div>
+</div>

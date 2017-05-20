@@ -1,0 +1,100 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "Crm";
+}
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+
+    @Scripts.Render("~/bundles/jqxgrid")
+}
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var theme = 'Arctic';
+            JSON.useDateParser();
+
+            var source =
+            {
+                dataType: "json",
+                datafields:
+                [
+                    { name: 'PropId', type: 'number' },
+                    { name: 'PropName', type: 'string' },
+                    { name: 'RegionId', type: 'number' },
+                    { name: 'RegionName', type: 'string' }
+                ],
+                id: 'PropId',
+                data: {},
+                type: 'POST',
+                url: '@Url.Action("GetCityRegionViewAll", "Common")'
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                contentType: "application/json; charset=utf-8",
+                loadError: function (jqXHR, status, error) {
+                    //alert("dealAdapter failed: " + error);
+                },
+                loadComplete: function (data) {
+                    //alert("dealAdapter is Loaded");
+                }
+            });
+
+            var editrow = -1;
+            // initialize jqxGrid
+            $("#jqxgrid").jqxGrid(
+            {
+                rtl: true,
+                width: 500,
+                autoheight: false,
+                source: dataAdapter,
+                localization: getLocalization('he'),
+                pageable: false,
+                sortable: true,
+                showtoolbar: true,
+                rendertoolbar: function (toolbar) {
+                    var me = this;
+                    var container = $("<div style='margin: 5px;text-align:right'></div>");
+                    toolbar.append(container);
+                    container.append('<input id="refreshbutton" type="button" value="רענון" />');
+                    $("#refreshbutton").jqxButton();
+                    // refresh grid.
+                    $("#refreshbutton").on('click', function () {
+                        dataAdapter.dataBind();
+                    });
+                },
+                columns: [
+                  { text: 'קוד עיר', datafield: 'PropId', width: 60, cellsalign: 'right', align: 'center' },
+                  { text: 'שם עיר', datafield: 'PropName', cellsalign: 'right', align: 'center' },
+                  { text: 'אזור', datafield: 'RegionName', width: 100, cellsalign: 'right', align: 'center' }
+                  //{
+                  //    text: 'אזור', datafield: 'RegionId', displayfield: 'RegionName', columntype: 'dropdownlist',
+                  //    createeditor: function (row, value, editor) {
+                  //        editor.jqxDropDownList({ source: zoneAdapter, displayMember: 'PropName', valueMember: 'PropId' });
+                  //    }
+                  //}
+                ]
+            });
+
+        });
+    </script>
+}
+<hgroup class="title">
+    <h3 class="rightPan">הגדרות כלליות-<span>ערים-אזורים</span></h3>
+
+</hgroup>
+<div class="clear"></div>
+
+<div class="global-view">
+
+    <div class="container-rtl">
+        <div class="grid-wrap">
+            <div id="jqxWidget">
+                <!--<input style="margin-right: 5px;" type="button" id="addrowbutton" value="הוספה" />-->
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+
+                <div style="font-size: 12px; font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif; margin-top: 30px;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

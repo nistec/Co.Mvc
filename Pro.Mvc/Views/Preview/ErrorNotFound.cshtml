@@ -1,0 +1,23 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+@{
+    Layout = "~/Views/Shared/_ViewRegistry.cshtml";
+    ViewBag.Title = "Error";
+}
+
+<div class="global" style="text-align: center">
+    <div class="center-box">
+        <div class="container">
+            <img src="~/Images/warning.png" alt="Error" />
+            <h1>העמוד שניסית לגלוש אליו אינו קיים</h1>
+            <p>
+                @ViewBag.Message
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>נתקלת בבעיה? נא פנה לתמיכה <a href="tel:#">טלפון תמיכה</a></p>
+            
+        </div>
+
+    </div>
+</div>

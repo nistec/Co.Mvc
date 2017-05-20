@@ -1,0 +1,41 @@
+﻿@model Pro.Mvc.Models.ViewModel
+@{
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    ViewBag.Title = "Report";
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="@Html.Raw(Model.ScriptSrc)"></script>
+<style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+    </style>
+
+}
+
+@section scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            JSON.useDateParser();
+            app_view_grid.load(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
+
+        });
+    </script>
+}
+
+<div class="grid-wrap rtl">
+    <div id="grid-toolbar" class="grid-toolbar"></div>
+    <div id="jqxWidget">
+        <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+    </div>
+</div>
+

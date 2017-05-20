@@ -1,0 +1,321 @@
+﻿@model Pro.Mvc.Models.EditTaskModel
+@{
+    //ViewBag.Title = "System";
+    Layout = "~/Views/Shared/_View.cshtml";
+    //int rcdid = Nistec.Types.ToInt(Request["id"]);
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/task-new.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+
+    <script src="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.js"></script>
+    <link href="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.css" rel="stylesheet" />
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+
+        /*.jqx-grid-cell {
+            border: none;
+        }
+
+        .wiz-tab {
+            display: none;
+        }
+
+            .wiz-tab.active {
+                display: block;
+            }*/
+        #accordion {
+            max-width: 800px;
+        }
+       
+    </style>
+
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    var task_def;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        var uinfo = JSON.parse('@userInfo');
+              
+        task_def = app_task.init('@Model.PId', uinfo, 'E');
+
+
+        $('#reset').on('click', function () {
+            location.reload();
+        });
+
+        $('#fcClear').on('click', function (e) {
+            //app_messenger.Post("הודעה");
+            $('#fcForm')[0].reset();
+            $('#fcForm').jqxValidator('hide');
+        });
+
+        $('#fcCancel').on('click', function (e) {
+            task_def.doCancel();
+        });
+        $('#fcSubmit').on('click', function (e) {
+            task_def.doSubmit();
+        });
+
+        $('#task-item-update').click(function () {
+            var iframe = wizard.getIframe();
+            if (iframe && iframe.triggerSubmit) {
+                iframe.triggerSubmit();
+            }
+        });
+        $('#task-item-cancel').click(function () {
+            wizard.wizHome();
+        });
+
+    });
+      
+    </script>
+}
+
+<div class="breadcrumbs">
+</div>
+
+
+<div class="global-view">
+    <div id="wiz-container" class="container">
+           <h3 id="hTitle" class="rtl">פתיחת כרטיס</h3>
+            <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+                @*<div id="fcWindow">*@
+                @*<div id="fcHeader">
+                        <span id="fcTitle" style="font-weight: bold;">משימה</span>
+                    </div>*@
+                <div id="fcBody">
+
+                    <div id="accordion" class="tab-content" dir="rtl">
+                        <div id="hxp-0">כרטיס</div>
+                        <div id="exp-0" style="padding:0;margin:0">
+                            <div class="expander-entry" style="margin:10px">
+                                <form class="fcForm" id="fcForm" method="post" action="/System/UpdateNewTask">
+                                    <input type="hidden" id="TaskKey" name="TaskKey" value="@Model.PId" />
+                                    <input type="hidden" id="TaskId" name="TaskId" value="0" />
+                                    <input type="hidden" id="TaskModel" name="TaskModel" value="E" />
+                                    <input type="hidden" id="AccountId" name="AccountId" value="" />
+                                    <input type="hidden" id="UserId" name="UserId" value="" />
+                                    <input type="hidden" id="TeamId" name="TeamId" value="" />
+                                    <input type="hidden" id="Task_Parent" name="Task_Parent" value="" />
+                                    <input type="hidden" id="TaskStatus" name="TaskStatus" value="1" />
+                                    <input type="hidden" id="Task_Type" name="Task_Type" value="0" />
+
+                                    <div id="tab-content" class="tab-content" dir="rtl">
+
+                                        <div class="form-group">
+                                            <div class="field">
+                                                נושא:
+                                            </div>
+                                            <input id="TaskSubject" name="TaskSubject" type="text" style="width:80%;" />
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                תיאור:
+                                            </div>
+                                            <textarea id="TaskBody" name="TaskBody" class="text-content" style="height:200px;width:400px;"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                משימה עבור:
+                                            </div>
+                                            <div id="AssignTo"></div>
+                                        </div>
+                                        @*<div class="form-group">
+                    <div class="field">
+                        נוצר ב:
+                    </div>
+                    <div id="CreatedDate" name="CreatedDate"></div>
+                </div>*@
+                                        <div class="form-group">
+                                            <div class="field">
+                                                תאריך לביצוע:
+                                            </div>
+                                            <div id="DueDate" name="DueDate"></div>
+                                        </div>
+
+                                        <div class="form-group pasive">
+                                            <div class="field">
+                                                צבע :
+                                            </div>
+                                            <select id="ColorFlag" name="ColorFlag">
+                                                <option value="#7bd148">Green</option>
+                                                <option value="#5484ed">Bold blue</option>
+                                                <option value="#a4bdfc">Blue</option>
+                                                <option value="#46d6db">Turquoise</option>
+                                                <option value="#7ae7bf">Light green</option>
+                                                <option value="#51b749">Bold green</option>
+                                                <option value="#fbd75b">Yellow</option>
+                                                <option value="#ffb878">Orange</option>
+                                                <option value="#ff887c">Red</option>
+                                                <option value="#dc2127">Bold red</option>
+                                                <option value="#dbadff">Purple</option>
+                                            </select>
+                                        </div>
+
+
+                                        <div id="jqxExp-1" class="item-pasive">
+                                            <div>
+                                                פרטים נוספים
+                                            </div>
+                                            <div class="rtl" style="border:none">
+
+                                                @*<div class="form-group">
+                            <div class="field">
+                                מועד התחלה:
+                            </div>
+                            <input id="StartedDate" name="StartedDate" type="text" readonly="readonly" class="text-mid" />
+                        </div>
+                        <div class="form-group">
+                            <div class="field">
+                                מועד סיום:
+                            </div>
+                            <input id="EndedDate" name="EndedDate" type="text" readonly="readonly" class="text-mid" />
+                        </div>*@
+                                                <div id="Project_Id-container" class="form-group">
+                                                    <div id="Project_Id-name" class="field">
+                                                        פרוייקט :
+                                                    </div>
+                                                    <input id="Project_Id" name="Project_Id" type="hidden" />
+                                                    <input id="Project_Id-display" type="text" class="text-mid" readonly />
+                                                    <a href="#" id="Project_Id-button" class="@(Model.Option == "g" ? "item-pasive" : null)" style="font-size:16px"><i class="fa fa-search"></i></a>
+                                                    <script type="text/javascript">
+                                                        var project_dlg;
+                                                        $('#Project_Id-button').on('click', function (event) {
+                                                            if (project_dlg == null) {
+                                                                project_dlg = new app_ComboDlg('#Project_Id');
+                                                                project_dlg.init("ProjectId", "ProjectName", '/System/Lookup_DisplayList', 'project_name');
+                                                            }
+                                                            project_dlg.display();
+                                                        });
+                                                    </script>
+                                                </div>
+                                                <div id="ClientId-container" class="form-group">
+                                                    <div id="ClientId-name" class="field">
+                                                        לקוח\מנוי:
+                                                    </div>
+                                                    <input type="hidden" id="ClientId" name="ClientId" value="0" />
+                                                    <input type="hidden" id="ClientDetails" name="ClientDetails" />
+                                                    <input id="ClientId-display" type="text" class="text-mid" readonly />
+                                                    <a href="#" id="ClientId-button" class="@(Model.Option == "g" ? "item-pasive" : null)" style="font-size:16px"><i class="fa fa-search"></i></a>
+                                                    <script type="text/javascript">
+                                                        var client_dlg;
+                                                        $('#ClientId-button').on('click', function (event) {
+                                                            if (client_dlg == null) {
+                                                                client_dlg = new app_ComboDlg('#ClientId', "#ClientDetails");//function (item) {
+                                                                //    $("#ClientDetails").val(item.label);
+                                                                //});
+                                                                client_dlg.init("Value", "Label", '/Common/Lookup_DisplayList', 'member_display');
+                                                            }
+                                                            client_dlg.display();
+                                                        });
+                                                    </script>
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="checkbox" id="IsShare" name="IsShare" />&nbsp;<span>משותף</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="height: 5px"></div>
+                                        <div>
+                                            <input id="fcSubmit" class="btn-default btn7 w-80" type="button" value="עדכון" />
+                                            <input id="fcCancel" class="btn-default btn7 w-80" type="button" value="ביטול" />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="hxp-4" class="hxp" style="display:none">פעולות לביצוע</div>
+                        <div id="exp-4" style="padding: 0; margin: 0; display: none">
+                            <div class="expander-entry">
+                                <div class="grid-wrap rtl">
+                                    <div>
+                                        <a id="jqxgrid4-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                        <a id="jqxgrid4-edit" href="#" class="btn-default btnIcon"><i class="fa fa-edit"></i>עריכה</a>
+                                        <a id="jqxgrid4-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
+                                        <a id="jqxgrid4-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                        <a id="jqxgrid4-clear" href="#" class="btn-default btnIcon"><i class="fa fa-circle-thin"></i>ניקוי</a>
+                                    </div>
+                                    <div id="jqxgrid4-window" style="display:none">
+                                        <div>עריכה</div>
+                                        <div style="overflow: hidden;direction:rtl;text-align:right">
+                                            <form id="fcTaskForm" method="post" action="/System/TaskFormUpdate">
+                                                <input type="hidden" id="ItemId" name="ItemId" value="0" />
+                                                <input type="hidden" id="Task_Id" name="Task_Id" value="0" />
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        תיאור:
+                                                    </div>
+                                                    <textarea id="ItemText" name="ItemText" class="text-content" style="height:120px;width:90%;"></textarea>
+                                                </div>
+                                                <div style="height: 5px"></div>
+                                                <div>
+                                                    <input id="formSave" type="button" class="btn-default btn7 w-80" value="עדכון" />
+                                                    <input id="formCancel" type="button" class="btn-default btn7 w-80" value="ביטול" />
+                                                </div>
+                                                <div id="signResult"></div>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group pasive">
+                                        <div class="field">
+                                            הוספה מתבנית:
+                                        </div>
+                                        <div id="Form_Type" name="Form_Type"></div>
+                                    </div>
+                                    <div id="jqxgrid4" style="position:relative;z-index:1;"></div>
+                                    <div style="display:none">
+                                        <input id="jqxgrid4-check_template" type="checkbox" /><span>האם לשמור כתבנית?</span>
+                                        <div id="divFormTemplate" class="item-pasive">
+                                            <div>שם התבנית</div>
+                                            <input id="jqxgrid4-template_name" type="text" />
+                                            <a id="jqxgrid4-save_template" href="#" class="btn-default btn7">שמירה</a>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                        <div id="hxp-5" class="hxp" style="display:none">קבצים</div>
+                        <div id="exp-5" style="padding:0;margin:0">
+                            <div class="expander-entry">
+                                <div id="task-files">
+                                    <iframe id="iframe-files" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+     </div>
+</div>
+<!--end of content-wrapper-->
+
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
+</script>
+
+
+

@@ -1,0 +1,94 @@
+﻿@{
+
+    //ViewBag.Title = "System";
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    int rcdid = Nistec.Types.ToInt(Request["id"]);
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+    
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/system/task-def.js"></script>
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+
+}
+
+<div style="margin: 0px;">
+    <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+        <div id="fcWindow">
+            <div id="fcHeader">
+                <span id="fcTitle" style="font-weight: bold;">משימה</span>
+            </div>
+            <div id="fcBody">
+                <form class="fcForm" id="fcForm" method="post" action="/System/UpdateTaskAssign">
+                    <div style="direction: rtl; text-align: right">
+                        <input type="hidden" id="AssignId" name="AssignId" value="0" />
+                        <input type="hidden" id="EmployeeId_AssignedBy" name="EmployeeId_AssignedBy" value="" />
+                        <input type="hidden" id="Task_Id" name="Task_Id" value="" />
+                        <div style="height:5px"></div>
+                        <div id="tab-content" class="tab-content" dir="rtl">
+ 
+                                <div class="form-group">
+                                    <div class="field">
+                                        העבר אל :
+                                    </div>
+                                    <div id="EmployeeId_AssignedTo" name="EmployeeId_AssignedTo"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        תאריך העברה:
+                                    </div>
+                                    <div id="Task_AsignDate" name="Task_AsignDate"></div>
+                                </div>
+ 
+                        </div>
+                        <div style="height: 5px"></div>
+                        <div>
+                            <input id="fcSubmit" class="btn-default btn7" type="button" value="עדכון" />
+                            <input id="fcClear" class="btn-default btn7" type="button" value="ניקוי" />
+                            <input id="fcCancel" class="btn-default btn7" type="button" value="ביטול" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--end of content-wrapper-->
+
+
+<script type="text/javascript">
+
+    var def;
+
+    $(document).ready(function () {
+
+
+        def = new app_task_def('@rcdid', JSON.parse('@userInfo'),true);
+
+        $('#reset').on('click', function () {
+            location.reload();
+        });
+
+
+        $('#fcSubmit').on('click', function (e) {
+            e.preventDefault();
+            def.doSubmit();
+        });
+
+        $('#fcClear').on('click', function (e) {
+            $('#fcForm')[0].reset();
+            $('#fcForm').jqxValidator('hide');
+        });
+
+        $('#fcCancel').on('click', function (e) {
+            def.doCancel();
+        });
+    });
+
+
+</script>
+

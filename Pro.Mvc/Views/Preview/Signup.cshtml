@@ -1,0 +1,136 @@
+﻿@model Pro.Data.Registry.RegistryPage
+@{
+    Layout = "~/Views/Shared/_ViewRegistry.cshtml";
+}
+
+
+@section head {
+
+@Scripts.Render("~/bundles/jqx")
+@Html.Raw(Model.HScript)
+
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var def = new registry_signup();
+
+            //$('#reset').on('click', function () {
+            //    location.reload();
+            //});
+
+            //$('#accSubmit').on('click', function (e) {
+
+            //    e.preventDefault();
+            //    def.doSubmit();
+            //});
+
+            //$('#accCancel').on('click', function (e) {
+            //    $('#accForm')[0].reset();
+            //    $('#accForm').jqxValidator('hide');
+            //});
+
+
+            @*$("#cmsHeader").text(@Model.Header);
+            $("#cmsFooter").html(htmlDecode(@Model.Footer));
+            $("#cmsPlaceHolder1").html(htmlDecode(@Model.PlaceHolder1));
+            $("#cmsPlaceHolder2").html(htmlDecode(@Model.PlaceHolder2));
+            $("#cmsPlaceHolder3").html(htmlDecode(@Model.PlaceHolder3));*@
+
+        });
+
+    </script>
+@Html.Raw(Model.HiddenScript)
+}
+<input type="hidden" id="model-account" value="@Model.AccountId" />
+<input type="hidden" id="model-folder" value="@Model.Folder" />
+<input type="hidden" id="model-credit" value="@Model.EnableSignupCredit?1:0" />
+
+@section cmsHeader {
+
+    <div id="cmsHeader">
+        @Html.Raw(Model.Header)
+    </div>
+}
+
+<div id="stp-1" class="stp1">
+    <h1 id="hTitle">@Model.Title</h1>
+    <h3><span>אנא הקלידו פרטים אישיים</span>:</h3>
+    <p class="remark">* שדה חובה</p>
+    <div class="form rtl">
+        <form id="form1" method="post" action="/Registry/UpdateMemberSignup">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="RecordId" name="RecordId" value="0" />
+            <input type="hidden" id="AccountId" name="AccountId" value="@Model.AccountId" />
+            <input type="hidden" id="Categories" name="Categories" value="" />
+
+            <div class="form-group">
+                <div class="lable">*שם משפחה</div>
+                <input type="text" class="txt" id="LastName" name="LastName" />
+            </div>
+            <div class="form-group">
+                <div class="lable">*שם פרטי</div>
+                <input type="text" class="txt" id="FirstName" name="FirstName" />
+            </div>
+            <div class="form-group">
+                <div class="lable">*ת.ז.</div>
+                <input type="text" class="txt" id="MemberId" name="MemberId" />
+            </div>
+            <div class="form-group">
+                <div class="lable">*טלפון נייד</div>
+                <input type="text" class="txt" id="CellPhone" name="CellPhone" />
+            </div>
+            <div class="form-group">
+                <div class="lable">טלפון בבית</div>
+                <input type="number" class="txt" id="Phone" name="Phone" />
+            </div>
+            <div class="form-group">
+                <div class="lable">*אימייל</div>
+                <input type="text" class="txt" id="Email" name="Email" />
+            </div>
+            <div class="form-group">
+                <div class="lable">*כתובת (רחוב ומספר) </div>
+                <input type="text" class="txt" id="Address" name="Address" />
+            </div>
+            <div class="form-group">
+                <div class="lable">*עיר</div>
+                <div id="City" name="City"></div>
+            </div>
+            <div class="form-group">
+                <div class="lable">*מין</div>
+                <div id="Gender" name="Gender"></div>
+            </div>
+            <div class="form-group">
+                <div class="lable">*תאריך לידה</div>
+                <div id="Birthday" name="Birthday" class="Birthday"></div>
+            </div>
+
+            <div class="disclaimer">
+                <a id="aStatement" href="#" style="font-size:1.2em;">להצהרת המנוי לחץ כאן</a>
+                <input id="ConfirmAgreement" name="ConfirmAgreement" type="checkbox"><span>*אני מאשר שקראתי ומאשר את הצהרתי לעיל.</span>
+            </div>
+
+            <div>
+                <input type="button" class="btn" id="Submit" value="המשך" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="cmsPh1">
+    @Html.Raw(Model.Ph1)
+</div>
+<div id="cmsPh2">
+    @Html.Raw(Model.Ph2)
+</div>
+<div id="cmsPh3">
+    @Html.Raw(Model.Ph3)
+</div>
+
+    <!--end of content-wrapper-->
+@section cmsFooter {
+    @Html.Raw(Model.Footer)
+}
+

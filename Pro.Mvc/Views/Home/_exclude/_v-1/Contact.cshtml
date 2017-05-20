@@ -1,0 +1,74 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Contact";
+}
+
+@section head {
+       <link rel="stylesheet" href="~/Content/contact-form.css"> 
+ }
+<div class="global indent">
+    <div class="formBox">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-4">
+                    <h2 class="indent">Get in Touch</h2>
+                    <div class="info">
+                        <h3>Address 1:</h3>
+                        <p>123 Yad-Harozim Tela-Aviv.</p>
+                        
+                        <p><span>Telephones:</span><br>972 3 1234567<br>972 3 1234567<br>972 3 1234567</p>
+                        
+                        <h3>Address 2:</h3>
+                        <p>123 Yad-Harozim Tela-Aviv.</p>
+                    </div>
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-8">
+                        <h2 class="indent">Contact Form</h2>
+                        <form id="contact-form">
+                          <div class="contact-form-loader"></div>
+                          <fieldset>
+                            <label class="name form-div-1">
+                              <input type="text" name="name" placeholder="Name:" value="" data-constraints="@@Required @@JustLetters"  />
+                              <span class="empty-message">*This field is required.</span>
+                              <span class="error-message">*This is not a valid name.</span>
+                            </label>
+                            <label class="email form-div-2">
+                              <input type="text" name="email" placeholder="E-mail:" value="" data-constraints="@@Required @@Email" />
+                              <span class="empty-message">*This field is required.</span>
+                              <span class="error-message">*This is not a valid email.</span>
+                            </label>
+                            <label class="phone form-div-3">
+                              <input type="text" name="phone" placeholder="Phone:" value="" data-constraints="@@Required @@JustNumbers" />
+                              <span class="empty-message">*This field is required.</span>
+                              <span class="error-message">*This is not a valid phone.</span>
+                            </label>
+                            <label class="message form-div-4">
+                              <textarea name="message" placeholder="Message:" data-constraints='@@Required @@Length(min=20,max=999999)'></textarea>
+                              <span class="empty-message">*This field is required.</span>
+                              <span class="error-message">*The message is too short.</span>
+                            </label>
+                            <!-- <label class="recaptcha"><span class="empty-message">*This field is required.</span></label> -->
+                            <div>
+                              <a href="#" data-type="submit" class="btn-default btn1">submit <span></span></a>  
+                            </div>
+                          </fieldset> 
+                          <div class="modal fade response-message">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                  <h4 class="modal-title">Modal title</h4>
+                                </div>
+                                <div class="modal-body">
+                                  You message has been sent! We will be in touch soon.
+                                </div>      
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+</div>

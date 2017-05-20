@@ -1,0 +1,51 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+@{
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    ViewBag.Title = "Error";
+    /*
+    // Split the url to url + query string
+    var fullUrl = Request.UrlReferrer.ToString();
+    var questionMarkIndex = fullUrl.IndexOf('?');
+    string queryString = null;
+    string url = fullUrl;
+    if (questionMarkIndex != -1) // There is a QueryString
+    {    
+        url = fullUrl.Substring(0, questionMarkIndex); 
+        queryString = fullUrl.Substring(questionMarkIndex + 1);
+    }   
+
+    // Arranges
+    var request = new HttpRequest(null, url, queryString);
+    var response = new HttpResponse(new StringWriter());
+    var httpContext = new HttpContext(request, response)
+
+    var routeData = RouteTable.Routes.GetRouteData(new HttpContextWrapper(httpContext));
+
+    // Extract the data    
+    var values = routeData.Values;
+    var controllerName = values["controller"];
+    var actionName = values["action"];
+    var areaName = values["area"];
+    */
+    
+}
+
+<div class="global" style="text-align: center">
+    <div class="center-box">
+        <div class="container">
+            <img src="~/Images/warning.png" alt="Error" />
+            <h1>אירעה שגיאה בילתי צפויה</h1>
+            <p>
+                @ViewBag.Message
+                <br />
+                <a href="javascript:parent.history.back()">חזרה</a>
+            </p>
+        </div>
+
+
+        <div class="footer">
+            
+        </div>
+
+    </div>
+</div>

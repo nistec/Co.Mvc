@@ -1,0 +1,118 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "Users";
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head {
+     @Scripts.Render("~/bundles/jqx")
+     @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/Scripts/app/system/ad-users-def.js"></script>
+<script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+}
+@section scripts {
+ <script type="text/javascript">
+     $(document).ready(function () {
+         var theme = 'Arctic';
+         JSON.useDateParser();
+
+         var def = new app_ad_user_def(JSON.parse('@userInfo'));
+         
+     });
+    </script>
+}
+
+<div class="breadcrumbs">
+</div>
+
+<div class="global">
+    
+    <div class="container">
+        <h3 class="rtl">הגדרות כלליות-<span>משתמשים</span></h3>
+        <div class="grid-wrap rtl">
+             <div id="jqxWidget">
+                 @*<a href="AdDef">קבוצות</a>
+                 <a href="AdTeamDef">צוותים</a>*@
+                 <!--<input style="margin-right: 5px;" type="button" id="addrowbutton" value="הוספה" />-->
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                 <div style="font-size: 12px; font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif; margin-top: 30px;">
+                <div>לעריכת שורה: לחיצה כפולה על השורה הרצויה</div>
+            <div id="cellbegineditevent"></div>
+            <div style="margin-top: 10px;" id="cellendeditevent"></div>
+            <div id="popContainer" style="display:none">
+                         <div id="popupWindow">
+                             <div>עריכה</div>
+                             <div style="overflow: hidden;direction:rtl">
+                                 <form id="form" action="./">
+                                     <input type="hidden" id="insertFlag" value="0" />
+                                     <!--<input type="hidden" id="ApplicationId" value="0" />-->
+                                     <input type="hidden" id="AccountId" value="0" />
+                                     <input type="hidden" id="Lang" value="" />
+                                     <!--<input type="hidden" id="Perms" value="" />-->
+
+                                     <input type="hidden" id="Evaluation" value="0" />
+                                     <input type="hidden" id="Creation" value="" />
+
+                                     <table style="border-spacing: 10px;border-collapse: separate;direction:rtl">
+                                         <tr id ="trcode">
+                                             <td>קוד משתמש:</td>
+                                             <td><input id="UserId" type="text" disabled="disabled" style="direction:rtl;text-align:right;" /></td>
+                                             </tr>
+                                             <tr>
+                                                 <td>שם משתמש:</td>
+                                                 <td><input id="UserName" type="text" style="direction:ltr;text-align:left;" /></td>
+                                             </tr>
+                                             <tr>
+                                                 <td>שם מלא:</td>
+                                                 <td><input id="DisplayName" type="text" style="direction:rtl;text-align:right;" /></td>
+                                             </tr>
+                                             <tr>
+                                                 <td>אימייל:</td>
+                                                 <td><input id="Email" type="text" style="direction:ltr;text-align:left;" /></td>
+                                             </tr>
+                                             <tr>
+                                                 <td>טלפון:</td>
+                                                 <td><input id="Phone" type="text" style="direction:ltr;text-align:left;" /></td>
+                                             </tr>
+                                             <tr>
+                                                 <td>קוד הרשאה:</td>
+                                                 <td><div id="UserRole"></div></td>
+                                             </tr>
+                                             <tr>
+                                                 <td>חסום:</td>
+                                                 <td colspan="2"><div id="IsBlocked" style="direction:rtl;text-align:right;"></div></td>
+                                             </tr>
+                                             <tr id="isReset">
+                                                 <td>איפוס סיסמה:</td>
+                                                 <td colspan ="2"><div id="IsResetPass" style="direction:rtl;text-align:right;"></div></td>
+                                             </tr>
+                                             <tr>
+                                                 <td colspan="2"></td>
+                                             </tr>
+
+                                             <tr>
+                                                 <td></td>
+                                                 <td style="padding-top: 10px;">
+                                                     <input id="Save" type="button" style="margin-right: 5px;" value="עדכון" />
+                                                     <input id="Cancel" type="button" value="ביטול" />
+                                                 </td>
+                                             </tr>
+                                             <tr>
+                                                 <td colspan="2"></td>
+                                             </tr>
+                                             <tr>
+                                                 <td colspan="2"><div id="signResult"></div></td>
+                                             </tr>
+</table>
+                               </form>
+                             </div>
+                         </div>
+                     </div>
+                </div>
+             </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("System", "AdUsersDef", 'en');
+</script>

@@ -1,0 +1,190 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Home Page";
+}
+
+@section head {
+       <link rel="stylesheet" id="camera-css"  href="~/Content/css/camera.css" type="text/css" media="all"> 
+        <script type="text/javascript" src="~/Scripts/camera.js"></script> 
+    <script>
+        jQuery(function () {
+            jQuery('.camera_wrap').camera();
+        });
+	</script>
+}
+@section featured {
+}
+ 
+<div class="slider">
+    <div class="camera_wrap">
+            <div  data-src="../images/slider/picture1.jpg"></div>
+            <div  data-src="../images/slider/picture2.jpg"></div>
+            <div  data-src="../images/slider/picture3.jpg"></div>
+       </div><!-- #camera_wrap -->
+</div><!-- .fluid_container -->
+
+<div class="global">
+    <div class="offers-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <figure><img src="~/images/site/page1_icon1.png" alt=""></figure>
+                    <p class="title">What's new</p>
+                    <span class="hr"><em></em></span>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore <br>et dolore magna aliqua. Ut enim ad minim veniam quis nostrud.</p>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                            <div class="thumb-pad0">
+                                <div class="thumbnail">
+                                    <figure>1</figure>
+                                    <div class="caption">
+                                        <p class="description">Mailroom<br>Clerks</p>
+                                        <p>odio dignissimos ducimus qui blanditiis praesentium volupta.</p>
+                                        <a href="#" class="btn-default btn1">more <span></span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                            <div class="thumb-pad0">
+                                <div class="thumbnail">
+                                    <figure>2</figure>
+                                    <div class="caption">
+                                        <p class="description">Contracts<br>Administration</p>
+                                        <p>odio dignissimos ducimus qui blanditiis praesentium volupta.</p>
+                                        <a href="#" class="btn-default btn1">more <span></span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                            <div class="thumb-pad0">
+                                <div class="thumbnail">
+                                    <figure>3</figure>
+                                    <div class="caption">
+                                        <p class="description">Administrative<br>Assistants</p>
+                                        <p>odio dignissimos ducimus qui blanditiis praesentium volupta.</p>
+                                        <a href="#" class="btn-default btn1">more <span></span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                            <div class="thumb-pad0">
+                                <div class="thumbnail">
+                                    <figure>4</figure>
+                                    <div class="caption">
+                                        <p class="description">Business<br>management</p>
+                                        <p>odio dignissimos ducimus qui blanditiis praesentium volupta.</p>
+                                        <a href="#" class="btn-default btn1">more <span></span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="center-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <h2>Welcome to <span>Natam!</span></h2>
+                    <div class="thumb-pad1">
+                        <div class="thumbnail">
+                            <figure><img src="~/images/site/page1_pic1.jpg" alt=""></figure>
+                            <div class="caption">
+                                <p class="title">Employment opportunities for professionals</p>
+                                <p>At vero eos et accusamus et iusto odio dignissimosede ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molesas.</p>
+                            </div>
+                        </div>
+                        <p>At vero eos et accusamus et iusto odio dignissimosede ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molesas exceptur sint occaecati cupiditate non providenimilique sunt in culpa qui... </p>
+                        <a href="#" class="btn-default btn2">more about us</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 choose-box">
+                    <div class="row">
+                        <div class="col-lg-11 col-md-12 col-sm-12 col-lg-offset-1">
+                            <h2>Why Choose Us</h2>
+                            <ul class="list1">
+                                <li>
+                                    <em></em>
+                                    <div class="extra-wrap">
+                                        <a href="#">At vero eos et <br>accusamus et iusto</a>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed dobe eiusmod tempor incididunut labore et dolore magna... </p>
+                                    </div>
+                                    <i></i>
+                                </li>
+                                <li>
+                                    <em></em>
+                                    <div class="extra-wrap">
+                                        <a href="#">Lorem ipsum dolor sit amet <br>consectetur adipisicing</a>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed dobe eiusmod tempor incididunut labore et dolore magna... </p>
+                                    </div>
+                                    <i></i>
+                                </li>
+                                <li>
+                                    <em></em>
+                                    <div class="extra-wrap">
+                                        <a href="#">Nam libero tempore cum <br>soluta nobis est</a>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed dobe eiusmod tempor incididunut labore et dolore magna... </p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="offers-box indent">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <figure><img src="~/images/site/page1_icon1.png" alt=""></figure>
+                    <p class="title">contact us</p>
+                    <span class="hr"><em></em></span>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore <br>et dolore magna aliqua. Ut enim ad minim veniam quis nostrud.</p>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <div class="thumb-pad2">
+                                <div class="thumbnail">
+                                    <figure><img src="~/images/site/page1_symbol1.png" alt=""></figure>
+                                    <div class="caption">
+                                        <p class="title1">Natam</p>
+                                        <p>Yad Harozim, <br>Tel Aviv, 12345. <br>Israel</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-6">
+                            <div class="thumb-pad2">
+                                <div class="thumbnail">
+                                    <figure><img src="~/images/site/page1_symbol2.png" alt=""></figure>
+                                    <div class="caption">
+                                        <p class="title2">Give us a call or send us a fax:</p>
+                                        <p><span>Freephone:</span>  972 3 12345678</p>
+                                        <p><span>Telephone:</span>  972 3 12345678</p>
+                                        <p><span>FAX:</span>  972 3 12345678</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-6">
+                            <div class="thumb-pad2">
+                                <div class="thumbnail">
+                                    <figure><img src="~/images/site/page1_symbol3.png" alt=""></figure>
+                                    <div class="caption">
+                                        <p class="title2">Send us a message:</p>
+                                        <a href="#">contact@natam.co.il</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
