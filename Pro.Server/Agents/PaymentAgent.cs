@@ -10,6 +10,7 @@ using Nistec.Threading;
 using System.Security;
 using Pro.Lib.Api;
 using System.Threading.Tasks;
+using Pro.Lib.Payments;
 
 namespace Pro.Server.Agents
 {

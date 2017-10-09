@@ -14,6 +14,7 @@ function app_city_def(userInfo) {
     this.sourceUrl='/Common/GetCityRegionViewAll';
     this.updateUrl = '';// '/Common/DefCityUpdate';
     this.deleteUrl = '';// '/Common/DefCityDelete';
+    this.rowEdit = -1;
 
     this.loadControls();
        

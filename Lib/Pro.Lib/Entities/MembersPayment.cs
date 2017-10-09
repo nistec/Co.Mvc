@@ -32,147 +32,10 @@ namespace Pro.Data.Entities
 
         #endregion
 
-        #region update
-/*
-        public static int PaymentConfirm(PaymentItem v)
-        {
-            var args = new object[]{
-                "PayId", 0
-                ,"ID", v.ID
-                ,"Payed", v.Payed
-                ,"TransIndex", v.TransIndex
-                ,"ConfirmationCode", v.ConfirmationCode
-                ,"Token", v.Token
-                ,"SignKey",v.SignKey
-                ,"Contact", v.Contact
-                ,"Ccno", v.Ccno
-                ,"Response", v.Response
-                ,"SignId", v.SignId
-                ,"Email", v.Email
-                ,"Phone", v.Phone
-                ,"ResponseText", v.ResponseText
-                ,"Terminal", v.Terminal
-                ,"TransMode", v.TransMode
-            };
-            var parameters = DataParameter.GetSql(args);
-            parameters[0].Direction = System.Data.ParameterDirection.Output;
-            int res = db.ExecuteNonQuery("sp_Payment_Confirm", parameters, System.Data.CommandType.StoredProcedure);
-            v.PayId = Types.ToInt(parameters[0].Value);
-            return res;
-        }
-        public static int PaymentFailure(PaymentItem v)
-        {
-
-            var args = new object[]{
-                "PayId", 0
-                ,"ID", v.ID
-                ,"Payed", v.Payed
-                ,"TransIndex", v.TransIndex
-                ,"ConfirmationCode", v.ConfirmationCode
-                ,"Token", v.Token
-                ,"SignKey",v.SignKey
-                ,"Contact", v.Contact
-                ,"Ccno", v.Ccno
-                ,"Response", v.Response
-                ,"SignId", v.SignId
-                ,"Email", v.Email
-                ,"Phone", v.Phone
-                ,"ResponseText", v.ResponseText
-                ,"Terminal", v.Terminal
-                ,"TransMode", v.TransMode
-            };
-            var parameters = DataParameter.GetSql(args);
-            parameters[0].Direction = System.Data.ParameterDirection.Output;
-            int res = db.ExecuteNonQuery("sp_Payment_Failure", parameters, System.Data.CommandType.StoredProcedure);
-            v.PayId = Types.ToInt(parameters[0].Value);
-            return res;
-        }
-
-*/
-        #endregion
-               
-
-        #region Payment
-        /*
-        Response=000
-        &o_tranmode=AK
-        &trid=50
-        &trBgColor=
-        &expmonth=10
-        &contact=nissim
-        &myid=054649967
-        &email=nissim%40myt.com
-        &currency=1
-        &nologo=1
-        &expyear=17
-        &supplier=baityehudi
-        &sum=1.00
-        &benid=5pb423r0odqe2kcvo40ku1bvm7
-        &o_cred_type=
-        &lang=il
-        &phone=0527464292&o_npay=
-        &tranmode=AK
-        &ConfirmationCode=0000000
-        &cardtype=2
-        &cardissuer=6
-        &cardaquirer=6
-        &index=5
-        &Tempref=02720001
-        &TranzilaTK=W2e44ed3a9737dc2322
-        &ccno=
-        */
-
-        //public static int ExecPaymentReponse(string clientId,string response)
-        //{
-        //    var args = GenericArgs.ParseQueryString(response);
-        //    string contact = args["contact"];
-        //    contact = contact != null ? HttpUtility.UrlDecode(contact) : "";
-
-        //    //ID = Nistec.Types.NZ(args["myid"], "");
-        //    //if (string.IsNullOrEmpty(ID))
-        //    //{
-        //    //    isValid = false;
-        //    //}
-
-        //     var pi = new PaymentItem()
-        //             {
-        //                 ResponseText=response,
-        //                 Response = args["Response"],//Response
-        //                 SignId = Types.ToInt(args["trid"]),
-        //                 ExpireMonth =Types.ToInt(args["expmonth"]),//expmonth
-        //                 Contact = args["contact"],//contact
-        //                 ID = args["myid"],//myid
-        //                 Email = args["email"],//email
-        //                 ExpireYear = Types.ToInt(args["expyear"]),//expyear
-        //                 Terminal = args["supplier"],//supplier
-        //                 Payed = Types.ToDecimal(args["sum"],0),//sum
-        //                 benid = args["benid"],//benid
-        //                 Phone = args["phone"],//phone
-        //                 TransMode = args["tranmode"],//tranmode
-        //                 ConfirmationCode = args["ConfirmationCode"],//ConfirmationCode
-        //                 Token = args["TranzilaTK"],//TranzilaTK
-        //                 TransIndex = args["index"]//index
-        //             };
-
-        //    Pro.Data.Entities.PaymentContext.PaymentConfirm(pi);
-        //    return pi.PayId;
-        //}
-        #endregion
 
         #region static
 
-        //public static IEnumerable<PaymentAccountView> PaymentsViewByAccount(int AccountId)
-        //{
-        //    return db.ExecuteQuery<PaymentAccountView>("sp_Payment_View", "AccountId", AccountId);
-        //}
-        //public static IEnumerable<PaymentView> MemberPaymentHistory(int MemberRecord)
-        //{
-        //    return db.EntityQuery<PaymentView>("vw_Payment_View", "MemberRecord", MemberRecord);
-        //}
-        //public static IEnumerable<PaymentAccountView> MemberPaymentHistory(string MemberId, int AccountId)
-        //{
-        //    return db.EntityQuery<PaymentAccountView>("vw_Payment_View", "MemberId", MemberId, "AccountId", AccountId);
-        //}
+   
         public static decimal LookupItemPrice(int ItemId)
         {
             using (var db = DbContext.Create<DbPro>())
@@ -299,7 +162,7 @@ namespace Pro.Data.Entities
         public int PayId { get; set; }
         public decimal Payed { get; set; }
         public string ConfirmationCode { get; set; }
-        //public string Token { get; set; }
+        public string Response { get; set; }
         public DateTime PayedDate { get; set; }
         public int Qty { get; set; }
         public int SignupId { get; set; }
@@ -445,7 +308,7 @@ namespace Pro.Data.Entities
         //public string FatherName { get; set; }
         public string Address { get; set; }
         public int City { get; set; }
-        //public int PlaceOfBirth { get; set; }
+        
         //public int BirthDateYear { get; set; }
         //public int ChargeType { get; set; }
         //public int Branch { get; set; }

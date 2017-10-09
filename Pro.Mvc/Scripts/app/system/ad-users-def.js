@@ -15,7 +15,7 @@ function app_ad_user_def(userInfo) {
     this.updateUrl = '/System/AdUserDefUpdate';
     this.deleteUrl = '/System/AdUserDefDelete';
     this.insertUrl = '/System/AdUserDefInsert';
-    
+    this.rowEdit = -1;
 
     //this.showMemmbersUrl = '/System/AdUserShowMembers';
     this.fieldId = 'UserId';
@@ -25,17 +25,24 @@ function app_ad_user_def(userInfo) {
     var slf = this;
 
     this.createRowData = function () {
+        var creation = $("#Creation").val();
+        var item = $("#UserRole").jqxDropDownList('getSelectedItem');
+        //var UserRole=item.value
+        //var RoleName=item.label;
+
         var row = {
             UserId: $("#UserId").val(),
             UserName: $("#UserName").val(),
-            UserRole: $("#UserRole").val(),
+            UserRole: item.value,
+            RoleName: item.label,
             Email: $("#Email").val(),
             Phone: $("#Phone").val(),
             AccountId: $("#AccountId").val(),
             Lang: $("#Lang").val(),
             Evaluation: 0,
             IsBlocked: $("#IsBlocked").val(),
-            DisplayName: $("#DisplayName").val()
+            DisplayName: $("#DisplayName").val(),
+            Creation: app.toLocalDateString(creation)
         };
         return row;
     }

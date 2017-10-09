@@ -15,11 +15,12 @@ function app_ad_team_def(userInfo) {
     this.updateUrl = '/System/AdTeamDefUpdate';
     this.deleteUrl = '/System/AdTeamDefDelete';
     this.showMemmbersUrl = '/System/AdTeamShowMembers';
-    this.fieldId = 'PropId';
+    this.fieldId = 'TeamId';
     this.RelUrl = '/System/AdTeamDefRel';
     this.RelToAddUrl = '/System/AdTeamDefRelToAdd';
     this.RelDeleteUrl = "/System/AdTeamDefRelDelete"
     this.RelUpdateUrl = "/System/AdTeamDefRelUpdate"
+    this.rowEdit = -1;
 
     this.loadControls();
        
@@ -27,21 +28,21 @@ function app_ad_team_def(userInfo) {
 
     this.createRowData = function () {
         var row = {
-            PropId: $("#PropId").val(), PropName: $("#PropName").val()
+            TeamId: $("#TeamId").val(), TeamName: $("#TeamName").val()
         };
         return row;
     }
 
     this.setEditorInputData = function (dataRecord) {
         if (dataRecord === undefined || dataRecord==null) {
-            $("#PropId").val('');
-            $("#PropName").val('');
+            $("#TeamId").val('');
+            $("#TeamName").val('');
             $("#trcode").hide();
         }
         else {
             $("#trcode").show();
-            $("#PropId").val(dataRecord.PropId);
-            $("#PropName").val(dataRecord.PropName);
+            $("#TeamId").val(dataRecord.TeamId);
+            $("#TeamName").val(dataRecord.TeamName);
         }
     }
 
@@ -49,22 +50,23 @@ function app_ad_team_def(userInfo) {
 
         var columns = [
            //{
-           //    text: 'קוד צוות', datafield: 'PropId', width: 60, cellsalign: 'right', align: 'center',
+           //    text: 'קוד צוות', datafield: 'TeamId', width: 60, cellsalign: 'right', align: 'center',
            //cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
            //    return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="'+slf.showMemmbersUrl+'=' + value + '" title="הצג מנויים">' + value + '</a></div>'
            //}
            //},
-           { text: 'שם צוות', datafield: 'PropName', cellsalign: 'right', align: 'center' },
+           { text: 'שם צוות', datafield: 'TeamName', cellsalign: 'right', align: 'center' },
            { text: 'מנויים', datafield: 'MembersCount', width: 80, cellsalign: 'right', align: 'center' }
         ];
        return columns;
     }
-
+    
     this.createFields = function () {
         var datafields =
             [
-                { name: 'PropId', type: 'number' },
-                { name: 'PropName', type: 'string' },
+                { name: 'TeamId', type: 'number' },
+                { name: 'TeamName', type: 'string' },
+                { name: 'TeamLead', type: 'number' },
                 { name: 'MembersCount', type: 'number' }
             ];
         return datafields;
@@ -78,11 +80,11 @@ function app_ad_team_def(userInfo) {
                app_dialog.alert("Invalid row id to delete!");
                 return null;
             }
-            return { 'PropId': rowid };
+            return { 'TeamId': rowid };
         }
         else
 
-            return { 'PropId': command == 0 ? -1 : rowdata.PropId, 'PropName': rowdata.PropName, 'command': command };
+            return { 'TeamId': command == 0 ? -1 : rowdata.TeamId, 'TeamName': rowdata.TeamName, 'command': command };
 
     }
 
@@ -93,8 +95,8 @@ function app_ad_team_def(userInfo) {
         event.stopPropagation();
         var row = event.args.row;
         if (row) {
-            var PropId = row.PropId;
-            slf.nastedGridLoder(PropId, false);
+            var TeamId = row.TeamId;
+            slf.nastedGridLoder(TeamId, false);
         }
     });
 
@@ -135,8 +137,8 @@ function app_ad_team_def(userInfo) {
 app_ad_team_def.prototype.loadControls = function () {
 
     // initialize the input fields.
-    $("#PropId").jqxInput().width(200);
-    $("#PropName").jqxInput().width(200);
+    $("#TeamId").jqxInput().width(200);
+    $("#TeamName").jqxInput().width(200);
    
     // initialize the popup window and buttons.
     $("#Cancel").jqxButton();
@@ -147,7 +149,7 @@ app_ad_team_def.prototype.loadControls = function () {
     });
 
     var input_rules = [
-             { input: '#PropName', message: 'חובה לציין צוות!', action: 'keyup, blur', rule: 'required' }
+             { input: '#TeamName', message: 'חובה לציין צוות!', action: 'keyup, blur', rule: 'required' }
     ];
 
     //input_rules.push({ input: '#MemberId', message: 'חובה לציין ת.ז!', action: 'keyup, blur', rule: 'required' });
@@ -196,7 +198,7 @@ app_ad_team_def.prototype.nastedGrid = function (id) {
             { name: 'Email', type: 'string' },
             { name: 'TeamId', type: 'number' }
         ],
-        //id: 'PropId',
+        //id: 'TeamId',
         data: { 'id': id },
         type: 'POST',
         url: '/System/AdDefRel'

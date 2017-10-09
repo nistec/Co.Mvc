@@ -1,8 +1,9 @@
 ﻿@{
     Layout = "~/Views/Shared/_View.cshtml";
     Page.Title = "CmsWizardHead";
-    var userRole = Nistec.Types.ToInt( ViewBag.UserRole);
-    var accountId = Nistec.Types.ToInt(ViewBag.AccountId);
+    var userInfo = ViewBag.UserInfo;
+    var userRole = Nistec.Types.ToInt(userInfo.UserRole);
+    var accountId = Nistec.Types.ToInt(userInfo.AccountId);
     string exportClass = userRole < 5 ? "hide" : "show";
 }
 
@@ -161,7 +162,7 @@
 </div>
 <script type="text/javascript">
     app_menu.activeLayoutMenu("liCms");
-    app_menu.breadcrumbs("Crm", "CmsWizardHead", 'en');
+    app_menu.breadcrumbs("Cms", "CmsWizardHead", 'en');
 </script>
 
 

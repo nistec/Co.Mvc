@@ -13,7 +13,8 @@ function app_entity_def(userInfo, entityType, tagPropTitle) {
     this.sourceUrl = '/Common/DefEntityView';
     this.updateUrl = '/Common/DefEntityUpdate';
     this.deleteUrl = '/Common/DefEntityUpdate';
-    
+    this.rowEdit = -1;
+
     this.tagPropId = "קוד";
     this.tagPropName = "תאור";
     this.tagPropTitle = tagPropTitle;

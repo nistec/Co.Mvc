@@ -1,0 +1,163 @@
+﻿@model Pro.Lib.Query.MemberQuery
+@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    ViewBag.Title = "Members";
+    //int acctype = Nistec.Types.ToInt(Request.QueryString["acctype"]);
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userModel=ViewBag.UserInfo;
+    var userInfo = @Html.Raw(Json.Encode(userModel));
+    
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxloader.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxtooltip.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/main/members-grid.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
+    <script src="~/Scripts/app/main/members-def.js"></script>
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+        .jqx-grid-cell {
+            border: none;
+        }
+        
+    </style>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    //var members_grid;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        // prepare the data
+        wizard = new app_wiztabs();
+        wizard.displayStep(1);
+
+        members_grid = app_members_grid.load(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
+
+        app_jqxgrid.gridFilterEx(this, $("#grid-toolbar"), columnList, dateList);
+
+            //$("#btnFind").jqxLinkButton({ width: '120', height: '30' });
+            //$('#btnclearfilter').jqxButton({ width: '120', height: '30' });
+            //$('#btnclearfilter').click(function () {
+            //    $("#jqxgrid").jqxGrid('clearfilters');
+            //});
+            //$('#btnCustomerDef').jqxButton({ width: '120', height: '30' });
+            //$('#btnCustomerDef').click(function () {
+            //    memberEdit(0);
+            //});
+            //$("#excelExport").jqxButton({ width: '120', height: '30' });
+            //$("#excelExport").click(function () {
+            //    $("#jqxgrid").jqxGrid('exportdata', 'xls', 'Members');
+            //    //$("#jqxgrid").jqxGrid('exportdata', 'xls', 'Members',true, null, false,null,'utf-8');
+
+            //});
+
+        });
+
+        //function triggerMemberComplete(memid) {
+        //    $("#jqxgrid").jqxGrid('source').dataBind();
+        //    app_dialog.dialogIframClose();
+        //};
+
+        //function triggerCategoriesComplete(memid) {
+        //    members_categoriesRefresh();
+        //    app_dialog.dialogClose(members_grid.NScustomers.categoriesDialog);
+        //};
+
+        
+
+       
+        var columnList = [
+         { label: 'ת.ז המנוי', value: 'MemberId', checked: false },
+         { label: 'שם המנוי', value: 'MemberName', checked: false },
+         { label: 'טלפון נייד', value: 'CellPhone', checked: false },
+         { label: 'דואר אלקטרוני', value: 'Email', checked: false },
+         { label: 'עיר', value: 'CityName', checked: false },
+         { label: 'כתובת', value: 'Address', checked: false }
+         //{ label: 'מס רישום', value: 'SignupId', checked: false },
+         //{ label: 'תוקף', value: 'ValidityMonth', checked: true },
+         //{ label: 'המשלם', value: 'CreditCardOwner', checked: true },
+         //{ label: 'חיוב חוזר', value: 'AutoCharge', checked: true },
+         //{ label: 'קמפיין', value: 'CampaignName', checked: true },
+         //{ label: 'מחירון', value: 'PriceName', checked: false },
+         //{ label: 'מחיר', value: 'Price', checked: false },
+         //{ label: 'מספר קבלה', value: 'PayId', checked: true }
+        ];
+        var dateList = [
+         { label: 'מועד הצטרפות', value: 'JoiningDate', checked: false }
+         //{ label: 'תאריך עדכון', value: 'LastUpdate', checked: false }
+        ];
+
+    </script>
+}
+
+
+<div class="breadcrumbs">
+</div>
+@*<div class="top-space"></div>*@
+
+<div class="global-view">
+    <div id="wiz-container" class="container">
+
+        <div id="wiz-1" class="wiz-tab active">
+            <h3 class="rtl">רשימת מנויים<span>...<a href="javascript:location.reload()">רענון</a></span></h3>
+            <div class="grid-wrap rtl">
+                <div id="grid-toolbar" class="grid-toolbar"></div>
+                <div class="rtl">
+                    <a id="member-item-add" class="btn-default btnIcon w-60 @(userModel.AllowAddClass)" href="javascript:members_grid.add();">הוספה</a>
+                    <a id="member-item-edit" class="btn-default btnIcon w-60 @(userModel.AllowEditClass)" href="javascript:members_grid.edit();">עריכה </a>
+                    <a id="member-item-delete" class="btn-default btnIcon w-60 @(userModel.AllowDeleteClass)" href=" javascript:members_grid.remove();">מחיקה </a>
+                    @*<a id="member-item-refresh" class="btn-default btn7 w-60" href="javascript:members_grid.refresh();">רענון</a>*@
+                    <a id="member-item-filetr-remove" class="btn-default btn7 w-80 font-90" href="javascript:members_grid.clear_filter();">הסר סינון</a>
+                    <a id="member-item-query" class="btn-default btnIcon w-60" href="javascript:members_grid.query();">איתור</a>
+                </div>
+                <div id="jqxWidget">
+                    <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                </div>
+             </div>
+        </div>
+        <div id="wiz-2" class="wiz-tab">
+            <h3 id="wiz-2-title" class="rtl">
+                עריכת מנוי
+            </h3>
+            @*<div id="loader" style="text-align:center">המתן...</div>*@
+            <div id="divPartial2" style="margin:0;padding:0"></div>
+                <div class="rtl" style="margin-top:5px;">
+                    <a id="member-item-update" class="btn-default btn7 w-60" href="#">עדכון</a>
+                    <a id="member-item-update-plus" class="btn-default btn7 w-60" href="#">עדכון+</a>
+                    <a id="member-item-cancel" class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">ביטול</a>
+                </div>
+            </div>
+        <div id="wiz-3" class="wiz-tab" style="margin:10px;">
+            <h3 id="wiz-3-title" class="rtl">
+                איתור מנויים
+            </h3>
+            <div id="loader" style="text-align:center">המתן...</div>
+            <div id="divPartial3" class="wiz-partial" style="background-color:transparent;"></div>
+            <div style="clear:both;"></div>
+                @*<div class="rtl">
+                <a id="member-query-submit" class="btn-default btn7 w-60" href="#">איתור</a>
+                <a id="member-query-submit-export" class="btn-default btn7 w-60" href="#">ייצוא לקובץ</a>
+                <a id="member-query-cancel" class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">ביטול</a>
+            </div>*@
+            </div>
+    </div>
+</div>
+    <script type="text/javascript">
+        app_menu.activeLayoutMenu("liMain");
+        app_menu.breadcrumbs("Main", "Members", 'en');
+    </script>
+

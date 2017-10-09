@@ -27,42 +27,223 @@ namespace Pro.Mvc.Controllers
  
 
         #region override
-
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             if (Request.IsAuthenticated)
             {
-                var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
-                if (signedUser != null && signedUser.IsAuthenticated)
+                base.OnActionExecuting(filterContext);
+            }
+            else
+            {
+                filterContext.Result = new RedirectResult("~/Account/Login");
+                return;
+            }
+        }
+
+        protected SignedUser LoadUserInfo()
+        {
+            //var signedUser = (SignedUser)ViewBag.UserInfo;
+            //if (signedUser != null)
+            //    return signedUser;
+
+            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
+            if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsBlocked == false)
+            {
+                ViewBag.UserInfo = signedUser;
+                
+                //ViewBag.UserId = signedUser.UserId;
+                ViewBag.UserName = signedUser.UserName;
+                ViewBag.UserRole = signedUser.UserRole;
+                //ViewBag.AccountId = signedUser.AccountId;
+                //ViewBag.DisplayName = signedUser.DisplayName;
+                ViewBag.AccountName = signedUser.AccountName;
+                //ViewBag.AccountCategory = signedUser.AccountCategory;
+                //ViewBag.ParentId = signedUser.ParentId;
+                //ViewBag.IsMobile = ismobile;
+
+                return signedUser;
+            }
+
+            return null;
+
+            //else
+            //{
+            //    RedirectToAction("Login", "Account");
+            //    return null;
+            //    //filterContext.Result = new RedirectResult("~/Account/Login");
+            //    //return;
+            //}
+        }
+
+        protected ActionResult RedirectToLogin()
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        //protected JsonResult JsonResultToLogin()
+        //{
+        //    return Json(new
+        //    {
+        //        redirectUrl = Url.Action("Login", "Account"),
+        //        isRedirect = true
+        //    });
+        //}
+        protected ActionResult View(SignedUser signedUser)
+        {
+            if (signedUser == null)
+            {
+                return RedirectToLogin();
+            }
+            return base.View();
+        }
+        protected ActionResult View(SignedUser signedUser, object model)
+        {
+            if (signedUser == null)
+            {
+                return RedirectToLogin();
+            }
+            return base.View(model);
+        }
+        protected ActionResult View(SignedUser signedUser, string viewName, object model)
+        {
+            if (signedUser == null)
+            {
+                return RedirectToLogin();
+            }
+            return base.View(viewName, model);
+        }
+        protected ActionResult View(bool loadInfo)
+        {
+            if (loadInfo)
+            {
+                var signedUser = LoadUserInfo();
+                if (signedUser == null)
                 {
-                    bool ismobile = DeviceHelper.IsMobile(Request);
-                    ViewBag.UserId = signedUser.UserId;
-                    ViewBag.UserName = signedUser.UserName;
-                    ViewBag.UserRole = signedUser.UserRole;
-                    ViewBag.AccountId = signedUser.AccountId;
-                    ViewBag.DisplayName = signedUser.DisplayName;
-                    ViewBag.AccountName = signedUser.AccountName;
-                    ViewBag.AccountCategory = signedUser.AccountCategory;
-                    ViewBag.ParentId = signedUser.ParentId;
-                    ViewBag.IsMobile = ismobile;
-                    ViewBag.UserInfo = new UserModel()
-                    {
-                        UserId = signedUser.UserId,
-                        UserName = signedUser.UserName,
-                        DisplayName = signedUser.DisplayName,
-                        UserRole = signedUser.UserRole,
-                        AccountId = signedUser.AccountId,
-                        AccountName = signedUser.AccountName,
-                        AccountCategory = signedUser.AccountCategory,
-                        ParentId = signedUser.ParentId,
-                        IsMobile = ismobile
-                    };
+                    return RedirectToLogin();
+                }
+            } 
+            return base.View();
+        }
+        protected ActionResult View(bool loadInfo, object model)
+        {
+            if (loadInfo)
+            {
+                var signedUser = LoadUserInfo();
+                if (signedUser == null)
+                {
+                    return RedirectToLogin();
+                }
+            } 
+            return base.View(model);
+        }
+
+        protected ActionResult View(bool loadInfo, string viewName, object model)
+        {
+            if (loadInfo)
+            {
+                var signedUser = LoadUserInfo();
+                if (signedUser == null)
+                {
+                    return RedirectToLogin();
+                }
+            }
+            return base.View(viewName, model);
+        }
+        protected ActionResult PartialView(bool loadInfo)
+        {
+            if (loadInfo)
+            {
+                var signedUser = LoadUserInfo();
+                if (signedUser == null)
+                {
+                    return RedirectToLogin(); // RedirectResult("~/Account/Login");
+                }
+            }
+            return base.PartialView();
+        }
+        protected ActionResult PartialView(bool loadInfo, object model)
+        {
+            if (loadInfo)
+            {
+                var signedUser = LoadUserInfo();
+                if (signedUser == null)
+                {
+                    return RedirectToLogin();
+                }
+            }
+            return base.PartialView(model);
+        }
+        protected ActionResult PartialView(bool loadInfo, string viewName, object model)
+        {
+            if (loadInfo)
+            {
+                var signedUser = LoadUserInfo();
+                if (signedUser == null)
+                {
+                    return RedirectToLogin();
+                }
+            }
+            return base.PartialView(viewName, model);
+        }
+        /*
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+
+            //HttpContext ctx = HttpContext.Current;
+            //if (HttpContext.Current.Session["ID"] == null)
+            //{
+            //    filterContext.Result = new RedirectResult("~/Home/Login");
+            //    return;
+            //}
+            //base.OnActionExecuting(filterContext);
+
+
+            if (Request.IsAuthenticated)
+            {
+                var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
+                if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsBlocked==false)
+                {
+                    //bool ismobile = DeviceHelper.IsMobile(Request);
+
+                    ViewBag.UserInfo = signedUser;
+
+                    //ViewBag.UserId = signedUser.UserId;
+                    //ViewBag.UserName = signedUser.UserName;
+                    //ViewBag.UserRole = signedUser.UserRole;
+                    //ViewBag.AccountId = signedUser.AccountId;
+                    //ViewBag.DisplayName = signedUser.DisplayName;
+                    //ViewBag.AccountName = signedUser.AccountName;
+                    //ViewBag.AccountCategory = signedUser.AccountCategory;
+                    //ViewBag.ParentId = signedUser.ParentId;
+                    //ViewBag.IsMobile = ismobile;
+                    //ViewBag.UserInfo = new UserModel()
+                    //{
+                    //    UserId = signedUser.UserId,
+                    //    UserName = signedUser.UserName,
+                    //    DisplayName = signedUser.DisplayName,
+                    //    UserRole = signedUser.UserRole,
+                    //    AccountId = signedUser.AccountId,
+                    //    AccountName = signedUser.AccountName,
+                    //    AccountCategory = signedUser.AccountCategory,
+                    //    ParentId = signedUser.ParentId,
+                    //    IsMobile = ismobile
+                    //};
                     if (signedUser.IsAdmin || signedUser.IsManager)
                     {
                         ViewBag.MngData = signedUser.Data;
 
                     }
                 }
+                else
+                {
+                    filterContext.Result = new RedirectResult("~/Account/Login");
+                    return;
+                }
+            }
+            else
+            {
+                filterContext.Result = new RedirectResult("~/Account/Login");
+                return;
             }
             //if (Request.UserLanguages != null)
             //{
@@ -78,6 +259,7 @@ namespace Pro.Mvc.Controllers
             //}
             base.OnActionExecuting(filterContext);
         }
+         */ 
         #endregion
 
         const string passkey = "PS5467THdgcbrtd90001";
@@ -111,24 +293,24 @@ namespace Pro.Mvc.Controllers
         }
 
         #region signedUser
-        protected string GetSignedUserData()
-        {
-            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
-            if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsAdmin)
-            {
-                return signedUser.Data;
-            }
-            return null;
-        }
-        protected void SetSignedUserData(string value)
-        {
-            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
-            if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsAdmin)
-            {
-                signedUser.Data = value;
-                ViewBag.MngData = value;
-            }
-        }
+        //protected string GetSignedUserData()
+        //{
+        //    var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
+        //    if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsAdmin)
+        //    {
+        //        return signedUser.Data;
+        //    }
+        //    return null;
+        //}
+        //protected void SetSignedUserData(string value)
+        //{
+        //    var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
+        //    if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsAdmin)
+        //    {
+        //        signedUser.Data = value;
+        //        ViewBag.MngData = value;
+        //    }
+        //}
 
         /*
         protected IDictionary<string,object> GetSignedUserData()
@@ -163,7 +345,7 @@ namespace Pro.Mvc.Controllers
                 signedUser.Data = Nistec.Serialization.JsonSerializer.Serialize(data);
             }
         }
-        */
+        
         protected UserModel GetUserModel()
         {
             var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
@@ -177,6 +359,21 @@ namespace Pro.Mvc.Controllers
                     AccountId = signedUser.AccountId
                 };
             }
+            return null;
+        }
+         */
+        protected SignedUser GetSignedUser()
+        {
+            //var signedUser = (SignedUser)ViewBag.UserInfo;
+            //if (signedUser != null)
+            //    return signedUser;
+
+            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
+            if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsBlocked == false)
+            {
+               return signedUser;
+            }
+            //throw new SecurityException(AuthState.UnAuthorized);
             return null;
         }
         protected SignedUser GetAdminSignedUser()
@@ -295,44 +492,43 @@ namespace Pro.Mvc.Controllers
    
         protected int GetUser()
         {
-            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
-            if (signedUser == null || !signedUser.IsAuthenticated)
+            var signedUser = GetSignedUser();
+            if (signedUser != null)
             {
-                return 0;
+                //ViewBag.UserName = signedUser.UserName;
+                //ViewBag.UserRole = signedUser.UserRole;
+                return signedUser.UserId;
             }
-            ViewBag.UserName = signedUser.UserName;
-            ViewBag.UserRole = signedUser.UserRole;
-            return signedUser.UserId;
+            return -1;
         }
         protected int GetUserRole()
         {
-            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
-            if (signedUser == null || !signedUser.IsAuthenticated)
+            var signedUser = GetSignedUser();
+            if (signedUser != null)
             {
-                return 0;
+                return signedUser.UserRole;
             }
-            return signedUser.UserRole;
+            return -1;
         }
         protected int GetAccountId()
         {
-            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
-            if (signedUser == null || !signedUser.IsAuthenticated)
-            {
-                return 0;
-            }
-            ViewBag.IsVirtual = signedUser.IsVirtual;
-            ViewBag.ParentId = signedUser.ParentId;
-            return signedUser.AccountId;
+             var signedUser = GetSignedUser();
+             if (signedUser != null)
+             {
+                 //ViewBag.IsVirtual = signedUser.IsVirtual;
+                 //ViewBag.ParentId = signedUser.ParentId;
+                 return signedUser.AccountId;
+             }
+             return -1;
         }
         protected int GetParentId()
         {
-            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
-            if (signedUser == null || !signedUser.IsAuthenticated)
-            {
-                return 0;
-            }
-            //ViewBag.UserName = signedUser.UserName;
-            return signedUser.ParentId;
+             var signedUser = GetSignedUser();
+             if (signedUser != null)
+             {
+                 return signedUser.ParentId;
+             }
+             return -1;
         }
         #endregion
 
@@ -443,6 +639,10 @@ namespace Pro.Mvc.Controllers
                     ex = filterContext.Exception;
                     if (ex == null)
                         ex = new Exception("No further information exists.");
+                    else if (ex is SecurityException)
+                    {
+                        filterContext.Result = new RedirectResult("~/Account/Login");
+                    }
                 }
             }
             else
@@ -450,6 +650,10 @@ namespace Pro.Mvc.Controllers
                 ex = filterContext.Exception;
                 if (ex == null)
                     ex = new Exception("No further information exists.");
+                else if(ex is SecurityException)
+                {
+                    filterContext.Result = new RedirectResult("~/Account/Login");
+                }
             }
 
             TraceHelper.Log("Application", "OnException", ex.Message + " StackTrace: " + ex.StackTrace, Request, 500);
@@ -489,19 +693,19 @@ namespace Pro.Mvc.Controllers
         #endregion
 
         #region Auth
-        protected ActionResult Authenticate(object value)
-        {
-            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
-            if (signedUser == null || !signedUser.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            ViewBag.UserName = signedUser.UserName;
-            ViewBag.UserRole = signedUser.UserRole;
-            if (value != null)
-                return View(value);
-            return View();
-        }
+        //protected ActionResult Authenticate(object value)
+        //{
+        //    var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
+        //    if (signedUser == null)
+        //    {
+        //        return RedirectToAction("Index", "Home");
+        //    }
+        //    ViewBag.UserName = signedUser.UserName;
+        //    ViewBag.UserRole = signedUser.UserRole;
+        //    if (value != null)
+        //        return View(value);
+        //    return View();
+        //}
 
         protected ActionResult AuthenticateAdmin(object value)
         {
@@ -535,7 +739,7 @@ namespace Pro.Mvc.Controllers
 
             ModelState.AddModelError("ErrorMessage", "The user name or password provided is incorrect.");
 
-            return RedirectToAction("Login", "Home", ModelState);//new { ErrorMessage = message });
+            return RedirectToAction("Login", "Account", ModelState);//new { ErrorMessage = message });
 
         }
         protected virtual ActionResult RedirectToLocal(string returnUrl)
@@ -546,7 +750,7 @@ namespace Pro.Mvc.Controllers
             }
             else
             {
-                return RedirectToAction("Dashboard", "Home");
+                return RedirectToAction("Dashboard", "Main");
             }
         }
 
@@ -596,7 +800,7 @@ namespace Pro.Mvc.Controllers
             }
             var model = new ResultModel() { Title = title, Message = message };
             //TempData["resultModel"] = model;
-            return View(model);
+            return View(true,model);
         }
 
         protected ActionResult GoWarn(string msg, string error)
@@ -628,7 +832,7 @@ namespace Pro.Mvc.Controllers
             }
             var model = new ResultModel() { Title = title, Message = message };
             //TempData["resultModel"] = model;
-            return View(model);
+            return View(true,model);
         }
         #endregion
 

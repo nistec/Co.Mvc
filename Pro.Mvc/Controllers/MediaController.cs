@@ -131,16 +131,23 @@ namespace Pro.Mvc.Controllers
         {
             if (extension == null)
                 return "none";
-            switch (extension.ToLower())
-            {
-                case ".xls":
-                case ".csv":
-                case ".txt":
-                case ".xlsx":
-                    return "files";
-                default:
-                    return "none";
-            }
+            string files = NetConfig.AppSettings["UploadFileTypes"];
+
+            if (files.Contains(extension.ToLower()))
+                return "files";
+            else
+                return "none";
+
+            //switch (extension.ToLower())
+            //{
+            //    case ".xls":
+            //    case ".csv":
+            //    case ".txt":
+            //    case ".xlsx":
+            //        return "files";
+            //    default:
+            //        return "none";
+            //}
         }
 
         public JsonResult FileUploadHeader()
@@ -355,7 +362,7 @@ namespace Pro.Mvc.Controllers
                 int op = updateExists ? 1 : 0;
                 UploadMembers.ExecUploadMemberAsync(accountId, category, uploadKey, op);
 
-                //return RedirectToAction("UploadProc", "Crm", new { uk = uploadKey });
+                //return RedirectToAction("UploadProc", "Main", new { uk = uploadKey });
 
                 model = new ResultModel() { Status = 0, Message = "ok" };
 

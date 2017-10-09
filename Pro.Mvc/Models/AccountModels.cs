@@ -1,4 +1,5 @@
-﻿using Nistec.Web.Security;
+﻿using Nistec.Web.Controls;
+using Nistec.Web.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -81,6 +82,20 @@ namespace Pro.Mvc.Models
         public bool RememberMe { get; set; }
         [Display(Name = "הודעה")]
         public string Message { get; set; }
+    }
+
+    public class RegisterAccountModel : RegisterModel
+    {
+        [Required]
+        [Display(Name = "שם משתמש")]
+        public string UserName { get; set; }
+        [Required]
+        [Display(Name = "שם מלא")]
+        public string DisplayName { get; set; }
+        [Required]
+        [Display(Name = "טלפון נייד")]
+        public string Phone { get; set; }
+        public string Folder { get; set; }
     }
 
     public class RegisterModel : ResetPasswordModel
@@ -183,6 +198,27 @@ namespace Pro.Mvc.Models
 
     public class StatusDesc
     {
+        public static FormResult GetMembershipResult(string action, int status)
+        {
+            bool isok = false;
+            var Message = StatusDesc.GetMembershipStatus("MembershipStatus", status, ref isok);
+            if (!isok)
+            {
+                return FormResult.Get(-1, action, Message);
+            }
+            return FormResult.Get(1, action, Message);
+        }
+        public static FormResult GetAuthResult(string action, int status)
+        {
+            bool isok = false;
+            var Message = StatusDesc.GetMembershipStatus("authstate", status, ref isok);
+            if (!isok)
+            {
+                return FormResult.Get(-1, action, Message);
+            }
+            return FormResult.Get(1, action, Message);
+        }
+
         public static string GetMembershipStatus(string type, int code, ref bool IsOk)
         {
             if (type == null)

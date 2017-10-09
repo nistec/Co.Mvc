@@ -1,4 +1,5 @@
 ﻿using Nistec;
+using Nistec.Data;
 using Nistec.Data.Entities;
 using Nistec.Web.Security;
 using Pro.Data;
@@ -32,6 +33,35 @@ namespace Pro.Lib.Sender
             return HttpSender.Send(ApiUrlSendMailGroup, "POST", msg.ToJson());
         }
 
+        public ApiResult SendSmsByCategory()
+        {
+
+            int SentCount = 0;
+            var parameters = DataParameter.GetSql(
+                "SentCount", SentCount,
+                    "AccountId", AccountId,
+                    "Categories", Categories,
+                    "Platform", 1,
+                    "Message", Message,
+                    "Body", null,
+                    "Title", Title,
+                    "PersonalFields", PersonalFields,
+                    "PersonalDisplay", PersonalDisplay,
+                    "IsPersonal", IsPersonal,
+                    "SendTime", TimeToSend,
+                    "IsAll", true,
+                    "IsMultimedia", false
+                );
+            parameters[0].Direction = System.Data.ParameterDirection.Output;
+            
+            using (var db = DbContext.Create<DbPro>())
+            {
+                int res = db.ExecuteCommandNonQuery("sp_Targets_SendByCategory", parameters, System.Data.CommandType.StoredProcedure);
+                SentCount = Types.ToInt(parameters[0].Value);
+                return new ApiResult() { Count=SentCount};
+            }
+        }
+
         public ApiRequest(HttpRequestBase Request, bool isMail)
         {
             var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
@@ -42,7 +72,7 @@ namespace Pro.Lib.Sender
             Message = Request["Message"];
             PersonalDisplay = Request["PersonalDisplay"];
             IsPersonal = string.IsNullOrEmpty(PersonalDisplay) ? false : true;
-            Category = Request["Category"];
+            Categories = Request["Category"];
             IsAll = Types.ToBool(Request["allCategory"], false);
             TimeToSend = Types.ToNullableDateTimeIso(Request["TimeToSend"]);
 
@@ -66,8 +96,10 @@ namespace Pro.Lib.Sender
         public string Method { get; set; }
         public string Message { get; set; }
         public string PersonalDisplay { get; set; }
+        public string PersonalFields { get; set; }
+        
         public bool IsPersonal { get; set; }
-        public string Category { get; set; }
+        public string Categories { get; set; }
         public bool IsAll { get; set; }
         public DateTime? TimeToSend { get; set; }
         
@@ -81,7 +113,7 @@ namespace Pro.Lib.Sender
         }
         protected string GetCategory()
         {
-            return IsAll ? "-ALL-" : Category;
+            return IsAll ? "-ALL-" : Categories;
         }
         public SmsMessageGroupRequest BuildSmsMessageGroup()
         {

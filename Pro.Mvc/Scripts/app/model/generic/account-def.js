@@ -15,6 +15,7 @@ function app_account_def(userInfo) {
     this.sourceUrl = '/Admin/GetAccountView';
     this.updateUrl = '/Admin/DefAccountUpdate';
     this.deleteUrl = '/Common/DefAccountUpdate';
+    this.rowEdit = -1;
 
     this.loadControls();
        

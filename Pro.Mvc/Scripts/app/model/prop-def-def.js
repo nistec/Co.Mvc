@@ -20,6 +20,7 @@ function app_prop_def(userInfo) {
     this.RelToAddUrl = '/System/AdDefRelToAdd';
     this.RelDeleteUrl = "/System/AdDefRelDelete"
     this.RelUpdateUrl = "/System/AdDefRelUpdate"
+    this.rowEdit = -1;
 
     this.loadControls();
 

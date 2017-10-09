@@ -17,12 +17,13 @@
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
     <script src="~/jqwidgets/jqxgrid.aggregates.js"></script>
-<script src="~/jqwidgets/jqxpopover.js"></script>
+    <script src="~/jqwidgets/jqxpopover.js"></script>
     <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
     <script type="text/javascript" src="~/Scripts/app/system/task-def.js"></script>
     <script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
     <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
-    
+<script src="~/Scripts/plagins/tabs/responsiveTabs.min.js"></script>
+<link href="~/Scripts/plagins/tabs/responsive-tabs.css" rel="stylesheet" />    
 <script src="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.js"></script>
 <link href="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.css" rel="stylesheet" />
     <style type="text/css">
@@ -43,7 +44,10 @@
                 display: block;
             }*/
         #accordion {
-        max-width:800px;
+            /*max-width:800px;*/
+            width: 100%;
+            height: 100%;
+            /*background: #fff;*/
         }
         #TaskBody {
             text-align: right;
@@ -56,6 +60,9 @@
             width: 100%;
             border: solid 1px #dbd6d6;
             direction: rtl;
+        }
+        #jqxExp-1 {
+            border: solid 1px #dbd6d6;
         }
     </style>
 
@@ -130,29 +137,7 @@
         $('#task-item-cancel').click(function () {
             wizard.wizHome();
         });
-
-        //$('#fcComment').on('click', function (e) {
-        //    task_def.doComment(taskid);
-        //});
-        //$('#fcAssign').on('click', function (e) {
-        //    task_def.doAssign(taskid);
-        //});
-        //$('#fcForm').on('click', function (e) {
-        //    task_def.doForm(taskid);
-        //});
-
-        //$('#task-item-cancel').on('click', function (e) {
-        //    wizard.displayStep(1)
-        //});
-
-
     });
-        //function triggerCommentCompleted(data) {
-        //    app_tasks_comment.end(data);
-        //}
-        //function goPartial(step) {
-        //    wizard.displayStep(step);
-        //}
 </script>
 }
 
@@ -171,10 +156,18 @@
                 <span id="fcTitle" style="font-weight: bold;">משימה</span>
             </div>*@
                 <div id="fcBody">
-                    <div id="accordion" class="tab-content" dir="rtl">
-                        <div id="hxp-0">משימה</div>
-                        <div id="exp-0" style="padding:0;margin:0">
-                            <div class="expander-entry" style="margin:10px">
+                    <div id="accordion" class="tab-content">
+                        <ul id="tab-query" class="nav nav-tabs1">
+                            <li class="active"><a id="hxp-0" href="#exp-0" data-toggle="tab">משימה</a></li>
+                            <li><a id="hxp-1" href="#exp-1" data-toggle="tab">הערות</a></li>
+                            <li><a id="hxp-2" href=" #exp-2" data-toggle="tab">מעקב העברות</a></li>
+                            <li><a id="hxp-3" href=" #exp-3" data-toggle="tab">מעקב זמנים</a></li>
+                            <li><a id="hxp-4" href="#exp-4" data-toggle="tab">מעקב ביצוע</a></li>
+                            <li><a id="hxp-5" href="#exp-5" data-toggle="tab">קבצים</a></li>
+                        </ul>
+                        @*<div id="hxp-0">משימה</div>*@
+                        <div id="exp-0" class="tab-panel">
+                            <div class="tab-entry">
                                 <form class="fcForm" id="fcForm" method="post" action="/System/UpdateTask">
                                         <input type="hidden" id="TaskId" name="TaskId" value="0" />
                                         <input type="hidden" id="AccountId" name="AccountId" value="" />
@@ -250,7 +243,7 @@
                                                 </div>
                                                 <input id="EndedDate" name="EndedDate" type="text" readonly="readonly" class="text-mid" />
                                             </div>
-                                            <div id="Project_Id-container" class="form-group">
+                                            <div id="Project_Id-container" class="form-group" style="max-width:250px">
                                                 <div id="Project_Id-name" class="field">
                                                     פרוייקט :
                                                 </div>
@@ -269,19 +262,18 @@
                                                     });
                                                 </script>
                                             </div>
-                                            <div id="ClientId-container" class="form-group">
+                                            <div id="ClientId-container" class="form-group" style="max-width:250px">
                                                 <div id="ClientId-name" class="field">
                                                     לקוח\מנוי:
                                                 </div>
                                                 <input type="hidden" id="ClientId" name="ClientId" value="0" />
-                                                <input type="hidden" id="ClientDetails" name="ClientDetails" />
-                                                <input id="ClientId-display" type="text" class="text-mid" readonly />
+                                                <input id="ClientDetails" type="text" class="text-mid" readonly />
                                                 <a href="#" id="ClientId-button" class="@(Model.Option == "g" ? "item-pasive" : null)" style="font-size:16px"><i class="fa fa-search"></i></a>
                                                 <script type="text/javascript">
                                                     var client_dlg;
                                                     $('#ClientId-button').on('click', function (event) {
                                                         if (client_dlg == null) {
-                                                            client_dlg = new app_ComboDlg('#ClientId', "#ClientDetails" );//function (item) {
+                                                            client_dlg = new app_ComboDlg('#ClientId', "#ClientDetails");//function (item) {
                                                             //    $("#ClientDetails").val(item.label);
                                                             //});
                                                             client_dlg.init("Value", "Label", '/Common/Lookup_DisplayList', 'member_display');
@@ -290,6 +282,7 @@
                                                     });
                                                 </script>
                                             </div>
+
                                             <div class="form-group">
                                                 <input type="checkbox" id="IsShare" name="IsShare" disabled="disabled" />&nbsp;<span>משותף</span>
                                             </div>
@@ -304,9 +297,9 @@
                                 </form>
                             </div>
                         </div>
-                        <div id="hxp-1">הערות</div>
-                        <div id="exp-1" style="padding:0;margin:0">
-                            <div class="expander-entry">
+                        @*<div id="hxp-1">הערות</div>*@
+                        <div id="exp-1" class="tab-panel">
+                            <div class="tab-entry">
                                 <div class="grid-wrap rtl">
                                     <div class="@(Model.Option == "g" ? "item-pasive" : null)">
                                         <a id="jqxgrid1-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
@@ -319,9 +312,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div id ="hxp-2">מעקב העברות</div>
-                        <div id="exp-2" style="padding:0;margin:0">
-                            <div class="expander-entry">
+                        @*<div id ="hxp-2">מעקב העברות</div>*@
+                        <div id="exp-2" class="tab-panel">
+                            <div class="tab-entry">
                                 <div class="grid-wrap rtl">
                                     <div class="@(Model.Option == "g" ? "item-pasive" : null)">
                                         <a id="jqxgrid2-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
@@ -332,9 +325,9 @@
                                 </div>
                             </div>
                         </div>
-                         <div id="hxp-3">מעקב זמנים</div>
-                        <div id="exp-3" style="padding:0;margin:0">
-                            <div class="expander-entry">
+                        @*<div id="hxp-3">מעקב זמנים</div>*@
+                        <div id="exp-3" class="tab-panel">
+                            <div class="tab-entry">
                                 <div class="grid-wrap rtl">
                                     <div class="@(Model.Option == "g" ? "item-pasive" : null)">
                                         <a id="jqxgrid3-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
@@ -347,9 +340,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="hxp-4">מעקב ביצוע</div>
-                        <div id="exp-4" style="padding:0;margin:0">
-                            <div class="expander-entry">
+                        @*<div id="hxp-4">מעקב ביצוע</div>*@
+                        <div id="exp-4" class="tab-panel">
+                            <div class="tab-entry">
                                 <div class="grid-wrap rtl">
                                     <div class="@(Model.Option == "g" ? "item-pasive" : null)">
                                         <a id="jqxgrid4-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
@@ -362,12 +355,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="hxp-5">קבצים</div>
-                        <div id="exp-5" style="padding:0;margin:0">
-                            <div class="expander-entry">
+                        @*<div id="hxp-5">קבצים</div>*@
+                        <div id="exp-5" class="tab-panel">
+                            <div class="tab-entry1">
                                 <div id="task-files">
                                     <iframe id="iframe-files" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen></iframe>
-                               </div>
+                                </div>
                             </div>
                         </div>
                     </div>

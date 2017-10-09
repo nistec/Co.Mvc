@@ -2,6 +2,7 @@
     Layout = "~/Views/Shared/_ViewAdmin.cshtml";
     Page.Title = "Accounts";
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+    var accountId = userInfo == null ? -1 : ViewBag.UserInfo.AccountId;
 }
 @section head {
     @Scripts.Render("~/bundles/jqx")
@@ -132,7 +133,7 @@
             
             <input type="button" id="virtualSetbutton" value="כניסת מנהל" />
             <input type="button" id="virtualCancelbutton" value="יציאת מנהל" />
-            <span>לקוח נוכחי</span> : <span>@ViewBag.AccountId</span>
+            <span>לקוח נוכחי</span> : <span>@accountId</span>
             <div id="jqxWidget" style="max-width: 800px;">
                 <div id="jqxgrid" style="position:relative;z-index:1;"></div>
                 <input style="margin-right: 5px;" type="button" id="creditbutton" value="עריכת סליקה באשראי" />

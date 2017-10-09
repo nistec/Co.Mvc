@@ -104,7 +104,7 @@
                         </ul>
                     </li>*@
 
-                <li><a href="~/Home/Dashboard">ראשי</a></li>
+                <li><a href="~/Main/Dashboard">ראשי</a></li>
 
                 @*<li>
                         <a href="~/Home/Logoff">יציאה</a>
@@ -118,41 +118,41 @@
             <ul style="direction:rtl">
                 <li class="nbr-label"><span>@ViewBag.AccountName</span><span>@@</span><span>@ViewBag.UserName</span></li>
 
-                <li id="liCrm" class="nbr-has-children overview">
+                <li id="liMain" class="nbr-has-children overview">
                     <a href="#0">מנויים</a>
                     <ul class="submeunav">
-                        <li>
-                            <a href="~/Crm/MembersQuery" title="מנויים">
+                        @*<li>
+                            <a href="~/Main/MembersQuery" title="מנויים">
                                 <img src="~/Images/icons/item.png" alt="" />איתור מנויים
                             </a>
-                        </li>
+                        </li>*@
                         <li>
-                            <a href="~/Crm/Members" title="מנויים">
+                            <a href="~/Main/Members" title="מנויים">
                                 <img src="~/Images/icons/item.png" alt="" />רשימת מנויים
                             </a>
                         </li>
                         @*<li>
-                            <a href="~/Crm/MemberEdit" title="הוספת מנוי">
+                            <a href="~/Main/MemberEdit" title="הוספת מנוי">
                                 <img src="~/Images/icons/item.png" alt="" />הוספת מנוי
                             </a>
                         </li>*@
                         <li>
-                            <a href="~/Crm/MembersUpload" title="קליטה מקובץ">
+                            <a href="~/Main/MembersUpload" title="קליטה מקובץ">
                                 <img src="~/Images/icons/item.png" alt="" />קליטה מקובץ
                             </a>
                         </li>
                         @*<li>
-                            <a href="~/Crm/MembersRemove" title="הסרת מנויים">
+                            <a href="~/Main/MembersRemove" title="הסרת מנויים">
                                 <img src="~/Images/icons/item.png" alt="" />הסרת מנויים
                             </a>
                         </li>*@
                         <li>
-                            <a href="~/Crm/PaymentsQuery" title="תשלומים">
+                            <a href="~/Main/PaymentsQuery" title="תשלומים">
                                 <img src="~/Images/icons/item.png" alt="" />איתור תשלומים
                             </a>
                         </li>
                         @*<li>
-                            <a href="~/Crm/SignupQuery" title="איתור נרשמים">
+                            <a href="~/Main/SignupQuery" title="איתור נרשמים">
                                 <img src="~/Images/icons/item.png" alt="" />איתור נרשמים
                             </a>
                         </li>*@
@@ -164,22 +164,22 @@
 
                     <ul class="submeunav">
                         <li>
-                            <a href="~/Crm/SmsBroadcast">
+                            <a href="~/Main/SmsBroadcast">
                                 <img src="~/Images/icons/item.png" alt="" />שליחת מסרון
                             </a>
                         </li>
                         <!--<li>
-                        <a href="~/Crm/SmsMultimedia">
+                        <a href="~/Main/SmsMultimedia">
                             <img src="~/Images/icons/item.png" alt="" />שליחת מסרון מולטימדיה
                         </a>
                     </li>-->
                         <li>
-                            <a href="~/Crm/EmailBroadcast">
+                            <a href="~/Main/EmailBroadcast">
                                 <img src="~/Images/icons/item.png" alt="" />שליחת דואר אלקטרוני
                             </a>
                         </li>
                         <li>
-                            <a href="~/Crm/SendQuery">
+                            <a href="~/Main/SendQuery">
                                 <img src="~/Images/icons/item.png" alt="" />דוחות דיוור
                             </a>
                         </li>
@@ -252,7 +252,7 @@
                     <a href="#0">ניהול</a>
                     <ul>
                         <li>
-                            <a href="~/System/Scheduler" title="יומן">
+                            <a href="~/System/Calendar" title="יומן">
                                 <img src="~/Images/icons/item.png" alt="" />יומן
                             </a>
                         </li>
@@ -415,7 +415,7 @@
             <!-- {%FOOTER_LINK} -->
 </footer>
     <script type="text/javascript">
-        app_messenger.Init('top', 'flat');
+        app_messenger.Init('bottom-right', 'flat');
     </script>
     @*@Scripts.Render("~/bundles/jqwidgets")*@
     @RenderSection("scripts", required: false)

@@ -1,0 +1,127 @@
+﻿@model Pro.Lib.Query.SignupQuery
+@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    ViewBag.Title = "Members";
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/main/signup-grid.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+    </style>
+}
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    var members_grid;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+   
+
+        app_signup_grid.load(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
+
+        app_jqxgrid.gridFilterEx(this, $("#grid-toolbar"), columnList, dateList);
+
+
+        @*members_grid = app_members_grid.load(JSON.parse('@dataModel'));
+
+            $("#btnFind").jqxLinkButton({ width: '120', height: '30' });
+            $('#btnclearfilter').jqxButton({ width: '120', height: '30' });
+            $('#btnclearfilter').click(function () {
+                $("#jqxgrid").jqxGrid('clearfilters');
+            });
+            $('#btnCustomerDef').jqxButton({ width: '120', height: '30' });
+            $('#btnCustomerDef').click(function () {
+                memberEdit(0);
+            });
+            $("#excelExport").jqxButton({ width: '120', height: '30' });
+            $("#excelExport").click(function () {
+                $("#jqxgrid").jqxGrid('exportdata', 'xls', 'Members',true, null, false,null,'utf-8');
+
+            });*@
+   
+        });
+        
+        //function triggerMemberComplete(memid) {
+        //    $("#jqxgrid").jqxGrid('source').dataBind();
+        //    app_dialog.dialogIframClose();
+        //};
+
+        //function triggerCategoriesComplete(memid) {
+        //    members_categoriesRefresh();
+        //    app_dialog.dialogClose(NScustomers.categoriesDialog);
+        //};
+
+        //function members_categoriesRefresh() {
+        //    members_grid.categoriesRefresh();
+        //};
+        //function members_categoriesDelete(id, memid) {
+        //    members_grid.categoriesDelete(id, memid);
+        //}
+
+    var columnList = [
+        { label: 'ת.ז המנוי', value: 'MemberId', checked: false },
+        { label: 'שם המנוי', value: 'MemberName', checked: false },
+        { label: 'טלפון נייד', value: 'CellPhone', checked: false },
+        //{ label: 'דואר אלקטרוני', value: 'Email', checked: false },
+        //{ label: 'עיר', value: 'CityName', checked: false },
+        //{ label: 'כתובת', value: 'Address', checked: false },
+        //{ label: 'מס רישום', value: 'SignupId', checked: false },
+        //{ label: 'תוקף', value: 'ValidityMonth', checked: true },
+        //{ label: 'המשלם', value: 'CreditCardOwner', checked: true },
+        //{ label: 'חיוב חוזר', value: 'AutoCharge', checked: true },
+        { label: 'קמפיין', value: 'CampaignName', checked: true },
+        //{ label: 'מחירון', value: 'PriceName', checked: false },
+        //{ label: 'מזהה רישום', value: 'SignKey', checked: false },
+        { label: 'קוד הפנייה', value: 'ReferralCode', checked: false },
+        { label: 'פריט', value: 'ItemName', checked: false },
+        { label: 'מחיר', value: 'Price', checked: false },
+        //{ label: 'סכום ששולם', value: 'Payed', checked: false },
+        //{ label: 'קוד אישור תשלום', value: 'ConfirmationCode', checked: false },
+        { label: 'מספר קבלה', value: 'PayId', checked: true }
+    ];
+    var dateList = [
+     { label: 'מועד רישום', value: 'SignupDate', checked: false },
+     { label: 'תאריך תפוגה', value: 'ExpirationDate', checked: false }
+     //{ label: 'תאריך תשלום', value: 'PayedDate', checked: false }
+    ];
+
+
+    </script>
+}
+
+
+<div class="breadcrumbs">
+</div>
+
+<div class="top-space"></div>
+
+<div class="global">
+    <div class="container">
+        <h3 class="rtl">דוח נרשמים.</h3>
+        <div class="grid-wrap rtl">
+            <div id="grid-toolbar" class="grid-toolbar"></div>
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liMain");
+    app_menu.breadcrumbs("Main", "SignupReport", 'en');
+</script>
+

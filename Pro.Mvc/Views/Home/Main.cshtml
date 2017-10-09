@@ -2,7 +2,8 @@
     
     Layout = "~/Views/Shared/_View.cshtml";
     ViewBag.Title = "Main";
-    string UserName = ViewBag.UserName;
+    var userInfo = ViewBag.UserInfo;
+    string UserName = userInfo.UserName;
     
 }
 
@@ -32,7 +33,7 @@
         $(document).ready(function () {
             
 
-            if ('@ViewBag.UserRole' > 5) {
+            if ('@userInfo.UserRole' > 5) {
                 var link = app_const.adminLink;
                 $('#mngr').append(link);
             }
@@ -57,7 +58,7 @@
                             <div class="caption">
                                 <p id="cms_2-text-main" class="title">איתור מנויים</p>
                                 <p id="cms_3-html-main">איתור מנויים לפי חתך</p>
-                                <a id="cms_4-link-main" href="~/Crm/MembersQuery" class="btn-default btn1">הצג <span></span></a>
+                                <a id="cms_4-link-main" href="~/Main/MembersQuery" class="btn-default btn1">הצג <span></span></a>
                             </div>
                         </div>
                     </div>
@@ -67,7 +68,7 @@
                             <div class="caption">
                                 <p id="cms_5-text-main" class="title">טעינה מקובץ</p>
                                 <p id="cms_6-html-main">טעינת מנויים מקובץ חיצוני.</p>
-                                <a id="cms_7-link-main" href="~/Crm/MembersUpload" class="btn-default btn1">הצג <span></span></a>
+                                <a id="cms_7-link-main" href="~/Main/MembersUpload" class="btn-default btn1">הצג <span></span></a>
                             </div>
                         </div>
                     </div>
@@ -79,7 +80,7 @@
                             <div class="caption">
                                 <p id="cms_8-text-main" class="title">הוספת מנוי</p>
                                 <p id="cms_9-html-main">הוספת מנוי חדש.</p>
-                                <a id="cms_10-link-main" href="~/Crm/MemberEdit" class="btn-default btn1">הצג <span></span></a>
+                                <a id="cms_10-link-main" href="~/Main/MemberEdit" class="btn-default btn1">הצג <span></span></a>
                             </div>
                         </div>
                     </div>
@@ -101,7 +102,7 @@
                             <div class="caption">
                                 <p id="cms_14-text-main" class="title">רשימת מנויים</p>
                                 <p id="cms_15-html-main">הגדת רשימת המנויים כולל אפשרויות סינון.</p>
-                                <a id="cms_16-link-main" href="~/Crm/Members" class="btn-default btn1">הצג <span></span></a>
+                                <a id="cms_16-link-main" href="~/Main/Members" class="btn-default btn1">הצג <span></span></a>
                             </div>
                         </div>
                     </div>
@@ -111,7 +112,7 @@
                             <div class="caption">
                                 <p id="cms_17-text-main" class="title">תשלומים</p>
                                 <p id="cms_18-html-main">פירוט תשלומים כולל אפשרויות סינון.</p>
-                                <a id="cms_19-link-main" href="~/Crm/Payments" class="btn-default btn1">הצג <span></span></a>
+                                <a id="cms_19-link-main" href="~/Main/Payments" class="btn-default btn1">הצג <span></span></a>
                             </div>
                         </div>
                     </div>

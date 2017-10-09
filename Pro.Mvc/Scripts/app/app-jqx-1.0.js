@@ -53,15 +53,15 @@ var app_jqxform = {
                         var str = value.toString();
                         if (str.match(/Date/gi)) {
                             var d = formatJsonShortDate(value)
-                            $('#' + tag).val(d);
+                            $('form#' + form + ' [name=' + tag + ']').val(d);  //$('#' + tag).val(d);
                         }
                         else if (typeof value === 'boolean')
-                            $('#' + tag).attr("checked", value);
+                            $('form#' + form + ' [name=' + tag + ']').attr("checked", value);  //$('#' + tag).attr("checked", value);
                         else
-                            $('#' + tag).val(value);
+                            $('form#' + form + ' [name=' + tag + ']').val(value);  //$('#' + tag).val(value);
                     }
                     else {
-                        $('#' + tag).val(null);
+                        $('form#' + form + ' [name=' + tag + ']').val(null);  //$('#' + tag).val(null);
                     }
                 }
                 else {
@@ -275,7 +275,9 @@ var app_jqxcombos = {
                 $("#" + output.replace('#', '')).val(value);
         }
     },
-
+    clearCheckList: function (tag) {
+        $(tag).jqxListBox('uncheckAll');
+    },
     getListCheckedValues: function (list) {
         var items = $("#" + list.replace('#', '')).jqxListBox('getCheckedItems');
         var values = "";
@@ -610,6 +612,29 @@ var app_jqxcombos = {
             $("#" + checkbox.replace('#', '')).prop('checked', checked);
         $("#" + input.replace('#', '')).val(values);
     },
+    listCheckBoxToPersonalFields: function (list, inputLabel,inputValue) {
+        
+        $("#" + inputLabel.replace('#', '')).val('');
+        $("#" + inputValue.replace('#', '')).val('');
+
+        var items = $("#" + list.replace('#', '')).jqxListBox('getCheckedItems');
+        var values = "";
+        var labels = "";
+        if (items && items.length > 0) {
+            for (var i = 0; i < items.length; i++) {
+                values += "[" + items[i].value + "]";
+                labels += "[" + items[i].label + "]";
+
+                if (i < items.length - 1) {
+                    values += ";";
+                    labels += ";";
+                }
+            }
+        }
+
+        $("#" + inputLabel.replace('#', '')).val(labels);
+        $("#" + inputValue.replace('#', '')).val(values);
+    },
     comboCheckBoxToInput: function (list, input, checkbox, setlabel) {
         //$('#' + list).on('checkChange', function (event) {
         var items = $("#" + list.replace('#', '')).jqxComboBox('getCheckedItems');
@@ -639,7 +664,7 @@ var app_jqxcombos = {
             $("#" + checkbox.replace('#', '')).prop('checked', checked);
         $("#" + input).val(value);
     },
-    renoteCombo: function (valueMember, displayMember, tag, url, width, dropDownHeight, async, output) {
+    remoteCombo: function (valueMember, displayMember, tag, url, width, dropDownHeight, async, output) {
 
         if (typeof width === 'undefined' || width == 0) { width = 240; }
         if (typeof async === 'undefined') { async = true; }
@@ -787,6 +812,23 @@ var app_jqx = {
                         { name: displayMember }
                     ],
                     type: 'POST',
+                    url: url
+                };
+        var srcAdapter = new $.jqx.dataAdapter(source);
+        return srcAdapter;
+    },
+    createtDataAdapterData: function (valueMember, displayMember, url, async,data) {
+        if (typeof async === 'undefined') { async = true; }
+        var source =
+                {
+                    dataType: "json",
+                    async: async,
+                    dataFields: [
+                        { name: valueMember },
+                        { name: displayMember }
+                    ],
+                    type: 'POST',
+                    data:data,
                     url: url
                 };
         var srcAdapter = new $.jqx.dataAdapter(source);

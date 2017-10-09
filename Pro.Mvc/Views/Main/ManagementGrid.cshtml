@@ -1,0 +1,237 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    ViewBag.Title = "Management";
+  
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+    </style>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    var NScustomers = {};
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        // prepare the data
+        var source =
+        {
+            datatype: "json",
+            async:false,
+            datafields: [
+               { name: 'MemberId', type: 'string' },
+               { name: 'MemberName', type: 'string' },
+               { name: 'Address', type: 'string' },
+               { name: 'CityName', type: 'string' },
+               { name: 'BranchName', type: 'string' },
+               { name: 'RoleName', type: 'string' },
+               { name: 'CellPhone', type: 'string' },
+               { name: 'Phone', type: 'string' },
+               //{ name: 'Email', type: 'string' },
+               { name: 'LastUpdate', type: 'date' },
+               { name: 'RecordId', type: 'number' }
+            ],
+            id: 'MemberId',
+            type: 'POST',
+            url: '@Url.Action("GetManagementGrid", "Main")',
+            //data:{},
+                pagenum: 1,
+                pagesize: 20,
+                pager: function (pagenum, pagesize, oldpagenum) {
+                    // callback called when a page or page size is changed.
+                },
+            };
+
+            //var dataAdapter = new $.jqx.dataAdapter(source);
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                loadComplete: function (data) {
+                    //source.totalrecords = getTotalRows(data);
+                },
+                loadError: function (xhr, status, error) { alert(' status: ' + status + '\n error ' + error) }
+            });
+           /*
+            var initrowdetails = function (index, parentElement, gridElement, datarecord) {
+                NScustomers.currentIndex = index;
+
+                var tabsdiv = null;
+                var information = null;
+                var notes = null;
+
+                tabsdiv = $($(parentElement).children()[0]);
+                if (tabsdiv != null) {
+                    information = tabsdiv.find('.information');
+                    notes = tabsdiv.find('.notes');
+                    var title = tabsdiv.find('.title');
+                    title.text(datarecord.MemberName);
+                    var tabcategories = tabsdiv.find('.categories');
+
+                    var container = $('<div style="margin: 5px;text-align:right;"></div>')
+                    container.rtl = true;
+                    container.appendTo($(information));
+
+                    var leftcolumn = $('<div style="float: left; width: 45%;direction:rtl;"></div>');
+                    var rightcolumn = $('<div style="float: right; width: 40%;direction:rtl;"></div>');
+                    container.append(leftcolumn);
+                    container.append(rightcolumn);
+
+                    var divLeft = $("<div style='margin: 10px;'><b>קוד חיוב:</b> " + datarecord.ChargeName + "</div>" +
+                        "<div style='margin: 10px;'><b>סווג:</b> " + datarecord.CategoryName + "</div>" +
+                        "<div style='margin: 10px;'><b>מחוז:</b> " + datarecord.RegionName + "</div>" +
+                        "<div style='margin: 10px;'><b>סניף:</b> " + datarecord.BranchName + "</div>" +
+                        "<div style='margin: 10px;'><b>מועד עדכון:</b> " + datarecord.LastUpdate + "</div>" );
+
+                    divLeft.rtl = true;
+                    var divRight = $("<div style='margin: 10px;'><b>דואל:</b> " + datarecord.Email + "</div>" +
+                        "<div style='margin: 10px;'><b>טלפון:</b> " + datarecord.Phone + "</div>" +
+                        "<div style='margin: 10px;'><b>ארץ לידה:</b> " + datarecord.PlaceName + "</div>" +
+                        "<div style='margin: 10px;'><b>תאריך לידה:</b> " + datarecord.Birthday + "</div>" +
+                        "<div style='margin: 10px;'><b>מגדר:</b> " + datarecord.GenderName + "</div>" +
+                        "<div style='margin: 10px;'><b>ת.ז:</b> " + datarecord.MemberId + "</div>" );
+
+
+                    divRight.rtl = true;
+                    $(leftcolumn).append(divLeft);
+                    $(rightcolumn).append(divRight);
+
+                    var notescontainer = $('<div style="white-space: normal; margin: 5px;text-align:right;"><span>' + datarecord.Note + '</span></div>');
+                    notescontainer.rtl = true;
+                    $(notes).append(notescontainer);
+
+                    var memid = datarecord.MemberId;//parseInt(datarecord.MemberId);
+                    initCategoriesGrid(tabcategories, index, memid);
+
+                    $(tabsdiv).jqxTabs({ width: '95%', height: 170, rtl: true });
+                }
+            };
+            */
+            // create Tree Grid
+            $("#jqxgrid").jqxGrid(
+            {
+                width: '100%',
+                autoheight: true,
+                rtl: true,
+                source: dataAdapter,
+                localization: getLocalization('he'),
+                rendergridrows: function (obj) {
+                    return dataAdapter.records;
+                },
+                pageable: true,
+                pagermode: 'simple',
+                sortable: true,
+                showfilterrow: true,
+                filterable: true,
+                //rowdetails: true,
+                //rowdetailstemplate: { rowdetails: "<div style='margin: 10px;'><ul style='margin-right: 30px;'><li class='title'></li><li>פרטים</li><li>סיווגים</li></ul><div class='information'></div><div class='notes'></div><div class='categories'></div></div>", rowdetailsheight: 200 },
+                //initrowdetails: initrowdetails,
+                columns: [
+                  {
+                      text: 'פעולות', dataField: 'RecordId', filterable: false, width: 100, cellsalign: 'right', align: 'center', cellsrenderer:
+                       function (row, columnfield, value, defaulthtml, columnproperties) {
+                           return '<div style="text-align:center"><a href="#" onclick="app_popup.managementEdit(' + value + ')" >הצג</a></div>';
+                       }
+                  },
+                  {
+                      text: 'ת.ז', dataField: 'MemberId', filtercondition: 'starts_with', cellsalign: 'right', align: 'center'
+                  },
+                  {
+                      text: 'שם', dataField: 'MemberName', filtercondition: 'contains', cellsalign: 'right', align: 'center'
+                  },
+                  {
+                      text: 'עיר', dataField: 'CityName', filtercondition: 'contains', cellsalign: 'right', align: 'center'
+                  },
+                  {
+                      text: 'כתובת', dataField: 'Address', filtercondition: 'contains', cellsalign: 'right', align: 'center'
+                  },
+                  {
+                      text: 'טלפון נייד', dataField: 'CellPhone', filtercondition: 'starts_with', width: 120, cellsalign: 'right', align: 'center'
+                  },
+                  //{ text: 'דואל', dataField: 'Email', filtercondition: 'starts_with', width: 150, cellsalign: 'right', align: 'center' },
+                  {
+                      text: 'תפקיד', dataField: 'RoleName', width: 100, cellsalign: 'right', align: 'center'
+                  },
+                  { text: 'מועד עדכון', type: 'date', dataField: 'LastUpdate', filterable: false, width: 120, cellsformat: 'd', cellsalign: 'right', align: 'center' }
+                ]
+            });
+
+            //$("#btnFind").jqxLinkButton({ width: '120', height: '30' });
+            $('#btnclearfilter').jqxButton({ width: '120', height: '30' });
+            $('#btnclearfilter').click(function () {
+                $("#jqxgrid").jqxGrid('clearfilters');
+            });
+            $('#btnCustomerDef').jqxButton({ width: '120', height: '30' });
+            $('#btnCustomerDef').click(function () {
+                app_popup.memberEdit(0);
+            });
+            $("#excelExport").jqxButton({ width: '120', height: '30' });
+            $("#excelExport").click(function () {
+                $("#jqxgrid").jqxGrid('exportdata', 'xls', 'Members',true, null, false,null,'utf-8');
+
+            });
+
+        });
+
+        function triggerMemberComplete(memid) {
+            $("#jqxgrid").jqxGrid('source').dataBind();
+            app_dialog.dialogIframClose();
+        };
+
+    </script>
+}
+
+
+@section featured {
+
+
+}
+
+<div class="breadcrumbs">
+@Html.ActionLink("Home", "Index", "Home")>
+@Html.ActionLink("Main", "Dashboard", "Main")>
+<a href="javascript:parent.history.back()">Main</a> >
+@ViewContext.RouteData.Values["action"].ToString()
+</div>
+
+
+<hgroup class="title">
+    <h3 class="rightPan">רשימת חברי הנהלה.</h3>
+</hgroup>
+
+<div class="clear"></div>
+
+<div class="global">
+    <div class="container">
+
+        <div class="grid-wrap">
+            <div style="display: inline; float: right; direction:rtl">
+                <input style="margin-top: 10px;" value="הוספת מנוי" id="btnCustomerDef" type="button" />
+                <input style="margin-top: 10px;" value="הסר סינון" id="btnclearfilter" type="button" />
+                <input style="margin-top: 10px;" value="ייצוא לאקסל" title="ייצוא דף נוכחי" id="excelExport" type="button" />
+            </div>
+            
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                <div style="margin-top: 30px;">
+                    <div id="cellbegineditevent"></div>
+                    <div style="margin-top: 10px;" id="cellendeditevent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liMain");
+</script>
+

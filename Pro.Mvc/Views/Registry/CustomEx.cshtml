@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_ViewRegistry.cshtml";
     string ismemeber = Request["m"];
-    var SignKey = Pro.Data.Entities.SignupContext.CreateSignKey(Model.AccountId);
+    //var SignKey = Pro.Data.Entities.SignupContext.CreateSignKey(Model.AccountId);
 }
 
 @section head {
@@ -34,7 +34,7 @@
         <form id="form1" method="post" action="">
             @Html.AntiForgeryToken()
             <input type="hidden" id="AccountId" name="AccountId" value="@Model.AccountId" />
-            <input type="hidden" id="SignKey" name="SignKey" value="@SignKey" />
+            <input type="hidden" id="SignKey" name="SignKey" value="@Model.Ds1" />
             @Html.Raw(Model.Body)
         </form>
     </div>
@@ -44,7 +44,7 @@
         <form id="form2" method="post" action="">
             @Html.AntiForgeryToken()
             <input type="hidden" id="AccountId" name="AccountId" value="@Model.AccountId" />
-            <input type="hidden" id="SignKey" name="SignKey" value="@SignKey" />
+            <input type="hidden" id="SignKey" name="SignKey" value="@Model.Ds1" />
             @Html.Raw(Model.Ph2)
         </form>
     </div>

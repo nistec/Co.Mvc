@@ -11,6 +11,7 @@
     @Scripts.Render("~/bundles/jqxgrid")
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script src="~/jqwidgets/jqxpopover.js"></script>
     <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
     <script type="text/javascript" src="~/Scripts/app/system/task-new.js"></script>
     <script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
@@ -73,16 +74,6 @@
         });
         $('#fcSubmit').on('click', function (e) {
             task_def.doSubmit();
-        });
-
-        $('#task-item-update').click(function () {
-            var iframe = wizard.getIframe();
-            if (iframe && iframe.triggerSubmit) {
-                iframe.triggerSubmit();
-            }
-        });
-        $('#task-item-cancel').click(function () {
-            wizard.wizHome();
         });
 
     });
@@ -177,7 +168,7 @@
                                                 פרטים נוספים
                                             </div>
                                             <div class="rtl" style="border:none">
-                                                <div id="Project_Id-container" class="form-group">
+                                                <div id="Project_Id-container" class="form-group" style="max-width:250px">
                                                     <div id="Project_Id-name" class="field">
                                                         פרוייקט :
                                                     </div>
@@ -195,13 +186,12 @@
                                                         });
                                                     </script>
                                                 </div>
-                                                <div id="ClientId-container" class="form-group">
+                                                <div id="ClientId-container" class="form-group" style="max-width:250px">
                                                     <div id="ClientId-name" class="field">
                                                         לקוח\מנוי:
                                                     </div>
                                                     <input type="hidden" id="ClientId" name="ClientId" value="0" />
-                                                    <input type="hidden" id="ClientDetails" name="ClientDetails" />
-                                                    <input id="ClientId-display" type="text" class="text-mid" readonly />
+                                                    <input id="ClientDetails" type="text" class="text-mid" readonly />
                                                     <a href="#" id="ClientId-button" class="@(Model.Option == "g" ? "item-pasive" : null)" style="font-size:16px"><i class="fa fa-search"></i></a>
                                                     <script type="text/javascript">
                                                         var client_dlg;

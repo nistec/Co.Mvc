@@ -20,7 +20,7 @@ using Pro.Data.Entities.Props;
 using Pro.Data.Registry;
 using Nistec.Runtime;
 using System.Text;
-using Pro.Lib.Api;
+using Pro.Lib.Payments;
 using CaptchaMvc.HtmlHelpers;
 using CaptchaMvc.Attributes;
 using System.Threading.Tasks;
@@ -31,6 +31,7 @@ namespace Pro.Mvc.Controllers
 
     public class RegistryController : Controller
     {
+        #region protected methods
         protected string GetReferrer()
         {
             string referer = Request.ServerVariables["HTTP_REFERER"];
@@ -59,13 +60,14 @@ namespace Pro.Mvc.Controllers
             return sb.ToString();
         }
 
+
         //protected RegistryPage GetRegistryPage(int AccountId, string folder, string pageType)
         //{
         //    RegistryPage rp = CmsRegistryContext.LoadRegistryPage(folder, "MainEx");
         //    rp.SignKey = Pro.Data.Entities.SignupContext.CreateSignKey(AccountId);
         //    return rp;
         //}
-
+        #endregion
         #region properties
 
         [HttpPost]
@@ -117,6 +119,7 @@ namespace Pro.Mvc.Controllers
             {
                 rp.HScript = Types.NZ(rp.HScript, "") + "\n" + GetTemplateContent(rp.Design);
             }
+            rp.Ds1 = Pro.Data.Entities.SignupContext.CreateSignKey(rp.AccountId);
             ViewBag.Title = rp.Title;
             return View(rp);
         }
@@ -129,6 +132,7 @@ namespace Pro.Mvc.Controllers
             {
                 rp.HScript = Types.NZ(rp.HScript, "") + "\n" + GetTemplateContent(rp.Design);
             }
+            rp.Ds1 = Pro.Data.Entities.SignupContext.CreateSignKey(rp.AccountId);
             ViewBag.Title = rp.Title;
             return View(rp);
         }
@@ -137,6 +141,7 @@ namespace Pro.Mvc.Controllers
         {
             TraceHelper.Log(folder, "Custom", "request", Request);
             RegistryPage rp = CmsRegistryContext.LoadRegistryPage(folder, "Main");
+            rp.Ds1 = Pro.Data.Entities.SignupContext.CreateSignKey(rp.AccountId);
             ViewBag.Title = rp.Title;
             return View(rp);
         }
@@ -145,6 +150,7 @@ namespace Pro.Mvc.Controllers
         {
             TraceHelper.Log(folder, "CustomEx", "request", Request);
             RegistryPage rp = CmsRegistryContext.LoadRegistryPage(folder, "MainEx");
+            rp.Ds1 = Pro.Data.Entities.SignupContext.CreateSignKey(rp.AccountId);
             ViewBag.Title = rp.Title;
             return View(rp);
         }
@@ -222,7 +228,7 @@ namespace Pro.Mvc.Controllers
 
         #endregion
 
-         #region Info
+        #region Info
 
          [HttpGet]
          public ActionResult Info(string folder)
@@ -350,7 +356,7 @@ namespace Pro.Mvc.Controllers
          }
          #endregion
 
-         #region Credit
+        #region Credit
 
          public ActionResult Credit(string folder)
          {
@@ -592,13 +598,13 @@ namespace Pro.Mvc.Controllers
          [ValidateAntiForgeryToken()]
          public JsonResult UpdateMember()
          {
-
+             //MemberCategoryView
              int res = 0;
              string action = "הגדרת מנוי";
-             MemberCategoryView a = null;
+             MemberItem a = null;
              try
              {
-                 a = EntityContext.Create<MemberCategoryView>(Request.Form);
+                 a = EntityContext.Create<MemberItem>(Request.Form);
                 
                  EntityValidator validator = EntityValidator.ValidateEntity(a, "הגדרת מנוי", "he");
                  if (!validator.IsValid)

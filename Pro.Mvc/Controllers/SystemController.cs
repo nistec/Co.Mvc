@@ -29,7 +29,7 @@ namespace Pro.Mvc.Controllers
 
         public ActionResult UsersDef()
         {
-            return View();
+            return View(true);
         }
         /*
         public ActionResult DefUser()
@@ -346,14 +346,14 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult AdDef()
         {
-            return View();
+            return View(true);
         }
 
         [HttpPost]
         public ActionResult AdDefList()
          {
              int accountId = GetAccountId();
-             var db = new AdContext<AdItemView>(accountId);
+             var db = new AdContext<AdItem>(accountId);
              return Json(db.GetList(accountId), JsonRequestBehavior.AllowGet);
         }
  
@@ -361,7 +361,7 @@ namespace Pro.Mvc.Controllers
          public ActionResult AdShowMembers()
          {
              int accountId = GetAccountId();
-             var db = new AdContext<AdItemView>(accountId);
+             var db = new AdContext<AdItem>(accountId);
              return Json(db.GetList(accountId), JsonRequestBehavior.AllowGet);
          }
 
@@ -377,6 +377,7 @@ namespace Pro.Mvc.Controllers
                 int accountId = GetAccountId();
                 context = new AdContext<AdItem>(accountId);
                 context.Set(Request.Form);
+                context.Current.AccountId = accountId;
                 var res = context.SaveChanges();
                 return Json(context.GetFormResult(res, null), JsonRequestBehavior.AllowGet);
             }
@@ -386,7 +387,7 @@ namespace Pro.Mvc.Controllers
             }
         }
         [HttpPost]
-        public ActionResult AdDefDelete(int id)
+        public ActionResult AdDefDelete(int GroupId)
         {
             string action = "מחיקת קבוצה";
             AdContext<AdItem> context = null;
@@ -396,7 +397,7 @@ namespace Pro.Mvc.Controllers
 
                 int accountId = GetAccountId();
                 context = new AdContext<AdItem>(accountId);
-                var res = context.Delete("GroupId", id, "AccountId", accountId);
+                var res = context.Delete("GroupId", GroupId, "AccountId", accountId);
                 return Json(FormResult.Get(res, context.EntityName,"ok"), JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -488,15 +489,18 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult AdUsersDef()
         {
-            return View();
+            return View(true);
         }
   
 
         [HttpPost]
         public ActionResult AdUserDefList()
         {
-            int accountId = GetAccountId();
-            int userId = GetUser();
+            var su= GetSignedUser();
+            //int parentId = su.ParentId;
+            int userId = su.UserId;
+            int accountId = su.AccountId;
+            
             var db = new AdContext<AdUserProfile>(accountId);
             var list = db.GetList("AccountId", accountId, "UserId", userId);
             return Json(list, JsonRequestBehavior.AllowGet);
@@ -514,6 +518,7 @@ namespace Pro.Mvc.Controllers
                 int accountId = GetAccountId();
                 context = new AdContext<AdUserProfile>(accountId);
                 context.Set(Request.Form);
+                context.Current.AccountId = accountId;
                 var res = context.SaveChanges(false);
                 if (isResetPass)
                 {
@@ -574,13 +579,8 @@ namespace Pro.Mvc.Controllers
                     "Profession", 0,
                     "AppId", ProSettings.AppId);
                 int status = res.GetReturnValue();
-                bool isok=false;
-                var Message = StatusDesc.GetMembershipStatus("MembershipStatus", status, ref isok);
-                if (!isok)
-                {
-                    return Json(FormResult.Get(-1, action, Message), JsonRequestBehavior.AllowGet);
-                }
-                return Json(FormResult.Get(1, action, Message), JsonRequestBehavior.AllowGet);
+                var reslult = StatusDesc.GetMembershipResult(action, status);
+                return Json(reslult, JsonRequestBehavior.AllowGet);
                 //return Json(context.GetFormResult(res, Message), JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -589,18 +589,21 @@ namespace Pro.Mvc.Controllers
             }
         }
         [HttpPost]
-        public ActionResult AdUserDefDelete(int id)
+        public ActionResult AdUserDefDelete(int UserId)
         {
             string action = "מחיקת משתמש";
             AdContext<AdUserProfile> context = null;
             try
             {
-                ValidateDelete(GetUser(), "AdUserDefDelete");
+                var user=GetSignedUser();
+                ValidateDelete(user.UserId, "AdUserDefDelete");
 
-                int accountId = GetAccountId();
+                int accountId = user.AccountId;
                 context = new AdContext<AdUserProfile>(accountId);
-                var res = context.Delete("UserId", id, "AccountId", accountId);
-                return Json(FormResult.Get(res, context.EntityName, "ok"), JsonRequestBehavior.AllowGet);
+                //var res = context.Delete("UserId", UserId, "AccountId", accountId, "AssignBy", user.UserId);
+                var status = context.DeleteReturnValue(-1, "UserId", UserId, "AccountId", accountId, "AssignBy", user.UserId);
+                var reslult = StatusDesc.GetAuthResult(action, status);
+                return Json(reslult, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -614,14 +617,14 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult AdTeamDef()
         {
-            return View();
+            return View(true);
         }
 
         [HttpPost]
         public ActionResult AdTeamDefList()
         {
             int accountId = GetAccountId();
-            var db = new AdContext<AdTeamItemView>(accountId);
+            var db = new AdContext<AdTeamItem>(accountId);
             return Json(db.GetList(accountId), JsonRequestBehavior.AllowGet);
         }
 
@@ -629,7 +632,7 @@ namespace Pro.Mvc.Controllers
         public ActionResult AdTeamShowMembers(int id)
         {
             int accountId = GetAccountId();
-            var db = new AdContext<AdTeamItemView>(accountId);
+            var db = new AdContext<AdTeamItem>(accountId);
             return Json(db.GetList(accountId), JsonRequestBehavior.AllowGet);
         }
 
@@ -645,6 +648,7 @@ namespace Pro.Mvc.Controllers
                 int accountId = GetAccountId();
                 context = new AdContext<AdTeamItem>(accountId);
                 context.Set(Request.Form);
+                context.Current.AccountId = accountId;
                 var res = context.SaveChanges();
                 return Json(context.GetFormResult(res, null), JsonRequestBehavior.AllowGet);
             }
@@ -654,7 +658,7 @@ namespace Pro.Mvc.Controllers
             }
         }
         [HttpPost]
-        public ActionResult AdTeamDefDelete(int id)
+        public ActionResult AdTeamDefDelete(int TeamId)
         {
             string action = "מחיקת צוות";
             AdContext<AdTeamItem> context = null;
@@ -664,7 +668,7 @@ namespace Pro.Mvc.Controllers
 
                 int accountId = GetAccountId();
                 context = new AdContext<AdTeamItem>(accountId);
-                var res = context.Delete("TeamId", id, "AccountId", accountId);
+                var res = context.Delete("TeamId", TeamId, "AccountId", accountId);
                 return Json(FormResult.Get(res, context.EntityName, "ok"), JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -750,19 +754,174 @@ namespace Pro.Mvc.Controllers
         }
         #endregion
 
-        #region task
+        #region AdShare
 
+        [HttpGet]
+        public ActionResult AdShareDef()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public ActionResult AdShareList(int id)
+        {
+            int accountId = GetAccountId();
+            int user=GetUser();
+            
+            var db = new AdContext<AdShare>(accountId,user);
+            var list = db.ExecList("ShareModel",0, "AccountId", accountId, "UserId", user);
+            var filterlist = list.Where(v => v.ShareModel == 0 || v.ShareModel == id);
+            return Json(filterlist, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult AdShareShowMembers(int id)
+        {
+            int accountId = GetAccountId();
+            int user = GetUser();
+            var db = new AdContext<AdShare>();
+            var list = db.ExecList("ShareModel", id, "AccountId", accountId, "UserId", user, "ListType", 1);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult AdShareDefUpdate()
+        {
+            string action = "עדכון שיתוף";
+            AdContext<AdShare> context = null;
+            try
+            {
+                ValidateUpdate(GetUser(), "AdShareDefUpdate");
+
+                int accountId = GetAccountId();
+                int user = GetUser();
+                context = new AdContext<AdShare>(accountId, user);
+                context.Set(Request.Form);
+                //context.Current.AccountId = accountId;
+                var res = context.SaveChanges();
+                return Json(context.GetFormResult(res, null), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetTrace<DbSystem>(ex, action, Request), JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public ActionResult AdShareDefDelete(int id, int uid)
+        {
+            string action = "מחיקת שיתוף";
+            AdContext<AdShare> context = null;
+            try
+            {
+                int user = GetUser();
+                ValidateDelete(user, "AdSharDefDelete");
+                int accountId = GetAccountId();
+                context = new AdContext<AdShare>(accountId, user);
+                var res = context.Delete("ShareModel", id, "AccountId", accountId, "UserId", uid, "ShareWith", user);
+                return Json(FormResult.Get(res, context.EntityName, "ok"), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetTrace<DbSystem>(ex, action, Request), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AdShareDefRel(int id)
+        {
+            int accountId = GetAccountId();
+            int user = GetUser();
+            var db = new AdContext<AdShare>();
+            var list = db.ExecList("ShareModel", id, "AccountId", accountId, "UserId", user, "ListType", 1);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult AdShareDefRelAll(int id)
+        {
+            int accountId = GetAccountId();
+            int user = GetUser();
+            var db = new AdContext<AdShare>();
+            var list = db.ExecList("ShareModel", id, "AccountId", accountId, "UserId", user, "ListType", 0);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult AdShareDefRelToAdd(int id)
+        {
+            int accountId = GetAccountId();
+            int user = GetUser();
+            var db = new AdContext<AdShare>();
+            var list = db.ExecList("ShareModel", id, "AccountId", accountId, "UserId", user, "ListType", 2);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult AdShareDefRelUpdate()
+        {
+            string action = "הגדרת שיתוף";
+            AdContext<AdShare> context = null;
+            try
+            {
+                ValidateUpdate(GetUser(), "AdShareDefRelUpdate");
+                int user = GetUser();
+                int accountId = GetAccountId();
+                int ShareModel = Types.ToInt(Request["ShareModel"]);
+                string users = Request["Users"];
+                if (ShareModel > 0 && !string.IsNullOrEmpty(users))
+                {
+                    context = new AdContext<AdShare>(accountId, user);
+                    //@Mode tinyint=0--0= insert,1=upsert,2=delete
+                    var model = context.Upsert(UpsertType.Update, ReturnValueType.ReturnValue, "ShareModel", ShareModel, "AccountId", accountId, "UserId", user, "Mode", 0);//Update
+                    return Json(context.GetFormResult(model, null), JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(FormResult.Get(0, action, null), JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetTrace<DbSystem>(ex, action, Request), JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public ActionResult AdShareDefRelDelete()
+        {
+            string action = "מחיקת משתמשים משיתוף";
+            AdContext<AdShare> context = null;
+            int res = 0;
+            try
+            {
+                ValidateDelete(GetUser(), "AdShareDefRelDelete");
+                int ShareModel = Types.ToInt(Request["ShareModel"]);
+                int userid = Types.ToInt(Request["UserId"]);
+                if (ShareModel > 0 && userid > 0)
+                {
+                    int user = GetUser();
+                    int accountId = GetAccountId();
+                    context = new AdContext<AdShare>(accountId);
+                    res = context.Delete("ShareModel", ShareModel, "AccountId", accountId, "UserId", userid, "ShareWith", user);
+                }
+                return Json(FormResult.Get(res, context.EntityName, "ok"), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetTrace<DbSystem>(ex, action, Request), JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
+        #region Task
 
         [HttpGet]
         public ActionResult Tasks()
         {
+            var userinfo = LoadUserInfo();
             TaskQuery model = new TaskQuery()
             {
-                AccountId = GetAccountId(),
-                UserId = GetUser()
+                AccountId = userinfo.AccountId,
+                UserId = userinfo.UserId
             };
-            return View(model);
+            return View(userinfo, model);
         }
         [HttpPost]
         public ActionResult GetTasksGrid()
@@ -786,37 +945,41 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult TaskUser()
         {
-            return View();
+            return View(true);
         }
-        
+
         [HttpPost]
         public JsonResult TaskUserKanban()
         {
+            var userinfo = GetSignedUser();
             int status = Types.ToInt(Request["Status"]);
-            bool isshare = Types.ToBool(Request["IsShare"],false);
-            int accountId = GetAccountId();
-            int userId = GetUser();
+            bool isshare = Types.ToBool(Request["IsShare"], false);
+            int accountId = userinfo.AccountId;//GetAccountId();
+            int userId = userinfo.UserId;// GetUser();
             var view = TaskContext.TaskUserKanban(accountId, userId, status, isshare);
             return Json(view, JsonRequestBehavior.AllowGet);
 
         }
+
         [HttpGet]
         public ActionResult TaskEdit(int id)
         {
-            return View(new EditTaskModel() { PId = id, Option = "e" });
+            return View(true,new EditTaskModel() { PId = id, Option = "e" });
         }
         [HttpGet]
         public ActionResult TaskInfo(int id)
         {
-            return View("TaskEdit", new EditTaskModel() { PId = id, Option = "g" });
+            return View(true, "TaskEdit", new EditTaskModel() { PId = id, Option = "g" });
         }
         [HttpGet]
         public ActionResult TaskStart(int id)
         {
-            int accountId = GetAccountId();
-            int user = GetUser();
+            var userinfo = LoadUserInfo();
+
+            int accountId = userinfo.AccountId;// GetAccountId();
+            int user = userinfo.UserId;// GetUser();
             TaskContext.Task_Status_Change(id, user, 2, "אתחול משימה", null);
-            return View("TaskEdit", new EditTaskModel() { PId = id, Option = "e" });
+            return View(userinfo, "TaskEdit", new EditTaskModel() { PId = id, Option = "e" });
         }
         [HttpGet]
         public ActionResult _TaskEdit(Guid id)
@@ -828,7 +991,7 @@ namespace Pro.Mvc.Controllers
         public ContentResult GetTaskEdit()
         {
             int id = Types.ToInt(Request["id"]);
-            int accountId = GetAccountId();
+            
             string json = "";
             TaskItem item = null;
             if (id > 0)
@@ -837,6 +1000,7 @@ namespace Pro.Mvc.Controllers
             }
             else
             {
+                int accountId = GetAccountId();
                 item = new TaskItem() { AccountId = accountId };// DbSystem.SysCounters(2) };
             }
             if (item != null)
@@ -947,6 +1111,7 @@ namespace Pro.Mvc.Controllers
             {
 
                 a = EntityContext.Create<TaskItem>(Request.Form);
+                a.AccountId = GetAccountId();
                 var result = TaskItemUpdate(a, action);
                 return Json(result, JsonRequestBehavior.AllowGet);
 
@@ -1462,7 +1627,32 @@ namespace Pro.Mvc.Controllers
                 return Json(FormResult.GetError(context.EntityName, ex.Message), JsonRequestBehavior.AllowGet);
             }
         }
+        [HttpPost]
+        public JsonResult TaskFormChecked(int id,bool done)
+        {
+            TaskContext<TaskForm> context = null;
+            try
+            {
+                int userId = GetUser();
+                context = new TaskContext<TaskForm>(userId);
+                var item = context.Get("ItemId", id);
+                item.DoneStatus = done;
+                if (done)
+                    item.DoneDate = DateTime.Now;
+                else
+                    item.DoneDate = null;//new Nullable<DateTime>().Value;
+                if (item.AssignBy == 0)
+                    item.AssignBy = userId;
+                context.Set(item);
+                var res = context.SaveChanges();
+                return Json(context.GetFormResult(res, null), JsonRequestBehavior.AllowGet);
 
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetError(context.EntityName, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
         [HttpPost]
         public JsonResult TaskFormDelete(int id)
         {
@@ -1554,6 +1744,7 @@ namespace Pro.Mvc.Controllers
             {
                 context = new TaskContext<TaskAction>(GetUser());
                 context.Set(Request.Form);
+                //context.Current.AccountId = accountId;
                 var res = context.SaveChanges();
                 return Json(context.GetFormResult(res, null), JsonRequestBehavior.AllowGet);
 
@@ -1589,7 +1780,7 @@ namespace Pro.Mvc.Controllers
         public ActionResult TaskNew()
         {
             //TaskContext.NewTaskId() 
-            return View(new EditTaskModel() { PId = 0});
+            return View(true,new EditTaskModel() { PId = 0});
         }
 
 
@@ -1640,7 +1831,7 @@ namespace Pro.Mvc.Controllers
         public ActionResult ReminderNew()
         {
             //TaskContext.NewTaskId() 
-            return View("Reminder",new EditTaskModel() { PId = 0 });
+            return View(true,"Reminder",new EditTaskModel() { PId = 0 });
         }
         [HttpGet]
         public ActionResult ReminderEdit(int id)
@@ -1657,12 +1848,12 @@ namespace Pro.Mvc.Controllers
             //Console.WriteLine(datat.TableName);
 
             var model = new EditTaskModel() { PId = id, Option = "e", Result = TaskContext.Get(id) };
-            return View("Reminder", model);
+            return View(true,"Reminder", model);
         }
         [HttpGet]
         public ActionResult ReminderInfo(int id)
         {
-            return View("Reminder", new EditTaskModel() { PId = id, Option = "g", Result = TaskContext.Get(id) });
+            return View(true,"Reminder", new EditTaskModel() { PId = id, Option = "g", Result = TaskContext.Get(id) });
         }      
 
         [HttpPost]
@@ -1774,33 +1965,165 @@ namespace Pro.Mvc.Controllers
         public ActionResult TicketNew()
         {
             //TaskContext.NewTaskId()
-            return View(new EditTaskModel() { PId = 0 });
+            return View(true,new EditTaskModel() { PId = 0 });
         }
-
+        [HttpGet]
+        public ActionResult TicketStart(int id)
+        {
+            int accountId = GetAccountId();
+            int user = GetUser();
+            TaskContext.Task_Status_Change(id, user, 2, "אתחול סוגיה", null);
+            return View("TicketEdit", new EditTaskModel() { PId = id, Option = "e" });
+        }
            
         [HttpGet]
         public ActionResult TicketEdit(int id)
         {
-            return View(new EditTaskModel() { PId = id, Option = "e" });
+            return View(true,new EditTaskModel() { PId = id, Option = "e" });
         }
         [HttpGet]
         public ActionResult TicketInfo(int id)
         {
-            return View("TaskEdit", new EditTaskModel() { PId = id, Option = "g" });
+            return View(true,"TicketEdit", new EditTaskModel() { PId = id, Option = "g" });
         }
        
         
 
         #endregion
 
-        #region Scheduler
+        #region Calendar
 
         [HttpGet]
-        public ActionResult Scheduler()
+        public ActionResult Calendar()
         {
-            return View(new EditTaskModel() { PId = 0, Option="g" });
+            return View(true,new EditTaskModel() { PId = 0, Option="g" });
         }
 
+        [HttpPost]
+        public JsonResult CalendarGetItems()
+        {
+            string viewType = Request.Form["view"];
+            int user = Types.ToInt(Request.Form["user"]);
+            string  sdateFrom = Request.Form["from"];
+            string sdateTo = Request.Form["to"];
+
+            DateTime dateFrom = Types.ToDateTime(sdateFrom);
+            DateTime dateTo = Types.ToDateTime(sdateTo);
+            if (user == 0)
+                user = GetUser();
+            int accountId = GetAccountId();
+            
+            var calendar = new CalendarContext(user);
+            var list = calendar.GetListItems(accountId, user, dateFrom, dateTo);
+            //var list = calendar.GetList("TimeFrom",dateFrom,"TimeTo",dateTo);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult AppointmentAdd()
+        {
+            string action = "פגישה";
+            try
+            {
+                int accountId = GetAccountId();
+                var user = GetUser();
+
+                var item = EntityExtension.Create<CalendarItem>(Request.Form);
+                item.ModifiedDate = DateTime.Now;
+                item.AccountId = accountId;
+                var calendar = new CalendarContext(user);
+                calendar.Set(item);
+                var res = calendar.Insert();
+                return Json(calendar.GetFormResult(res, null), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public JsonResult AppointmentChange()
+        {
+            string action = "פגישה";
+            try
+            {
+                int accountId = GetAccountId();
+                var user = GetUser();
+
+                var item = EntityExtension.Create<CalendarItem>(Request.Form);
+                item.UserId = item.GetUserId(user);
+                item.ModifiedDate = DateTime.Now;
+                item.AccountId = accountId;
+                var calendar = new CalendarContext(user);
+                calendar.Delete("CalendarId", item.CalendarId);
+                calendar.Set(item);
+                var res = calendar.Insert();
+                return Json(calendar.GetFormResult(res, null), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public JsonResult AppointmentDelete()
+        {
+            string action = "פגישה";
+            try
+            {
+                int accountId = GetAccountId();
+                var user = GetUser();
+
+                var item = EntityExtension.Create<CalendarItem>(Request.Form);
+                var calendar = new CalendarContext(user);
+                var res=calendar.Delete("CalendarId", item.CalendarId);
+                return Json(FormResult.Get(res,"ביטול פגישה"), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult CalendarUpdate()
+        {
+
+            int res = 0;
+            string action = "פגישה";
+            TaskItem a = null;
+            try
+            {
+                a = EntityContext.Create<TaskItem>(Request.Form);
+
+                EntityValidator validator = EntityValidator.ValidateEntity(a, action, "he");
+                if (!validator.IsValid)
+                {
+                    return Json(GetFormResult(-1, action, validator.Result, 0), JsonRequestBehavior.AllowGet);
+
+                }
+                int user = GetUser();
+                int accountId = GetAccountId();
+                if (a.TaskId > 0)
+                {
+                    res = TaskContext.DoUpdate(a);
+                }
+                else
+                {
+                    a.UserId = user;
+                    a.AssignByAccount = accountId;
+                    a.AccountId = accountId;
+                    a.AssignBy = user;
+                    res = TaskContext.DoInsert(a);
+                }
+                return Json(ResultModel.GetFormResult(res, action, null, a.TaskId), JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
 
         #endregion
 

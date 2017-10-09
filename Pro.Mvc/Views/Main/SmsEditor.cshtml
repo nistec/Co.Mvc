@@ -1,0 +1,242 @@
+﻿@model Pro.Lib.MemberQuery
+@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "Sms";
+}
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+   <script type="text/javascript" src="~/Scripts/app/dateFormat.js"></script>
+   <script type="text/javascript" src="~/Scripts/plagins/blockUI.js"></script>
+   <script type="text/javascript" src="~/Scripts/jq/jquery.ui.1.11.1.js"></script>
+   <link rel="stylesheet" href="~/Scripts/jq/css/jquery-ui.css" type="text/css" />
+
+    <style type="text/css">
+        .styledTable {
+            direction:rtl; text-align:right;
+        }
+        .styledTableHeader {background-color:#0094ff;color:#fff;padding-left:20px;text-align:right;
+        }
+        .styledTableHeader {background-color:#0094ff;color:#fff;text-align:right;
+        }
+        .styledRowKey {padding-left:20px;text-align:right;
+        }
+        .styledRowValue {text-align:right;
+        }
+    </style>
+}
+
+@section scripts {
+    <script type="text/javascript">
+      
+        $(document).ready(function () {
+            JSON.useDateParser();
+            
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetMembersTargets", "Main")',
+                data: "{'QueryType': '@Model.QueryType','AccountId': '@Model.AccountId','UserId': '@Model.UserId','MemberId': '@Model.MemberId','Name': '@Model.Name','Address': '@Model.Address','City': '@Model.City','Category': '@Model.Category','Region': '@Model.Region', 'Place': '@Model.Place','Branch': '@Model.Branch', 'Status': '@Model.Status','BirthdayMonth': '@Model.BirthdayMonth', 'JoinedFrom': '@Model.JoinedFrom','JoinedTo': '@Model.JoinedTo', 'AgeFrom': '@Model.AgeFrom','AgeTo': '@Model.AgeTo'}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data.Status > 0) {
+                        $("#TragetCount").val(data.OutputId);
+                        if (data.OutputId > 0) {
+                            $("#submit").show();
+                            $("#btnShow").show();
+                            $("#csvExport").show();
+                        }
+                        else {
+                            $("#submit").hide();
+                            $("#btnShow").hide();
+                            $("#csvExport").hide();
+                        }
+                    }
+                    $("#QueryMessage").text(data.Message);
+                    //alert(data.Message);
+                },
+                error: function (e) {
+                    alert(e);
+                },
+                beforeSend: function () {
+                    //$.blockUI({ timeout: 6000 });
+                    $("#QueryMessage").text("המתן...");
+                },
+                complete: function () {
+                    //$.unblockUI();
+                }
+            });
+
+
+            //$("#EntryDate").jqxDateTimeInput({ formatString: 'dd/MM/yyyy' });
+
+      
+          //JSON.useDateParser();
+          var theme = 'Arctic';
+          // prepare the data
+        
+        //initialize validator.
+        $('#form').jqxValidator({
+            rtl: true,
+            hintType: 'label',
+            animationDuration: 0,
+            rules: [
+                    //{
+                    //    input: '#TargetCount', message: 'אין נמענים לשליחה!', action: 'keyup, blur', rule: function () {
+                    //        var value = $("#TargetCount").val();
+                    //        return value > 0;
+                    //    }
+                    //},
+                   { input: '#Message', message: 'חובה לציין נוסח הודעה!', action: 'keyup, blur', rule: 'required' }
+            ]
+        });
+        $('#submit').on('click', function (e) {
+
+            
+            //var actionurl = $('#form').attr('action');
+
+            var validationResult = function (isValid) {
+                if (isValid) {
+                    //$.ajax({
+                    //    url: actionurl,
+                    //    type: 'post',
+                    //    dataType: 'json',
+                    //    //data: $('#form').serialize(),
+                    //    success: function (data) {
+                    //        //if (data.Count > 0) {
+                    //        //    //window.parent.triggerMemberComplete(data.OutputId);
+                    //        //    $('#form')[0].reset();
+                    //        //    //$('#RecordId').val(data.OutputId);
+                    //        //    //window.location = "/Home/Final?m=sms-ok";
+                    //        //}
+                    //        //else
+                    //        //    alert(data.Reason);
+
+                    //    },
+                    //    error: function (jqXHR, status, error) {
+                    //        alert(error);
+                    //    }
+                    //});
+                }
+                else {
+                    e.preventDefault();
+                }
+            }
+            $('#form').jqxValidator('validate', validationResult);
+        });
+
+        $('#reset').on('click', function (e) {
+            location.reload();
+            //$('#form')[0].reset();
+            //$('#form').jqxValidator('hide');
+        });
+
+        $('#btnShow').on('click', function (e) {
+            var val = $("#TragetCount").val();
+            if (val <= 0)
+                alert("לא נמצאו נמענים להצגה");
+            else
+                popupIframe('/Common/_Targets?mode=querysms', "580", "500");
+        });
+ 
+     });
+ 
+         $("#Message").change(function () {
+             var len = $(this).val().length;
+             $('#CharCount').val(len);
+        });
+
+        $('#Message').keyup(function () {
+            var len = $(this).val().length;
+            $('#CharCount').val(len);
+
+            //var max = 500;
+            //var len = $(this).val().length;
+            //if (len >= max) {
+            //    $('#charNum').text(' you have reached the limit');
+            //} else {
+            //    var char = max - len;
+            //    $('#charNum').text(char + ' characters left');
+            //}
+        });
+</script>
+
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+</div>
+
+
+
+<div class="clear"></div>
+
+<div class="global">
+    <div class="container">
+        <h3 class="rtl">שליחת מסרון</h3>
+        <div style="height: 10px;">
+            <p class="rtl" id="QueryMessage" style="color:#ff0000"></p>
+        </div>
+        <div id="tag-form">
+            <form class="form" id="formExport" method="post" action="@Url.Action("ExportTargets", "Main")">
+                <div>
+
+                    <div class="form-group">
+                        <label class="column">
+                            מספר נמענים:
+                        </label>
+                        <input id="TragetCount" name="TragetCount" type="number" readonly="readonly" class="text-short" />
+                        <input type="button" id="btnShow" value="הצג נמענים" />
+                        <input style="margin-top: 10px;" value="ייצוא לקובץ" id="csvExport" type="submit" />
+                    </div>
+                </div>
+            </form>
+                <form class="form" id="form" method="post" action="@Url.Action("SendSms", "Main")">
+                    <input id="UserId" type="hidden" name="UserId" class="number" />
+
+                    <div>
+                        <div class="form-group">
+                            <label class="column">
+                                פרסונאלי:
+                            </label>
+                            <select name="PersonalDisplay">
+                                <option value="">בחירה:</option>
+                                <option value="[שם פרטי]">שם פרטי</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                נוסח:
+                            </label>
+                            <textarea id="Message" name="Message" style="width:50%;height:200px"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="column">
+                                מספר תוים:
+                            </label>
+                            <input id="CharCount" name="CharCount" type="number" readonly="readonly" style="width:80px" />
+                        </div>
+                    </div>
+                    <p style="text-align: right; padding: 10px">
+                        <span>לשליחת הודעה פרסונאלית יש לבחור את השדה מהרשימה (פרסונאלי) ולציין בגוף ההודעה במיקום הרצוי את שם השדה בתוך סוגריים מרובעים לדוגמא:</span>
+                        <br />
+                        <span>לדוגמא: [שם פרטי] שלום רב</span>
+
+                    </p>
+                    <div>
+                        <input id="submit" type="submit" value="שליחה" class="btn-default btn2" />
+                        <input id="reset" type="reset" value="רענון" class="btn-default btn2" />
+                    </div>
+
+                </form>
+
+</div>
+ 
+    </div>
+</div>
+<!--end of content-wrapper-->
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liMain");
+    app_menu.breadcrumbs("Main", "SmsEditor", 'en');
+</script>
+

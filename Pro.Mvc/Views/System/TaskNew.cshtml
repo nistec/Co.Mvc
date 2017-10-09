@@ -13,6 +13,7 @@
     @Scripts.Render("~/bundles/jqxgrid")
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script src="~/jqwidgets/jqxpopover.js"></script>   
     <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
     <script type="text/javascript" src="~/Scripts/app/system/task-new.js"></script>
     <script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
@@ -49,7 +50,7 @@
 
     <script type="text/javascript">
 
-    var wizard;
+   
     var task_def;
 
     $(document).ready(function () {
@@ -57,23 +58,7 @@
         var theme = 'Arctic';
         var uinfo = JSON.parse('@userInfo');
 
-        wizard = new app_wiztabs();
-        wizard.displayStep(1);
-
-
-
-        //$("#ColorFlag").jqxDropDownButton();
-       // var source = [
-       //{ text: "פתוח", value: 1 },
-       //{ text: "אותחל", value: 2 },
-       //{ text: "מושהה", value: 4 },
-       //{ text: "מבוטל", value: 8 },
-       //{ text: "סגור", value: 16 }
-       // ];
-
-       // app_jqx.createDropDown("#Status", source);//, width, tagTargetOnChange);
-
-
+     
         task_def = app_task.init('@Model.PId', uinfo, 'T');
 
 
@@ -98,23 +83,9 @@
         $('#fcSubmit-plus').on('click', function (e) {
             task_def.doSubmit('plus');
         });
-        $('#task-item-update').click(function () {
-            var iframe = wizard.getIframe();
-            if (iframe && iframe.triggerSubmit) {
-                iframe.triggerSubmit();
-            }
-        });
-        $('#task-item-cancel').click(function () {
-            wizard.wizHome();
-        });
-
+        
     });
-        //function triggerCommentCompleted(data) {
-        //    app_tasks_comment.end(data);
-        //}
-        //function goPartial(step) {
-        //    wizard.displayStep(step);
-        //}
+        
     </script>
 }
 
@@ -124,14 +95,9 @@
 
 <div class="global-view">
     <div id="wiz-container" class="container">
-
-        <div id="wiz-1" class="wiz-tab active">
             <h3 id="hTitle" class="rtl">משימה חדשה</h3>
             <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
-                @*<div id="fcWindow">*@
-                @*<div id="fcHeader">
-                        <span id="fcTitle" style="font-weight: bold;">משימה</span>
-                    </div>*@
+                
                 <div id="fcBody">
 
                     <div id="accordion" class="tab-content" dir="rtl">
@@ -148,8 +114,6 @@
                                     <input type="hidden" id="Task_Parent" name="Task_Parent" value="" />
                                     <input type="hidden" id="TaskStatus" name="TaskStatus" value="1" />
                                     <input type="hidden" id="TaskModel" name="TaskModel" value="T" />
-                                    <input type="hidden" id="ClientId" name="ClientId" value="0" />
-                                    <input type="hidden" id="ClientDetails" name="ClientDetails" value="" />
                                     <div id="tab-content" class="tab-content" dir="rtl">
 
                                         <div class="form-group">
@@ -215,7 +179,7 @@
                                                 פרטים נוספים
                                             </div>
                                             <div class="rtl" style="border:none">
-                                                <div id="Project_Id-container" class="form-group">
+                                                <div id="Project_Id-container" class="form-group" style="max-width:250px">
                                                     <div id="Project_Id-name" class="field">
                                                         פרוייקט :
                                                     </div>
@@ -233,13 +197,12 @@
                                                         });
                                                     </script>
                                                 </div>
-                                                <div id="ClientId-container" class="form-group">
+                                                <div id="ClientId-container" class="form-group" style="max-width:250px">
                                                     <div id="ClientId-name" class="field">
                                                         לקוח\מנוי:
                                                     </div>
                                                     <input type="hidden" id="ClientId" name="ClientId" value="0" />
-                                                    <input type="hidden" id="ClientDetails" name="ClientDetails" />
-                                                    <input id="ClientId-display" type="text" class="text-mid" readonly />
+                                                    <input id="ClientDetails" type="text" class="text-mid" readonly />
                                                     <a href="#" id="ClientId-button" class="@(Model.Option == "g" ? "item-pasive" : null)" style="font-size:16px"><i class="fa fa-search"></i></a>
                                                     <script type="text/javascript">
                                                         var client_dlg;
@@ -270,8 +233,8 @@
                                 </form>
                             </div>
                         </div>
-                        <div id="hxp-4">פעולות לביצוע</div>
-                        <div id="exp-4" style="padding:0;margin:0">
+                        <div id="hxp-4" class="hxp" style="display:none">פעולות לביצוע</div>
+                        <div id="exp-4" style="padding: 0; margin: 0; display: none">
                             <div class="expander-entry">
                                 <div class="grid-wrap rtl">
                                     <div>
@@ -319,7 +282,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="hxp-5">קבצים</div>
+                        <div id="hxp-5" class="hxp" style="display:none">קבצים</div>
                         <div id="exp-5" style="padding:0;margin:0">
                             <div class="expander-entry">
                                 <div id="task-files">
@@ -331,7 +294,6 @@
 
                 </div>
             </div>
-        </div>
      </div>
 </div>
 <!--end of content-wrapper-->

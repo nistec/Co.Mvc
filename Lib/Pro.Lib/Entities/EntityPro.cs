@@ -337,8 +337,8 @@ namespace Pro.Data.Entities
                     return ChargeView.TableName;
                 case "city":
                     return CityView.TableName;
-                case "place":
-                    return PlaceView.TableName;
+                //case "place":
+                //    return PlaceView.TableName;
                 case "region":
                     return RegionView.TableName;
                 case "category":

@@ -32,7 +32,7 @@ namespace Pro.Data.Entities
         //public string FatherName { get; set; }
         //public string Address { get; set; }
         //public int City { get; set; }
-        //public int PlaceOfBirth { get; set; }
+        
         //public int BirthDateYear { get; set; }
         //public int ChargeType { get; set; }
         //public int Branch { get; set; }

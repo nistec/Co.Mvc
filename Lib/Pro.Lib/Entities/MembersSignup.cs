@@ -44,7 +44,61 @@ namespace Pro.Data.Entities
             return accountId.ToString() + "_" + Nistec.Generic.UUID.NewUuid().ToString().Replace("-","");
         }
 
-        public static int DoSave(MemberSignup v)
+        //public static int DoSave(MemberSignup v)
+        //{
+
+        //    var args = new object[]{
+        //        "SignupId", 0
+        //        ,"SignupStatus", 0//v.SignupStatus
+        //        ,"AccountId", v.AccountId
+        //        ,"MemberId", v.MemberId
+        //        ,"LastName", v.LastName
+        //        ,"FirstName", v.FirstName
+        //        ,"Address", v.Address
+        //        ,"City", v.City
+        //        ,"CellPhone",v.CellPhone
+        //        ,"Phone", v.Phone
+        //        ,"Email", v.Email
+        //        ,"Gender", v.Gender
+        //        ,"Birthday", v.Birthday
+        //        ,"Note", v.Note
+        //        //,"JoiningDate", v.JoiningDate
+        //        ,"Branch", v.Branch
+        //        ,"ZipCode", v.ZipCode
+        //        ,"ContactRule", 0
+        //        ,"Categories", v.Categories
+        //        ,"ExField1", v.ExField1
+        //        ,"ExField2", v.ExField2
+        //        ,"ExField3", v.ExField3
+        //        ,"ExEnum1", v.ExEnum1
+        //        ,"ExEnum2", v.ExEnum2
+        //        ,"ExEnum3", v.ExEnum3
+        //        ,"ExId", v.ExId
+        //        ,"ReferralCode", v.ReferralCode
+        //        ,"AutoCharge", v.AutoCharge
+        //        ,"RegHostAddress", v.RegHostAddress
+        //        ,"RegReferrer", v.RegReferrer
+        //        ,"CreditCardOwner", v.CreditCardOwner
+        //        ,"ConfirmAgreement", v.ConfirmAgreement
+        //        ,"Campaign", 0//v.Campaign
+        //        ,"SignKey", v.SignKey//CreateSignKey(v.AccountId) //v.SignKey
+        //        ,"SignupOrder", v.SignupOrder
+        //        ,"Price", v.Price
+        //        ,"ItemId", v.ItemId
+        //    };
+        //    var parameters = DataParameter.GetSql(args);
+        //    parameters[0].Direction = System.Data.ParameterDirection.Output;
+        //    parameters[1].Direction = System.Data.ParameterDirection.Output;
+        //    using (var db = DbContext.Create<DbPro>())
+        //    {
+        //        int res = db.ExecuteCommandNonQuery("sp_Member_Signup", parameters, System.Data.CommandType.StoredProcedure);
+        //        v.SignupId = Types.ToInt(parameters[0].Value);
+        //        int SignupStatus = Types.ToInt(parameters[1].Value);
+        //        return SignupStatus;
+        //    }
+        //}
+
+        public static int DoSave (MemberSignup v)
         {
 
             var args = new object[]{
@@ -62,7 +116,6 @@ namespace Pro.Data.Entities
                 ,"Gender", v.Gender
                 ,"Birthday", v.Birthday
                 ,"Note", v.Note
-                //,"JoiningDate", v.JoiningDate
                 ,"Branch", v.Branch
                 ,"ZipCode", v.ZipCode
                 ,"ContactRule", 0
@@ -74,6 +127,8 @@ namespace Pro.Data.Entities
                 ,"ExEnum2", v.ExEnum2
                 ,"ExEnum3", v.ExEnum3
                 ,"ExId", v.ExId
+                ,"MemberType", v.MemberType
+                ,"CompanyName", v.CompanyName
                 ,"ReferralCode", v.ReferralCode
                 ,"AutoCharge", v.AutoCharge
                 ,"RegHostAddress", v.RegHostAddress
@@ -91,13 +146,12 @@ namespace Pro.Data.Entities
             parameters[1].Direction = System.Data.ParameterDirection.Output;
             using (var db = DbContext.Create<DbPro>())
             {
-                int res = db.ExecuteCommandNonQuery("sp_Member_Signup", parameters, System.Data.CommandType.StoredProcedure);
+                int res = db.ExecuteCommandNonQuery("sp_Member_Signup_v1", parameters, System.Data.CommandType.StoredProcedure);
                 v.SignupId = Types.ToInt(parameters[0].Value);
                 int SignupStatus = Types.ToInt(parameters[1].Value);
                 return SignupStatus;
             }
         }
-
 
         #endregion
 
@@ -419,7 +473,7 @@ namespace Pro.Data.Entities
         //public string FatherName { get; set; }
         public string Address { get; set; }
         public int City { get; set; }
-        //public int PlaceOfBirth { get; set; }
+        
         //public int BirthDateYear { get; set; }
         //public int ChargeType { get; set; }
         //public int Branch { get; set; }

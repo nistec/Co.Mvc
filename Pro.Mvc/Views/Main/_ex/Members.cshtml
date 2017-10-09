@@ -1,0 +1,114 @@
+﻿@model Pro.Lib.Query.MemberQuery
+@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    ViewBag.Title = "Members";
+    //int acctype = Nistec.Types.ToInt(Request.QueryString["acctype"]);
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/model/members-grid.js"></script>
+<script type="text/javascript" src="~/Scripts/app/app-jqx-grid.js"></script>
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+    </style>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    var members_grid;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        // prepare the data
+        
+        members_grid = app_members_grid.load(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
+
+            //$("#btnFind").jqxLinkButton({ width: '120', height: '30' });
+            //$('#btnclearfilter').jqxButton({ width: '120', height: '30' });
+            //$('#btnclearfilter').click(function () {
+            //    $("#jqxgrid").jqxGrid('clearfilters');
+            //});
+            //$('#btnCustomerDef').jqxButton({ width: '120', height: '30' });
+            //$('#btnCustomerDef').click(function () {
+            //    memberEdit(0);
+            //});
+            //$("#excelExport").jqxButton({ width: '120', height: '30' });
+            //$("#excelExport").click(function () {
+            //    $("#jqxgrid").jqxGrid('exportdata', 'xls', 'Members');
+            //    //$("#jqxgrid").jqxGrid('exportdata', 'xls', 'Members',true, null, false,null,'utf-8');
+
+            //});
+
+        });
+
+        function triggerMemberComplete(memid) {
+            $("#jqxgrid").jqxGrid('source').dataBind();
+            popupIframeClose();
+        };
+
+        function triggerCategoriesComplete(memid) {
+            members_categoriesRefresh();
+            popupClose(members_grid.NScustomers.categoriesDialog);
+        };
+
+        function members_categoriesRefresh() {
+            members_grid.categoriesRefresh();
+        };
+        function members_categoriesDelete(id, rcdid) {
+            members_grid.categoriesDelete(id, rcdid);
+        }
+
+    </script>
+}
+
+
+@section featured {
+
+
+}
+
+<div class="breadcrumbs">
+
+</div>
+
+
+@*<hgroup class="title">
+    <h3 class="rightPan">רשימת מנויים.</h3>
+</hgroup>*@
+
+<div class="clear"></div>
+
+<div class="global">
+    <div class="container">
+        <h3 class="rtl">רשימת מנויים.</h3>
+        <div class="grid-wrap rtl">
+            @*<div style="display: inline; float: right; direction:rtl">
+                <input style="margin-top: 10px;" value="הוספת מנוי" id="btnCustomerDef" type="button" />
+                <a id="btnFind" href="MembersQuery">איתור</a>
+                <input style="margin-top: 10px;" value="הסר סינון" id="btnclearfilter" type="button" />
+                <input style="margin-top: 10px;" value="ייצוא לאקסל" title="ייצוא דף נוכחי" id="excelExport" type="button" />
+            </div>*@
+            
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liCrm");
+    app_menu.breadcrumbs("Crm", "Members", 'en');
+</script>
+

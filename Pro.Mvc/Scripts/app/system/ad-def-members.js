@@ -15,6 +15,7 @@ function app_ad_def_members(userInfo) {
     this.updateUrl = '/System/AdDefUpdate';
     this.deleteUrl = '/System/AdDefDelete';
     this.showMemmbersUrl = '/System/AdShowMembers';
+    this.rowEdit = -1;
 
     this.loadControls();
        

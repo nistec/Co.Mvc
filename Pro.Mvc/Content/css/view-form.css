@@ -314,6 +314,20 @@ color: #ff6a00; orange
     outline-color: transparent !important;
 }*/
 
+.tab-container {
+    width: 100%;
+    direction: rtl;
+    border: none;
+    
+    /*font-size: 80%;*/
+}
+.tab-group {
+    float: right;
+    /*height: 100%;*/
+    margin: 5px;
+    padding-left: 10%;
+}
+
 #wizard ul {display:none !important;}
 #wizard ul > li{display:none !important;}
 #wizard ul > li > a{display:none !important;}

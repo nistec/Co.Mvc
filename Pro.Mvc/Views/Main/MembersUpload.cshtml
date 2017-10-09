@@ -1,0 +1,422 @@
+﻿@model Pro.Mvc.Models.UploadFileModel
+@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "MembersUpload";
+}
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/Scripts/plagins/uploader/js/jquery.iframe-transport.js"></script>
+    <script type="text/javascript" src="~/Scripts/plagins/uploader/js/jquery.fileupload.js"></script>
+    <link type="text/css" href="~/Scripts/plagins/uploader/css/jquery.fileupload.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="~/Scripts/app/dateFormat.js"></script>
+@*<script src="~/Scripts/app/app-uploads.js"></script>*@
+
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+
+        #divInputUpload {
+            width: 100px;
+            height: 25px;
+            text-align: center;
+            border: solid 1px #C7C7C7;
+            background-color: #15C8D8;
+        }
+
+        .styledTable {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .styledTableHeader {
+            background-color: #0094ff;
+            color: #fff;
+            padding-left: 20px;
+            text-align: right;
+        }
+
+        .styledTableHeader {
+            background-color: #0094ff;
+            color: #fff;
+            text-align: right;
+        }
+
+        .styledRowKey {
+            padding-left: 20px;
+            text-align: right;
+        }
+
+        .styledRowValue {
+            text-align: right;
+        }
+    </style>
+}
+
+@section scripts {
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        //var app = new app_uploads();
+
+        ///////////////////////////// uploader
+        $("#loader").hide();
+        var wait_message = 'נא להמתין להודעת סיום,לאחר מכן יש ללחוץ על הבא.';
+        var hint_message = 'לטעינת מנויים יש ללחוץ על טעינת קובץ,להמתין להודעת סיום,לאחר מכן יש ללחוץ על הבא.';
+        var categoryAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "listCategory", '@Url.Action("GetValidCategoriesView", "Common")', 200, 120, false);
+
+
+        $('#fileupload').fileupload({
+            maxFileSize: 10000000,
+            url: '@Url.Action("FileUpload", "Media")',
+            //formData: {
+            //    param1: $('#updateExists').val()
+            //    //param2: $('#uploadUid').val(),
+            //    //param3: $('#uploadPt').val()
+            //},
+            //dataType: 'json',
+            done: function (e, data) {
+                $("#loader").hide();
+                //ObjectKeys(data);
+
+
+                //alert(data.result.Message.replace('<br/>', '\n'));//textStatus);
+                $("#hint-0").html('<strong>' + data.result.Message + '</strong>');
+                $("#divUploadResult").html(data.result.Message);
+                $("#uploadKey").val(data.result.Args);
+                $("#TotalCount").val(data.result.Status);
+                //connectUploadedGrid();
+                if(data.result.Status>0)
+                {
+                    wizard.next();
+                }
+                //$.each(data.result.files, function (index, file) {
+                //    $('<p/>').text(file.name).appendTo('#files');
+                //});
+            },
+            error: function (jqXHR, status, error) {
+                $("#loader").hide();
+                alert(error);
+            },
+            beforeSend: function (e, data) {
+                //$("#hint-0").html(wait_message);
+                wizard.showHint(wait_message);
+            },
+            progressall: function (e, data) {
+                doPprogress(data);
+                $("#loader").show();
+            }
+        }).prop('disabled', !$.support.fileInput)
+             .parent().addClass($.support.fileInput ? undefined : 'disabled')
+             .bind('fileuploadsubmit', function (e, data) {
+                 $("#loader").hide();
+                 resetPprogress();
+                 //fileuuid = generateUUID('16');
+                 //data.formData = {
+                 //    param1: $('#uploadBid').val(),
+                 //    param2: $('#uploadUid').val(),
+                 //    param3: $('#uploadPt').val()
+                 //};
+             });
+
+        //}).prop('disabled', !$.support.fileInput)
+        //    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        var doPprogress = function (data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+                'width',
+                progress + '%'
+            );
+        };
+        var resetPprogress = function () {
+            $('#progress .progress-bar').css(
+                'width', '0%'
+            );
+        };
+
+        var doUploadSync = function () {
+            //var updateExists = $("#updateExists").val();
+            var updateExists = $('#updateExists').is(":checked");
+
+            var category = $("#listCategory").val();
+            var uploadKey = $("#uploadKey").val();
+            $.ajax({
+                url: '@Url.Action("ExecUploadAsync", "Media")',
+                type: "POST",
+                dataType: 'json',
+                //contentType: "application/json; charset=utf-8",
+                data: {'category':  category  ,'uploadKey':'' + uploadKey + '', 'updateExists' : updateExists },
+                success: function (data) {
+                    if (data) {
+                        if (data.Status < 0)
+                            alert(data.Message);
+                        else {
+
+                            //redirectTo('UploadProc?uk='+uploadKey);
+                            wizard.upload(uploadKey);
+
+                            //$("#final").html(data.Message);
+                           
+                        };
+                    }
+
+                },
+                error: function (jqXHR, status, error) {
+                    alert(error);
+                }
+            });
+        };
+        //==============================================================
+
+        //wizard ====================================
+        //Creating wizard module
+        var wizard = (function () {
+            var _addHandlers = function () {
+                $('.next-tab').click(function () {
+                    return wizard.next();
+                });
+                $('.prev-tab').click(function () {
+                    return wizard.prev();
+                });
+            };
+            return {
+                init: function () {
+                    var $tabs = $('#wizard').tabs();
+                    $('#wizard').css('height', '400px');
+                    $('.prev-tab').hide();
+                    $('.end-tab').hide();
+                    _addHandlers();
+                    wizard.goto(0);
+                },
+                size: function () {
+                    var totalSize = $(".ui-tabs-panel").size() - 1;
+                    return totalSize;
+                },
+                active: function () {
+                    var active = $('#wizard').tabs("option", "active");
+                    return active;
+                },
+                displayMessage: function (message) {
+                    $('#wizard-validation').val(message);
+                    return false;
+                },
+                upload: function (uploadKey) {
+                    wizard.goto(3);
+                    var src = '_UploadProc?uk=' + uploadKey;
+                    app_iframe.appendIframe("proc_iframe", src, "500px", "300px", "yes");
+                },
+                showHint: function (message, selector) {
+
+                    if (typeof selector === 'undefined') {
+                        selector = '.hint';
+                    }
+
+                    if (message === undefined || message === '' || message == 'hint_message')
+                        message = 'לטעינת מנויים יש ללחוץ על טעינת קובץ,להמתין להודעת סיום,לאחר מכן יש ללחוץ על הבא.';
+                    else if (message === 'wait_message')
+                        message = 'נא להמתין להודעת סיום,לאחר מכן יש ללחוץ על הבא.';
+
+                    $(selector).html('<strong>' + message + '</strong>');
+                },
+                goto: function (index) {
+                    //0=file upload header
+                    //1=set mapping and upload stg
+                    //2=show stg
+                    //3=finished
+                    var totalSize = wizard.size();
+                    if (index >= totalSize) {
+                        $('.prev-tab').hide();
+                        $('.next-tab').hide();
+                        $('.end-tab').show();
+                    }
+                    else if (index == 0) {
+                        $('.prev-tab').hide();
+                        $('.next-tab').show();
+                    }
+                    else {
+                        $('.prev-tab').show();
+                        $('.next-tab').show();
+                        $('.end-tab').hide();
+                    }
+                    $('#wizard').tabs({ active: index });
+                    //wizard.displayStep(index, totalSize);
+
+                    var step = index + 1;
+                    //if (totalSize === undefined)
+                    //    totalSize = $(".ui-tabs-panel").size() - 1;
+                    totalSize++;
+                    wizard.displayMessage("שלב " + step + " מתוך " + totalSize);
+
+                    return false;
+                },
+                next: function () {
+                    //var totalSize = wizard.size;
+                    var active = wizard.active();
+                    switch (active) {
+                        case 0:
+                            var value = $("#TotalCount").val();
+                            if (value <= 0) {
+                                return wizard.displayMessage("אין מנויים לקליטה");
+                            }
+                            break;
+                    }
+                    //$('#wizard-validation').val("");
+                    var next = active + 1;
+                    return wizard.goto(next);
+
+                    //if (next >= totalSize) {
+                    //    $('.next-tab').hide();
+                    //    $('.end-tab').show();
+                    //}
+                    //$('.prev-tab').show();
+                    //$('#wizard').tabs({ active: next });
+                    //wizard.displayStep(next, totalSize);
+                    //return false;
+                },
+                prev: function () {
+                    var active = wizard.active();
+                    var prev = active - 1;
+                    return wizard.goto(prev);
+
+                    //if (prev <= 0) {
+                    //    $('.prev-tab').hide();
+                    //}
+                    //$('.end-tab').hide();
+                    //$('.next-tab').show();
+                    //$('#wizard-validation').val("");
+                    //$('#wizard').tabs({ active: prev });
+                    //wizard.displayStep(prev);
+                    ////$tabs.tabs('select', $(this).attr("rel"));
+                    //return false;
+                },
+            }
+        }());
+        //Initializing the wizard
+        wizard.init();
+
+
+        //end wizard =====================================
+
+        $('#btnUpload').click(function () {
+            doUploadSync();
+        });
+
+    });
+
+
+
+    </script>
+
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+</div>
+
+<div class="global-view">
+    <div class="container-box">
+        <h3 class="rtl">קליטת מנויים מקובץ</h3>
+        <div class="rtl">
+            <a href="javascript:location.reload();" id="btnRefresh">חדש</a> | 
+            <a href="~/_Doc/members.xls">תבנית לטעינה</a>
+        </div>
+        <input type="hidden" id="uploadKey" />
+        <div style="height: 10px;">
+        </div>
+        <div id="tag-form">
+            <input id="uploadFile" type="hidden" />
+            <div id="wizard">
+                <ul>
+                    <li><a href="#tab-1">1</a></li>
+                    <li><a href="#tab-2">2</a></li>
+                    <li><a href="#tab-3">3</a></li>
+                    <li><a href="#tab-4">4</a></li>
+                </ul>
+                <div id="tab-1" class="ui-tabs-panel rtl">
+                    <h3>טעינת קובץ</h3>
+                    <div style="margin:10px">
+                        <div id="divInputUpload">
+                            <span class="btn btn-success fileinput-button">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span>בחירת קובץ</span>
+                                <!-- The file input field used as target for the file upload widget -->
+                                <input id="fileupload" type="file" name="files[]" multiple>
+                            </span>
+                        </div>
+                        <br>
+                        <br>
+                        <div id="hint-0" class="hint"></div>
+                        <!-- The global progress bar -->
+                        <div id="progress" class="progress">
+                            <div class="progress-bar progress-bar-success"></div>
+                        </div>
+                        <!-- The container for the uploaded files -->
+                        <div id="files" class="files"></div>
+                        <div id="loader">
+                            <img src="~/Content/css/images/loading.gif" />
+                        </div>
+                        <p class="rtl"> ניתן לטעון קבצים בפורמט Csv </p>
+                    </div>
+                </div>
+
+                <div id="tab-2" class="ui-tabs-panel">
+                    <h3 class="rtl">רשימת מנויים שנקלטו</h3>
+                    <input type="hidden" id="TotalCount" readonly />
+
+                    <p id="divUploadResult" style="text-align:right;margin:20px"></p>
+
+                    <p style="text-align:center">לקליטה נא ללחוץ על הבא</p>
+                </div>
+
+                <div id="tab-3" class="ui-tabs-panel">
+                    <h3 class="rtl">קליטת מנויים</h3>
+                    <div id="orderContainer" style="float:right; direction:rtl">
+
+                        <label class="headline">סיווג</label>
+                        <br />
+                        <div id="listCategory" name="listCategory"></div>
+                        <br />
+                        <input type="checkbox" id="updateExists" name="updateExists" /> <span>האם לעדכן רשומות קיימות</span>
+                        <br />
+                        <br />
+                        <input type="button" id="btnUpload" value="טעינת מנויים למאגר קבוע" />
+                    </div>
+                </div>
+
+                <div id="tab-4" class="ui-tabs-panel">
+                    <h3 class="rtl">טעינה וסנכרון נתונים</h3>
+
+                    <div id="proc_iframe" style="float: right; direction:rtl">
+
+                    </div>
+                    <div style="margin:20px">
+                        <div id="final" style="text-align:right; font-size:18px"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wizard-steps">
+                <a href="#" class="btn-tab prev-tab ">הקודם</a>
+                <a href="#" class="btn-tab  next-tab">הבא</a>
+                <a id="submit" href="javascript:location.reload();" class="btn-tab  end-tab">סיום</a>
+                <input type="text" id="wizard-validation" readonly />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--end of content-wrapper-->
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liMain");
+    app_menu.breadcrumbs("Main", "MemberUpload", 'en');
+</script>
+

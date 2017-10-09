@@ -17,10 +17,18 @@ namespace ProSystem.Data.Entities
         {
             DbContextCache.Remove<T>(Settings.ProjectName, EntityCacheGroups.System, AccountId, 0);
         }
-        public AdContext(int accountId)
+        public AdContext()
+        {
+            //no cache
+        }
+        public AdContext(int accountId,int userId=0)
         {
             if (accountId > 0)
-                CacheKey = DbContextCache.GetKey<T>(Settings.ProjectName, EntityCacheGroups.System, accountId, 0);
+                CacheKey = DbContextCache.GetKey<T>(Settings.ProjectName, EntityCacheGroups.System, accountId, userId);
+        }
+        public IList<T> ExecList(params object[] keyValueParameters)
+        {
+            return DbContextCache.ExecuteList<DbSystem, T>(CacheKey, keyValueParameters);
         }
         public IList<T> GetList()
         {
@@ -326,28 +334,31 @@ namespace ProSystem.Data.Entities
 
     }
     */
+
     #region Ad
-    [EntityMapping("Ad", ProcDelete = null, ProcUpdate = null, ProcInsert = null)]
+    [EntityMapping("Ad", "vw_Ad", ProcDelete = null, ProcUpdate = null, ProcInsert = null)]
     public class AdItem:IEntityItem
     {
         [EntityProperty(EntityPropertyType.Identity, Column = "GroupId")]
-        public int PropId { get; set; }
+        public int GroupId { get; set; }
 
         [EntityProperty(Column = "GroupName")]
         [Validator("שם קבוצה", true)]
-        public string PropName { get; set; }
+        public string GroupName { get; set; }
         [EntityProperty(EntityPropertyType.Key)]
         public int AccountId { get; set; }
        
         [EntityProperty(EntityPropertyType.View)]
         public DateTime Creation { get; set; }
+        [EntityProperty(EntityPropertyType.Optional)]
+        public int MembersCount { get; set; }
     }
 
-    [EntityMapping("vw_Ad")]
-    public class AdItemView : AdItem
-    {
-       public int MembersCount { get; set; }
-    }
+    //[EntityMapping("vw_Ad")]
+    //public class AdItemView : AdItem
+    //{
+    //   public int MembersCount { get; set; }
+    //}
 
     [EntityMapping("Ad_Rel", "vw_Ad_Rel", ProcUpdate="sp_Ad_Rel_Update")]
     public class AdItemRel:IEntityItem
@@ -378,26 +389,28 @@ namespace ProSystem.Data.Entities
 
     #region AdTeam
 
-    [EntityMapping("Ad_Team", ProcDelete = null, ProcUpdate = null, ProcInsert = null)]
+    [EntityMapping("Ad_Team", "vw_Ad_Team", ProcDelete = null, ProcUpdate = null, ProcInsert = null)]
     public class AdTeamItem : IEntityItem
     {
         [EntityProperty(EntityPropertyType.Identity, Column = "TeamId")]
-        public int PropId { get; set; }
+        public int TeamId { get; set; }
 
         [EntityProperty(Column = "TeamName")]
         [Validator("שם קבוצה", true)]
-        public string PropName { get; set; }
+        public string TeamName { get; set; }
         [EntityProperty(EntityPropertyType.Key)]
         public int AccountId { get; set; }
 
         [EntityProperty(EntityPropertyType.View)]
         public DateTime Creation { get; set; }
-    }
-    [EntityMapping("vw_Ad_Team")]
-    public class AdTeamItemView : AdTeamItem
-    {
+        [EntityProperty(EntityPropertyType.Optional)]
         public int MembersCount { get; set; }
     }
+    //[EntityMapping("vw_Ad_Team")]
+    //public class AdTeamItemView : AdTeamItem
+    //{
+    //    public int MembersCount { get; set; }
+    //}
      [EntityMapping("Ad_Team_Rel", "vw_Ad_Team_Rel", ProcUpdate = "sp_Ad_Team_Rel_Update")]
     public class AdTeamItemRel : IEntityItem
     {
@@ -427,8 +440,8 @@ namespace ProSystem.Data.Entities
 
     #region AdUserProfile
 
-   
-     [EntityMapping("Ad_UserProfile", ProcDelete = "sp_Ad_UserDelete", ProcUpdate = null, ProcInsert = "sp_Ad_UserRegister", ProcListView = "sp_Ad_GetUsers")]
+
+     [EntityMapping("Ad_UserProfile", "vw_Ad_UserProfile", ProcDelete = "sp_Ad_UserDelete", ProcUpdate = null, ProcInsert = "sp_Ad_UserRegister", ProcListView = "sp_Ad_GetUsers")]
      public class AdUserProfile : IEntityItem
      {
 
@@ -518,5 +531,52 @@ namespace ProSystem.Data.Entities
 
     
      #endregion
+
+    #region AdShare
+
+    //sp_Ad_Share_UserList @ShareModel tinyint,@AccountId int,@UserId int
+
+     [EntityMapping("Ad_Share", ProcDelete = "sp_Ad_Share_UserDelete", ProcUpdate = null, ProcInsert = "sp_Ad_Share_UserRegister", ProcListView = "sp_Ad_Share_UserList")]
+     public class AdShare : IEntityItem
+     {
+
+         [EntityProperty(EntityPropertyType.Key)]
+         public int ShareModel
+         {
+             get;
+             set;
+         }
+           [EntityProperty(EntityPropertyType.Key)]
+         public int UserId
+         {
+             get;
+             set;
+         }
+
+           [EntityProperty(EntityPropertyType.Key)]
+         public int ShareWith
+         {
+             get;
+             set;
+         }
+         public bool AllowEdit
+         {
+             get;
+             set;
+         }
+         [EntityProperty(EntityPropertyType.Optional)]
+         public string DisplayName
+         {
+             get;
+             set;
+         }
+         [EntityProperty(EntityPropertyType.Optional)]
+         public string ShareUser
+         {
+             get;
+             set;
+         }
+     }
+    #endregion
 
 }

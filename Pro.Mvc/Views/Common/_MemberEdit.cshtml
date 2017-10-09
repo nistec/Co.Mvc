@@ -1,6 +1,6 @@
 ﻿@{
 
-    ViewBag.Title = "Crm";
+    ViewBag.Title = "Main";
     Layout = "~/Views/Shared/_ViewIframe.cshtml";
     int rcdid = Nistec.Types.ToInt(Request["id"]);
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
@@ -10,7 +10,7 @@
 @section head {
 
     @Scripts.Render("~/bundles/jqx")
-    <script type="text/javascript" src="~/Scripts/app/crm/members-def.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/main/members-def.js"></script>
     <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
 
 }

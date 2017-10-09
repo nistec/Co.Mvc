@@ -11,6 +11,16 @@ namespace Pro.Mvc
         {
 
             config.Routes.MapHttpRoute(
+            name: "MemberAdd",
+            routeTemplate: "api/sync/MemberAdd",
+            defaults: new { id = 0, controller = "Sync", action = "MemberAdd" }
+            );
+            config.Routes.MapHttpRoute(
+            name: "PaymentNotifyPostForm",
+            routeTemplate: "api/sync/PaymentNotify",
+            defaults: new { id = 0, controller = "Sync", action = "PaymentNotify" }
+            );
+            config.Routes.MapHttpRoute(
              name: "NotifyPostForm",
              routeTemplate: "api/credit/notify",
              defaults: new { id = 0, controller = "Credit", action = "Notify" }

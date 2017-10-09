@@ -156,7 +156,7 @@ namespace Pro.Lib.Upload
             //dt.Columns.Add("FatherName");
             //dt.Columns.Add("Address");
             //dt.Columns.Add("City");
-            //dt.Columns.Add("PlaceOfBirth");
+            
             //dt.Columns.Add("Birthday");
             //dt.Columns.Add("Gender");
             //dt.Columns.Add("CellPhone");
@@ -190,7 +190,7 @@ namespace Pro.Lib.Upload
             dt.Columns.Add("FatherName");
             dt.Columns.Add("Address");
             dt.Columns.Add("City", typeof(int));
-            dt.Columns.Add("PlaceOfBirth", typeof(int));
+            
             dt.Columns.Add("Birthday");
             dt.Columns.Add("Gender");
             dt.Columns.Add("CellPhone");
@@ -237,6 +237,7 @@ namespace Pro.Lib.Upload
             dt.Columns.Add("Creation", typeof(DateTime));
             return dt.Copy();
         }
+        /*
         public static int FormatMembersUpload(DataTable dt)
         {
             int count = dt.Columns.Count;
@@ -284,6 +285,7 @@ namespace Pro.Lib.Upload
             return count;
 
         }
+        */
         #endregion
         
     }

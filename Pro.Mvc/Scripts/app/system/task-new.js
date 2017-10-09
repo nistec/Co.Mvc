@@ -42,7 +42,7 @@ function app_task_new(taskId, userInfo, taskModel) {
     if (this.TaskModel == 'R')
         this.Title = 'תזכורת';
     else if (this.TaskModel == 'E')
-        this.Title = 'כרטיס';
+        this.Title = 'סוגיה';
     else //if (this.TaskModel == 'T')
         this.Title = 'משימה';
 
@@ -546,7 +546,13 @@ app_tasks_form_template = {
         return id;
     },
     add: function () {
-        this.doRowEdit(0);
+        $("#Task_Id").val(this.TaskId);
+        $("#ItemText").val('');
+        $("#ItemId").val(0);
+        //app_jqx.openWindow("#popupWindow", "#jqxgrid4");
+        app_jqx.displayWindow("#jqxgrid4-window", "#jqxgrid4-add");
+
+        //this.doRowEdit(0);
         //app_iframe.appendEmbed("jqxgrid4-window", app.appPath() + "/System/_TaskFormAdd?pid=" + this.TaskId, "100%", "220px", true);
     },
     edit: function () {

@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_View.cshtml";
     Page.Title = "CmsWizardPages";
     var accountId = Nistec.Types.ToInt(ViewBag.AccountId);
-    var userRole = Nistec.Types.ToInt( ViewBag.UserRole);
+    var userRole = Nistec.Types.ToInt( ViewBag.UserInfo.UserRole);
     string exportClass = userRole < 5 ? "hide" : "show";
 }
 

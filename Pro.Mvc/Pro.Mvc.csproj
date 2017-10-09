@@ -414,6 +414,7 @@
     <Content Include="jqwidgets\jqxgrid.sort.js" />
     <Content Include="jqwidgets\jqxgrid.storage.js" />
     <Content Include="jqwidgets\jqxinput.js" />
+    <Content Include="jqwidgets\jqxkanban.nis.js" />
     <Content Include="jqwidgets\jqxkanban.js" />
     <Content Include="jqwidgets\jqxknob.js" />
     <Content Include="jqwidgets\jqxknockout.js" />
@@ -437,6 +438,7 @@
     <Content Include="jqwidgets\jqxresponse.js" />
     <Content Include="jqwidgets\jqxresponsivepanel.js" />
     <Content Include="jqwidgets\jqxribbon.js" />
+    <Content Include="jqwidgets\jqxscheduler.nis.js" />
     <Content Include="jqwidgets\jqxscheduler.api.js" />
     <Content Include="jqwidgets\jqxscheduler.js" />
     <Content Include="jqwidgets\jqxscrollbar.js" />
@@ -809,8 +811,9 @@
     <Content Include="Scripts\app\model\generic\entity-def.js" />
     <Content Include="Scripts\app\model\generic\price-def.js" />
     <Content Include="Scripts\app\model\media-files.js" />
-    <Content Include="Scripts\app\crm\sendreport-grid.js" />
+    <Content Include="Scripts\app\main\sendreport-grid.js" />
     <Content Include="Scripts\app\registry\member-info.js" />
+    <Content Include="Scripts\app\system\calendar.js" />
     <Content Include="Scripts\app\system\task-form-temp.js" />
     <Content Include="Scripts\app\system\ad-def-members.js" />
     <Content Include="Scripts\app\system\ad-users-def.js" />
@@ -818,22 +821,22 @@
     <Content Include="Scripts\app\system\ad-def.js" />
     <Content Include="Scripts\app\system\reminder.js" />
     <Content Include="Scripts\app\system\task-user.js" />
-    <Content Include="Scripts\app\system\ticket-def.js" />
-    <Content Include="Scripts\app\system\task-user-0.js" />
+    <Content Include="Scripts\app\system\_ex\ticket-def.js" />
+    <Content Include="Scripts\app\system\_ex\task-user-0.js" />
     <Content Include="Scripts\app\system\task-new.js" />
     <Content Include="Scripts\app\system\task-items.js" />
     <Content Include="Scripts\app\system\tasks-grid.js" />
     <Content Include="Scripts\app\system\task-def.js" />
     <Content Include="Scripts\app\uploads-1.js" />
     <Content Include="Scripts\app\view\unpayed-grid.js" />
-    <Content Include="Scripts\app\crm\signup-grid.js" />
+    <Content Include="Scripts\app\main\signup-grid.js" />
     <Content Include="Scripts\app\model\reports.js" />
-    <Content Include="Scripts\app\crm\payments-grid.js" />
-    <Content Include="Scripts\app\crm\members-query.js" />
+    <Content Include="Scripts\app\main\payments-grid.js" />
+    <Content Include="Scripts\app\main\members-query.js" />
     <Content Include="Scripts\app\registry\mifkad.js" />
     <Content Include="Scripts\app\registry\signup-def.js" />
-    <Content Include="Scripts\app\crm\members-def.js" />
-    <Content Include="Scripts\app\crm\members-grid.js" />
+    <Content Include="Scripts\app\main\members-def.js" />
+    <Content Include="Scripts\app\main\members-grid.js" />
     <Content Include="Scripts\app\app-jqx-1.0.js" />
     <Content Include="Scripts\app\app-model-1.0.js" />
     <Content Include="Scripts\app\app-cms.css" />
@@ -1781,6 +1784,9 @@
     <Content Include="Scripts\plagins\sidebar\js\modernizr.js" />
     <Content Include="Scripts\plagins\steps\jquery.steps.js" />
     <Content Include="Scripts\plagins\steps\jquery.steps.min.js" />
+    <Content Include="Scripts\plagins\tabs\responsive-tabs.css" />
+    <Content Include="Scripts\plagins\tabs\responsiveTabs.js" />
+    <Content Include="Scripts\plagins\tabs\responsiveTabs.min.js" />
     <Content Include="Scripts\plagins\vex\css\vex-theme-bottom-right-corner.css" />
     <Content Include="Scripts\plagins\vex\css\vex-theme-default.css" />
     <Content Include="Scripts\plagins\vex\css\vex-theme-flat-attack.css" />
@@ -1806,7 +1812,7 @@
     <Content Include="Uploads\mifkad\registry.js" />
     <Content Include="Uploads\mifkad\share.png" />
     <Content Include="Uploads\mifkad\style.css" />
-    <Content Include="Views\Crm\MembersQuery.cshtml" />
+    <Content Include="Views\Main\MembersQuery.cshtml" />
     <Content Include="Views\Home\_exclude\demoupload.cshtml" />
     <Content Include="Views\Home\_exclude\demouploadform.cshtml" />
     <Content Include="Views\Common\_MemberCategories.cshtml" />
@@ -1815,19 +1821,15 @@
     <Content Include="Views\Admin\DefEntityEnum.cshtml" />
     <Content Include="Views\Common\_Upload.cshtml" />
     <Content Include="Views\Common\_Targets.cshtml" />
-    <Content Include="Views\Crm\SmsEditor.cshtml" />
     <Content Include="Views\Common\DefEntityEnum.cshtml" />
-    <Content Include="Views\Crm\MembersAdd.cshtml" />
-    <Content Include="Views\Crm\ManagementGrid.cshtml" />
+    <Content Include="Views\Main\MembersAdd.cshtml" />
+    <Content Include="Views\Main\ManagementGrid.cshtml" />
     <Content Include="Views\Common\_ManagementEdit.cshtml" />
-    <Content Include="Views\Crm\MembersUpload-0.cshtml" />
     <Content Include="Views\Common\DefCity.cshtml" />
-    <Content Include="Views\Crm\MembersExport.cshtml" />
-    <Content Include="Views\Crm\MembersRemove.cshtml" />
-    <Content Include="Views\Home\Logoff.cshtml" />
-    <Content Include="Views\Crm\_UploadProc.cshtml" />
-    <Content Include="Views\Crm\MemberEdit.cshtml" />
-    <Content Include="Views\Common\_MemberEdit.cshtml" />
+    <Content Include="Views\Main\MembersExport.cshtml" />
+    <Content Include="Views\Main\MembersRemove.cshtml" />
+    <Content Include="Views\Main\_UploadProc.cshtml" />
+    <Content Include="Views\Main\MemberEdit.cshtml" />
     <Content Include="Views\Cms\CmsHtmlEdit.cshtml" />
     <Content Include="Views\Cms\CmsContentGrid.cshtml" />
     <Content Include="Views\Cms\CmsContentFields.cshtml" />
@@ -1836,16 +1838,16 @@
     <Content Include="Views\Home\Index.cshtml">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="Views\Crm\PaymentsReport.cshtml" />
-    <Content Include="Views\Crm\SignupQuery.cshtml" />
-    <Content Include="Views\Crm\SignupExport.cshtml" />
-    <Content Include="Views\Crm\SignupReport.cshtml" />
+    <Content Include="Views\Main\PaymentsReport.cshtml" />
+    <Content Include="Views\Main\SignupQuery.cshtml" />
+    <Content Include="Views\Main\SignupExport.cshtml" />
+    <Content Include="Views\Main\SignupReport.cshtml" />
     <Content Include="Views\Admin\DefAccount.cshtml" />
     <Content Include="Views\Admin\AccountDef.cshtml" />
-    <Content Include="Views\Crm\SmsBroadcast.cshtml" />
-    <Content Include="Views\Crm\EmailBroadcast.cshtml" />
+    <Content Include="Views\Main\SmsBroadcast.cshtml" />
+    <Content Include="Views\Main\EmailBroadcast.cshtml" />
     <Content Include="Content\mifkad\images\matza.pdf" />
-    <Content Include="Views\Home\Dashboard.cshtml" />
+    <Content Include="Views\Main\Dashboard.cshtml" />
     <Content Include="Uploads\mifkad\tofes.pdf" />
     <Content Include="Views\Cms\CmsTextEdit.cshtml" />
     <Content Include="Uploads\mifkad\matza.pdf" />
@@ -1865,7 +1867,7 @@
     <Content Include="Scripts\plagins\vex\sass\vex.sass" />
     <Content Include="Scripts\plagins\vex\sass\_keyframes.sass" />
     <Content Include="Scripts\plagins\vex\sass\_mixins.sass" />
-    <Content Include="Views\Crm\Members.cshtml" />
+    <Content Include="Views\Main\Members.cshtml" />
     <Content Include="Scripts\plagins\sidebar\.DS_Store" />
     <Content Include="Scripts\plagins\sidebar\js\.DS_Store" />
     <Content Include="Scripts\plagins\sidebar\js\README-menu-aim.md" />
@@ -1875,8 +1877,8 @@
     <Content Include="Scripts\plagins\sidebar\README.md" />
     <Content Include="Scripts\plagins\sidebar\scss\style.scss" />
     <Content Include="Views\System\DefUser.cshtml" />
-    <Content Include="Views\Crm\SendQuery.cshtml" />
-    <Content Include="Views\Crm\SendReport.cshtml" />
+    <Content Include="Views\Main\SendQuery.cshtml" />
+    <Content Include="Views\Main\SendReport.cshtml" />
     <Content Include="Views\Common\_BatchMessageView.cshtml" />
     <Content Include="Scripts\jq\jquery-ui-1.12.0\images\Thumbs.db" />
     <Content Include="Scripts\jq\jquery-ui-1.12.0\package.json" />
@@ -1891,11 +1893,9 @@
     <Content Include="Views\Common\_Media.cshtml" />
     <Content Include="Views\Cms\CmsMedia.cshtml" />
     <Content Include="Views\Cms\CmsPageSettings.cshtml" />
-    <Content Include="Views\System\_ex\main.js" />
-    <Content Include="Views\System\_ex\style.css" />
     <Content Include="Views\System\AdUsersDef.cshtml" />
-    <Content Include="Views\Crm\PaymentsQuery.cshtml" />
-    <Content Include="Views\Crm\PaymentsExport.cshtml" />
+    <Content Include="Views\Main\PaymentsQuery.cshtml" />
+    <Content Include="Views\Main\PaymentsExport.cshtml" />
     <Content Include="Views\Preview\css\html5reset-1.6.1.css" />
     <Content Include="Views\Preview\css\registry.css" />
     <Content Include="Views\Preview\css\style.css" />
@@ -1907,17 +1907,16 @@
     <Content Include="Views\Cms\CmsWizardHead.cshtml" />
     <Content Include="Views\Cms\CmsWizardPages.cshtml" />
     <Content Include="Views\Common\_View.cshtml" />
-    <Content Include="Views\Crm\SmsMultimedia.cshtml" />
+    <Content Include="Views\Main\SmsMultimedia.cshtml" />
     <Content Include="_Doc\github.txt" />
     <Content Include="_Doc\ReadMe.txt" />
-    <Content Include="Views\Crm\MembersUpload.cshtml" />
-    <Content Include="Views\Crm\_upload\MembersUpload.cshtml" />
+    <Content Include="Views\Main\MembersUpload.cshtml" />
     <Content Include="Views\Common\CategoryQuery.cshtml" />
     <Content Include="Views\Common\DefCategory.cshtml" />
     <Content Include="Views\Home\ErrorUnauthorized.cshtml" />
     <Content Include="Scripts\jq\jquery-ui-1.12.1\package.json" />
-    <Content Include="Views\Crm\Member.cshtml" />
-    <Content Include="Views\Crm\_MemberEdit.cshtml" />
+    <Content Include="Views\Main\Member.cshtml" />
+    <Content Include="Views\Main\_MemberEdit.cshtml" />
     <Content Include="Scripts\app\app-control-1.0.js" />
     <Content Include="jqwidgets\styles\images\colorpicker\Thumbs.db" />
     <Content Include="jqwidgets\styles\images\darkness\Thumbs.db" />
@@ -1930,16 +1929,12 @@
     <Content Include="jqwidgets\styles\images\sunny\Thumbs.db" />
     <Content Include="jqwidgets\styles\images\Thumbs.db" />
     <Content Include="jqwidgets\styles\Thumbs.db" />
-    <Content Include="Views\Crm\ReportQuery.cshtml" />
-    <Content Include="Views\Crm\StatisticReport.cshtml" />
+    <Content Include="Views\Main\ReportQuery.cshtml" />
     <Content Include="Views\Home\Construction.cshtml" />
-    <Content Include="Views\Home\LoginBlock.cshtml" />
     <Content Include="Scripts\plagins\colorpicker\.gitignore" />
     <Content Include="Scripts\plagins\colorpicker\bower.json" />
     <Content Include="Scripts\plagins\colorpicker\package.json" />
     <Content Include="Scripts\plagins\colorpicker\README.md" />
-    <Content Include="Views\Cms\_ex\CmsWizardPages.cshtml" />
-    <Content Include="Views\Home\Register.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ForgotPasswordConfirm.cshtml" />
@@ -1952,6 +1947,7 @@
     <None Include="Views\Home\_exclude\demoform.cshtml" />
     <Content Include="Scripts\plagins\popbox\api.html" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\SyncController.cs" />
     <Compile Include="Controllers\SenderController.cs" />
     <Compile Include="Controllers\SystemController.cs" />
     <Compile Include="Controllers\ApiBaseController.cs" />
@@ -2171,7 +2167,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
-    <Compile Include="Controllers\CrmController.cs" />
+    <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -2180,7 +2176,7 @@
     <Compile Include="Models\RequestModels.cs" />
     <Compile Include="Models\ResultModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="Views\Crm\StatusMessage.cshtml">
+    <Content Include="Views\Main\StatusMessage.cshtml">
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Home\Error.cshtml" />
@@ -2194,10 +2190,6 @@
     <Content Include="Views\Shared\_ViewAdmin.cshtml" />
     <Content Include="Views\Admin\Manager.cshtml" />
     <Content Include="Views\Admin\Main.cshtml" />
-    <Content Include="Views\Home\Login.cshtml">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="Views\Home\LoginFailed.cshtml" />
     <Content Include="Views\Admin\UsersDef.cshtml" />
     <Content Include="Views\Home\_exclude\demogrid3.cshtml" />
     <Content Include="Views\Home\_exclude\demogrid2.cshtml" />
@@ -2253,13 +2245,7 @@
     <Content Include="Views\System\TaskNew.cshtml" />
     <Content Include="Views\System\_TaskTimer.cshtml" />
     <Content Include="Views\System\_TaskAssign.cshtml" />
-    <Content Include="Views\System\_ex\TasksBoard.cshtml" />
-    <Content Include="Views\System\_ex\ViewPage1.cshtml" />
-    <Content Include="Views\System\_ex\Scheduler.cshtml" />
     <Content Include="Views\System\_TaskForm.cshtml" />
-    <Content Include="Views\System\_ex\ViewPage2.cshtml" />
-    <Content Include="Views\System\_ex\ViewPage3.cshtml" />
-    <Content Include="Views\System\_ex\ViewPage4.cshtml" />
     <Content Include="Views\Registry\Info.cshtml" />
     <Content Include="Views\Registry\MemberInfo.cshtml" />
     <Content Include="Views\System\AdDef.cshtml" />
@@ -2268,10 +2254,11 @@
     <Content Include="Views\System\_TicketAction.cshtml" />
     <Content Include="Views\System\TicketEdit.cshtml" />
     <Content Include="Views\System\TicketNew.cshtml" />
-    <Content Include="Views\System\Scheduler.cshtml" />
+    <Content Include="Views\System\Calendar.cshtml" />
     <Content Include="Views\System\_TaskFormTemplate.cshtml" />
     <Content Include="Views\System\TaskUser.cshtml" />
     <Content Include="Views\System\Reminder.cshtml" />
+    <Content Include="Views\Main\_MembersQuery.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\camera.css" />
@@ -2373,22 +2360,24 @@
     <Content Include="Views\Shared\_Menu.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Main.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Images\_obsolete\" />
     <Folder Include="Scripts\app\admin\" />
-    <Folder Include="Scripts\app\system\_ex\" />
     <Folder Include="Scripts\app\_old\" />
+    <Folder Include="Scripts\plagins\tabs\_ex\" />
     <Folder Include="Scripts\_exclude\" />
     <Folder Include="Views\Account\_ex\" />
+    <Folder Include="Views\Cms\_ex\" />
     <Folder Include="Views\Common\_defEntity\" />
     <Folder Include="Views\Common\_exclude\" />
-    <Folder Include="Views\Crm\_exclude\" />
-    <Folder Include="Views\Crm\_ex\" />
     <Folder Include="Views\Home\_exclude\_v-0\" />
     <Folder Include="Views\Home\_exclude\_v-1\" />
+    <Folder Include="Views\Main\_exclude\" />
+    <Folder Include="Views\Main\_ex\" />
+    <Folder Include="Views\Main\_upload\" />
+    <Folder Include="Views\System\_ex\" />
     <Folder Include="Views\_exclude\_v-menu\" />
     <Folder Include="_files\" />
   </ItemGroup>

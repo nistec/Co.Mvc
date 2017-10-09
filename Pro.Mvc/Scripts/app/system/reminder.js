@@ -70,12 +70,18 @@ function app_reminder_def(dataModel, userInfo) {
     this.doSubmit = function (act) {
         //e.preventDefault();
 
-        //var status = $("#TaskStatus").val();
+        var status = $("#TaskStatus").val();
         //if (status > 1 && status < 8)
         //{
         //    if (confirm("האם לסיים משימה?") == false)
         //        return;
         //}
+
+        if (act == 'finished')
+            $("#TaskStatus").val(16);
+        else if(status==0)
+            $("#TaskStatus").val(1);
+
         var value = $("#TaskBody").jqxEditor('val');
         //var clientDetails = $('#ClientDetails').val();
         //, { key: 'ClientDetails', value: clientDetails }
@@ -96,11 +102,14 @@ function app_reminder_def(dataModel, userInfo) {
                             slf.TaskId = data.OutputId;
                             $("#TaskId").val(data.OutputId);
                             $("#hxp-0").text('תזכורת: '+data.OutputId);
-                            $(".hxp").show();
-                            app_messenger.Notify(data, 'info');//, "/System/TaskUser");
+                            //$(".hxp").show();
+                            app_messenger.Notify(data, 'info');
                         }
                         if (act == 'plus') {
                             app.refresh();
+                        }
+                        else if (act == 'finished') {
+                            app.redirectTo('/System/TaskUser');
                         }
                     },
                     error: function (jqXHR, status, error) {
@@ -112,6 +121,7 @@ function app_reminder_def(dataModel, userInfo) {
         $('#fcForm').jqxValidator('validate', validationResult);
     };
 
+
     if(this.TaskId>0)
     {
         this.syncData(dataModel.Result);
@@ -121,7 +131,7 @@ function app_reminder_def(dataModel, userInfo) {
 app_reminder_def.prototype.loadControls = function () {
 
     var slf = this;
-
+    var exp1_Inited = false;
     $('#DueDate').jqxDateTimeInput({ width: '150px', rtl: true });
     $('#DueDate ').jqxDateTimeInput('setMinDate', new Date());
     //$('#CreatedDate').jqxDateTimeInput({ showCalendarButton: false, width: '150px', rtl: true, disabled: true });
@@ -129,17 +139,26 @@ app_reminder_def.prototype.loadControls = function () {
 
     
     //app_jqx_list.taskTypeComboAdapter();
-    //app_jqx_list.taskStatusComboAdapter();
-    //$("#TaskStatus").jqxDropDownList({ enableSelection: false });
+    app_jqx_list.taskStatusComboAdapter();
+    $("#TaskStatus").jqxDropDownList({ enableSelection: false, disabled: true, rtl: true });
     app_jqxcombos.createComboAdapter("PropId", "PropName", "Task_Type", '/System/GetTaskTypeList', 0, 120, false);
-    app_jqxcombos.createComboAdapter("UserTeamId", "DisplayName", "AssignTo", '/System/GetUserTeamList', 0, 0, false);
+    app_jqxcombos.createComboAdapter("UserTeamId", "DisplayName", "AssignTo", '/System/GetUserTeamList', 200, 0, false);
     app_jqxcombos.createComboAdapter("ProjectId", "ProjectName", "Project_Id", '/System/GetProjectList', 0, 120, false);
     $("#Project_Id").jqxComboBox({ showArrow: false, autoComplete: true });
     $("#RemindPlatform").jqxDropDownList({autoDropDownHeight: true, width:160, rtl:true });
     
 
     $("#accordion").accordion({ heightStyle: "content", rtl: true, editable: true });
-    $("#jqxExp-1").jqxExpander({ rtl: true, width: '260px', expanded: false });
+    $("#jqxExp-1").jqxExpander({ rtl: true, width: '100%', expanded: false });
+    $('#jqxExp-1').on('expanding', function () {
+        if (!exp1_Inited) {
+            //app_lookups.member_name($('#ClientId').val(), '#ClientId-display');
+            app_lookups.project_name($('#Project_Id').val(), '#Project_Id-display');
+        }
+
+        exp1_Inited = true;
+    });
+
     $("#ColorFlag").simplecolorpicker();
     $("#ColorFlag").on('change', function () {
         //$('select').simplecolorpicker('destroy');
@@ -257,6 +276,9 @@ app_reminder_def.prototype.syncData = function (record) {
             $("#TaskSubject").val(record.TaskSubject);
             $("#hTitle").text(this.Title + ": " + record.TaskSubject);
             $("#hTitle").css("color", (record.ColorFlag || '#000'));
+
+            app.showIf('#fcSubmit', record.TaskStatus < 8);
+            app.showIf('#fcFinished', record.TaskStatus >= 1 && record.TaskStatus < 8);
 
             //if (record.TaskStatus > 1 && record.TaskStatus < 8)
             //    $("#fcSubmit").val("סיום");

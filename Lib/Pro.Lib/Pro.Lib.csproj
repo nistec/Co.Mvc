@@ -49,12 +49,25 @@
     <Reference Include="WebMatrix.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Api\PaymentBroker.cs" />
-    <Compile Include="Api\PaymentChrageItem.cs" />
-    <Compile Include="Api\PaymentItem.cs" />
-    <Compile Include="Api\PaymentApi.cs" />
-    <Compile Include="Api\StatusContract.cs" />
-    <Compile Include="Common\Enums.cs" />
+    <Compile Include="Api\ApiException.cs" />
+    <Compile Include="Api\ApiSettings.cs" />
+    <Compile Include="Api\CLI.cs" />
+    <Compile Include="Api\ApiService.cs" />
+    <Compile Include="Api\Common.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Api\DataAuth.cs" />
+    <Compile Include="Api\DbCo.cs" />
+    <Compile Include="Api\MemberMessageRequest.cs" />
+    <Compile Include="Api\RequestContract.cs" />
+    <Compile Include="Api\ApiStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Payments\PaymentBroker.cs" />
+    <Compile Include="Payments\PaymentChrageItem.cs" />
+    <Compile Include="Payments\PaymentItem.cs" />
+    <Compile Include="Payments\PaymentApi.cs" />
+    <Compile Include="Payments\StatusContract.cs" />
     <Compile Include="Db\AppSettings.cs" />
     <Compile Include="Db\DbLogs.cs" />
     <Compile Include="Db\DbLookups.cs" />
@@ -110,7 +123,6 @@
     <Compile Include="Upload\UploadMembersView.cs" />
     <Compile Include="Upload\UploadMembers.cs" />
     <Compile Include="Upload\UploadException.cs" />
-    <Compile Include="Upload\UploadState.cs" />
     <Compile Include="Upload\UploadSumarize.cs" />
     <Compile Include="Upload\UploadReader.cs" />
     <Compile Include="Upload\UploadFiles.cs" />
@@ -127,7 +139,6 @@
     <Compile Include="Entities\Props\CityView.cs" />
     <Compile Include="Entities\PropsEnum\EntityEnum.cs" />
     <Compile Include="Entities\MemberCategories.cs" />
-    <Compile Include="Entities\Props\PlaceView.cs" />
     <Compile Include="Entities\Members.cs" />
     <Compile Include="Db\DbPro.cs" />
     <Compile Include="Entities\IEntityProp.cs" />
@@ -149,12 +160,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Common\" />
     <Folder Include="Media\" />
     <Folder Include="obj\" />
     <Folder Include="Upload\_ex\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Api\Member flow.txt" />
+    <Content Include="Payments\Member flow.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Channels\Nistec.Channels\Nistec.Channels.csproj">

@@ -98,19 +98,77 @@ function app_task_def(dataModel,userInfo,taskModel) {
     this.AccountId = userInfo.AccountId;
     this.UserRole = userInfo.UserRole;
     this.AllowEdit = (this.UserRole > 4) ? 1 : 0;
-    this.Title = (this.TaskModel =='E') ? 'כרטיס' : 'משימה';
+    this.Title = (this.TaskModel =='E') ? 'סוגיה' : 'משימה';
 
     var slf = this;
     var exp1_Inited = false;
     $("#AccountId").val(this.AccountId);
     $("#hxp-0").text(this.Title + ': ' + this.TaskId);
 
-    $("#accordion").accordion({ heightStyle: "content", rtl: true, editable: true });
-    $("#jqxExp-1").jqxExpander({ rtl: true, width: '300px', expanded: false });
+    //$("#accordion").accordion({ heightStyle: "content", rtl: true, editable: true });
+
+    $("#accordion").responsiveTabs({
+        rotate: false,
+        startCollapsed: 'accordion',
+        collapsible: 'accordion',
+        //setHash: true,
+        //disabled: [3, 4],
+        click: function (e, tab) {
+            //$('.info').html('Tab <strong>' + tab.id + '</strong> clicked!');
+        },
+        activate: function (e, tab) {
+            //$('.info').html('Tab <strong>' + tab.id + '</strong> activated!');
+
+            switch (tab.id) {
+                case 1://"hxp-1"://"ui-id-1":
+                    if (slf.TaskId == 0) {
+                        event.preventDefault();
+                        app_dialog.alert("יש לשמור את המשימה הנוכחית לפני הוספת הערות");
+                        return false;
+                    }
+                    if ($("#jqxgrid1")[0].childElementCount == 0)
+                        app_tasks_comment.load(slf.Model, slf.UserInfo);
+                    break;
+                case 2://"hxp-2"://"ui-id-2":
+                    if ($("#jqxgrid2")[0].childElementCount == 0)
+                        app_tasks_assign.load(slf.Model, slf.UserInfo);
+                    break;
+                case 3://"hxp-3"://"ui-id-3":
+                    if ($("#jqxgrid3")[0].childElementCount == 0)
+                        app_tasks_timer.load(slf.Model, slf.UserInfo);
+                    break;
+                case 4://"hxp-4"://"ui-id-4":
+                    if (slf.TaskId == 0) {
+                        event.preventDefault();
+                        app_dialog.alert("יש לשמור את המשימה הנוכחית לפני הוספת פעולות");
+                        return false;
+                    }
+                    if ($("#jqxgrid4")[0].childElementCount == 0)
+                        app_tasks_form.load(slf.Model, slf.UserInfo);
+                    break;
+                case 5://"hxp-5"://"ui-id-5":
+                    if (slf.TaskId == 0) {
+                        event.preventDefault();
+                        app_dialog.alert("יש לשמור את המשימה הנוכחית לפני הוספת קבצים");
+                        return false;
+                    }
+                    if ($("#iframe-files").attr('src') === undefined)
+                        var op = slf.Model.Option;
+                    app_iframe.attachIframe('iframe-files', '/Media/_MediaFiles?refid=' + slf.TaskId + '&refType=t&op=' + op, '100%', '350px', true);
+                    break;
+            }
+        },
+        activateState: function (e, state) {
+            //console.log(state);
+            //$('.info').html('Switched from <strong>' + state.oldState + '</strong> state to <strong>' + state.newState + '</strong> state!');
+        }
+    });
+
+    $("#jqxExp-1").jqxExpander({ rtl: true, width: '100%', expanded: false });
     $('#jqxExp-1').on('expanding', function () {
         if(!exp1_Inited)
         {
-            app_lookups.member_name($('#ClientId').val(), '#ClientId-display');
+            //app_lookups.member_name($('#ClientId').val(), '#ClientId-display');
             app_lookups.project_name($('#Project_Id').val(), '#Project_Id-display');
         }
 
@@ -135,7 +193,7 @@ function app_task_def(dataModel,userInfo,taskModel) {
         //theme: 'arctic'
         //stylesheets: ['editor.css']
     });
-
+    /*
     $("#accordion").accordion({
         beforeActivate: function (event, ui) {
             switch(ui.newHeader.context.id){
@@ -178,6 +236,7 @@ function app_task_def(dataModel,userInfo,taskModel) {
             }
         }
     });
+   */ 
 
     //$("#accordion").accordion({ activate: function(event, ui) {
     //    alert(ui.newHeader.text());
@@ -217,17 +276,34 @@ function app_task_def(dataModel,userInfo,taskModel) {
    
     this.doSubmit = function () {
         //e.preventDefault();
-
+        var slf = this;
         var actionurl = $('#fcForm').attr('action');
         var status = $("#TaskStatus").val();
 
-        if (status > 1 && status < 8)
-        {
-            if (confirm("האם לסיים משימה?") == false)
-                return;
-            else
-                actionurl = '/System/TaskCompleted';
+        if (status > 1 && status < 8) {
+            app_dialog.confirmYesNoCancel("האם לסיים משימה?", function (res) {
+                if (res == 'yes')
+                    slf.RunSubmit(status, '/System/TaskCompleted')
+                else if (res == 'no')
+                    slf.RunSubmit(status, actionurl);
+
+            });
         }
+        else {
+            slf.RunSubmit(status, actionurl);
+        }
+    };
+       
+    this.RunSubmit = function (status,actionurl) {
+        //e.preventDefault();
+
+        //var actionurl = $('#fcForm').attr('action');
+
+        if(status==0)
+            $("#TaskStatus").val(1);
+        if (status == 1)
+            $("#TaskStatus").val(2);
+
         //var clientId = $("#ClientId").val();
         //if (clientId > 0) {
         //    $('#ClientDetails').val($("#ClientId-display").val())
@@ -248,17 +324,16 @@ function app_task_def(dataModel,userInfo,taskModel) {
                     dataType: 'json',
                     data: formData,
                     success: function (data) {
-                        app_messenger.Notify(data,'info', "/System/TaskUser");
+                        app_messenger.Notify(data, 'info', "/System/TaskUser");
                     },
                     error: function (jqXHR, status, error) {
-                        app_messenger.Notify(error,'error');
+                        app_messenger.Notify(error, 'error');
                     }
                 });
             }
         }
         $('#fcForm').jqxValidator('validate', validationResult);
     };
-       
 
     var view_source =
    {
@@ -331,7 +406,7 @@ app_task_def.prototype.syncData = function (record) {
             editable = true;
         }
        
-        $('#DueDate').jqxDateTimeInput({ disabled: !editable });
+        $('#DueDate').jqxDateTimeInput({ disabled: !editable, showCalendarButton: editable });
         $("#TaskBody").jqxEditor({ editable: editable });
 
         //app_jqxcombos.selectCheckList("listCategory", record.Categories);
@@ -926,6 +1001,7 @@ app_tasks_form = {
 
         $("#jqxgrid4").jqxGrid({
             width: '100%',
+            editable: slf.Model.Option == "e",
             autoheight: true,
             enabletooltips: true,
             localization: getLocalization('he'),
@@ -933,12 +1009,12 @@ app_tasks_form = {
             columnsresize: true,
             rtl: true,
             columns: [
-              { text: 'מועד רישום', datafield: 'ItemDate', width: 150, cellsalign: 'right', type: 'date', cellsformat: 'dd/MM/yyyy hh:mm', align: 'center' },
-              { text: 'נושא', datafield: 'ItemText', cellsalign: 'right', align: 'center' },
-              { text: 'מועד סיום', datafield: 'DoneDate', width: 150, cellsalign: 'right', type: 'date', cellsformat: 'dd/MM/yyyy hh:mm', align: 'center' },
+              { text: 'מועד רישום', datafield: 'ItemDate', width: 150, cellsalign: 'right', type: 'date', cellsformat: 'dd/MM/yyyy hh:mm', align: 'center', editable: false },
+              { text: 'נושא', datafield: 'ItemText', cellsalign: 'right', align: 'center', editable: false },
+              { text: 'מועד סיום', datafield: 'DoneDate', width: 150, cellsalign: 'right', type: 'date', cellsformat: 'dd/MM/yyyy hh:mm', align: 'center', editable: false },
               { text: 'בוצע', datafield: 'DoneStatus', columntype: 'checkbox', width: 120, cellsalign: 'right', align: 'center' },
                //{ text: 'Product', columntype: 'dropdownlist', datafield: 'productname', width: 195 },
-              { text: 'שם', datafield: 'DisplayName', width: 120, cellsalign: 'right', align: 'center' } 
+              { text: 'שם', datafield: 'DisplayName', width: 120, cellsalign: 'right', align: 'center', editable: false }
               //{
               //    text: '...', datafield: 'ItemId', width: 120, cellsalign: 'right', align: 'center',
               //    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
@@ -947,6 +1023,23 @@ app_tasks_form = {
               //}
             ]
         });
+        $("#jqxgrid4").on('cellvaluechanged', function (event) {
+            // event arguments.
+            var args = event.args;
+            // column data field.
+            var datafield = event.args.datafield;
+            // row's bound index.
+            var rowBoundIndex = args.rowindex;
+            // new cell value.
+            var value = args.newvalue;
+            // old cell value.
+            var oldvalue = args.oldvalue;
+
+            var id = args.owner.rows.records[args.rowindex].bounddata.ItemId;
+            slf.update(id,value);
+
+        });
+
         $('#jqxgrid4').on('rowdoubleclick', function (event) {
             slf.edit();
         });
@@ -1034,6 +1127,25 @@ app_tasks_form = {
                 
             }
         }
+    },
+    update: function (id, value) {
+
+        $.ajax({
+            url: '/System/TaskFormChecked',
+            type: 'post',
+            dataType: 'json',
+            data: { 'id': id, 'done': value },
+            success: function (data) {
+                if (data.Status > 0) {
+                    window.parent.triggerSubTaskCompleted('form', data);
+                }
+                else
+                    app_messenger.Post(data, 'error');
+            },
+            error: function (jqXHR, status, error) {
+                app_messenger.Post(error, 'error');
+            }
+        });
     },
     refresh: function () {
         $('#jqxgrid4').jqxGrid('source').dataBind();
@@ -1610,7 +1722,7 @@ var app_tasks_form_control = function (tagWindow) {
                             '<div style="direction: rtl; text-align: right">' +
                                 '<input type="hidden" id="ItemId" name="ItemId" value="0" />' +
                                 '<input type="hidden" id="Task_Id" name="Task_Id" value="0" />' +
-                                '<input type="hidden" id="UserId" name="UserId" value="" />' +
+                                '<input type="hidden" id="form-UserId" name="UserId" value="" />' +
                                 '<input type="hidden" id="AssignBy" name="AssignBy" value="" />' +
                                 '<div style="height:5px"></div>' +
                                 '<div id="tab-content" class="tab-content" dir="rtl">' +
@@ -1640,7 +1752,7 @@ var app_tasks_form_control = function (tagWindow) {
                                         '</div>' +
                                         '<div id="divDisplayName" class="form-group">' +
                                             '<div class="field">בוצע ע"י:</div>' +
-                                            '<input id="DisplayName" name="DisplayName" type="text" readonly="readonly" class="text-mid" />' +
+                                            '<input id="form-DisplayName" name="DisplayName" type="text" readonly="readonly" class="text-mid" />' +
                                         '</div>' +
                                     '</div>' +
                                 '</div>' +
@@ -1713,6 +1825,8 @@ var app_tasks_form_sync = function (dataModel, userInfo) {
                 this.viewAdapter = new $.jqx.dataAdapter(view_source, {
                     loadComplete: function (record) {
                         app_jqxform.loadDataForm("form-Form", record);
+                       // $("form#form-Form [name=UserId]").val(record.UserId);
+                                                
                         //$('#StartTime').val(record['StartTime']);
                         $("#ItemDate").val(app.toLocalDateString(record.ItemDate));
                         $("#DoneDate").val(app.toLocalDateString(record.DoneDate));
@@ -1740,7 +1854,7 @@ var app_tasks_form_sync = function (dataModel, userInfo) {
         else {
             $("#form-Form input[name=Task_Id]").val(this.TaskId);
             $("#form-Form input[name=UserId]").val(this.UserInfo.UserId);
-            $('#form-Submit').text("התחל");
+            //$('#form-Submit').text("התחל");
 
         }
     },

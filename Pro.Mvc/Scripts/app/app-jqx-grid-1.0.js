@@ -75,6 +75,7 @@ var app_jqxgrid = {
             var args = event.args;
             var boundIndex = args.rowindex;
             var visibleIndex = args.visibleindex;
+            entity.rowEdit = boundIndex;
             app_jqxgrid.doRowEdit(boundIndex, entity, tag_grid);
         });
         //$(tag_grid).jqxGrid('autoresizecolumns');
@@ -89,7 +90,7 @@ var app_jqxgrid = {
             var validationResult = function (isValid) {
                 if (isValid) {
                     var row = entity.createRowData();
-
+                    var editrow=entity.rowEdit;
                     if (editrow < 0) {//$("#insertFlag").val() == '0') {
                         $(tag_grid).jqxGrid('addrow', null, row);
                     }
@@ -97,7 +98,8 @@ var app_jqxgrid = {
                         var rowID = $(tag_grid).jqxGrid('getrowid', editrow);
                         $(tag_grid).jqxGrid('updaterow', rowID, row);
                     }
-                    //$("#popupWindow").jqxWindow('hide');
+                    
+                    $("#popupWindow").jqxWindow('hide');
                 }
             }
             $('#form').jqxValidator('validate', validationResult);
@@ -183,6 +185,7 @@ var app_jqxgrid = {
             var args = event.args;
             var boundIndex = args.rowindex;
             var visibleIndex = args.visibleindex;
+            entity.rowEdit = boundIndex;
             app_jqxgrid.doRowEdit(boundIndex, entity, tag_grid);
         });
         //$(tag_grid).jqxGrid('autoresizecolumns');
@@ -197,7 +200,7 @@ var app_jqxgrid = {
             var validationResult = function (isValid) {
                 if (isValid) {
                     var row = entity.createRowData();
-
+                    var editrow = entity.rowEdit;
                     if (editrow<0){//$("#insertFlag").val() == '0') {
                         $(tag_grid).jqxGrid('addrow', null, row);
                     }
@@ -205,7 +208,7 @@ var app_jqxgrid = {
                         var rowID = $(tag_grid).jqxGrid('getrowid', editrow);
                         $(tag_grid).jqxGrid('updaterow', rowID, row);
                     }
-                    //$("#popupWindow").jqxWindow('hide');
+                    $("#popupWindow").jqxWindow('hide');
                 }
             }
             $('#form').jqxValidator('validate', validationResult);
@@ -235,18 +238,21 @@ var app_jqxgrid = {
         // update row.
         $("#updaterowbutton").on('click', function () {
             var selectedrowindex = $(tag_grid).jqxGrid('getselectedrowindex');
+            entity.rowEdit = selectedrowindex;
             app_jqxgrid.doRowEdit(selectedrowindex, entity,tag_grid);
 
         });
         // create new row.
         $("#addrowbutton").on('click', function () {
             // show the popup window.
+            entity.rowEdit = -1;
             entity.setEditorInputData(null);
             app_jqxgrid.openPopupEditor();
         });
         // delete row.
         $("#deleterowbutton").on('click', function () {
             var selectedrowindex = $(tag_grid).jqxGrid('getselectedrowindex');
+            entity.rowEdit = selectedrowindex;
             var rowscount = $(tag_grid).jqxGrid('getdatainformation').rowscount;
             if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
                 var id = $(tag_grid).jqxGrid('getrowid', selectedrowindex);
@@ -327,7 +333,7 @@ var app_jqxgrid = {
                 commit(true);
             },
             complete: function (data) {
-                if (data.Status > 0)
+                if (data.status==200)//.Status > 0)
                     $(tag_grid).jqxGrid('source').dataBind();
             },
             error: function () {

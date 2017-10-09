@@ -1,0 +1,351 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    Page.Title = "Members";
+}
+
+@section head {
+
+
+    @Scripts.Render("~/bundles/jqx")
+
+    <style type="text/css">
+        table {
+            direction: rtl;
+        }
+
+        td {
+            padding-top: 0px;
+            padding-bottom: 5px;
+        }
+
+        .headline {
+            color: #0094ff;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        $(function () {
+            $('#tab-query li:eq(0) a').tab('show');
+        });
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        var me = this;
+
+        $("#allBranch").prop('checked', true);
+        $("#allCity").prop('checked', true);
+        $("#allPlace").prop('checked', true);
+        $("#allCategory").prop('checked', true);
+        $("#allStatus").prop('checked', true);
+        $("#allRegion").prop('checked', true);
+
+        var branchAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "listBranch", '@Url.Action("GetBranchView", "Common")', 200, 120, true);
+        $('#listBranch').on('change', function (event) {
+            app_jqxcombos.comboBoxToInput("listBranch", "Branch", "allBranch");
+        });
+
+        @*var chargeAdapter = createListAdapter("PropId", "PropName", "listCharge", '@Url.Action("GetChargeView", "Common")', 200, 120);*@
+
+        @*var cityAdapter = createListAdapter("PropId", "PropName", "listCity", '@Url.Action("GetCityView", "Common")', 200, 120, true);
+            $('#listCity').on('change', function (event) {
+                listBoxToInput("listCity", "City");//, "allCity");
+                //var items = $("#listCity").jqxListBox('getSelectedItems');
+                //var checked = items && items.length > 0 ? true : false;
+                //$("#allCity").prop('checked', !checked);
+            });
+             *@
+
+        app_jqx_list.enum1ComboAdapter();
+        app_jqx_list.enum2ComboAdapter();
+        app_jqx_list.enum2ComboAdapter();
+
+
+        var statusAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "listStatus", '@Url.Action("GetStatusView", "Common")', 200, 120, false);
+        $('#listStatus').on('change', function (event) {
+            app_jqxcombos.comboBoxToInput("listStatus", "Status", "allStatus");
+        });
+
+        var placeAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "listPlace", '@Url.Action("GetPlaceView", "Common")', 200, 120, true);
+        $('#listPlace').on('change', function (event) {
+            app_jqxcombos.comboBoxToInput("listPlace", "Place", "allPlace");
+        });
+
+        var categoryAdapter = app_jqxcombos.createListAdapter("PropId", "PropName", "listCategory", '@Url.Action("GetCategoriesView", "Common")', 200, 200, true);
+        $('#listCategory').jqxListBox({ multiple: true });
+        $('#listCategory').on('change', function (event) {
+            app_jqxcombos.listBoxToInput("listCategory", "Category", "allCategory");
+        });
+
+        var statusAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "listStatus", '@Url.Action("GetStatusView", "Common")', 200, 120, false);
+        $('#listStatus').on('change', function (event) {
+            app_jqxcombos.comboBoxToInput("listStatus", "Status", "allStatus");
+        });
+
+        var regionAdapter = app_jqxcombos.createListAdapter("PropId", "PropName", "listRegion", '@Url.Action("GetRegionView", "Common")', 200, 120, false);
+        $('#listRegion').on('change', function (event) {
+            app_jqxcombos.listBoxToInput("listRegion", "Region", "allRegion");
+        });
+
+        var currentRegion = function () {
+
+            var reg = $("#Region").val();
+            if (isNumeric(reg))
+                return reg;
+            return 0;
+        }
+
+        var citySource =
+        {
+            dataType: "json",
+            dataFields: [
+                { name: 'PropId' },
+                { name: 'RegionId' },
+                { name: 'PropName' }
+            ],
+            data: { 'region': currentRegion() },
+            type: 'POST',
+            url: '@Url.Action("GetCityRegionView", "Common")'
+        };
+
+        var cityAdapter = new $.jqx.dataAdapter(citySource, {
+            //contentType: "application/json; charset=utf-8",
+            loadError: function (jqXHR, status, error) {
+                //alert("areaAdapter failed: " + error);
+            },
+            loadComplete: function (data) {
+                //alert("areaAdapter is Loaded");
+            }
+        });
+        // perform Data Binding.
+        //areaAdapter.dataBind();
+
+
+        $("#listCity").jqxListBox(
+        {
+            rtl: true,
+            source: cityAdapter,
+            width: 200,
+            height: 120,
+            multiple: true,
+            displayMember: 'PropName',
+            valueMember: 'PropId'
+        });
+        $('#listCity').on('change', function (event) {
+            app_jqxcombos.listBoxToInput("listCity", "City");//, "allCity");
+        });
+
+        $("#listRegion").bind('select', function (event) {
+            if (event.args) {
+
+                $("#listCity").jqxListBox({ disabled: false, selectedIndex: -1 });
+                var value = event.args.item.value;
+                citySource.data = { 'region': value };
+                cityAdapter = new $.jqx.dataAdapter(citySource);
+                $("#listCity").jqxListBox({ source: cityAdapter });
+                $("#City").val("");
+            }
+        });
+        // perform Data Binding.
+        //placeAdapter.dataBind();
+
+        //$("#listBranch").jqxListBox('insertAt', "בחר הכל", 1);
+        //$("#listCharge").jqxListBox('insertAt', { label: "בחר הכל", value: "-1" }, 1);
+        //$("#listCity").jqxListBox('insertAt', { label: "בחר הכל", value: "-1" }, 1);
+        //$("#listPlace").jqxListBox('insertAt', { label: "בחר הכל", value: "-1" }, 1);
+
+
+        $('#submit').on('click', function () {
+            var action = $("#form").find('input[name=op]:checked').val();
+
+            $("#form").attr('action', app.appPath() + action);
+        });
+        $("input[name=op]:radio").change(function () {
+            //$("#rdDefault, #rdSms", "#rdMail").change(function () {
+            var action = $("#form").find('input[name=op]:checked').val();
+            $("#form").attr('action', app.appPath() + action);
+        });
+        $('#reset').on('click', function () {
+            location.reload();
+        });
+
+        $("#allCity").click(function () {
+
+            var items = $("#listCity").jqxListBox('getItems');
+            jQuery.each(items, function (i, item) {
+                $("#listCity").jqxListBox('selectItem', item);
+            });
+            app_jqxcombos.listBoxToInput("listCity", "City");
+        });
+        $("#unselectAllCity").click(function () {
+            $("#listCity").jqxListBox('clearSelection');
+            $("#City").val("");
+        });
+    });
+
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+    @Html.ActionLink("Home", "Index", "Home")>
+    @Html.ActionLink("Main", "Main", "Home")>
+    @ViewContext.RouteData.Values["action"].ToString()
+</div>
+
+@*<hgroup class="title">
+    <h3 class="rightPan">איתור מנויים.</h3>
+</hgroup>*@
+<div class="clear"></div>
+
+
+<div class="global-view">
+
+    <div class="container">
+        <h3 class="rtl">איתור מנויים</h3>
+        <ul id="tab-query" class="nav nav-tabs">
+            <li class="active" style="font-size: 120%; font-weight: bold;"><a href="#tab-general" data-toggle="tab">חיפוש כללי</a></li>
+            <!--<li style="font-size: 120%; font-weight: bold;"><a href="#tab-branch" data-toggle="tab">חיפוש לפי סניף</a></li>-->
+            <li style="font-size: 120%; font-weight: bold;"><a href="#tab-address" data-toggle="tab">חיפוש לפי כתובת</a></li>
+            <li style="font-size: 120%; font-weight: bold;"><a href="#tab-adv" data-toggle="tab">חיפוש מתקדם</a></li>
+        </ul>
+
+
+        <form id="form" action="Members" method="post">
+            <input type="hidden" id="Category" name="Category" />
+            <input type="hidden" id="Status" name="Status" />
+            <input type="hidden" id="Place" name="Place" />
+            <input type="hidden" id="Branch" name="Branch" />
+            <input type="hidden" id="Region" name="Region" />
+            <input type="hidden" id="City" name="City" />
+            <div id="tab-content" class="tab-content" dir="rtl">
+                <div class="tab-pane fade in active" id="tab-general">
+                    <p>איתור כללי</p>
+                    <div>
+                        <table style="direction: rtl;">
+                            <tr>
+                                <th style="width: 20%"></th>
+                                <th style="width: 50px"></th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="headline">סיווג-בחירה מרובה</label>
+                                    <div id="listCategory" name="listCategory"></div>
+                                    <input type="checkbox" id="allCategory" name="allCategory" />&nbsp;<span>הצג הכל</span>
+                                </td>
+                                <td></td>
+                                <td>
+                                    <div class="headline">סניף</div>
+                                    <div id="listBranch" name="Branch"></div>
+                                    <input type="checkbox" id="allBranch" name="allBranch" />&nbsp;<span>הצג הכל</span>
+                                    <div class="headline">סטאטוס</div>
+                                    <div id="listStatus" name="listStatus"></div>
+                                    <input type="checkbox" id="allStatus" name="allStatus" />&nbsp;<span>הצג הכל</span>
+                                    <div class="headline">ארץ עלייה</div>
+                                    <div id="listPlace" name="listPlace"></div>
+                                    <input type="checkbox" id="allPlace" name="allPlace" />&nbsp;<span>הצג הכל</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"></td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+ 
+                <div class="tab-pane fade in" id="tab-address">
+                    <p>איתור לפי כתובת</p>
+                    <div>
+                        <div>
+                            <table style="direction: rtl;">
+                                <tr>
+                                    <th style="width: 20%"></th>
+                                    <th style="width: 50px"></th>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <td class="headline">מחוז</td>
+                                    <td></td>
+                                    <td class="headline">(שם היישוב (מתעדכן אוטומטית</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div id="listRegion" name="listRegion"></div>
+                                        <input type="checkbox" id="allRegion" name="allRegion" />&nbsp;<span>הצג הכל</span>
+                                    </td>
+                                    <td></td>
+                                    <td>
+                                        <div id="listCity" name="listCity"></div>
+                                        @*<input type="checkbox" id="allCity" name="allCity" />&nbsp;<span>הצג הכל</span>*@
+                                        <a href="#" id="allCity">סמן הכל</a>&nbsp;|&nbsp;
+                                        <a href="#" id="unselectAllCity">הסר</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="headline" colspan="3">כתובת</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <input type="text" name="address" style="width:400px" maxlength="30" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade in" id="tab-adv">
+                    <p>איתור מתקדם</p>
+                    <div>
+                        <div>
+                            <ul>
+                                <li class="headline">תעודת זהות</li>
+                                <li><input type="text" name="memID" style="width:120px" maxlength="10" /></li>
+                                <li class="headline">טלפון נייד</li>
+                                <li><input type="text" name="CellPhone" style="width:120px" maxlength="15" /></li>
+                                <li class="headline">גיל</li>
+                                <li>
+
+                                    <div style="vertical-align:top">
+                                        <span>מ:</span><br />
+                                        <input type="number" name="ageFrom" /><br />
+                                        <span>עד:</span><br />
+                                        <input type="number" name="ageTo" />
+                                    </div>
+                                </li>
+                                <li class="headline">הצטרפות לפני</li>
+                                <li><input type="number" name="monthlyTime" style="width:60px" /><span>חודשים</span></li>
+                                <li class="headline">שונות</li>
+                                <li><input type="checkbox" id="allBirthday" name="allBirthday" />&nbsp;<span>חוגגים החודש יום הולדת</span></li>
+                                <li><input type="checkbox" id="allCell" name="allCell" />&nbsp;<span>תקשורת לסלולאר</span></li>
+                                <li><input type="checkbox" id="allEmail" name="allEmail" />&nbsp;<span>תקשורת למייל</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div>
+                <input type="radio" id="rdDefault" name="op" value="/Crm/Members" checked="checked" />&nbsp;<span>אתר נמענים להצגה למסך</span>
+                <input type="radio" id="rdSms" name="op" value="/Crm/SmsEditor" />&nbsp;<span>אתר נמענים לשליחת מסרון</span>
+                <!--<input type="radio" id="rdMail" name="op" value="MailTargets" />&nbsp;<span>אתר נמענים לשליחת דואל</span>-->
+                <input type="radio" id="rdExport" name="op" value="/Crm/MembersExport" />&nbsp;<span>ייצוא לקובץ</span>
+
+            </div>
+            <div style="height:10px"></div>
+            <div>
+                <input type="submit" value="הצג" class="btn-default btn2" />
+                <input type="reset" value="נקה" class="btn-default btn2" />
+            </div>
+        </form>
+
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liCrm");
+</script>
+
+
+
+

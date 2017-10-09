@@ -19,7 +19,7 @@ var app_rout = {
     },
 
     redirectToMembers: function () {
-        app.redirectTo("/Crm/Members");
+        app.redirectTo("/Main/Members");
     }
 
 };
@@ -43,7 +43,7 @@ app_lookups = {
 
 };
 
-//============================================================================================ app_members
+//============================================================================================ app_ComboDlg
 
 
 //function app_ComboMembersDlg(tagName) {
@@ -158,6 +158,8 @@ function app_ComboDlg(tagName,tagDisplay,callback) {
     }
 };
 
+//============================================================================================ app_members
+
 var app_members = {
 
     displayMemberFields: function (url,data) {
@@ -170,11 +172,37 @@ var app_members = {
 			dataType: 'json',
 			data: data,
 			success: function (data) {
+
+			    $(".field-ex").hide();
+
 				if (data) {
 					$("#ExType").val(data.ExType);
 
-					//app.hideOrData("#divEnum1", data.ExEnum1, "");
+					app_members.displayExField(data.ExId, "ExId");
+					app_members.displayExField(data.ExEnum1, "ExEnum1");
+					app_members.displayExField(data.ExEnum2, "ExEnum2");
+					app_members.displayExField(data.ExEnum3, "ExEnum3");
+					app_members.displayExField(data.ExField1, "ExField1");
+					app_members.displayExField(data.ExField2, "ExField2");
+					app_members.displayExField(data.ExField3, "ExField3");
+					app_members.displayExField(data.ExRef1, "ExRef1");
+					app_members.displayExField(data.ExRef2, "ExRef2");
+					app_members.displayExField(data.ExRef3, "ExRef3");
 
+				    //app.hideOrData("#divEnum1", data.ExEnum1, "");
+
+					//app_members.displayExField(data.ExId, "#divExId", "#lblExId");
+					//app_members.displayExField(data.ExEnum1, "#divEnum1", "#lblEnum1");
+					//app_members.displayExField(data.ExEnum2, "#divEnum2", "#lblEnum2");
+					//app_members.displayExField(data.ExEnum3, "#divEnum3", "#lblEnum3");
+					//app_members.displayExField(data.ExField1, "#divField1", "#lblExField1");
+					//app_members.displayExField(data.ExField2, "#divField2", "#lblExField2");
+					//app_members.displayExField(data.ExField3, "#divField3", "#lblExField3");
+					//app_members.displayExField(data.ExRef1, "#divExRef1", "#lblExRef1");
+					//app_members.displayExField(data.ExRef2, "#divExRef2", "#lblExRef2");
+					//app_members.displayExField(data.ExRef3, "#divExRef3", "#lblExRef3");
+
+                    /*
 					if (data.ExEnum1 == "")
 						$("#divEnum1").hide();
 					else
@@ -208,14 +236,38 @@ var app_members = {
 					if (data.ExId == "")
 						$("#divExId").hide();
 					else
-						$("#lblExId").text(data.ExId);
+					    $("#lblExId").text(data.ExId);
 
+					if (data.ExRef1 == "")
+					    $("#divExRef1").hide();
+					else
+					    $("#lblExRef1").text(data.ExRef1);
+
+					if (data.ExRef2 == "")
+					    $("#divExRef2").hide();
+					else
+					    $("#lblExRef2").text(data.ExRef2);
+
+					if (data.ExRef3 == "")
+					    $("#divExRef3").hide();
+					else
+					    $("#lblExRef3").text(data.ExRef3);
+                    */
 				}
 			},
 			error: function (jqXHR, status, error) {
 				app_dialog.alert(error);
 			}
 		});
+    },
+    displayExField: function (exval,fieldname,match) {
+
+        if (exval == "")
+            $("#div" + fieldname).hide();
+        else {
+            $("#lbl" + fieldname).text(exval);
+            $("#div" + fieldname).show();
+        }
     },
     initMembersDlg: function (tagName) {
 
@@ -291,25 +343,25 @@ var app_member_edit = {
 	add: function (wizard,wizTab, updateTag) {
 		if (updateTag)
 			$(updateTag).show();
-		wizard.appendIframe(wizTab, app.appPath() + "/Crm/_MemberAdd", "100%", "500px");
+		wizard.appendIframe(wizTab, app.appPath() + "/Main/_MemberAdd", "100%", "500px");
 	},
 	edit: function (wizard, recordId, wizTab, updateTag) {
 		if (updateTag)
 			$(updateTag).show();
 		if (recordId > 0)
-			wizard.appendIframe(wizTab, app.appPath() + "/Crm/_MemberEdit?id=" + recordId, "100%", "500px");
+			wizard.appendIframe(wizTab, app.appPath() + "/Main/_MemberEdit?id=" + recordId, "100%", "500px");
 	},
 	view: function (wizard, recordId, wizTab, updateTag) {
 		if (updateTag)
 			$(updateTag).hide();
 		if (recordId > 0)
-			wizard.appendIframe(wizTab, app.appPath() + "/Crm/_MemberView?id=" + id, "100%", "500px");
+			wizard.appendIframe(wizTab, app.appPath() + "/Main/_MemberView?id=" + id, "100%", "500px");
 	},
 	remove: function (gridTag) {
 		var id = app_member_edit.getrowId(gridTag);
 		if (id > 0) {
 			if (confirm('האם למחוק מנוי ' + id)) {
-				app_query.doPost(app.appPath() + "/Crm/TaskAssignDelete", { 'id': id });
+				app_query.doPost(app.appPath() + "/Main/TaskAssignDelete", { 'id': id });
 				$('#jqxgrid2').jqxGrid('source').dataBind();
 			}
 		}
@@ -433,7 +485,7 @@ var app_menu = {
         if (lang === undefined || lang == 'en') {
             b.append($('<a href="/home/index">Home</a>'));
             b.append($('<span> >> </span>'));
-            b.append($('<a href="/home/dashboard">Main</a>'));
+            b.append($('<a href="/main/dashboard">Dashboard</a>'));
             b.append($('<span> >> </span>'));
             if (section.substr(0, 1) == '/') {
                 b.append($('<a href="' + section + '">' + page + '</a>'));
@@ -455,7 +507,7 @@ var app_menu = {
         else {
             b.append($('<a href="/home/index">דף הבית</a>'));
             b.append($('<span> >> </span>'));
-            b.append($('<a href="/home/dashboard">ראשי</a>'));
+            b.append($('<a href="/main/dashboard">ראשי</a>'));
             b.append($('<span> >> </span>'));
             if (section.substr(0, 1) == '/') {
                 b.append($('<a href="' + section + '">' + page + '</a>'));
@@ -477,7 +529,7 @@ var app_jqx_list = {
 
     branchComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "Branch" : tag, '/Common/GetBranchView', 0, 120, false) },
 
-    placeComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "PlaceOfBirth" : tag, '/Common/GetPlaceView', 0, 120, false) },
+    //placeComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "PlaceOfBirth" : tag, '/Common/GetPlaceView', 0, 120, false) },
 
     statusComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "Status" : tag, '/Common/GetStatusView', 0, 0, false) },
 
@@ -485,9 +537,9 @@ var app_jqx_list = {
 
     regionComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "Region" : tag, '/Common/GetRegionView', 0, 120, false) },
 
-    cityComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "City" : tag, '/Common/GetCityView', 0, 120, false) },
+    cityComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "City" : tag, '/Common/GetCityView', 150, 120, false) },
 
-    genderComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "Gender" : tag, '/Common/GetGenderView', 0, 0, false) },
+    genderComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "Gender" : tag, '/Common/GetGenderView', 150, 0, false) },
 
     categoryCheckListAdapter: function (tag, output) {
         return app_jqxcombos.createCheckListAdapter("PropId", "PropName", tag === undefined ? "listCategory" : tag, "/Common/GetCategoriesView", 240, 140, false, output === undefined ? "Categories" : output)
@@ -505,50 +557,5 @@ var app_jqx_list = {
     campaignComboAdapter: function (tag) { return app_jqxcombos.createDropDownAdapterTag("PropId", "PropName", tag === undefined ? "#Campaign" : tag, '/Common/GetCampaignView', 200, 0, false, 'נא לבחור קמפיין') },
     taskTypeComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "Task_Type" : tag, '/System/GetTaskTypeList', 0, 120, false) },
     taskStatusComboAdapter: function (tag) { return app_jqxcombos.createDropDownAdapter("PropId", "PropName", tag === undefined ? "TaskStatus" : tag, '/System/GetTaskStatusList', 150, 120, false) }
-
-
-    /*
-        categoryCheckListAdapter: function () {
-            var categorySource =
-            {
-                dataType: "json",
-                async: false,
-                dataFields: [
-                    { name: 'PropId' },
-                    { name: 'PropName' }
-                ],
-                type: 'POST',
-                url: '/Common/GetCategoriesView'
-            };
-            var categoryAdapter = new $.jqx.dataAdapter(categorySource);
-            $("#listCategory").jqxListBox(
-            {
-                rtl: true,
-                source: categoryAdapter,
-                width: 240,
-                height: 140,
-                checkboxes: true,
-                displayMember: 'PropName',
-                valueMember: 'PropId'
-            });
-        }
-    */
-    /*
-        classComboAdapter: function(){return app_jqxcombos.createComboAdapter("ClassType", "ClassName", "BuildingClass", '/Building/GetBuildingClasses', 155, 0, false)},
-        ownerComboAdapter: function(){return app_jqxcombos.createComboAdapter("AccountId", "AccountName", "BuildingOwnerId", '/Building/GetOwnerView', 0, 200, false)},
-        ownerUnitComboAdapter: function () { return createComboAdapter("AccountId", "AccountName", "OwnerId", '/Building/GetOwnerView', 240, 200, false) },
-        ownerPlotsComboAdapter: function () { return app_jqxcombos.createComboAdapter("AccountId", "AccountName", "OwnerId", '/Building/GetOwnerView', 0, 200, false) },
-        managementComboAdapter: function () { return app_jqxcombos.createComboAdapter("AccountId", "AccountName", "ManagementCompany", '/Building/GetManagementView', 0, 200, false) },
-        airComboAdapter: function(){return app_jqxcombos.createComboAdapter("AirConditionId", "AirConditionName", "AirConditionType", '/Building/GetAirConditionView', 155, 0, false)},
-        parkComboAdapter: function(){return app_jqxcombos.createComboAdapter("ParkId", "ParkName", "ParkingType", '/Building/GetParkingTypeView', 155, 0, false)},
-        areaComboAdapter: function(){return app_jqxcombos.createComboAdapter("AreaId", "AreaName", "AreaId", '/Building/GetAreaViewAll', 0, 200, false)},
-        dealComboAdapter: function(){return createComboAdapter("DealId", "DealName", "DealType", '/Building/GetDealView', 240, 0, false)},
-        dealUnitComboAdapter: function(){return createComboAdapter("DealId", "DealName", "DealType", '/Building/GetDealUnitView', 240, 0, false)},
-        purposeComboAdapter: function(){return createComboAdapter("PurposeId", "PurposeName", "PurposeId", '/Building/GetPurposeView', 240, 0, false)},
-        tenantComboAdapter: function () { return createComboAdapter("AccountId", "AccountName", "TenantId", '/Building/GetTenantView', 240, 200, false) },
-        ownerTypeComboAdapter: function () { return createComboAdapter("OwnerTypeId", "OwnerTypeName", "OwnerType", '/Building/GetOwnerTypeView', 155, 0, false) },
-        designationComboAdapter: function () { return createComboAdapter("DesignationId", "DesignationName", "Designation", '/Building/GetDesignationView', 240, 200, false) },
-        adsTypeComboAdapter: function () { return createComboAdapter("AdsTypeId", "AdsTypeName", "MediaType", '/Building/GetAdsTypeView', 240, 200, false) },
-    */
 
 };

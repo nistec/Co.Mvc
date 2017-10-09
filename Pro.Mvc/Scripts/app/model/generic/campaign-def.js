@@ -13,6 +13,7 @@ function app_campaign_def(userInfo) {
     this.sourceUrl = '/Common/GetCampaignView';
     this.updateUrl = '/Common/DefCampaignUpdate';
     this.deleteUrl = '/Common/DefCampaignDelete';
+    this.rowEdit = -1;
 
     this.loadControls();
 

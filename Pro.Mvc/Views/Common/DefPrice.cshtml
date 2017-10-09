@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_View.cshtml";
-    Page.Title = "Crm";
+    Page.Title = "Main";
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
 }
 @section head {
@@ -80,5 +80,5 @@
 </div>
 <script type="text/javascript">
     app_menu.activeLayoutMenu("liEntity");
-    app_menu.breadcrumbs("Crm", "DefPrices", 'en');
+    app_menu.breadcrumbs("Main", "DefPrices", 'en');
 </script>

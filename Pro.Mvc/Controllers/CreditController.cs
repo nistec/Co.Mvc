@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Nistec.Logging;
 using Pro.Data.Entities;
-using Pro.Lib.Api;
+using Pro.Lib.Payments;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -20,6 +20,7 @@ function app_task_form_template(Model,userInfo) {
     this.RelToAddUrl = '/System/TaskFormTemplateRelToAdd';
     this.RelDeleteUrl = "/System/AdDefRelDelete"
     this.RelUpdateUrl = "/System/AdDefRelUpdate"
+    this.rowEdit = -1;
 
     this.loadControls();
 

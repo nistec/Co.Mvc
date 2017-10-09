@@ -64,8 +64,12 @@ function tasks_active_open_task(status, id,model) {
 
     switch (model) {
         case 'T':
-            if (status > 1 && status < 8)
+            if (status >= 8)
+                app.redirectTo('/System/TaskInfo?id=' + id);
+            else if (status > 1 && status < 8)
                 app.redirectTo('/System/TaskEdit?id=' + id);
+            else if (status ==0)//today
+                app.redirectTo('/System/TaskStart?id=' + id);
             else if (status <= 1) {
                 app_dialog.confirm("האם לאתחל משימה?", function () {
                     app.redirectTo('/System/TaskStart?id=' + id);
@@ -74,14 +78,24 @@ function tasks_active_open_task(status, id,model) {
                 //if (confirm("האם לאתחל משימה?"))
                 //    app.redirectTo('/System/TaskStart?id=' + id);
             }
-            else if (status >= 8)
-                app.redirectTo('/System/TaskInfo?id=' + id);
+            
             break;
         case 'E':
             if (status >= 8)
                 app.redirectTo('/System/TicketInfo?id=' + id);
-            else
+            else if (status > 1 && status < 8)
                 app.redirectTo('/System/TicketEdit?id=' + id);
+            else if (status ==0) //today
+                    app.redirectTo('/System/TicketStart?id=' + id);
+            else if (status <= 1) {
+                app_dialog.confirm("האם לאתחל סוגיה?", function () {
+                    app.redirectTo('/System/TicketStart?id=' + id);
+                });
+            }
+            //if (status >= 8)
+            //    app.redirectTo('/System/TicketInfo?id=' + id);
+            //else
+            //    app.redirectTo('/System/TicketEdit?id=' + id);
             break;
         case 'R':
             if (status >= 8)
@@ -286,6 +300,22 @@ app_tasks_active = {
             source: dataAdapter,
             width: '100%',
             height: '100%',
+            //itemRenderer: function (item, data, resource) {
+            //    //$(item).find(".jqx-kanban-item-color-status").html("<span style='line-height: 23px; margin-left: 5px;'>" + resource.name + "</span>");
+            //    //$(item).find(".jqx-kanban-item-text").css('background', item.color);
+                
+            //    //item.data = data;
+            //    var name=resource.name;
+            //    var color=item.color;
+            //    //var resourceId = item.resourceId;
+            //    //var status = tasks_getStatus(item.status);
+            //    //var itemId = item.itemId;
+
+            //    item.on('dblclick', function (event, data) {
+            //        alert('dblclick');
+            //        //tasks_active_open_task(status, itemId, resourceId)
+            //    });
+            //},
             columns: [
             { text: "משימות סגורות", dataField: "done" },
             { text: "משימות בטיפול", dataField: "work" },
@@ -293,8 +323,72 @@ app_tasks_active = {
             { text: "משימות להיום", dataField: "today" }
             ]
         });
+        
+        $('#kanban').on('itemMoved', function (event) {
+            //event.preventDefault();
+            //event.stopPropagation();
+            var args = event.args;
+            var itemId = args.itemId;
+            var oldParentId = args.oldParentId;
+            var newParentId = args.newParentId;
+            var itemData = args.itemData;
+            var oldColumn = args.oldColumn;
+            var newColumn = args.newColumn;
+            var newstate = tasks_getStatus(newColumn.dataField);
+            var oldstate = tasks_getStatus(oldColumn.dataField);
+            if (oldColumn == newColumn)
+            {
+                var status = tasks_getStatus(itemData.status);
+                tasks_active_open_task(status, itemData.id, itemData.resourceId);
+                return;
+            }
+            
+            app_query.doDataPost('/System/TaskChangeState', { itemid: itemId, newstate: newstate, oldtate: oldstate }, function (data) {
+
+                if (data.Status < 0) {
+                    event.stopPropagation();
+                    //var newContent = { text: "Cookies", content: "Content", tags: "cookies", color: "lightgreen", resourceId: 1, className: "standard" };
+                    //itemData.status = oldColumn.dataField;
+                    //$('#kanban').jqxKanban('updateItem', itemId, itemData);
+                }
+
+            });
+        });
+
+        //$('#kanban').on('itemReceived', function (event) {
+        //    //event.preventDefault();
+        //    //event.stopPropagation();
+        //    var args = event.args;
+        //    var itemId = args.itemId;
+        //    var oldParentId = args.oldParentId;
+        //    var newParentId = args.newParentId;
+        //    var itemData = args.itemData;
+        //    var oldColumn = args.oldColumn;
+        //    var newColumn = args.newColumn;
+
+        //    //log.push("itemReceived is raised");
+        //    //updateLog();
+        //});
+        //$('#kanban').on('columnCollapsed', function (event) {
+        //    var args = event.args;
+        //    var column = args.column;
+
+        //    //log.push("columnCollapsed is raised");
+        //    //updateLog();
+        //});
+
+        //$('#kanban').on('columnExpanded', function (event) {
+        //    var args = event.args;
+        //    var column = args.column;
+
+        //    //log.push("columnExpanded is raised");
+        //    //updateLog();
+        //});
+
 
         $('#kanban').on('itemAttrClicked', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
             var args = event.args;
             var itemId = args.itemId;
             var attribute = args.attribute; // template, colorStatus, content, keyword, text, avatar
@@ -312,34 +406,23 @@ app_tasks_active = {
             tasks_active_open_task(status, itemId, resourceId)
 
         });
-        $('#kanban').on('itemMoved', function (event) {
-            var args = event.args;
-            var itemId = args.itemId;
-            var oldParentId = args.oldParentId;
-            var newParentId = args.newParentId;
-            var itemData = args.itemData;
-            var oldColumn = args.oldColumn;
-            var newColumn = args.newColumn;
-            var newstate=tasks_getStatus(newColumn.dataField);
-            var oldstate = tasks_getStatus(oldColumn.dataField);
-            app_query.doDataPost('/System/TaskChangeState', {itemid:itemId,newstate:newstate,oldtate:oldstate}, function(data){
-            
-                if(data.Status < 0)
-                {
-                    //var newContent = { text: "Cookies", content: "Content", tags: "cookies", color: "lightgreen", resourceId: 1, className: "standard" };
-                    itemData.status = oldColumn;
-                    $('#jqxKanban').jqxKanban('updateItem', itemId, itemData);
-                }
 
-            });
+        $('#kanban').on('columnAttrClicked', function (event) {
+            var args = event.args;
+            var column = args.column;
+            var cancelToggle = args.cancelToggle; // false by default. Set to true to cancel toggling dynamically.
+            var attribute = args.attribute; // title, button
+
+            //log.push("columnAttrClicked is raised");
+            //updateLog();
         });
 
-        function updateItem()
-        {
-            var itemId = '12354';
-            var newContent = { text: "Cookies", content: "Content", tags: "cookies", color: "lightgreen", resourceId: 1, className: "standard" };
-            $('#jqxKanban').jqxKanban('updateItem', itemId, newContent);
-        }
+        //function updateItem()
+        //{
+        //    var itemId = '12354';
+        //    var newContent = { text: "Cookies", content: "Content", tags: "cookies", color: "lightgreen", resourceId: 1, className: "standard" };
+        //    $('#kanban').jqxKanban('updateItem', itemId, newContent);
+        //}
 
         
 

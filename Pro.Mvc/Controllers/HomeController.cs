@@ -14,31 +14,10 @@ using System.Text;
 
 namespace Pro.Mvc.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController : Controller
     {
         //[AllowAnonymous]
-        [HttpGet]
-        public ActionResult Dashboard()
-        {
-            //ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
-
-            return View();
-        }
-
-        [HttpPost]
-        public String DashboardMembers()
-        {
-            int accountId = GetAccountId();
-            var data = ReportContext.Dashbord_Members(accountId);
-            return data;
-        }
-        [HttpPost]
-        public String DashboardCounters()
-        {
-            int accountId = GetAccountId();
-            var data = ReportContext.Dashbord_Counters(accountId);
-            return data;
-        }
+       
 
         
 
@@ -73,6 +52,75 @@ namespace Pro.Mvc.Controllers
         {
             return View();
         }
+
+         #region errors
+         public ViewResult ErrorNotFound()
+         {
+             ViewBag.Message = string.Format("{0} : {1}", "שגיאה אירעה ב", Request["aspxerrorpath"]);
+             Response.StatusCode = 200;// 404;  //you may want to set this to 200
+             return View();
+         }
+         public ViewResult ErrorUnauthorized()
+         {
+             ViewBag.Message = string.Format("{0} : {1}", "שגיאה אירעה ב", Request["aspxerrorpath"]);
+             Response.StatusCode = 200;// 404;  //you may want to set this to 200
+             return View();
+         }
+
+         protected string GetAllErrors()
+         {
+             string messages = string.Join("; ", ModelState.Values
+                                               .SelectMany(x => x.Errors)
+                                               .Select(x => x.ErrorMessage));
+             return messages;
+         }
+         public ViewResult Error()
+         {
+             ViewBag.Message = string.Format("{0} : {1}", "שגיאה אירעה ב", Request["aspxerrorpath"]);
+             Response.StatusCode = 200;// 500;  //you may want to set this to 200
+             return View();
+         }
+         protected override void OnException(ExceptionContext filterContext)
+         {
+             // Bail if we can't do anything; app will crash.
+             if (filterContext == null)
+                 return;
+             // since we're handling this, log to elmah
+             Exception ex = null;
+             //var ex = filterContext.HttpContext.Error.Exception ?? new Exception("No further information exists.");
+
+             if (filterContext.HttpContext != null)
+             {
+                 ex = filterContext.HttpContext.Error;
+                 if (ex == null)
+                 {
+                     ex = filterContext.Exception;
+                     if (ex == null)
+                         ex = new Exception("No further information exists.");
+                     else if (ex is SecurityException)
+                     {
+                         filterContext.Result = new RedirectResult("~/Account/Login");
+                     }
+                 }
+             }
+             else
+             {
+                 ex = filterContext.Exception;
+                 if (ex == null)
+                     ex = new Exception("No further information exists.");
+                 else if (ex is SecurityException)
+                 {
+                     filterContext.Result = new RedirectResult("~/Account/Login");
+                 }
+             }
+
+             TraceHelper.Log("Application", "OnException", ex.Message + " StackTrace: " + ex.StackTrace, Request, 500);
+
+             filterContext.ExceptionHandled = true;
+         }
+ 
+         #endregion
+
         /*
          [HttpGet]
          public ActionResult Login()
@@ -229,22 +277,22 @@ namespace Pro.Mvc.Controllers
             return View();
         }
        */
-        public ActionResult Main()
-        {
+        //public ActionResult Main()
+        //{
 
-            //return View();
-            return Authenticate(null);
+        //    return View();
+        //    //return Authenticate(null);
 
-            //var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
-            //if (signedUser == null)
-            //{
-            //  return  RedirectToAction("Index", "Home");
-            //}
-            //ViewBag.UserName = signedUser.UserName;
-            ////ViewBag.Layout = signedUser.UserRole == 9 ? "~/Views/_ViewAdmin.cshtml" : "~/Views/_View.cshtml"; ;
+        //    //var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
+        //    //if (signedUser == null)
+        //    //{
+        //    //  return  RedirectToAction("Index", "Home");
+        //    //}
+        //    //ViewBag.UserName = signedUser.UserName;
+        //    ////ViewBag.Layout = signedUser.UserRole == 9 ? "~/Views/_ViewAdmin.cshtml" : "~/Views/_View.cshtml"; ;
 
-            //return View();
-        }
+        //    //return View();
+        //}
 
         //public class EmployeeController : Controller
         //{

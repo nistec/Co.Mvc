@@ -14,6 +14,7 @@ function app_category_def(userInfo) {
     this.sourceUrl = '/Common/GetCategoryListView';
     this.updateUrl = '/Common/DefCategoryUpdate';
     this.deleteUrl = '/Common/DefCategoryDelete';
+    this.rowEdit = -1;
 
     this.loadControls();
        
@@ -42,7 +43,7 @@ function app_category_def(userInfo) {
         var columns = [
            { text: 'קוד סיווג', datafield: 'PropId', width: 60, cellsalign: 'right', align: 'center' ,
            cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
-               return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="/Crm/Members?Category=' + value + '" title="הצג מנויים">' + value + '</a></div>'
+               return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="/Main/Members?Category=' + value + '" title="הצג מנויים">' + value + '</a></div>'
            }
            },
            { text: 'שם סיווג', datafield: 'PropName', cellsalign: 'right', align: 'center' },

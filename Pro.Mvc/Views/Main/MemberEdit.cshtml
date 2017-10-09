@@ -1,0 +1,256 @@
+﻿@{
+
+    ViewBag.Title = "Main";
+    Layout = "~/Views/Shared/_View.cshtml";
+    int rcdid = Nistec.Types.ToInt(Request["id"]);
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <script type="text/javascript" src="~/Scripts/app/main/members-def.js"></script>
+   <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+
+    <style type="text/css">
+        #tabs {
+            max-width: 400px;
+            direction: rtl;
+            background: transparent;
+            border: none;
+            /*font-size: 80%;*/
+        }
+
+        #tab-head {
+            direction: rtl;
+            height: 34px;
+        }
+    </style>
+
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#tabs").tabs();
+            
+            var def = new app_members_def('@rcdid', JSON.parse('@userInfo'), false);
+
+            $('#reset').on('click', function () {
+                location.reload();
+            });
+
+
+            $('#accSubmit').on('click', function (e) {
+
+                e.preventDefault();
+                def.doSubmit();
+            });
+
+
+
+            $('#accCancel').on('click', function (e) {
+                $('#accForm')[0].reset();
+                $('#accForm').jqxValidator('hide');
+            });
+        });
+
+    </script>
+}
+
+<div class="breadcrumbs"></div>
+<div class="top-space"></div>
+
+<div class="global-view">
+    <div class="container">
+        <div id="fcWindow">
+            <div id="fcHeader">
+                <h3 id="fcTitle" class="rtl">הגדרת מנוי</h3>
+            </div>
+
+            <div id="fcBody">
+                <form class="fcForm" id="fcForm" method="post" action="/Main/MemberUpdate">
+                    <div style="direction: rtl; text-align: right;">
+                        <input type="hidden" id="ExType" />
+                        <input type="hidden" id="RecordId" name="RecordId" value="0" />
+                        <input type="hidden" id="AccountId" name="AccountId" value="" />
+                        <input type="hidden" id="Categories" name="Categories" value="" />
+                        <div id="tabs">
+                            <ul id="tab-head">
+                                <li class="active"><a href="#tab-personal" data-toggle="tab">פרטים אישיים</a></li>
+                                <li><a href="#tab-general" data-toggle="tab">כללי</a></li>
+                                <li><a href="#tab-notes" data-toggle="tab">הערות</a></li>
+                            </ul>
+
+                            <div id="tab-personal">
+                                <div class="form-group">
+                                    <div class="field">
+                                        תעודת זהות :
+                                    </div>
+                                    <input id="MemberId" name="MemberId" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        שם פרטי :
+                                    </div>
+                                    <input id="FirstName" name="FirstName" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        שם משפחה :
+                                    </div>
+                                    <input id="LastName" name="LastName" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        כתובת :
+                                    </div>
+                                    <input id="Address" name="Address" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        עיר :
+                                    </div>
+                                    <div id="City" name="City"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        מגדר:
+                                    </div>
+                                    <div id="Gender" name="Gender"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        תאריך לידה:
+                                    </div>
+                                    <div id="Birthday" name="Birthday"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        טלפון נייד:
+                                    </div>
+                                    <input id="CellPhone" name="CellPhone" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        טלפון:
+                                    </div>
+                                    <input id="Phone" name="Phone" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        דאר אלקטרוני:
+                                    </div>
+                                    <input id="Email" name="Email" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        חברה\ארגון :
+                                    </div>
+                                    <input id="CompanyName" name="CompanyName" type="text" class="text-mid" />
+                                </div>
+                            </div>
+                            <div id="tab-general">
+                                <div class="form-group">
+                                    <div class="field">
+                                        סניף :
+                                    </div>
+                                    <div id="Branch" name="Branch"></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="field">
+                                        סווג :
+                                    </div>
+                                    <div id="listCategory" name="listCategory" style="padding: 10px" data-type="checklist"></div>
+                                </div>
+                                <div id="divExId" class="form-group field-ex">
+                                    <div id="lblExId" class="column">
+                                    </div>
+                                    <input type="text" id="ExId" name="ExId" class="text-mid" maxlength="50" />
+                                </div>
+                                <div id="divExEnum1" class="form-group field-ex">
+                                    <div id="lblExEnum1" class="column">
+                                    </div>
+                                    <div id="ExEnum1" name="ExEnum1"></div>
+                                </div>
+                                <div id="divExEnum2" class="form-group field-ex">
+                                    <div id="lblExEnum2" class="column">
+                                    </div>
+                                    <div id="ExEnum2" name="ExEnum2"></div>
+                                </div>
+                                <div id="divExEnum3" class="form-group field-ex">
+                                    <div id="lblExEnum3" class="column">
+                                    </div>
+                                    <div id="ExEnum3" name="ExEnum3"></div>
+                                </div>
+                                <div id="divExField1" class="form-group field-ex">
+                                    <div id="lblExField1" class="column">
+                                    </div>
+                                    <input type="text" id="ExField1" name="ExField1" class="text-mid" maxlength="250" />
+                                </div>
+                                <div id="divExField2" class="form-group field-ex">
+                                    <div id="lblExField2" class="column">
+                                    </div>
+                                    <input type="text" id="ExField2" name="ExField2" class="text-mid" maxlength="250" />
+                                </div>
+                                <div id="divExField3" class="form-group field-ex">
+                                    <div id="lblExField3" class="column">
+                                    </div>
+                                    <input type="text" id="ExField3" name="ExField3" class="text-mid" maxlength="250" />
+                                </div>
+                                <div id="divExRef1" class="form-group field-ex">
+                                    <div id="lblExRef1" class="column">
+                                    </div>
+                                    <input type="number" id="ExRef1" name="ExRef1" />
+                                </div>
+                                <div id="divExRef2" class="form-group field-ex">
+                                    <div id="lblExRef2" class="column">
+                                    </div>
+                                    <input type="number" id="ExRef2" name="ExRef2" />
+                                </div>
+                                <div id="divExRef3" class="form-group field-ex">
+                                    <div id="lblExRef3" class="column">
+                                    </div>
+                                    <input type="number" id="ExRef3" name="ExRef3" />
+                                </div>
+
+                            </div>
+                            <div id="tab-notes">
+                                <div class="form-group">
+                                    <div class="field">
+                                        הערות:
+                                    </div>
+                                    <textarea id="Note" name="Note" style="max-width:320px;width:80%;height:60px"></textarea>
+                                </div>
+                                <div class="form-group @(Model.Option == "a" ? "pasive" : null)">
+                                    <div class="field">
+                                        מועד הצטרפות:
+                                    </div>
+                                    <input id="JoiningDate" name="JoiningDate" type="text" class="text-mid" readonly="readonly" />
+                                </div>
+                                <div class="form-group @(Model.Option == "a" ? "pasive" : null)">
+                                    <div class="field">
+                                        מועד עדכון:
+                                    </div>
+                                    <input id="LastUpdate" name="LastUpdate" type="text" readonly="readonly" class="text-mid" />
+                                </div>
+                            </div>
+                        </div>
+                        <div style="height: 5px"></div>
+                        <p id="validator-message" style="color:red"></p>
+                        <div>
+                            <input id="accSubmit" class="btn-default btn7" type="button" value="עדכון" />
+                            <input id="accCancel" class="btn-default btn7" type="button" value="ניקוי" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end of content-wrapper-->
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liMain");
+    app_menu.breadcrumbs("Main", "MemberEdit", 'en');
+</script>

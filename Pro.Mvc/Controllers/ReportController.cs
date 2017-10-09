@@ -15,13 +15,13 @@ namespace Pro.Mvc.Controllers
          [HttpGet]
         public ActionResult ReportQuery()
         {
-            return View();
+            return View(true);
         }
         [HttpPost]
          public ActionResult ReportStatistic()
         {
             StatisticReportQuery rm = new StatisticReportQuery(Request.Form, GetAccountId());
-            return View(rm);
+            return View(true,rm);
         }
         [HttpPost]
         public String GetStatisticReport(string report, int campaign, DateTime? dateFrom,DateTime? dateTo)

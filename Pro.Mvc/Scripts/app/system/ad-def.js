@@ -15,11 +15,12 @@ function app_ad_def(userInfo) {
     this.updateUrl = '/System/AdDefUpdate';
     this.deleteUrl = '/System/AdDefDelete';
     this.showMemmbersUrl = '/System/AdShowMembers';
-    this.fieldId = 'PropId';
+    this.fieldId = 'GroupId';
     this.RelUrl = '/System/AdDefRel';
     this.RelToAddUrl = '/System/AdDefRelToAdd';
     this.RelDeleteUrl = "/System/AdDefRelDelete"
     this.RelUpdateUrl = "/System/AdDefRelUpdate"
+    this.rowEdit = -1;
 
     this.loadControls();
 
@@ -27,21 +28,21 @@ function app_ad_def(userInfo) {
 
     this.createRowData = function () {
         var row = {
-            PropId: $("#PropId").val(), PropName: $("#PropName").val()
+            GroupId: $("#GroupId").val(), GroupName: $("#GroupName").val()
         };
         return row;
     }
 
     this.setEditorInputData = function (dataRecord) {
         if (dataRecord === undefined || dataRecord == null) {
-            $("#PropId").val('');
-            $("#PropName").val('');
+            $("#GroupId").val('');
+            $("#GroupName").val('');
             $("#trcode").hide();
         }
         else {
             $("#trcode").show();
-            $("#PropId").val(dataRecord.PropId);
-            $("#PropName").val(dataRecord.PropName);
+            $("#GroupId").val(dataRecord.GroupId);
+            $("#GroupName").val(dataRecord.GroupName);
         }
     }
 
@@ -49,12 +50,12 @@ function app_ad_def(userInfo) {
 
         var columns = [
            //{
-           //    text: 'קוד קבוצה', datafield: 'PropId', width: 60, cellsalign: 'right', align: 'center',
+           //    text: 'קוד קבוצה', datafield: 'GroupId', width: 60, cellsalign: 'right', align: 'center',
            //    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
            //        return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="' + slf.showMemmbersUrl + '=' + value + '" title="הצג מנויים">' + value + '</a></div>'
            //    }
            //},
-           { text: 'שם קבוצה', datafield: 'PropName', cellsalign: 'right', align: 'center' },
+           { text: 'שם קבוצה', datafield: 'GroupName', cellsalign: 'right', align: 'center' },
            { text: 'מנויים', datafield: 'MembersCount', width: 80, cellsalign: 'right', align: 'center' }
         ];
         return columns;
@@ -63,8 +64,8 @@ function app_ad_def(userInfo) {
     this.createFields = function () {
         var datafields =
             [
-                { name: 'PropId', type: 'number' },
-                { name: 'PropName', type: 'string' },
+                { name: 'GroupId', type: 'number' },
+                { name: 'GroupName', type: 'string' },
                 { name: 'MembersCount', type: 'number' }
             ];
         return datafields;
@@ -78,11 +79,11 @@ function app_ad_def(userInfo) {
                 app_dialog.alert("Invalid row id to delete!");
                 return null;
             }
-            return { 'PropId': rowid };
+            return { 'GroupId': rowid };
         }
         else
 
-            return { 'PropId': command == 0 ? -1 : rowdata.PropId, 'PropName': rowdata.PropName, 'command': command };
+            return { 'GroupId': command == 0 ? -1 : rowdata.GroupId, 'GroupName': rowdata.GroupName, 'command': command };
 
     }
 
@@ -93,8 +94,8 @@ function app_ad_def(userInfo) {
         event.stopPropagation();
         var row = event.args.row;
         if (row) {
-            var PropId = row.PropId;
-            slf.nastedGridLoder(PropId,false);
+            var GroupId = row.GroupId;
+            slf.nastedGridLoder(GroupId,false);
         }
     });
 
@@ -136,8 +137,8 @@ function app_ad_def(userInfo) {
 app_ad_def.prototype.loadControls = function () {
 
     // initialize the input fields.
-    $("#PropId").jqxInput().width(200);
-    $("#PropName").jqxInput().width(200);
+    $("#GroupId").jqxInput().width(200);
+    $("#GroupName").jqxInput().width(200);
 
     // initialize the popup window and buttons.
     $("#Cancel").jqxButton();
@@ -148,7 +149,7 @@ app_ad_def.prototype.loadControls = function () {
     });
 
     var input_rules = [
-             { input: '#PropName', message: 'חובה לציין קבוצה!', action: 'keyup, blur', rule: 'required' }
+             { input: '#GroupName', message: 'חובה לציין קבוצה!', action: 'keyup, blur', rule: 'required' }
     ];
 
     //input_rules.push({ input: '#MemberId', message: 'חובה לציין ת.ז!', action: 'keyup, blur', rule: 'required' });
@@ -197,7 +198,7 @@ app_ad_def.prototype.nastedGrid = function (id) {
         { name: 'Email', type: 'string' },
         { name: 'GroupId', type: 'number' }
     ],
-    //id: 'PropId',
+    //id: 'GroupId',
     data: { 'id': id },
     type: 'POST',
     url: '/System/AdDefRel'

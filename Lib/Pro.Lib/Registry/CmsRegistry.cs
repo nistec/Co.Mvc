@@ -315,7 +315,7 @@ namespace Pro.Data.Registry
                 HiddenScript = System.Web.HttpUtility.HtmlDecode(HiddenScript);
         }
 
-        [EntityProperty(EntityPropertyType.Key)]
+        [EntityProperty(EntityPropertyType.NA)]
         public string Args { get; set; }
     }
 
@@ -354,7 +354,7 @@ namespace Pro.Data.Registry
                 HScript = System.Web.HttpUtility.HtmlDecode(HScript);
         }
 
-        [EntityProperty(EntityPropertyType.Key)]
+        [EntityProperty(EntityPropertyType.NA)]
         public string Args { get; set; }
     }
     public class PageHead : IEntityItem

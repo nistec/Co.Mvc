@@ -147,6 +147,12 @@ function app_wiztabs() {
         current.removeClass('active')
         $("#wiz-" + step).addClass('active');
     }
+    this.clearStep = function (step) {
+        var part = (step) ? $("#divPartial" + step) : this.getCurrent().find('.wiz-partial');
+        if (part.length > 0)
+            part.children().remove();
+    }
+
     this.changeIframe = function (src) {
         var iframe = this.getCurrent().find('.wiz-partial').find("iframe");
         app_iframe.changeIframe(iframe,src);
@@ -176,6 +182,10 @@ function app_wiztabs() {
         if (part.length > 0)
             part.children().remove();
     }
+    this.existsIframe = function (step) {
+        var part = (step) ? $("#divPartial" + step) : this.getCurrent().find('.wiz-partial');
+        return (part.children().length > 0);
+    }
     this.closeIframe = function () {
 
         this.displayStep(1);
@@ -194,6 +204,115 @@ function app_wiztabs() {
     //end wizard =====================================
 };
 
+
+function wiz_control(controlName,tagWindow) {
+    //this.html,
+    //this.control_sync,
+    this.control_name = controlName,
+    this.tagWindow = tagWindow;
+    this.init = function (html,data, syncCallback) {
+        //var pasive = dataModel.Option == "a" ? " pasive" : "";
+        //this.html = html;
+        $(this.tagWindow).html(html).hide();
+
+        if (syncCallback)
+            syncCallback(data);
+
+        //var slf = this;
+
+        //if (this.control_sync == null)
+        //    this.control_sync = syncCallback();
+
+        //this.control_sync.init(dataModel, userInfo);
+        //this.load();
+    },
+    this.clearDataForm = function (form) {
+        if (form === undefined)
+            form = "fcForm";
+        app_jqxform.clearDataForm(form);
+    },
+    this.load = function (form,source, loadCallback) {
+
+        if (form === undefined || form==null)
+            form = "fcForm";
+
+        //if (this.RecordId > 0) {
+
+        if (this.viewAdapter == null) {
+
+            this.viewAdapter = new $.jqx.dataAdapter(source, {
+                loadComplete: function (record) {
+                    if (record) {
+                        if (loadCallback) {
+                            loadCallback(record);
+                        }
+                        else {
+                            app_jqxform.loadDataForm(form, record);
+                        }
+                    }
+                },
+                loadError: function (jqXHR, status, error) {
+                },
+                beforeLoadComplete: function (records) {
+                }
+            });
+        }
+        else {
+            this.viewAdapter._source.data = source.data;
+        }
+        this.viewAdapter.dataBind();
+        //}
+        //else {
+        //    $('#RecordId').val(this.RecordId);
+        //    $('#UserId').val(this.UserInfo.UserId);
+        //    $('#AccountId').val(this.UserInfo.AccountId);
+        //}
+    },
+    this.display = function () {
+        $(this.tagWindow).show();
+    },
+    this.doCancel = function () {
+        window.parent.triggerWizControlCancel(this.control_name);
+    },
+    this.doSubmit = function (preCallback, successCallback) {
+        //e.preventDefault();
+        var slf = this;
+        var actionurl = $('#fcForm').attr('action');
+        if (preCallback)
+            preCallback(this.control_name);
+        var validationResult = function (isValid) {
+            if (isValid) {
+                $.ajax({
+                    url: actionurl,
+                    type: 'post',
+                    dataType: 'json',
+                    data: $('#fcForm').serialize(),
+                    success: function (data) {
+                        if (successCallback)
+                            successCallback(data);
+                        else {
+                            app_dialog.alert(data.Message);
+                            if (data.Status >= 0) {
+                                //if (slf.IsDialog) {
+                                window.parent.triggerWizControlCompleted(slf.control_name,data.OutputId);
+                                //    //$('#fcForm').reset();
+                                //}
+                                //else {
+                                //    app.refresh();
+                                //}
+                                //$('#RecordId').val(data.OutputId);
+                            }
+                        }
+                    },
+                    error: function (jqXHR, status, error) {
+                        app_dialog.alert(error);
+                    }
+                });
+            }
+        }
+        $('#fcForm').jqxValidator('validate', validationResult);
+    };
+};
 
 /*
 (function ($) {

@@ -9,7 +9,7 @@
 
 
   @Scripts.Render("~/bundles/jqx")
-  <script type="text/javascript" src="~/Scripts/app/crm/members-query.js"></script>
+  <script type="text/javascript" src="~/Scripts/app/main/members-query.js"></script>
     <style type="text/css">
         /*table {
             direction: rtl;
@@ -236,7 +236,7 @@
             //$("#form").attr('action', app.appPath() + action);
             //$("#form").submit();
 
-            //var actionurl = '/Crm/MembersExport';
+            //var actionurl = '/Main/MembersExport';
             //$("#form").attr('action', app.appPath() + action);
 
 
@@ -264,7 +264,7 @@
 
         });
         //$('#submitExport').on('click', function () {
-        //    var action = '/Crm/MembersExport';
+        //    var action = '/Main/MembersExport';
         //    $("#form").attr('action', app.appPath() + action);
         //    $("#form").submit();
             //});
@@ -471,10 +471,7 @@
  
 <script type="text/javascript">
     app_menu.activeLayoutMenu("liEntity");
-    app_menu.breadcrumbs("Crm", "CategoryQuery", 'en');
-        @*@Html.ActionLink("Home", "Index", "Home")>
-    @Html.ActionLink("Main", "Main", "Home")>
-    @ViewContext.RouteData.Values["action"].ToString()*@
+    app_menu.breadcrumbs("Main", "CategoryQuery", 'en');
     
 </script>
 

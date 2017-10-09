@@ -14,6 +14,8 @@ using Nistec.Web.Security;
 using ProSystem.Data.Entities;
 using ProSystem;
 using System.Threading.Tasks;
+using CaptchaMvc.HtmlHelpers;
+using CaptchaMvc.Attributes;
 
 namespace Pro.Mvc.Controllers
 {
@@ -43,7 +45,7 @@ namespace Pro.Mvc.Controllers
             var status = FormsAuth.DoSignIn(model.UserName, model.Password, model.RememberMe);
             if (status== AuthState.Succeeded)
             {
-                return RedirectToAction("Dashboard", "Home");
+                return RedirectToAction("Dashboard", "Main");
             }
             
             string msg = "שם משתמש ו או סיסמה אינם מוכרים במערכת";
@@ -56,7 +58,7 @@ namespace Pro.Mvc.Controllers
 
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        [Authorize]
+        //[Authorize]
         public ActionResult LogOff()
         {
             FormsAuth.Instance.SignOut();
@@ -220,16 +222,23 @@ namespace Pro.Mvc.Controllers
                     //string profile_name = "coProfile";
                     //var status = UserMembership.ForgotPassword(model.Email, token, ConfirmUrl, AppUrl, MailSenderFrom, Subject, profile_name);
 
-                    var status = UserMembership.SendResetToken(model.Email, ProSettings.AppId);
-                    if (status != 10)
+                    if (this.IsCaptchaValid("Captcha is not valid"))
                     {
-                        string msg = StatusDesc.GetMembershipStatus("MembershipStatus", status, ref isok);
-                        ViewBag.Message = msg;
-                        //ModelState.AddModelError("ErrorMessage", msg);
+                        var status = UserMembership.SendResetToken(model.Email, ProSettings.AppId);
+                        if (status != 10)
+                        {
+                            string msg = StatusDesc.GetMembershipStatus("MembershipStatus", status, ref isok);
+                            ViewBag.Message = msg;
+                            //ModelState.AddModelError("ErrorMessage", msg);
+                            return View(model);
+                        }
+                        return RedirectToAction("Final", "Account", new { type = "MembershipStatus", code = (int)status });
+                    }
+                    else
+                    {
+                        ViewBag.Message = "שגיאה: אין התאמה, נא לנסות שוב.";
                         return View(model);
                     }
-                    return RedirectToAction("Final", "Account", new { type = "MembershipStatus", code = (int)status });
-
 
                     //string token = Authorizer.GenerateRandomPassword(24);
                     //var callbackUrl = Url.Action("ResetPassword", "Account", new { user = model.Email, code = token }, protocol: Request.Url.Scheme);
@@ -593,6 +602,74 @@ namespace Pro.Mvc.Controllers
         {
             await Task.Run(() => TraceHelper.Log(folder, Action, LogText, clientIp, referrer, LogType));
         }
+        #endregion
+
+        #region errors
+        public ViewResult ErrorNotFound()
+        {
+            ViewBag.Message = string.Format("{0} : {1}", "שגיאה אירעה ב", Request["aspxerrorpath"]);
+            Response.StatusCode = 200;// 404;  //you may want to set this to 200
+            return View();
+        }
+        public ViewResult ErrorUnauthorized()
+        {
+            ViewBag.Message = string.Format("{0} : {1}", "שגיאה אירעה ב", Request["aspxerrorpath"]);
+            Response.StatusCode = 200;// 404;  //you may want to set this to 200
+            return View();
+        }
+
+        protected string GetAllErrors()
+        {
+            string messages = string.Join("; ", ModelState.Values
+                                              .SelectMany(x => x.Errors)
+                                              .Select(x => x.ErrorMessage));
+            return messages;
+        }
+        public ViewResult Error()
+        {
+            ViewBag.Message = string.Format("{0} : {1}", "שגיאה אירעה ב", Request["aspxerrorpath"]);
+            Response.StatusCode = 200;// 500;  //you may want to set this to 200
+            return View();
+        }
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            // Bail if we can't do anything; app will crash.
+            if (filterContext == null)
+                return;
+            // since we're handling this, log to elmah
+            Exception ex = null;
+            //var ex = filterContext.HttpContext.Error.Exception ?? new Exception("No further information exists.");
+
+            if (filterContext.HttpContext != null)
+            {
+                ex = filterContext.HttpContext.Error;
+                if (ex == null)
+                {
+                    ex = filterContext.Exception;
+                    if (ex == null)
+                        ex = new Exception("No further information exists.");
+                    else if (ex is SecurityException)
+                    {
+                        filterContext.Result = new RedirectResult("~/Account/Login");
+                    }
+                }
+            }
+            else
+            {
+                ex = filterContext.Exception;
+                if (ex == null)
+                    ex = new Exception("No further information exists.");
+                else if (ex is SecurityException)
+                {
+                    filterContext.Result = new RedirectResult("~/Account/Login");
+                }
+            }
+
+            TraceHelper.Log("Application", "OnException", ex.Message + " StackTrace: " + ex.StackTrace, Request, 500);
+
+            filterContext.ExceptionHandled = true;
+        }
+
         #endregion
     }
 }

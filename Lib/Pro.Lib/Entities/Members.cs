@@ -40,32 +40,24 @@ namespace Pro.Data.Entities
         #endregion
 
         #region update
-
-        public static int DoSave(MemberCategoryView v, bool UpdateExists ,string DataSource,DataSourceTypes DataSourceType)
+        //MemberCategoryView
+        public static int DoSave(MemberItem v, bool UpdateExists ,string DataSource,DataSourceTypes DataSourceType)
         {
+
             var args = new object[]{
                 "RecordId", v.RecordId
                 ,"AccountId", v.AccountId
                 ,"MemberId", v.MemberId
                 ,"LastName", v.LastName
                 ,"FirstName", v.FirstName
-                //,"FatherName", v.FatherName
                 ,"Address", v.Address
                 ,"City", v.City
-                //,"PlaceOfBirth", v.PlaceOfBirth
-                //,"BirthDateYear", v.BirthDateYear
-                //,"ChargeType", v.ChargeType
                 ,"CellPhone",v.CellPhone
                 ,"Phone", v.Phone
                 ,"Email", v.Email
-                //,"Status", v.Status
-                //,"Region", v.Region
                 ,"Gender", v.Gender
                 ,"Birthday", v.Birthday
                 ,"Note", v.Note
-                //,"Fax", v.Fax
-                //,"WorkPhone", v.WorkPhone
-                ,"JoiningDate", v.JoiningDate
                 ,"Branch", v.Branch
                 ,"ZipCode", v.ZipCode
                 ,"ContactRule", 0
@@ -77,18 +69,30 @@ namespace Pro.Data.Entities
                 ,"ExEnum2", v.ExEnum2
                 ,"ExEnum3", v.ExEnum3
                 ,"ExId", v.ExId
-
-                ,"UpdateExists",true
+                //,"UpdateExists",true
+                ,"UpdateType",(int)MemberUpdateType.Update//MemberContext.ReadMemberUpdateType(m.Body.UpdateType,MemberUpdateType.Sync)
                 ,"EnableNews", v.EnableNews
                 ,"DataSource", DataSource
                 ,"DataSourceType",(int)DataSourceType// tinyint=0-- CoSystem = 0,Register = 1,FileSync = 2,ApiSync = 3
+                ,"MemberType", GenericTypes.ReadEnum<MemberTypes>(v.MemberType, MemberTypes.Private) 
+                ,"CompanyName", v.CompanyName
+                ,"ExRef1", v.ExRef1
+                ,"ExRef2", v.ExRef2
+                ,"ExRef3", v.ExRef3
 
             };
+
+            var parameters = DataParameter.GetSqlList(args);
+            parameters[0].Direction = System.Data.ParameterDirection.InputOutput;
+            //using (var db = DbContext.Create<DbPro>())
+            //{
+            //    var res = db.ExecuteCommandOutput("sp_Member_Save_v1", parameters.ToArray(), System.Data.CommandType.StoredProcedure);
+            //    v.RecordId = res.GetValue<int>("RecordId");
+            //}
+
             using (var db = DbContext.Create<DbPro>())
             {
-                var parameters = DataParameter.GetSql(args);
-                parameters[0].Direction = System.Data.ParameterDirection.InputOutput;
-                int res = db.ExecuteCommandNonQuery("sp_Member_Save", parameters, System.Data.CommandType.StoredProcedure);
+                int res = db.ExecuteCommandNonQuery("sp_Member_Save_v1", parameters.ToArray(), System.Data.CommandType.StoredProcedure);
                 v.RecordId = Types.ToInt(parameters[0].Value);
                 return res;
             }
@@ -192,14 +196,15 @@ namespace Pro.Data.Entities
                 return db.EntityItemGet<MemberInfo>("vw_Members ", "RecordId", RecordId, "AccountId", AccountId);
         }
 
-        public static MemberCategoryView ViewOrNewMemberItem(int RecordId, int AccountId)
+        //MemberCategoryView
+        public static MemberItem ViewOrNewMemberItem(int RecordId, int AccountId)
         {
             if (RecordId > 0)
             {
                 using (var db = DbContext.Create<DbPro>())
-                    return db.ExecuteSingle<MemberCategoryView>("sp_Member_View ", "RId", RecordId, "AccountId", AccountId);
+                    return db.ExecuteSingle<MemberItem>("sp_Member_View ", "RId", RecordId, "AccountId", AccountId);
             }
-            return new MemberCategoryView() { AccountId = AccountId };
+            return new MemberItem() { AccountId = AccountId };
         }
 
         public static string ViewMember(int RId, int AccountId)
@@ -232,6 +237,45 @@ namespace Pro.Data.Entities
         //    return db.EntityItemGet<MemberItem>(MappingName, "MemberId", MemberId);
         //}
         public const string MappingName = "Members";
+
+        
+
+        public static string ReadGender(string value)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(value))
+                    return "U";
+                switch (value)
+                {
+                    case "זכר":
+                    case "ז":
+                    case "m":
+                    case "M":
+                        return "M";
+                    case "נקבה":
+                    case "נ":
+                    case "f":
+                    case "F":
+                        return "F";
+                    default:
+                        return "U";
+                }
+
+            }
+            catch
+            {
+                return "U";
+            }
+        }
+
+        public static MemberUpdateType ReadMemberUpdateType(int value, MemberUpdateType defaultValue)
+        {
+            if (Enum.IsDefined(typeof(MemberUpdateType), value))
+                return (MemberUpdateType)value;
+            return defaultValue;
+            //Nistec.GenericTypes.ConvertEnum<MemberUpdateType>()
+        }
 
         #endregion
 
@@ -607,52 +651,52 @@ namespace Pro.Data.Entities
         #endregion
     }
 
-    public class MemberCategoryView : MemberItem
-    {
-        public string Categories { get; set; }
+    //public class MemberCategoryView : MemberItem
+    //{
+    //    public string Categories { get; set; }
 
-        public SqlParameter[] ToProc()
-        {
-            var args = new object[]{
-                "RecordId", RecordId
-                ,"MemberId", MemberId
-                ,"AccountId", AccountId
-                ,"LastName", LastName
-                ,"FirstName", FirstName
-                //,"FatherName", v.FatherName
-                ,"Address", Address
-                ,"City", City
-                //,"PlaceOfBirth", v.PlaceOfBirth
-                //,"BirthDateYear", v.BirthDateYear
-                //,"ChargeType", v.ChargeType
-                ,"CellPhone",CellPhone
-                ,"Phone", Phone
-                ,"Email", Email
-                //,"Status", v.Status
-                //,"Region", v.Region
-                ,"Gender", Gender
-                ,"Birthday", Birthday
-                ,"Note", Note
-                //,"Fax", v.Fax
-                //,"WorkPhone", v.WorkPhone
-                ,"JoiningDate", JoiningDate
-                ,"Branch", Branch
-                ,"ZipCode", ZipCode
-                ,"ContactRule", 0
-                ,"Categories", Categories
-                ,"ExField1", ExField1
-                ,"ExField2", ExField2
-                ,"ExField3", ExField3
-                ,"ExEnum1", ExEnum1
-                ,"ExEnum2", ExEnum2
-                ,"ExEnum3", ExEnum3
-                ,"ExId", ExId
-            };
-            var parameters = DataParameter.GetSql(args);
-            parameters[0].Direction = System.Data.ParameterDirection.InputOutput;
-            return parameters;
-        }
-    }
+    //    //public SqlParameter[] ToProc()
+    //    //{
+    //    //    var args = new object[]{
+    //    //        "RecordId", RecordId
+    //    //        ,"MemberId", MemberId
+    //    //        ,"AccountId", AccountId
+    //    //        ,"LastName", LastName
+    //    //        ,"FirstName", FirstName
+    //    //        //,"FatherName", v.FatherName
+    //    //        ,"Address", Address
+    //    //        ,"City", City
+                
+    //    //        //,"BirthDateYear", v.BirthDateYear
+    //    //        //,"ChargeType", v.ChargeType
+    //    //        ,"CellPhone",CellPhone
+    //    //        ,"Phone", Phone
+    //    //        ,"Email", Email
+    //    //        //,"Status", v.Status
+    //    //        //,"Region", v.Region
+    //    //        ,"Gender", Gender
+    //    //        ,"Birthday", Birthday
+    //    //        ,"Note", Note
+    //    //        //,"Fax", v.Fax
+    //    //        //,"WorkPhone", v.WorkPhone
+    //    //        ,"JoiningDate", JoiningDate
+    //    //        ,"Branch", Branch
+    //    //        ,"ZipCode", ZipCode
+    //    //        ,"ContactRule", 0
+    //    //        ,"Categories", Categories
+    //    //        ,"ExField1", ExField1
+    //    //        ,"ExField2", ExField2
+    //    //        ,"ExField3", ExField3
+    //    //        ,"ExEnum1", ExEnum1
+    //    //        ,"ExEnum2", ExEnum2
+    //    //        ,"ExEnum3", ExEnum3
+    //    //        ,"ExId", ExId
+    //    //    };
+    //    //    var parameters = DataParameter.GetSql(args);
+    //    //    parameters[0].Direction = System.Data.ParameterDirection.InputOutput;
+    //    //    return parameters;
+    //    //}
+    //}
 
 
     [EntityMapping("vw_Members")]
@@ -681,7 +725,7 @@ namespace Pro.Data.Entities
         [EntityProperty(EntityPropertyType.Key)]
         public string Identifier { get; set; }
      
-        [Validator(Required=true, Name="תעודת זהות")]
+        //[Validator(RequiredVar="@ExType=0", Name="תעודת זהות")]
         public string MemberId { get; set; }
         [EntityProperty(EntityPropertyType.Key)]
         [Validator(Required = true,Name="חשבון")]
@@ -690,12 +734,15 @@ namespace Pro.Data.Entities
         public string LastName { get; set; }
         [Validator(Required = true)]
         public string FirstName { get; set; }
+        //[Validator(RequiredVar = "@ExType=3")]
         public string ExId { get; set; }
         public string Address { get; set; }
         public int City { get; set; }
         public int Branch { get; set; }
+        //[Validator(RequiredVar = "@ExType=1", Name = "טלפון נייד")]
         public string CellPhone { get; set; }
         public string Phone { get; set; }
+        //[Validator(RequiredVar = "@ExType=2", Name = "דואל")]
         public string Email { get; set; }
         public string Gender { get; set; }
         public string Birthday { get; set; }
@@ -724,6 +771,12 @@ namespace Pro.Data.Entities
         public int DataSourceType { get; set; }
         public int MemberType { get; set; }
         public string CompanyName { get; set; }
+        public int ExRef1 { get; set; }
+        public int ExRef2 { get; set; }
+        public int ExRef3 { get; set; }
+        
+        [EntityProperty(EntityPropertyType.Optional)]
+        public string Categories { get; set; }
 
         public string DisplayName
         {
@@ -746,4 +799,33 @@ namespace Pro.Data.Entities
         }
     
     }
+
+     public enum MemberUpdateType
+     {
+         InsertOnly = 0,
+         Sync = 1,
+         Update = 2
+     }
+     public enum MemberTypes
+     {
+         Private = 0,
+         Business = 1
+     }
+
+     public enum DataSourceTypes
+     {
+         CoSystem = 0, Register = 1, FileSync = 2, ApiSync = 3
+     }
+     public enum EnableNewsState
+     {
+         NotSet = -1, Disable = 0, Enable = 1
+     }
+     public enum PlatformType
+     {
+         NA = 0, Cell = 1, Mail = 2
+     }
+     public enum MemberKeyType
+     {
+         None = -1, MemberId = 0, Cell = 1, Mail = 2, Target = 3, Key = 4
+     }
 }

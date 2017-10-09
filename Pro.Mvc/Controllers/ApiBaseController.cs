@@ -50,6 +50,8 @@ namespace Pro.Mvc.Controllers
                 return request.UserHostAddress;
         }
 
+
+
         // protected string ClientIP = null;
 
         // public ApiBaseController()

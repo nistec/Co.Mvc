@@ -55,6 +55,9 @@
             border: solid 1px #dbd6d6;
             direction: rtl;
         }
+        #jqxExp-1 {
+            border: solid 1px #dbd6d6;
+        }
     </style>
 
 }
@@ -103,18 +106,7 @@
         $('#fcSubmit').on('click', function (e) {
             task_def.doSubmit();
         });
-
-        $('#task-item-update').click(function () {
-            var iframe = wizard.getIframe();
-            if (iframe && iframe.triggerSubmit) {
-                iframe.triggerSubmit();
-            }
-        });
-        $('#task-item-cancel').click(function () {
-            wizard.wizHome();
-        });
-
-        
+              
     });
       
 </script>
@@ -211,7 +203,7 @@
                                                 </div>
                                                 <input id="EndedDate" name="EndedDate" type="text" readonly="readonly" class="text-mid" />
                                             </div>
-                                            <div id="Project_Id-container" class="form-group">
+                                            <div id="Project_Id-container" class="form-group" style="max-width:250px">
                                                 <div id="Project_Id-name" class="field">
                                                     פרוייקט :
                                                 </div>
@@ -230,7 +222,7 @@
                                                     });
                                                 </script>
                                             </div>
-                                            <div id="ClientId-container" class="form-group">
+                                            <div id="ClientId-container" class="form-group" style="max-width:250px">
                                                 <div id="ClientId-name" class="field">
                                                     לקוח\מנוי:
                                                 </div>
@@ -241,7 +233,7 @@
                                                     var client_dlg;
                                                     $('#ClientId-button').on('click', function (event) {
                                                         if (client_dlg == null) {
-                                                            client_dlg = new app_ComboDlg('#ClientId', "#ClientDetails" );//function (item) {
+                                                            client_dlg = new app_ComboDlg('#ClientId', "#ClientDetails");//function (item) {
                                                             //    $("#ClientDetails").val(item.label);
                                                             //});
                                                             client_dlg.init("Value", "Label", '/Common/Lookup_DisplayList', 'member_display');
@@ -250,6 +242,7 @@
                                                     });
                                                 </script>
                                             </div>
+
                                             <div class="form-group">
                                                 <input type="checkbox" id="IsShare" name="IsShare" disabled="disabled" />&nbsp;<span>משותף</span>
                                             </div>

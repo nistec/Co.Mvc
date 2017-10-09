@@ -10,16 +10,11 @@
 @section head {
 
     @Scripts.Render("~/bundles/jqx")
-    @Scripts.Render("~/bundles/jqxgrid")
-    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
-    <script type="text/javascript" src="~/jqwidgets/jqxdatatable.js"></script>
-<script src="~/jqwidgets/jqxkanban.js"></script>
-<script type="text/javascript" src="~/jqwidgets/jqxsortable.js"></script>
+    <script src="~/jqwidgets/jqxkanban.nis.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxsortable.js"></script>
     <script type="text/javascript" src="~/Scripts/app/system/task-user.js"></script>
-<script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
-<script type="text/javascript" src="~/jqwidgets/jqxbuttongroup.js"></script>
-<script type="text/javascript" src="~/jqwidgets/jqxradiobutton.js"></script>
-@*<link href="~/Scripts/HubSpot/messenger/css/messenger-theme-flat.css" rel="stylesheet" />*@
+    <script type="text/javascript" src="~/jqwidgets/jqxbuttongroup.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxradiobutton.js"></script>
 
     <style type="text/css">
 
@@ -100,22 +95,12 @@
 
     <script type="text/javascript">
 
-    var wizard;
-    //var def;
-
+   
     $(document).ready(function () {
         JSON.useDateParser();
         var theme = 'Arctic';
         var uinfo = JSON.parse('@userInfo');
-        //$('.expander').jqxExpander({ width: '100%', expanded: false, animationType: 'none',rtl:true });
-        //$("#popover").jqxPopover({ offset: { left: 0, top: 240 }, isModal: true, arrowOffsetValue: -240, position: "left", title: "Comments", showCloseButton: true, selector: $("#button") });
-
-        //_createWindow();
-        //$('#window').jqxWindow('close');
-        //app_messenger.Init('bottom-right', 'flat');
-        
-        wizard = new app_wiztabs();
-        wizard.displayStep(1);
+       
         app_tasks_active.load(uinfo);
         
         $("#Status-group").jqxButtonGroup({ mode: 'radio', rtl: true });
@@ -136,77 +121,6 @@
             //dataAdapter.dataBind();
             //app_tasks_active.refresh();
         });
-        
-        $('#ReminderDate').jqxDateTimeInput({ showCalendarButton: true, width: '150px', rtl: true });
-
-        $('#task-item-update').click(function (event) {
-            //var iframe = wizard.getIframe();
-            //if (iframe && iframe.triggerSubmit) {
-            //    iframe.triggerSubmit();
-            //}
-
-            event.stopPropagation();
-
-            if ($('#CommentText').text().length == 0) {
-                app_dialog.alert("חובה לציין הערה");
-                return;
-            }
-
-            var actionurl = $('#fcForm').attr('action');
-
-            app_query.doDataPost(actionurl, $('#fcForm').serialize(), function (data) {
-                //app_messenger.Post(data);
-                if (data.Status > 0)
-                    wizard.wizHome();
-            });
-
-        });
-        $('#task-item-cancel').click(function () {
-            wizard.wizHome();
-        });
-
-        
-
-
-        // var sourceColors = [
-        //{ text: "פתוח", value: "#5dc3f0" },
-        //{ text: "אותחל", value: "#f19b60" },
-        //{ text: "מושהה", value: "#5dc3f0" },
-        //{ text: "מבוטל", value: "#5dc3f0" },
-        //{ text: "סגור", value: "#6bbd49" }
-        // ];
-
-        // app_jqx.createDropDown("#ColorFlag", sourceColors);//, width, tagTargetOnChange);
-
-
-
-        //$('.date-reminder').jqxDateTimeInput({ showCalendarButton: true, width: '150px', rtl: true });
-
-        //$('#reset').on('click', function () {
-        //    location.reload();
-        //});
-
-        //$('#fcSubmit').on('click', function (e) {
-        //    e.preventDefault();
-        //    def.doSubmit();
-        //});
-
-        //$('#fcClear').on('click', function (e) {
-        //    $('#fcForm')[0].reset();
-        //    $('#fcForm').jqxValidator('hide');
-        //});
-
-        //$('#fcCancel').on('click', function (e) {
-        //    def.doCancel();
-        //});
-        //$('#fcComment').on('click', function (e) {
-        //    def.doComment(taskid);
-        //});
-        //$('#fcAssign').on('click', function (e) {
-        //    def.doAssign(taskid);
-        //});
-        var content=$("#filterdataTable").text();
-        $("#p1").html(content);
     });
 
 </script>
@@ -219,75 +133,24 @@
 
     <div id="wiz-container">
 
-        <div id="wiz-1" class="wiz-tab active">
-            @*<h3 class="rtl">משימה</h3>*@
-            <div class="rtl" style="height:44px">
+        <div class="rtl" style="height:44px">
                 <div>המשימות שלי</div>
                 <div id='Status-group' class="switch-group rtl">
-                    @*<div class="switch-item" id="Status-Today" data-val="255" title="משימות להיום">להיום<i class="fa fa-calendar"></i></div>
-                    <div class="switch-item" id="Status-Open" data-val="1" title="משימות ממתינות">ממתינות<i class="fa fa-calendar-o"></i></div>
-                    <div class="switch-item" id="Status-Started" data-val="2" title="משימות פעילות">פעילות<i class="fa fa-edit"></i></div>*@
-                    @*<div class="switch-item" id="Status-Close" data-val="16" title="משימות סגורות">סגורות<i class="fa fa-archive"></i></div>*@
                     <div class="switch-item" id="Status-New" data-val="0" title="משימה חדשה">משימה<i class="fa fa-plus-square-o"></i></div>
-                    <div class="switch-item" id="Status-Open" data-val="1" title="תזכורת חדשה">תזכורת<i class="fa fa-calendar-o"></i></div>
-                    <div class="switch-item" id="Status-Open" data-val="2" title="פתיחת כרטיס">כרטיס<i class="fa fa-edit"></i></div>
+                    <div class="switch-item" id="Status-Reminder" data-val="1" title="תזכורת חדשה">תזכורת<i class="fa fa-calendar-o"></i></div>
+                    <div class="switch-item" id="Status-Ticket" data-val="2" title="פתיחת סוגיה">סוגיה<i class="fa fa-edit"></i></div>
                     <div class="switch-item" id="Task-Report" data-val="100" title="דוח משימות">דוח<i class="fa fa-newspaper-o"></i></div>
                 </div>
-                @*<a href="/System/TaskNew" title="משימה חדשה">משימה חדשה</a>*@
             </div>
-            @*<h3 id="hTitle" style="text-align: right;"></h3>*@
             
-            <div id="jqxWidget">
+        <div id="jqxWidget">
                 <div id="fcBody" style="margin: 0;"><!--max-height:700px;overflow-y:auto;overflow-x:hidden-->
                     <input type="hidden" id="AccountId" name="AccountId" value="" />
                     <input type="hidden" id="StatusFilter" value="" />
                     <div id="kanban" style="position:relative;z-index:1;"></div>
-                    
-
                 </div>
             </div>
-        </div>
-        <div id="wiz-2" class="wiz-tab">
-            <h3 id="wiz-2-title" class="rtl">
-                הערה למעקב
-            </h3>
-            <div id="divPartial2" class="wiz-partial">
 
-                <div id="fcComment">
-                    <form class="fcForm" id="fcForm" method="post" action="/System/TaskCommentUpdate">
-                        <div style="direction: rtl; text-align: right">
-                            <input type="hidden" id="CommentId" name="CommentId" value="0" />
-                            <input type="hidden" id="Task_Id" name="Task_Id" value="0" />
-                            <input type="hidden" id="UserId" name="UserId" value="" />
-                            <div style="height:5px"></div>
-                            <div id="tab-content" class="tab-content" dir="rtl">
-                                <div class="form-group">
-                                    <div class="field">
-                                        הערה:
-                                    </div>
-                                    <textarea id="CommentText" name="CommentText" class="text-content-mid"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <div class="field">
-                                        תזכורת ל:
-                                    </div>
-                                    <div id="ReminderDate" name="ReminderDate"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="rtl">
-                            <a id="task-item-update" class="btn-default btn7 w-60" href="#">עדכון</a>
-                            <a id="task-item-cancel" class="btn-default btn7 w-60" href="#">ביטול</a>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-            @*<div class="rtl">
-                    <a id="task-item-update" class="btn-default btn7 w-60" href="#">עדכון</a>
-                    <a id="task-item-cancel" class="btn-default btn7 w-60" href="#">ביטול</a>
-                </div>*@
-        </div>
     </div>
 </div>
 <!--end of content-wrapper-->

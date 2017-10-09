@@ -1,0 +1,142 @@
+/* -------------------------------- 
+
+Primary style
+background-color:#15C8D8; myt-blue
+background-color:#4cddf3; myt-light blue 
+old-background-color:#1784c7; blue
+color: #ff6a00; orange
+color dark gray-blue=#24343F
+c-------------------------------- */
+
+.tab-panel{
+    padding:0;margin:0;
+    background-color:#fff;
+}
+.tab-entry{
+    margin:0 5px;
+}
+
+.r-tabs .r-tabs-nav {
+    margin: 0;
+    padding: 0;
+}
+
+.r-tabs .r-tabs-tab {
+    display: inline-block;
+    margin: 0;
+    list-style: none;
+}
+
+.r-tabs .r-tabs-panel {
+    /*padding: 15px;*/
+    display: none;
+}
+
+.r-tabs .r-tabs-accordion-title {
+    display: none;
+}
+
+.r-tabs .r-tabs-panel.r-tabs-state-active {
+    display: block;
+}
+
+/* Tabs container */
+.r-tabs {
+	position: relative;
+
+	background-color: #15C8D8;
+
+	border-top: 1px solid #15C8D8;
+	border-right: 1px solid #15C8D8;
+	border-left: 1px solid #15C8D8;
+	border-bottom: 2px solid #15C8D8;
+	border-radius: 4px;
+
+}
+
+/* Tab element */
+.r-tabs .r-tabs-nav .r-tabs-tab {
+	position: relative;
+	background-color: #15C8D8;
+}
+
+/* Tab anchor */
+.r-tabs .r-tabs-nav .r-tabs-anchor {
+	display: inline-block;
+	padding: 7px 12px;
+
+	text-decoration: none;
+	/*text-shadow: 0 1px rgba(0, 0, 0, 0.4);*/
+	font-size: 12px;
+	font-weight: bold;
+	color: #fff;
+}
+
+/* Disabled tab */
+.r-tabs .r-tabs-nav .r-tabs-state-disabled {
+	opacity: 0.5;
+}
+
+/* Active state tab anchor */
+.r-tabs .r-tabs-nav .r-tabs-state-active .r-tabs-anchor {
+	color: #15C8D8;
+	text-shadow: none;
+	background-color: white;
+
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+}
+
+/* Tab panel */
+.r-tabs .r-tabs-panel {
+	background-color: white;
+    
+	border-bottom: 4px solid white;
+
+	border-bottom-right-radius: 4px;
+	border-bottom-left-radius: 4px;
+
+}
+
+/* Accordion anchor */
+.r-tabs .r-tabs-accordion-title .r-tabs-anchor {
+	display: block;
+	padding: 8px;
+    margin-bottom:2px;
+	background-color: #15C8D8;
+	color: #fff;
+	font-weight: bold;
+	text-decoration: none;
+	/*text-shadow: 0 1px rgba(0, 0, 0, 0.4);*/
+	font-size: 12px;
+
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+    border-bottom:solid 1px #fff;
+}
+
+/* Active accordion anchor */
+.r-tabs .r-tabs-accordion-title.r-tabs-state-active .r-tabs-anchor {
+	background-color: #fff;
+	color: #15C8D8;
+	text-shadow: none;
+
+	border: 1px solid #15C8D8;
+}
+
+/* Disabled accordion button */
+.r-tabs .r-tabs-accordion-title.r-tabs-state-disabled {
+	opacity: 0.5;
+}
+
+
+/* Accordion responsive breakpoint */
+@media only screen and (max-width: 768px) {
+    .r-tabs .r-tabs-nav {
+        display: none;
+    }
+
+    .r-tabs .r-tabs-accordion-title {
+        display: block;
+    }
+}

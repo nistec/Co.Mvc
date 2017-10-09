@@ -151,6 +151,16 @@ app = {
     serializeArrayToJson: function (form) {
         return JSON.stringify($(form).serializeArray());
     },
+    serializeToJsonObject: function (form) {
+        var unindexed_array = $(form).serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function (n, i) {
+            indexed_array[n['name']] = n['value'];
+        });
+
+        return indexed_array;
+    },
     htmlEncode: function (value) {
         return $('<div/>').text(value).html();
     },
@@ -199,8 +209,7 @@ app = {
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     },
     guid: function () {
-        return
-        'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
@@ -214,22 +223,33 @@ app = {
     });
     return uuid;
     },
-    UUID:function(v) {
-    if (v===undefined || v == 'v4')
-        return Math.uuid() // RFC4122 v4 UUID
-    //"4FAC90E7-8CF1-4180-B47B-09C3A246CB67"
-    if (v == '62')
-        return Math.uuid(17) // 17 digits, base 62 (0-9,a-Z,A-Z)
-    //"GaohlDbGYvOKd11p2"
-
-    if (v == '10')
-        return Math.uuid(5, 10) // 5 digits, base 10
-    //"84274"
-
-    if (v == '16')
-        return Math.uuid(8, 16) // 8 digits, base 16
-    //"19D954C3"
+    UUID: function (v) {
+        var d = new Date().getTime();
+        if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+            d += performance.now(); //use high-precision timer if available
+        }
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
     },
+    //UUID_old:function(v) {
+    //    if (v === undefined || v == 'v4')
+    //        return app.guid();//Math.uuid() // RFC4122 v4 UUID
+    ////"4FAC90E7-8CF1-4180-B47B-09C3A246CB67"
+    //if (v == '62')
+    //    return Math.uuid(17) // 17 digits, base 62 (0-9,a-Z,A-Z)
+    ////"GaohlDbGYvOKd11p2"
+
+    //if (v == '10')
+    //    return Math.uuid(5, 10) // 5 digits, base 10
+    ////"84274"
+
+    //if (v == '16')
+    //    return Math.uuid(8, 16) // 8 digits, base 16
+    ////"19D954C3"
+    //},
     jsonToHtml: function (json,appendTo) {
         var ul = $('<ul>').appendTo(appendTo);//('body');
         //var json = { items: ['item 1', 'item 2', 'item 3'] };
@@ -308,6 +328,12 @@ app = {
         if (value == match)
             return valueIfMatch;
         return value;
+    },
+    showIf: function (tag, condition) {
+        if (condition)
+            $(tag).show();
+        else
+            $(tag).hide();
     },
     hideOrData: function (tag, data, match) {
         if (data === undefined || data == null || data == match)
@@ -564,7 +590,7 @@ var app_messenger = {
 //    },
 
 //    redirectToMembers: function () {
-//        app.redirectTo("/Crm/Members");
+//        app.redirectTo("/Main/Members");
 //    },
 //};
 
@@ -1205,7 +1231,33 @@ var app_dialog = {
         if (d)
             d.dialog('close');
     },
-
+    confirmYesNoCancel: function (message, callback, args) {
+        var divmessage = $('<div class="rtl">' + message + '</div>');
+        var dialog = $("<div class='bdialog'></div>").append(divmessage).appendTo("body").dialog({
+            resizable: false,
+            height: "auto",
+            width: 350,
+            modal: true,
+            dialogClass: 'ui-dialog-osx',
+            buttons: {
+                "כן": function () {
+                    $(this).dialog("close");
+                    if (callback)
+                        callback('yes',args);
+                },
+                "לא": function () {
+                    $(this).dialog("close");
+                    if (callback)
+                        callback('no',args);
+                },
+                "ביטול": function () {
+                    $(this).dialog("close");
+                    if (callback)
+                        callback('cancel', args);
+                }
+            }
+        });
+    },
     confirm: function (message, callback, args) {
         var divmessage = $('<div class="rtl">'+message+'</div>');
         var dialog = $("<div class='bdialog'></div>").append(divmessage).appendTo("body").dialog({
@@ -1216,7 +1268,7 @@ var app_dialog = {
             dialogClass: 'ui-dialog-osx',
             buttons: {
                 "אישור": function () {
-                    res = true;
+                    //res = true;
                     $(this).dialog("close");
                     if (callback)
                         callback(args);

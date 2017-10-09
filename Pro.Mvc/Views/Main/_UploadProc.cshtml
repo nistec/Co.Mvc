@@ -1,0 +1,163 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    ViewBag.Title = "Members";
+    string uk = Request["uk"];
+    
+    //model Pro.Mvc.Models.UploadProcModel
+}
+@section head {
+
+<script type="text/javascript" src="~/Scripts/app/dateFormat.js"></script>
+
+<style type="text/css">
+    input {
+        direction: rtl;
+        text-align: right;
+    }
+
+    .styledTable {
+        direction: rtl;
+        text-align: right;
+    }
+
+    .styledTableHeader {
+        background-color: #0094ff;
+        color: #fff;
+        padding-left: 20px;
+        text-align: right;
+    }
+
+    .styledTableHeader {
+        background-color: #0094ff;
+        color: #fff;
+        text-align: right;
+    }
+
+    .styledRowKey {
+        padding-left: 20px;
+        text-align: right;
+    }
+
+    .styledRowValue {
+        text-align: right;
+    }
+</style>
+}
+@section scripts {
+    <script type="text/javascript">
+
+    var time_refresh = 20000;
+
+    $(document).ready(function () {
+
+        $("#report").hide();
+        doUploadProc();
+ 
+    });
+
+        var showUploadProc = function () {
+            var uploadKey = '@uk';
+            $.ajax({
+                url: '@Url.Action("DoUploadProc", "Main")',
+                type: "POST",
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                data: "{'uploadKey':'" + uploadKey + "'}",
+                //data: { "uploadKey": "" + uploadKey + "" },
+                success: function (data) {
+                    if (data) {
+                        $("#dataTable").html(data.Message);
+
+                        if (data.Status < 0) {
+                            $("#procState").html("אירעה שגיאה");
+                        }
+                    }
+                },
+                error: function (jqXHR, status, error) {
+                    alert(error);
+                }
+            });
+        }
+
+        var retry = 0;
+
+        var doUploadProc = function () {
+            var uploadKey = '@uk';
+            retry = 0;
+            $.ajax({
+                url: '@Url.Action("DoUploadProc", "Main")',
+                type: "POST",
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                data: "{'uploadKey':'" + uploadKey + "'}",
+                //data: { "uploadKey": "" + uploadKey + "" },
+                success: function (data) {
+                    if (data) {
+                        $("#dataTable").html(data.Message);
+
+                        if (data.Status < 0) {
+                            if (retry > 3) {
+                                $("#procState").html("אירעה שגיאה");
+                                $("#loader").hide();
+                                $("#report").show();
+                            }
+                            else {
+                                retry++;
+                                $("#procState").html("נא להמתין");
+                                timedRefresh(time_refresh)
+                            }
+                        }
+                        else if (data.Status == 10) {
+                            $("#procState").html("הסתיים");
+                            $("#loader").hide();
+                        }
+                        else {
+                            retry = 0;
+                            $("#procState").html("נא להמתין");
+                            timedRefresh(time_refresh)
+                        }
+                    }
+                },
+                error: function (jqXHR, status, error) {
+                    $("#loader").hide();
+                    alert(error);
+                }
+            });
+        };
+
+        function timedRefresh(timeoutPeriod) {
+            setTimeout(function () {
+                location.reload(true);
+            }, timeoutPeriod);
+        }
+
+        $("#report_btn").click(function () {
+            showUploadProc();
+          
+        });
+
+</script>
+    }
+            <div class="clear"></div>
+            <div class="global-view">
+                <div class="container">
+                    <div style="float: right; direction:rtl">
+                        <h4>
+                            <span>סטאטוס טעינה</span>
+                            <span> - </span>
+                            <span id="procState"></span>
+                            <span id="loader">
+                                <img src="~/Content/css/images/loading.gif" />
+                            </span>
+                            <span id="report">
+                                <a id="report_btn" href="#">הצג דוח</a>
+                             </span>
+                        </h4>
+                        <div id="dataTable"></div>
+                        
+                        
+                   </div>
+               </div>
+            </div>
+
+

@@ -148,17 +148,18 @@ namespace ProSystem.Data.Entities
             using (var db = DbContext.Create<DbSystem>())
                 return db.ExecuteList<TaskUserItem>("sp_Task_User_kanban", "AccountId", AccountId, "UserId", UserId, "Status", Status, "IsShare", IsShare);
         }
-        public static IEnumerable<TaskItem> TaskUserList(int AccountId, int UserId, int Status=0)
-        {
-            using (var db = DbContext.Create<DbSystem>())
-                return db.ExecuteList<TaskItem>("sp_Task_User", "AccountId", AccountId, "UserId", UserId, "Status", Status);
-        }
 
-        public static IEnumerable<TaskItem> TaskUserList(int AccountId,int UserId, int Status, bool IncludeShare, int ProjectId, int TaskParent)
-        {
-            using (var db = DbContext.Create<DbSystem>())
-                return db.ExecuteList<TaskItem>("sp_Task_User", "AccountId",AccountId,"UserId",UserId,"Status",Status,"IncludeShare",IncludeShare,"ProjectId",ProjectId,"TaskParent",TaskParent);
-        }
+        //public static IEnumerable<TaskItem> TaskUserList(int AccountId, int UserId, int Status=0)
+        //{
+        //    using (var db = DbContext.Create<DbSystem>())
+        //        return db.ExecuteList<TaskItem>("sp_Task_User", "AccountId", AccountId, "UserId", UserId, "Status", Status);
+        //}
+
+        //public static IEnumerable<TaskItem> TaskUserList(int AccountId,int UserId, int Status, bool IncludeShare, int ProjectId, int TaskParent)
+        //{
+        //    using (var db = DbContext.Create<DbSystem>())
+        //        return db.ExecuteList<TaskItem>("sp_Task_User", "AccountId",AccountId,"UserId",UserId,"Status",Status,"IncludeShare",IncludeShare,"ProjectId",ProjectId,"TaskParent",TaskParent);
+        //}
   
         public static IEnumerable<TaskItem> TaskList()
         {

@@ -4,7 +4,8 @@
 @model Pro.Data.Registry.RegistryPage
 @{
     Layout = "~/Views/Shared/_ViewRegistry.cshtml";
-    var captcha = Html.Captcha("רענון", "נא להקליד את התוים שבציור", 4, "נדרש להקליד את התוים שבציור.", false);
+    //var captcha = Html.Captcha("רענון", "נא להקליד את התוים שבציור", 4, "נדרש להקליד את התוים שבציור.", false);
+    var captcha = Html.Captcha("רענון","",4);
 }
 
 @section head {

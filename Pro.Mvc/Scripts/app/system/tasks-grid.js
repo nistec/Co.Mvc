@@ -36,6 +36,8 @@
                    { name: 'AssignByName', type: 'string' },
                    { name: 'TaskStatus', type: 'number' },
                    { name: 'StatusName', type: 'string' },
+                   { name: 'TaskTypeName', type: 'string' },
+                   { name: 'ProjectName', type: 'string' },
                    { name: 'IsShare', type: 'boolean' },
                    { name: 'TotalTimeView', type: 'string' },
                    { name: 'TotalRows', type: 'number' }
@@ -412,15 +414,18 @@
                         "<div style='margin: 10px;'><b>מטפל נוכחי:</b> " + (datarecord.DisplayName || '') + "</div>" +
                         "<div style='margin: 10px;'><b>יוצר המשימה:</b> " + (datarecord.AssignByName || '') + "</div>" +
                         "<div style='margin: 10px;'><b>מועד עדכון:</b> " + datarecord.CreatedDate.toLocaleDateString() + "</div>" +
-                        "<div style='margin: 10px;'><b>משימת אב:</b> " + (datarecord.Task_Parent || '') + "</div>");
+                        "<div style='margin: 10px;'><b>פרוייקט:</b> " + (datarecord.ProjectName || '') + "</div>");
 
                     divLeft.rtl = true;
-                    var divRight = $("<div style='margin: 10px;'><b>מועד משוער להתחלה:</b> " + (datarecord.EstimateStartTime || '') + "</div>" +
-                        "<div style='margin: 10px;'><b>הערכת זמן לביצוע:</b> " + (datarecord.EstimateTakenTime || '') + "</div>" +
+                    var divRight = $("<div style='margin: 10px;'><b>לקוח\\מנוי:</b> " + (datarecord.ClientDetails || '') + "</div>" +
+                        "<div style='margin: 10px;'><b>סוג משימה:</b> " + (datarecord.TaskTypeName || '') + "</div>" +
                         "<div style='margin: 10px;'><b>מועד התחלה:</b> " + app.toLocalDateString(datarecord.StartedDate) + "</div>" +
-                        "<div style='margin: 10px;'><b>מועד סיום:</b> " + app.toLocalDateString(datarecord.EndedDate) + "</div>" +
-                        "<div style='margin: 10px;'><b>מספר משימה:</b> " + (datarecord.TaskId || '') + "</div>");
+                        "<div style='margin: 10px;'><b>מועד סיום:</b> " + app.toLocalDateString(datarecord.EndedDate) + "</div>" );
 
+                    //"<div style='margin: 10px;'><b>קוד משימה:</b> " + (datarecord.TaskId || '') + "</div>");
+
+                    //<div style='margin: 10px;'><b>מועד משוער להתחלה:</b> " + (datarecord.EstimateStartTime || '') + "</div>" +
+                    //"<div style='margin: 10px;'><b>הערכת זמן לביצוע:</b> " + (datarecord.EstimateTakenTime || '') + "</div>" +
 
                     divRight.rtl = true;
                     $(leftcolumn).append(divLeft);
@@ -517,7 +522,7 @@
                     $("#jqxgrid").jqxGrid('clearfilters');
                 });
                 queryButton.click(function (event) {
-                    app.redirectTo('/Crm/TasksQuery');
+                    app.redirectTo('/Main/TasksQuery');
                 });
 
                 // search for a record.

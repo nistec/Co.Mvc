@@ -277,25 +277,25 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult CmsContentGrid()
         {
-            return View();
+            return View(true);
         }
        
         [HttpGet]
         public ActionResult CmsWizardForm()
         {
-            return View();
+            return View(true);
         }
         [HttpGet]
         public ActionResult CmsWizardHead()
         {
             //var rp=CmsContext.GetRegistryHead(GetAccountId());
-            return View();
+            return View(true);
         }
         [HttpGet]
         public ActionResult CmsWizardPages()
         {
             CmsRegistryItem cri = CmsRegistryItem.Get(GetAccountId());
-            return View(cri);
+            return View(true,cri);
         }
 
         [HttpGet]
@@ -321,19 +321,19 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult CmsHtmlEdit(string extid)
         {
-            return PartialView();
+            return PartialView(true);
         }
         [HttpGet]
         public ActionResult CmsTextEdit(string extid)
         {
-            return PartialView();
+            return PartialView(true);
         }
         [HttpGet]
         public ActionResult CmsPageSettings(string pageType)
         {
             int accountId = GetAccountId();
             CmsPageSettings ap = CmsContext.GetPageSettings(accountId, pageType);//.GetRegistryPage(accountId, pageType);
-            return PartialView(ap);
+            return PartialView(true,ap);
         }
 
         [HttpGet]
@@ -460,7 +460,7 @@ namespace Pro.Mvc.Controllers
                 Folder = folder,
                 BaseUrl = baseUrl
             };
-            return View(model);
+            return View(true,model);
         }
     }
 }

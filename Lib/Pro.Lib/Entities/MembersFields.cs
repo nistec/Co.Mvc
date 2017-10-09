@@ -83,7 +83,9 @@ namespace Pro.Data.Entities
         public string ExText1 { get; set; }
         public string ExText2 { get; set; }
         public string ExText3 { get; set; }
-
+        public string ExRef1 { get; set; }
+        public string ExRef2 { get; set; }
+        public string ExRef3 { get; set; }
 
     }
 }

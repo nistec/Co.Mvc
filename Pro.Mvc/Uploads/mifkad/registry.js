@@ -141,10 +141,11 @@ function registry_custom() {
         }
 
     }
-    
+        
+
     function setSignKey() {
         var acc = $("#AccountId").val();
-        var g = app.UUID('v4');
+        var g = app.UUID();
         var signKey = acc + "_" + g.toString().replace("-", "");
         $("#SignKey").val(signKey);
     }
@@ -181,6 +182,8 @@ function registry_custom() {
                         app_dialog.alert(error);
                     }
                 });
+
+                setSignKey();
             }
         }
         $('#form2').jqxValidator('validate', validationResult);
@@ -544,11 +547,19 @@ function registry_custom_ex() {
         }
     }
 
+    //function setSignKey() {
+    //    var acc = $("#AccountId").val();
+    //    var g = app.UUID('v4');
+    //    var signKey = acc + "_" + g.toString().replace("-", "");
+    //    $("#SignKey").val(signKey);
+    //}
+
     function setSignKey() {
-        var acc = $("#AccountId").val();
-        var g = app.UUID('v4');
+        var acc = $("#form1 [name=AccountId]").val();
+        var g = app.UUID();
         var signKey = acc + "_" + g.toString().replace("-", "");
-        $("#SignKey").val(signKey);
+        $("#form1 [name=SignKey]").val(signKey);
+        $("#form2 [name=SignKey]").val(signKey);
     }
 
     $('#Submit').on('click', function (e) {
@@ -576,6 +587,7 @@ function registry_custom_ex() {
         var validationResult = function (isValid) {
             if (isValid) {
                 doSubmit(action, owner);
+                setSignKey();
             }
         }
         $('#form3').jqxValidator('validate', validationResult);

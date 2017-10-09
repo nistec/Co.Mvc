@@ -1,0 +1,519 @@
+﻿@model Pro.Lib.MemberQuery
+@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    ViewBag.Title = "Members";
+    //int acctype = Nistec.Types.ToInt(Request.QueryString["acctype"]);
+  
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+    </style>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    var NScustomers = {};
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        // prepare the data
+        var source =
+        {
+            datatype: "json",
+            async:false,
+            datafields: [
+               { name: 'MemberId', type: 'string' },
+               { name: 'MemberName', type: 'string' },
+               { name: 'Address', type: 'string' },
+               { name: 'CityName', type: 'string' },
+               { name: 'JoiningDate', type: 'date' },
+               //{ name: 'PlaceName', type: 'string' },
+               //{ name: 'BirthDateYear', type: 'number' },
+               //{ name: 'ChargeName', type: 'string' },
+               { name: 'BranchName', type: 'string' },
+               { name: 'CellPhone', type: 'string' },
+               { name: 'Phone', type: 'string' },
+               { name: 'Email', type: 'string' },
+               //{ name: 'StatusName', type: 'string' },
+              // { name: 'CategoryName', type: 'string' },
+               //{ name: 'RegionName', type: 'string' },
+               { name: 'GenderName', type: 'string' },
+               { name: 'Note', type: 'string' },
+               { name: 'Birthday', type: 'string' },
+               { name: 'RecordId', type: 'number' },
+               { name: 'TotalRows', type: 'number' }
+            ],
+            id: 'MemberId',
+            type: 'POST',
+            url: '@Url.Action("GetMembersGrid", "Crm")',
+            //data:{},
+                pagenum: 1,
+                pagesize: 20,
+                root: 'Rows',
+                pager: function (pagenum, pagesize, oldpagenum) {
+                    // callback called when a page or page size is changed.
+                },
+                filter: function () {
+                    // update the grid and send a request to the server.
+                    $("#jqxgrid").jqxGrid('updatebounddata');
+                },
+                sort: function () {
+                    // update the grid and send a request to the server.
+                    $("#jqxgrid").jqxGrid('updatebounddata');
+                },
+                beforeprocessing: function (data) {
+                    source.totalrecords = data.TotalRows;
+                }
+            };
+
+        source.data = {
+            'QueryType': '@Model.QueryType',
+            'AccountId': '@Model.AccountId',
+            'MemberId': '@Model.MemberId',
+            'Name': '@Model.Name',
+            'Address': '@Model.Address',
+            'City': '@Model.City',
+            'Category': '@Model.Category',
+            'Region': '@Model.Region',
+            'Branch': '@Model.Branch',
+            'BirthdayMonth': '@Model.BirthdayMonth',
+            'JoinedFrom': '@Model.JoinedFrom',
+            'JoinedTo': '@Model.JoinedTo',
+            'AgeFrom': '@Model.AgeFrom',
+            'AgeTo': '@Model.AgeTo',
+            'ContactRule': '@Model.ContactRule'
+        };
+
+            var getTotalRows=function (data) {
+                if (data) {
+                    return dataTotalRows(data);
+                }
+                return 0;
+            };
+
+
+        //////////////////begin filter
+ 
+            var buildFilterPanel = function (filterPanel, datafield) {
+                var textInput = $("<input style='margin:5px;'/>");
+                var applyinput = $("<div class='filter' style='height: 25px; margin-left: 20px; margin-top: 7px;'></div>");
+                var filterbutton = $('<span tabindex="0" style="padding: 4px 12px; margin-left: 2px;">סינון</span>');
+                applyinput.append(filterbutton);
+                var filterclearbutton = $('<span tabindex="0" style="padding: 4px 12px; margin-left: 5px;">הסר סינון</span>');
+                applyinput.append(filterclearbutton);
+                filterPanel.append(textInput);
+                filterPanel.append(applyinput);
+                filterbutton.jqxButton({ height: 20 });
+                filterclearbutton.jqxButton({ height: 20 });
+                //var dataSource =
+                //{
+                //    localdata: adapter.records,
+                //    datatype: "array",
+                //    async: false
+                //}
+                //var dataadapter = new $.jqx.dataAdapter(dataSource,
+                //{
+                //    autoBind: false,
+                //    autoSort: true,
+                //    autoSortField: datafield,
+                //    async: false,
+                //    uniqueDataFields: [datafield]
+                //});
+                var column = $("#jqxgrid").jqxGrid('getcolumn', datafield);
+                textInput.jqxInput({ placeHolder: "הקלד " + column.text, maxLength: 25, popupZIndex: 9999999, height: 23, width: 155 });
+                textInput.keyup(function (event) {
+                    if (event.keyCode === 13) {
+                        filterbutton.trigger('click');
+                    }
+                });
+                filterbutton.click(function () {
+                    var filtergroup = new $.jqx.filter();
+                    var filter_or_operator = 1;
+                    var filtervalue = textInput.val();
+                    var filtercondition = 'contains';
+                    var filter1 = filtergroup.createfilter('stringfilter', filtervalue, filtercondition);
+                    filtergroup.addfilter(filter_or_operator, filter1);
+                    // add the filters.
+                    $("#jqxgrid").jqxGrid('addfilter', datafield, filtergroup);
+                    // apply the filters.
+                    $("#jqxgrid").jqxGrid('applyfilters');
+                    $("#jqxgrid").jqxGrid('closemenu');
+                });
+                filterbutton.keydown(function (event) {
+                    if (event.keyCode === 13) {
+                        filterbutton.trigger('click');
+                    }
+                });
+                filterclearbutton.click(function () {
+                    $("#jqxgrid").jqxGrid('removefilter', datafield);
+                    // apply the filters.
+                    $("#jqxgrid").jqxGrid('applyfilters');
+                    $("#jqxgrid").jqxGrid('closemenu');
+                });
+                filterclearbutton.keydown(function (event) {
+                    if (event.keyCode === 13) {
+                        filterclearbutton.trigger('click');
+                    }
+                    textInput.val("");
+                });
+            }
+
+            ///////////////// begin nested category
+
+            NScustomers.nastedCategoriesGrids = new Array();
+
+            var initCategoriesGrid = function (tab, index, id) {
+                var nastedcontainer = $('<div style="float:right;margin:5px"></div>');
+                nastedcontainer.rtl = true;
+                var nastedsource = {
+                    datafields: [
+                          { name: 'PropId', type: 'number' },
+                          { name: 'PropName', type: 'string' },
+                    ],
+                    datatype: "json",
+                    id: 'PropId',
+                    type: 'POST',
+                    url: '@Url.Action("GetMemberCategories", "Crm")',
+                    data: { 'memid': id }
+                }
+                NScustomers.nastedCategoriesGrids[index] = nastedcontainer;
+
+                var nastedAdapter = new $.jqx.dataAdapter(nastedsource);
+                nastedcontainer.jqxGrid({
+                    source: nastedAdapter, width: '90%', height: 130,
+                    rtl: true,
+                    columns: [
+                      {
+                          text: 'פעולות', dataField: 'PropId', width: 100, cellsalign: 'right', align: 'center',
+                          cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                              var memid = id;//  $('#jqxgrid').jqxGrid('getrowdata', row).AccountId;
+                              return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="#" onclick="members_categoriesDelete(' + value + ',' + memid + ');" >הסר</a></div>'
+                          }
+                      },
+                      { text: 'סיווג', datafield: 'PropName', cellsalign: 'right', align: 'center' },
+                    ]
+                });
+                var additem = $('<div style="margin:10px"><input type="button" value="הוסף" title="הוספת סיווג" /></div>')
+                .click(function () {
+                    NScustomers.categoriesDialog = popupIframe(app.appPath() + "/Common/_MemberCategories?id=" + id, "580", "400");
+                });
+                var refreshitem = $('<div style="margin:10px"><input type="button" value="רענן" title="רענון סיווגים" /></div>')
+                .click(function () {
+                    nastedAdapter.dataBind();
+                });
+
+                $(tab).append(nastedcontainer);
+                $(tab).append(additem);
+                $(tab).append(refreshitem);
+
+            };
+
+            //////////////// end nasted category
+
+            //var dataAdapter = new $.jqx.dataAdapter(source);
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                loadComplete: function (data) {
+                    //source.totalrecords = getTotalRows(data);
+                },
+                loadError: function (xhr, status, error) { alert(' status: ' + status + '\n error ' + error) }
+            });
+           
+            var initrowdetails = function (index, parentElement, gridElement, datarecord) {
+                NScustomers.currentIndex = index;
+
+                var tabsdiv = null;
+                var information = null;
+                var notes = null;
+
+                tabsdiv = $($(parentElement).children()[0]);
+                if (tabsdiv != null) {
+                    information = tabsdiv.find('.information');
+                    notes = tabsdiv.find('.notes');
+                    var title = tabsdiv.find('.title');
+                    title.text(datarecord.MemberName);
+                    var tabcategories = tabsdiv.find('.categories');
+
+                    var container = $('<div style="margin: 5px;text-align:right;"></div>')
+                    container.rtl = true;
+                    container.appendTo($(information));
+
+                    var leftcolumn = $('<div style="float: left; width: 45%;direction:rtl;"></div>');
+                    var rightcolumn = $('<div style="float: right; width: 40%;direction:rtl;"></div>');
+                    container.append(leftcolumn);
+                    container.append(rightcolumn);
+
+                    var divLeft = $(//"<div style='margin: 10px;'><b>קוד חיוב:</b> " + datarecord.ChargeName + "</div>" +
+                   "<div style='margin: 10px;'><b>מחוז:</b> " + datarecord.RegionName + "</div>" +
+                   "<div style='margin: 10px;'><b>סניף:</b> " + datarecord.BranchName + "</div>" +
+                   "<div style='margin: 10px;'><b>מועד עדכון:</b> " + datarecord.LastUpdate.toLocaleDateString() + "</div>");
+
+                    divLeft.rtl = true;
+                    var divRight = $("<div style='margin: 10px;'><b>דואל:</b> " + datarecord.Email + "</div>" +
+                        "<div style='margin: 10px;'><b>טלפון:</b> " + datarecord.Phone + "</div>" +
+                        //"<div style='margin: 10px;'><b>ארץ לידה:</b> " + datarecord.PlaceName + "</div>" +
+                        "<div style='margin: 10px;'><b>תאריך לידה:</b> " + datarecord.Birthday + "</div>" +
+                        "<div style='margin: 10px;'><b>מגדר:</b> " + datarecord.GenderName + "</div>" +
+                        "<div style='margin: 10px;'><b>ת.ז:</b> " + datarecord.MemberId + "</div>");
+
+                    //var divLeft = $("<div style='margin: 10px;'><b>קוד חיוב:</b> " + datarecord.ChargeName + "</div>" +
+                    //    "<div style='margin: 10px;'><b>מחוז:</b> " + datarecord.RegionName + "</div>" +
+                    //    "<div style='margin: 10px;'><b>סניף:</b> " + datarecord.BranchName + "</div>" +
+                    //    "<div style='margin: 10px;'><b>מועד עדכון:</b> " + datarecord.LastUpdate + "</div>" );
+
+                    //divLeft.rtl = true;
+                    //var divRight = $("<div style='margin: 10px;'><b>דואל:</b> " + datarecord.Email + "</div>" +
+                    //    "<div style='margin: 10px;'><b>טלפון:</b> " + datarecord.Phone + "</div>" +
+                    //    "<div style='margin: 10px;'><b>ארץ לידה:</b> " + datarecord.PlaceName + "</div>" +
+                    //    "<div style='margin: 10px;'><b>תאריך לידה:</b> " + datarecord.Birthday + "</div>" +
+                    //    "<div style='margin: 10px;'><b>מגדר:</b> " + datarecord.GenderName + "</div>" +
+                    //    "<div style='margin: 10px;'><b>ת.ז:</b> " + datarecord.MemberId + "</div>" );
+
+
+                    divRight.rtl = true;
+                    $(leftcolumn).append(divLeft);
+                    $(rightcolumn).append(divRight);
+
+                    var notescontainer = $('<div style="white-space: normal; margin: 5px;text-align:right;"><span>' + datarecord.Note + '</span></div>');
+                    notescontainer.rtl = true;
+                    $(notes).append(notescontainer);
+
+                    var memid = datarecord.MemberId;//parseInt(datarecord.MemberId);
+                    initCategoriesGrid(tabcategories, index, memid);
+
+                    $(tabsdiv).jqxTabs({ width: '95%', height: 170, rtl: true });
+                }
+            };
+            
+            // create Tree Grid
+            $("#jqxgrid").jqxGrid(
+            {
+                width: '100%',
+                autoheight: true,
+                rtl: true,
+                source: dataAdapter,
+                localization: getLocalization('he'),
+                virtualmode: true,
+                rendergridrows: function (obj) {
+                    return dataAdapter.records;
+                },
+                pageable: true,
+                pagermode: 'simple',
+                sortable: true,
+                //showfilterrow: true,
+                filterable: true,
+                rowdetails: true,
+                rowdetailstemplate: { rowdetails: "<div style='margin: 10px;'><ul style='margin-right: 30px;'><li class='title'></li><li>הערות</li><li>סיווגים</li></ul><div class='information'></div><div class='notes'></div><div class='categories'></div></div>", rowdetailsheight: 200 },
+                //ready: function () {
+                //    $("#jqxgrid").jqxGrid('showrowdetails', 0);
+                //},
+                initrowdetails: initrowdetails,
+                autoshowfiltericon: true,
+                columnmenuopening: function (menu, datafield, height) {
+                    
+                    var column = $("#jqxgrid").jqxGrid('getcolumn', datafield);
+                    if (column.filtertype === "custom") {
+                        menu.height(155);
+                        setTimeout(function () {
+                            menu.find('input').focus();
+                        }, 25);
+                    }
+                    else menu.height(height);
+                },
+                columns: [
+                  {
+                      text: 'פעולות', dataField: 'RecordId', filterable: false, width: 100, cellsalign: 'right', align: 'center', cellsrenderer:
+                       function (row, columnfield, value, defaulthtml, columnproperties) {
+                           return '<div style="text-align:center"><a href="#" onclick="app_popup.memberEdit(' + value + ')" >הצג</a></div>';
+                       }
+                  },
+                  {
+                      text: 'ת.ז', dataField: 'MemberId', cellsalign: 'right', align: 'center',
+                      filtertype: "custom",
+                        createfilterpanel: function (datafield, filterPanel) {
+                        buildFilterPanel(filterPanel, datafield);
+                        }
+                  },
+                  {
+                      text: 'שם', dataField: 'MemberName', cellsalign: 'right', align: 'center',
+                      filtertype: "custom",
+                      createfilterpanel: function (datafield, filterPanel) {
+                          buildFilterPanel(filterPanel, datafield);
+                      }
+                  },
+                  {
+                      text: 'עיר', dataField: 'CityName', cellsalign: 'right', align: 'center',
+                      filtertype: "custom",
+                      createfilterpanel: function (datafield, filterPanel) {
+                          buildFilterPanel(filterPanel, datafield);
+                      }
+                  },
+                  {
+                      text: 'כתובת', dataField: 'Address', cellsalign: 'right', align: 'center',
+                      filtertype: "custom",
+                      createfilterpanel: function (datafield, filterPanel) {
+                          buildFilterPanel(filterPanel, datafield);
+                      }
+                  },
+                  {
+                      text: 'טלפון נייד', dataField: 'CellPhone', width: 120, cellsalign: 'right', align: 'center',
+                      filtertype: "custom",
+                      createfilterpanel: function (datafield, filterPanel) {
+                          buildFilterPanel(filterPanel, datafield);
+                      }
+                  },
+                  //{ text: 'דואל', dataField: 'Email', filtercondition: 'starts_with', width: 150, cellsalign: 'right', align: 'center' },
+                  //{
+                  //    text: 'סטאטוס', dataField: 'StatusName', width: 100, cellsalign: 'right', align: 'center',
+                  //    filtertype: "custom",
+                  //    createfilterpanel: function (datafield, filterPanel) {
+                  //        buildFilterPanel(filterPanel, datafield);
+                  //    }
+                  //},
+                  { text: 'מועד הצטרפות', type: 'date', dataField: 'JoiningDate', filterable: false, width: 120, cellsformat: 'd', cellsalign: 'right', align: 'center' }
+                ]
+            });
+
+            $("#btnFind").jqxLinkButton({ width: '120', height: '30' });
+            $('#btnclearfilter').jqxButton({ width: '120', height: '30' });
+            $('#btnclearfilter').click(function () {
+                $("#jqxgrid").jqxGrid('clearfilters');
+            });
+            $('#btnCustomerDef').jqxButton({ width: '120', height: '30' });
+            $('#btnCustomerDef').click(function () {
+                app_popup.memberEdit(0);
+            });
+            $("#excelExport").jqxButton({ width: '120', height: '30' });
+            $("#excelExport").click(function () {
+                $("#jqxgrid").jqxGrid('exportdata', 'xls', 'Members',true, null, false,null,'utf-8');
+
+            });
+
+        ////////////////////////////filter 
+        //    $("#jqxgrid").on("filter", function (event) {
+        //        $("#events").jqxPanel('clearcontent');
+        //        var filterinfo = $("#jqxgrid").jqxGrid('getfilterinformation');
+        //        var eventData = "Triggered 'filter' event";
+        //        for (i = 0; i < filterinfo.length; i++) {
+        //            var eventData = "Filter Column: " + filterinfo[i].filtercolumntext;
+        //            $('#events').jqxPanel('prepend', '<div style="margin-top: 5px;">' + eventData + '</div>');
+        //        }
+        //    });
+        //    $('#clearfilteringbutton').jqxButton({ height: 25 });
+        //    $('#filterbackground').jqxCheckBox({ checked: true, height: 25 });
+        //    $('#filtericons').jqxCheckBox({ checked: false, height: 25 });
+        //// clear the filtering.
+        //    $('#clearfilteringbutton').click(function () {
+        //        $("#jqxgrid").jqxGrid('clearfilters');
+        //    });
+        // show/hide filter background
+            //$('#filterbackground').on('change', function (event) {
+            //    $("#jqxgrid").jqxGrid({ showfiltercolumnbackground: event.args.checked });
+            //});
+        // show/hide filter icons
+            //$('#filtericons').on('change', function (event) {
+            //    $("#jqxgrid").jqxGrid({ autoshowfiltericon: !event.args.checked });
+            //});
+        });
+        
+        function triggerMemberComplete(memid) {
+            $("#jqxgrid").jqxGrid('source').dataBind();
+            popupIframeClose();
+        };
+
+        function triggerCategoriesComplete(rcdid) {
+            members_categoriesRefresh();
+            popupClose(NScustomers.categoriesDialog);
+        };
+
+        function members_categoriesRefresh() {
+            try {
+                var i = NScustomers.currentIndex;
+                var g = NScustomers.nastedCategoriesGrids[i];
+                var adapter = g.jqxGrid('source');
+                adapter.dataBind();
+            }
+            catch (e) {
+                alert(e);
+            }
+        };
+        function members_categoriesDelete(id, memid) {
+            //accountNewsRemove(id, memid);
+            if (confirm("האם להסיר מנוי " + memid + " מקבוצת סיווג " + id)) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("DeleteMemberCategories", "Crm")',
+                    data: "{ 'memid': '" + memid + "','propId': " + id + " }",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        members_categoriesRefresh();
+                        if (data.Status > 0)
+                            dialogMessage('סיווגים', 'מנוי ' + memid + ' הוסר מקבוצת סייוג ' + id, true);
+                        else
+                            alert(data.Message);
+                    },
+                    error: function (e) {
+                        alert(e);
+                    }
+                });
+            }
+            members_categoriesRefresh();
+        }
+
+    </script>
+}
+
+
+@section featured {
+
+
+}
+
+<div class="breadcrumbs">
+@Html.ActionLink("Home", "Index", "Home")>
+@Html.ActionLink("Main", "Main", "Home")>
+<a href="javascript:parent.history.back()">Crm</a> >
+@ViewContext.RouteData.Values["action"].ToString()
+</div>
+
+
+<hgroup class="title">
+    <h3 class="rightPan">רשימת מנויים.</h3>
+</hgroup>
+
+<div class="clear"></div>
+
+<div class="global">
+    <div class="container">
+
+        <div class="grid-wrap">
+            <div style="display: inline; float: right; direction:rtl">
+                <input style="margin-top: 10px;" value="הוספת מנוי" id="btnCustomerDef" type="button" />
+                <a id="btnFind" href="MembersQuery">איתור</a>
+                <input style="margin-top: 10px;" value="הסר סינון" id="btnclearfilter" type="button" />
+                <input style="margin-top: 10px;" value="ייצוא לאקסל" title="ייצוא דף נוכחי" id="excelExport" type="button" />
+            </div>
+            
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                <div style="margin-top: 30px;">
+                    <div id="cellbegineditevent"></div>
+                    <div style="margin-top: 10px;" id="cellendeditevent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

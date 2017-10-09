@@ -35,11 +35,12 @@ namespace Pro.Lib.Query
         public int QueryType { get; set; }
         public int AccountId { get; set; }
         public int UserId { get; set; }
-
+        public int ExType { get; set; }
         public MemberQuery()
         {
             MemberId = null;
             ExId = null;
+            ExType = 0;
             CellPhone = null;
             Name = null;
             Address = null;
@@ -65,18 +66,19 @@ namespace Pro.Lib.Query
 
             QueryType = QueryType = Types.ToInt(Request["QueryType"]);
             AccountId = Types.ToInt(Request["AccountId"]);
-
-            if (QueryType == 1)
-            {
+            //ExType = Types.ToInt(Request["ExType"]);
+            
+            //if (QueryType == 1)
+            //{
                 MemberId = Request["MemberId"];
                 ExId = Request["ExId"];
                 Email = Request["Email"];
                 CellPhone = Request["CellPhone"];
                 Category = Request["Category"];
                 Branch = Request["Branch"];
-            }
-            else
-            {
+            //}
+            //else
+            //{
                 
                 Name = Request["Name"];
                 Address = Request["Address"];
@@ -107,14 +109,18 @@ namespace Pro.Lib.Query
                 HasPayment = Types.ToInt(Request["HasPayment"]);// == "on";
                 HasSignup = Types.ToInt(Request["HasSignup"]);// == "on";
 
-            }
+            //}
             LoadSortAndFilter(Request);
         }
 
-        public MemberQuery(NameValueCollection Request, int queryType)
+        public  MemberQuery(NameValueCollection Request, int queryType)
         {
+            if (Request.Count == 0)
+                return;
+
             //string query_type = Request["query_type"];
             QueryType = queryType;// Types.ToInt(Request["QueryType"]);
+            //ExType = Types.ToInt(Request["ExType"]);
 
             if (queryType == 1)
             {
@@ -175,7 +181,7 @@ namespace Pro.Lib.Query
                 if (!allCategory)
                     Category = listCategory;
 
-                Address = Types.NZorEmpty(Request["address"], null);
+                Address = Types.NZorEmpty(Request["Address"], null);
 
                 bool allBirthday = Request["allBirthday"] == "on";
                 if (allBirthday)
@@ -199,8 +205,8 @@ namespace Pro.Lib.Query
                 else
                     ContactRule = 0;
 
-                AgeFrom = Types.ToInt(Request["ageFrom"]);
-                AgeTo = Types.ToInt(Request["ageTo"]);
+                AgeFrom = Types.ToInt(Request["AgeFrom"]);
+                AgeTo = Types.ToInt(Request["AgeTo"]);
 
 
                 //signup query

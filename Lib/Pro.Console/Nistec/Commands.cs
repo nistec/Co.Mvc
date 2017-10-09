@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using Nistec.Channels;
 using Pro.Lib.Api;
+using Pro.Lib.Payments;
 
 namespace Nistec
 {

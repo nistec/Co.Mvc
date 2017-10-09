@@ -14,6 +14,7 @@ function app_price_def(userInfo) {
     this.sourceUrl='/Common/GetPriceListView';
     this.updateUrl = '/Common/DefPriceUpdate';
     this.deleteUrl = '/Common/DefPriceDelete';
+    this.rowEdit = -1;
 
     this.loadControls();
        

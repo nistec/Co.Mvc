@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_ViewIframe.cshtml";
     Page.Title = "Cms";
     string extid = Request.QueryString["extid"];
-    string btnClass = (ViewBag.UserInfo.UserRole > 5) ? "show" : "hide";
+    string btnClass = (Nistec.Types.ToInt(ViewBag.UserRole) > 5) ? "show" : "hide";
 }
 @section head {
 

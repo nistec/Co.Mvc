@@ -40,8 +40,8 @@ namespace Pro.Mvc.Controllers
                     return Json(EntityPro.ViewEntityList<ChargeView>(EntityGroups.Enums, ChargeView.TableName, accountId), JsonRequestBehavior.AllowGet);
                 case "city":
                     return Json(EntityPro.ViewEntityList<CityView>(EntityGroups.Enums, CityView.TableName, 0), JsonRequestBehavior.AllowGet);
-                case "place":
-                    return Json(EntityPro.ViewEntityList<PlaceView>(EntityGroups.Enums, PlaceView.TableName, accountId), JsonRequestBehavior.AllowGet);
+                //case "place":
+                //    return Json(EntityPro.ViewEntityList<PlaceView>(EntityGroups.Enums, PlaceView.TableName, accountId), JsonRequestBehavior.AllowGet);
                 case "region":
                     return Json(EntityPro.ViewEntityList<RegionView>(EntityGroups.Enums, RegionView.TableName, 0), JsonRequestBehavior.AllowGet);
                 case "category":
@@ -87,10 +87,10 @@ namespace Pro.Mvc.Controllers
         #endregion
 
         #region Def
-
+         [HttpGet]
         public ActionResult DefCity()
         {
-            return View();
+            return View(true);
         }
 
         [HttpPost]
@@ -142,9 +142,10 @@ namespace Pro.Mvc.Controllers
             }
             return Json(rm, JsonRequestBehavior.AllowGet);
         }
+         [HttpGet]
         public ActionResult DefPrice()
         {
-            return View();
+            return View(true);
         }
         [HttpPost]
         public JsonResult DefPriceDelete(int PropId)
@@ -194,11 +195,12 @@ namespace Pro.Mvc.Controllers
             }
             return Json(rm, JsonRequestBehavior.AllowGet);
         }
-
+        [HttpGet]
         public ActionResult DefCategory()
         {
-            return View();
+            return View(true);
         }
+
         [HttpPost]
         public JsonResult DefCategoryDelete(int PropId)
         {
@@ -247,10 +249,10 @@ namespace Pro.Mvc.Controllers
             }
             return Json(rm, JsonRequestBehavior.AllowGet);
         }
-
+         [HttpGet]
         public ActionResult CategoryQuery()
         {
-            return View();
+            return View(true);
         }
 
         [HttpPost]
@@ -287,10 +289,10 @@ namespace Pro.Mvc.Controllers
             }
             return Json(rm, JsonRequestBehavior.AllowGet);
         }
-
+         [HttpGet]
         public ActionResult DefCampaign()
         {
-            return View();
+            return View(true);
         }
 
         [HttpPost]
@@ -365,11 +367,11 @@ namespace Pro.Mvc.Controllers
                     ViewBag.TagPropName = CityView.TagPropName;
                     ViewBag.TagPropTitle = CityView.TagPropTitle;
                     break;
-                case "place":
-                    ViewBag.TagPropId = PlaceView.TagPropId;
-                    ViewBag.TagPropName = PlaceView.TagPropName;
-                    ViewBag.TagPropTitle = PlaceView.TagPropTitle;
-                    break;
+                //case "place":
+                //    ViewBag.TagPropId = PlaceView.TagPropId;
+                //    ViewBag.TagPropName = PlaceView.TagPropName;
+                //    ViewBag.TagPropTitle = PlaceView.TagPropTitle;
+                //    break;
                 case "region":
                     ViewBag.TagPropId = RegionView.TagPropId;
                     ViewBag.TagPropName = RegionView.TagPropName;
@@ -392,7 +394,7 @@ namespace Pro.Mvc.Controllers
                 //    break;
             }
 
-            return View();
+            return View(true);
         }
 
 
@@ -423,9 +425,9 @@ namespace Pro.Mvc.Controllers
                         case "city":
                             result = EntityPro.DoSave<CityView>(PropId, PropName, accountId, (UpdateCommandType)command);
                             break;
-                        case "place":
-                            result = EntityPro.DoSave<PlaceView>(PropId, PropName, accountId, (UpdateCommandType)command);
-                            break;
+                        //case "place":
+                        //    result = EntityPro.DoSave<PlaceView>(PropId, PropName, accountId, (UpdateCommandType)command);
+                        //    break;
                         case "region":
                             result = EntityPro.DoSave<RegionView>(PropId, PropName, accountId, (UpdateCommandType)command);
                             break;
@@ -673,7 +675,8 @@ namespace Pro.Mvc.Controllers
             }
             else
             {
-                MemberCategoryView view = new MemberCategoryView() { AccountId = accountId };
+                //MemberCategoryView
+                MemberItem view = new MemberItem() { AccountId = accountId };
                 json = JsonSerializer.Serialize(view);
             }
 
@@ -694,14 +697,15 @@ namespace Pro.Mvc.Controllers
         // [ValidateAntiForgeryToken]
         public JsonResult UpdateMember()
         {
+            //MemberCategoryView
 
             int res = 0;
             string action = "הגדרת מנוי";
-            MemberCategoryView a = null;
+            MemberItem a = null;
             ResultModel model=null;
             try
             {
-                a = EntityContext.Create<MemberCategoryView>(Request.Form);
+                a = EntityContext.Create<MemberItem>(Request.Form);
 
                 EntityValidator validator = EntityValidator.ValidateEntity(a, "הגדרת מנוי", "he");
                 if (!validator.IsValid)
@@ -727,10 +731,10 @@ namespace Pro.Mvc.Controllers
         // [ValidateAntiForgeryToken]
         public JsonResult DeleteMember(string MemberId)
         {
-
+            //MemberCategoryView
             int res = 0;
             string action = "הסרת מנוי";
-            MemberCategoryView a = null;
+            MemberItem a = null;
             try
             {
                 int RecordId = Types.ToInt(Request["RecordId"]);
@@ -1127,7 +1131,7 @@ namespace Pro.Mvc.Controllers
                     break;
             }
 
-            return View();
+            return View(true);
         }
 
         #endregion

@@ -28,12 +28,12 @@ namespace Pro.Mvc.Controllers
 
       
 
-        [HttpPost]
-        public JsonResult SetMngData(string value)
-        {
-            base.SetSignedUserData(value);
-            return Json(null);
-        }
+        //[HttpPost]
+        //public JsonResult SetMngData(string value)
+        //{
+        //    base.SetSignedUserData(value);
+        //    return Json(null);
+        //}
 
 
         #region admin
@@ -101,11 +101,12 @@ namespace Pro.Mvc.Controllers
                 current.AccountId = accountId;
                 current.AccountName = profile.AccountName;
                 current.AccountCategory = profile.AccountCategory;
+                current.SetUserDataEx();
                 //FormsAuth.Instance.SetAuthenticatedUserForRequest(current);
                 FormsAuth.Instance.SignIn(current, false);
-                return Json(new ResultModel() { Status = 1, Link = "/Home/Dashboard" });
+                return Json(new ResultModel() { Status = 1, Link = "/Main/Dashboard" });
 
-                //return RedirectToAction("Dashboard", "Home");
+                //return RedirectToAction("Dashboard", "Main");
             }
             catch (Exception ex)
             {
@@ -130,9 +131,10 @@ namespace Pro.Mvc.Controllers
                 current.AccountId = profile.AccountId;
                 current.AccountName = profile.AccountName;
                 current.AccountCategory = profile.AccountCategory;
+                current.SetUserDataEx();
                 FormsAuth.Instance.SignIn(current, false);
                 return Json( new ResultModel() { Status = 1, Link = "/Admin/Main" });
-                // RedirectToAction("Dashboard", "Home");
+                // RedirectToAction("Dashboard", "Main");
             }
             catch (Exception ex)
             {
@@ -223,7 +225,7 @@ namespace Pro.Mvc.Controllers
             {
                 return RedirectToIndex("User not alllowed for this method");
             }
-            return View();
+            return View(true);
         }
 
         public ActionResult DefAccount()
@@ -232,7 +234,7 @@ namespace Pro.Mvc.Controllers
             {
                return RedirectToIndex("User not alllowed for this method");
             }
-            return View();
+            return View(true);
         }
 
         [HttpPost]
@@ -683,7 +685,7 @@ namespace Pro.Mvc.Controllers
 
         public ActionResult Main()
         {
-            return Authenticate(null);
+            return View(true);
         }
 
       

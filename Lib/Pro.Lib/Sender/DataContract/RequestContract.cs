@@ -1,5 +1,4 @@
-﻿using Netcell.Lib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -9,7 +8,6 @@ using System.Web;
 namespace RestApi.DataContracts
 {
 
-   // [DataContract]
     public abstract class RequestContract<T>
     {
         public DataAuth Auth { get; set; }

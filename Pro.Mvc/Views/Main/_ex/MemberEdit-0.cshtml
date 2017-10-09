@@ -1,0 +1,385 @@
+﻿@{
+
+    ViewBag.Title = "Crm";
+    Layout = "~/Views/Shared/_View.cshtml";
+    int rcdid = Nistec.Types.ToInt(Request["id"]);
+
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
+
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var id = '@rcdid';
+
+            var me = this;
+
+            var categorySource =
+            {
+                dataType: "json",
+                async: false,
+                dataFields: [
+                    { name: 'PropId' },
+                    { name: 'PropName' }
+                ],
+                type: 'POST',
+                url: '@Url.Action("GetCategoriesView", "Common")'
+            };
+            var categoryAdapter = new $.jqx.dataAdapter(categorySource);
+            $("#listCategory").jqxListBox(
+            {
+                rtl: true,
+                source: categoryAdapter,
+                width: 240,
+                height: 140,
+                checkboxes: true,
+                displayMember: 'PropName',
+                valueMember: 'PropId'
+            });
+
+            var branchAdapter = createComboAdapter("PropId", "PropName", "Branch", '@Url.Action("GetBranchView", "Common")', 0, 120, false);
+
+            var placeAdapter = createComboAdapter("PropId", "PropName", "PlaceOfBirth", '@Url.Action("GetPlaceView", "Common")', 0, 120, false);
+
+            var statusAdapter = createComboAdapter("PropId", "PropName", "Status", '@Url.Action("GetStatusView", "Common")', 0, 0, false);
+
+            var regionAdapter = createComboAdapter("PropId", "PropName", "Region", '@Url.Action("GetRegionView", "Common")', 0, 120, false);
+
+            var cityAdapter = createComboAdapter("PropId", "PropName", "City", '@Url.Action("GetCityView", "Common")', 0, 120, false);
+
+            var genderAdapter = createComboAdapter("PropId", "PropName", "Gender", '@Url.Action("GetGenderView", "Common")', 0, 0, false);
+
+
+            @*var citySource =
+            {
+                dataType: "json",
+                dataFields: [
+                    { name: 'PropId' },
+                    { name: 'RegionId' },
+                    { name: 'PropName' }
+                ],
+                data: { 'zone': 0 },
+                type: 'POST',
+                url: '@Url.Action("GetCityView", "Common")'
+            };
+
+            var cityAdapter = new $.jqx.dataAdapter(citySource, {
+                //contentType: "application/json; charset=utf-8",
+                loadError: function (jqXHR, status, error) {
+                    //alert("areaAdapter failed: " + error);
+                },
+                loadComplete: function (data) {
+                    //alert("areaAdapter is Loaded");
+                }
+            });
+            // perform Data Binding.
+            //areaAdapter.dataBind();
+
+
+            $("#City").jqxComboBox(
+            {
+                rtl: true,
+                source: cityAdapter,
+                width: 200,
+                dropDownHeight: 200,
+                autoDropDownHeight: false,
+                displayMember: 'PropName',
+                valueMember: 'PropId'
+            });
+
+            $("#Region").bind('select', function (event) {
+                if (event.args) {
+
+                    $("#City").jqxComboBox({ disabled: false, selectedIndex: -1 });
+                    var value = event.args.item.value;
+                    citySource.data = { 'region': value };
+                    cityAdapter = new $.jqx.dataAdapter(citySource);
+                    $("#City").jqxComboBox({ source: cityAdapter });
+                }
+            });*@
+            // perform Data Binding.
+            //placeAdapter.dataBind();
+
+            //$("#listBranch").jqxListBox('insertAt', "בחר הכל", 1);
+            //$("#listCharge").jqxListBox('insertAt', { label: "בחר הכל", value: "-1" }, 1);
+            //$("#listCity").jqxListBox('insertAt', { label: "בחר הכל", value: "-1" }, 1);
+            //$("#listPlace").jqxListBox('insertAt', { label: "בחר הכל", value: "-1" }, 1);
+
+
+            $('#reset').on('click', function () {
+                location.reload();
+            });
+
+            //===========================================================================
+
+            var view_source =
+           {
+               datatype: "json",
+               async: false,
+               id: 'RecordId',
+               data: { 'id': '@rcdid' },
+               type: 'POST',
+               url: '@Url.Action("GetMemberEdit", "Common")'
+           };
+
+            var viewAdapter = new $.jqx.dataAdapter(view_source, {
+                loadComplete: function (record) {
+                    if (record) {
+                        loadDataForm("accForm", record);
+                        selectCheckList("listCategory", record.Categories);
+
+                    }
+                },
+                loadError: function (jqXHR, status, error) {
+                },
+                beforeLoadComplete: function (records) {
+                }
+            });
+            viewAdapter.dataBind();
+
+
+            //account dialog
+            $('#accForm').jqxValidator({
+                rtl: true,
+                //hintType: 'label',
+                animationDuration: 0,
+                rules: [
+                      { input: '#FirstName', message: 'חובה לציין שם פרטי!', action: 'keyup, blur', rule: 'required' },
+                      { input: '#LastName', message: 'חובה לציין שם משפחה!', action: 'keyup, blur', rule: 'required' },
+                      { input: '#Address', message: 'חובה לציין כתובת!', action: 'keyup, blur', rule: 'required' },
+                       {
+                           input: "#City input", message: 'חובה לציין עיר!', action: 'blur', rule: function (input, commit) {
+                               var index = $("#City").jqxComboBox('getSelectedIndex');
+                               return index != -1;
+                           }
+                       },
+                      //{ input: '#City', message: 'חובה לציין עיר!', action: 'keyup, blur', rule: 'required' },
+                      { input: '#Email', message: 'אימייל לא תקין!', action: 'keyup', rule: 'email' },
+                      {
+                          input: '#CellPhone', message: 'טלפון נייד אינו תקין!', action: 'valuechanged, blur', rule:
+                                    function (input, commit) {
+                                        var val = input.val();
+                                        var re = /^(|\()(0|972)(\d{1}|\d{2})(|[\)\/\.-])([0-9]{7})$/
+                                        return val ? re.test(val) : true;
+                                    }
+                      },
+                      {
+                          input: '#Phone', message: 'טלפון אינו תקין!', action: 'valuechanged, blur', rule:
+                                    function (input, commit) {
+                                        var val = input.val();
+                                        var re = /^(|\()(0|972)(\d{1}|\d{2})(|[\)\/\.-])([0-9]{7})$/
+                                        return val ? re.test(val) : true;
+                                    }
+                      }
+                ]
+            });
+
+
+            $('#accSubmit').on('click', function (e) {
+
+                e.preventDefault();
+                var actionurl = $('#accForm').attr('action');
+                renderCheckList("listCategory", "Categories");
+                var validationResult = function (isValid) {
+                    if (isValid) {
+                        $.ajax({
+                            url: actionurl,
+                            type: 'post',
+                            dataType: 'json',
+                            data: $('#accForm').serialize(),
+                            success: function (data) {
+                                alert(data.Message);
+                                if (data.Status >= 0) {
+                                    window.parent.triggerMemberComplete(data.OutupId);
+                                    $('#accForm')[0].reset();
+                                    //$('#RecordId').val(data.OutputId);
+                                }
+                            },
+                            error: function (jqXHR, status, error) {
+                                alert(error);
+                            }
+                        });
+                    }
+                }
+                $('#accForm').jqxValidator('validate', validationResult);
+
+            });
+
+            $('#accCancel').on('click', function (e) {
+                $('#accForm')[0].reset();
+                $('#accForm').jqxValidator('hide');
+            });
+        });
+
+    </script>
+}
+
+<div style="margin: 0px;">
+    <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+        <div id="accWindow">
+            <div id="accHeader">
+                <span id="accTitle" style="font-weight: bold;">הגדרת מנוי</span>
+            </div>
+            <div id="accBody">
+                <form class="accForm" id="accForm" method="post" action="/Common/UpdateMember">
+                    <div style="direction: rtl; text-align: right">
+
+                        <input type="hidden" id="RecordId" name="RecordId" value="0" />
+                        <input type="hidden" id="AccountId" name="AccountId" value="" />
+                        <input type="hidden" id="Categories" name="Categories" value="" />
+
+                        <ul id="tab-query" class="nav nav-tabs">
+                            <li class="active" style="font-weight: bold;"><a href="#tab-personal" data-toggle="tab">פרטים אישיים</a></li>
+                            <li style="font-weight: bold;"><a href="#tab-general" data-toggle="tab">כללי</a></li>
+                            <li style="font-weight: bold;"><a href="#tab-notes" data-toggle="tab">הערות</a></li>
+                        </ul>
+                        <div id="tab-content" class="tab-content" dir="rtl">
+                            <div class="tab-pane fade in active" id="tab-personal">
+                                <div class="form-group">
+                                    <label class="column">
+                                        תעודת זהות :
+                                    </label>
+                                    <input id="MemberId" name="MemberId" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        שם פרטי :
+                                    </label>
+                                    <input id="FirstName" name="FirstName" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        שם משפחה :
+                                    </label>
+                                    <input id="LastName" name="LastName" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        שם האב :
+                                    </label>
+                                    <input id="FatherName" name="FatherName" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        כתובת :
+                                    </label>
+                                    <input id="Address" name="Address" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        עיר :
+                                    </label>
+                                    <div id="City" name="City"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        מקום לידה:
+                                    </label>
+                                    <div id="PlaceOfBirth" name="PlaceOfBirth"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        מגדר:
+                                    </label>
+                                    <div id="Gender" name="Gender"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        תאריך לידה:
+                                    </label>
+                                    <input id="Birthday" name="Birthday" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        טלפון נייד:
+                                    </label>
+                                    <input id="CellPhone" name="CellPhone" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        טלפון:
+                                    </label>
+                                    <input id="Phone" name="Phone" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        דאר אלקטרוני:
+                                    </label>
+                                    <input id="Email" name="Email" type="text" class="text-mid" />
+                                </div>
+                            </div>
+                            <div class="tab-pane fade in" id="tab-general">
+                                <div class="form-group">
+                                    <label class="column">
+                                        סניף :
+                                    </label>
+                                    <div id="Branch" name="Branch"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        סוג חיוב :
+                                    </label>
+                                    <div id="ChargeType" name="ChargeType"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        סווג :
+                                    </label>
+                                    <div id="listCategory" name="listCategory" style="padding: 10px" data-type="checklist"></div>
+                                </div>
+                                <div class="form-group" style="display:none">
+                                    <label class="column">
+                                        אזור :
+                                    </label>
+                                    <div id="Region" name="Region"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        סטאטוס :
+                                    </label>
+                                    <div id="Status" name="Status"></div>
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade in" id="tab-notes">
+                                <div class="form-group">
+                                    <label class="column">
+                                        הערות:
+                                    </label>
+                                    <textarea id="Note" name="Note" rows="3" cols="60"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        מועד הצטרפות:
+                                    </label>
+                                    <input id="JoiningDate" name="JoiningDate" type="text" class="text-mid" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="column">
+                                        מועד עדכון:
+                                    </label>
+                                    <input id="LastUpdate" name="LastUpdate" type="text" readonly="readonly" class="text-mid" />
+                                </div>
+
+                            </div>
+                        </div>
+                        <div style="height: 5px"></div>
+                        <div>
+                            <input id="accSubmit" class="btn-default btn7" type="button" value="עדכון" />
+                            <input id="accCancel" class="btn-default btn7" type="button" value="ניקוי" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--end of content-wrapper-->

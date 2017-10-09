@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/_View.cshtml";
-    Page.Title = "Crm";
+    Page.Title = "Main";
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
 }
 @section head {
@@ -61,11 +61,11 @@
                     <table style="border-spacing: 10px;border-collapse: separate;direction:rtl">
                         <tr id="trcode">
                             <td align="right">קוד צוות:</td>
-                            <td align="left"><input id="PropId" readonly="readonly" class="input" /></td>
+                            <td align="left"><input id="TeamId" readonly="readonly" class="input" /></td>
                         </tr>
                         <tr>
                             <td align="right">שם צוות:</td>
-                            <td align="left"><input id="PropName" class="input" /></td>
+                            <td align="left"><input id="TeamName" class="input" /></td>
                         </tr>
                         <tr>
                             <td align="right"></td>

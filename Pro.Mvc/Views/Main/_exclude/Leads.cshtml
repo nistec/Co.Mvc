@@ -1,0 +1,216 @@
+﻿@{
+    Layout = "~/Views/_View.cshtml";
+    ViewBag.Title = "Buildings";
+
+   
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+
+    @Scripts.Render("~/bundles/jqxgrid")
+
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+    </style>
+
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            JSON.useDateParser();
+            var theme = 'Arctic';
+            // prepare the data
+
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'LeadId', type: 'number' },
+                    { name: 'AgentId', type: 'number' },
+                    { name: 'CustomerName', type: 'string' },
+                    { name: 'Email', type: 'string' },
+                    { name: 'Mobile', type: 'string' },
+                    { name: 'Phone', type: 'string' },
+                    { name: 'Commission', type: 'string' },
+                    { name: 'PurposeType', type: 'number' },
+                    { name: 'DealType', type: 'number' },
+                    { name: 'RequestSize', type: 'number' },
+                    { name: 'AreaType', type: 'number' },
+                    { name: 'BadgetForMr', type: 'string' },
+                    { name: 'EntryDate', type: 'date' },
+                    { name: 'ParkingNum', type: 'number' },
+                    { name: 'ContractDuration', type: 'number' },
+                    { name: 'Memo', type: 'string' },
+                    { name: 'PurposeName', type: 'string' },
+                    { name: 'DealName', type: 'string' },
+                    { name: 'AreaName', type: 'string' },
+                    { name: 'Creation', type: 'date' },
+                    { name: 'LastUpdate', type: 'date' },
+                    { name: 'Status', type: 'number' }
+                    
+                ],
+                id: 'LeadId',
+                type:'POST',
+                url: '@Url.Action("GetLeads", "Crm")',
+                pagenum: 3,
+                pagesize: 20,
+                pager: function (pagenum, pagesize, oldpagenum) {
+                    // callback called when a page or page size is changed.
+                }
+            };
+            //var dataAdapter = new $.jqx.dataAdapter(source);
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                async:false,
+                loadComplete: function (data) { },
+                loadError: function (xhr, status, error) { alert(' status: ' + status + '\n error ' + error) }
+            });
+            var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+                return '<div style="text-align:center"><a href="LeadDef?id=' + value + '" >הצג</a></div>';
+            };
+        
+            var initrowdetails = function (index, parentElement, gridElement, datarecord) {
+                var tabsdiv = null;
+                var information = null;
+                var notes = null;
+                tabsdiv = $($(parentElement).children()[0]);
+                if (tabsdiv != null) {
+                    information = tabsdiv.find('.information');
+                    notes = tabsdiv.find('.notes');
+                    var title = tabsdiv.find('.title');
+                    title.text(datarecord.CustomerName);
+                    var container = $('<div style="margin: 5px;text-align:right;"></div>')
+                    container.rtl = true;
+                    container.appendTo($(information));
+                    var leftcolumn = $('<div style="float: left; width: 45%;direction:rtl;"></div>');
+                    var rightcolumn = $('<div style="float: right; width: 40%;direction:rtl;"></div>');
+                    container.append(leftcolumn);
+                    container.append(rightcolumn);
+  
+                    var divLeft = "<div style='margin: 10px;'><b>מייל:</b> " + datarecord.Email + "</div>" +
+                        "<div style='margin: 10px;'><b>טלפון נייד:</b> " + datarecord.Mobile + "</div>" +
+                        "<div style='margin: 10px;'><b>טלפון:</b> " + datarecord.Phone + "</div>" +
+                        "<div style='margin: 10px;'><b>מועד עדכון:</b> " + formatJsonShortDateTime(datarecord.LastUpdate) + "</div>";
+
+                    var divRight = "<div style='margin: 10px;'><b>עמלה:</b> " + datarecord.Commission + "</div>" +
+                        "<div style='margin: 10px;'><b>תקציב למר:</b> " + datarecord.BadgetForMr + "</div>" +
+                        "<div style='margin: 10px;'><b>מועד כניסה מבוקש:</b> " + datarecord.EntryDate + "</div>"+
+                        "<div style='margin: 10px;'><b>משך חוזה:</b> " + datarecord.ContractDuration + "</div>";
+
+                    $(leftcolumn).append(divLeft);
+                    $(rightcolumn).append(divRight);
+
+                    var notescontainer = $('<div style="white-space: normal; margin: 5px;text-align:right;"><span>' + datarecord.Memo + '</span></div>');
+                    notescontainer.rtl = true;
+
+                    $(notes).append(notescontainer);
+                    $(tabsdiv).jqxTabs({ width: '95%', height: 170, rtl:true });
+                }
+            }
+            // create Tree Grid
+            $("#jqxgrid").jqxGrid(
+            {
+                width: '100%',
+                //height:'500',
+                autoheight: true,
+                rtl: true,
+                source: dataAdapter,
+                localization: getLocalization('he'),
+                pageable: true,
+                sortable: true,
+                showfilterrow: true,
+                filterable: true,
+                rowdetails: true,
+                rowdetailstemplate: { rowdetails: "<div style='margin: 10px;'><ul style='margin-right: 30px;'><li class='title'></li><li>פרטים</li></ul><div class='information'></div><div class='notes'></div></div>", rowdetailsheight: 200 },
+                //ready: function () {
+                //    $("#jqxgrid").jqxGrid('showrowdetails', 0);
+                //    //$("#jqxgrid").jqxGrid('showrowdetails', 1);
+                //},
+                initrowdetails: initrowdetails,
+
+                columns: [
+                  { text: 'פעולות', dataField: 'LeadId', filterable: false, width: 100, cellsalign: 'right', align: 'center', cellsrenderer: cellsrenderer },
+                  //{ text: 'סוכן', dataField: 'AgentId', cellsalign: 'right', align: 'center' },
+                  { text: 'שם הלקוח', dataField: 'CustomerName', filtercondition: 'CONTAINS',  cellsalign: 'right', align: 'center' },
+                  { text: 'סוג נכס', dataField: 'PurposeName', filtertype: 'list', width: 150, cellsalign: 'right', align: 'center' },
+                  {text: 'סוג עסקה', dataField: 'DealName', filtertype: 'list',  width: 150, cellsalign: 'right', align: 'center'},
+                  { text: 'אזור מבוקש', dataField: 'AreaName', filtercondition: 'starts_with', width: 150, cellsalign: 'right', align: 'center' },
+                  {text: 'גודל מבוקש', dataField: 'RequestSize', type: 'number', filtertype: 'number', width: 120, cellsalign: 'right', align: 'center'},
+                  //{ text: 'סטאטוס', dataField: 'Status', width: 150, cellsalign: 'right', align: 'center' },
+                  { text: 'מועד עדכון', type: 'date', dataField: 'LastUpdate', filtertype :'range',width: 120, cellsformat: 'd', cellsalign: 'right', align: 'center' }
+                ]
+            });
+
+            //$('#jqxgrid').on('rowexpand', function (event) {
+            //    //alert('rowexpand');
+            //    // event arguments.
+            //    var args = event.args;
+            //    // row details.
+            //    var details = args.details;
+            //    // row's bound index.
+            //    var rowBoundIndex = args.rowindex;
+            //    alert(rowBoundIndex);
+            //    //checkTagObject(details);
+            //    //var dataRecord = args.row;
+            //    var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', rowBoundIndex);
+            //    //alert(dataRecord);
+            //    //initrowdetails(args.rowindex, args.details, args, dataRecord);
+
+            //});
+            $("#linkLeadDef").jqxLinkButton({ width: '120', height: '30' });
+            $('#btnclearfilter').jqxButton({ width: '120', height: '30' });
+            $('#btnclearfilter').click(function () {
+                $("#jqxgrid").jqxGrid('clearfilters');
+            });
+        });
+
+        
+    </script>
+}
+
+
+@section featured {
+
+
+}
+
+<div class="breadcrumbs">
+@Html.ActionLink("Home", "Index", "Home")>
+@Html.ActionLink("Main", "Main", "Home")>
+<a href="javascript:parent.history.back()">Crm</a> >
+@ViewContext.RouteData.Values["action"].ToString()
+</div>
+
+
+<hgroup class="title">
+    <h3 class="rightPan">הלקוחות שלי.</h3>
+</hgroup>
+
+<div class="clear"></div>
+
+<div class="global">
+    <div class="container">
+
+        <div class="grid-wrap">
+            <div style="display: inline; float: right">
+                <a id="linkLeadDef" href="~/Crm/LeadDef?id=0" title="הוספת לקוח">הוספת לקוח</a>
+                <input style="margin-top: 10px;" value="הסר סינון" id="btnclearfilter" type="button" />
+                <br />
+            </div>
+
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                <div style="margin-top: 30px;">
+                    <div id="cellbegineditevent"></div>
+                    <div style="margin-top: 10px;" id="cellendeditevent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

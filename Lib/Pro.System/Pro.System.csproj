@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\ResultStatusModel.cs" />
+    <Compile Include="Data\Entities\CalendarBook.cs" />
     <Compile Include="Data\SystemStatusMessage.cs" />
     <Compile Include="Data\DbLookups.cs" />
     <Compile Include="Data\Entities\CategoryContext.cs" />

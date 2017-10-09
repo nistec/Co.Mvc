@@ -122,7 +122,7 @@ namespace Pro.Lib.Upload
         #region ui methods
         
         Dictionary<string, int> listCity = null;
-        Dictionary<string, int> listPlace = null;
+        //Dictionary<string, int> listPlace = null;
         Dictionary<string, int> listCharge = null;
         Dictionary<string, int> listBranch = null;
         Dictionary<string, int> listStatus = null;
@@ -135,7 +135,7 @@ namespace Pro.Lib.Upload
             {
 
                 listCity = UploadReader.ReadLookup(cmd, "Cities", filter, "CityName", "CityId");
-                listPlace = UploadReader.ReadLookup(cmd, "PlaceOfBirth", filter, "PlaceName", "PlaceId");
+                //listPlace = UploadReader.ReadLookup(cmd, "PlaceOfBirth", filter, "PlaceName", "PlaceId");
                 listCharge = UploadReader.ReadLookup(cmd, "Charge", filter, "ChargeName", "ChargeId");
                 listBranch = UploadReader.ReadLookup(cmd, "Branch", filter, "BranchName", "BranchId");
                 listStatus = UploadReader.ReadLookup(cmd, "Enums", filter + " and PropType='Status'", "PropName", "PropId");
@@ -170,8 +170,8 @@ namespace Pro.Lib.Upload
                                     return UploadReader.ReadValidLookupField(dr, field, (int)defaultValue, listCity);
                                 case "listGender":
                                     return UploadReader.ReadValidSexField(dr, field, (string)defaultValue);
-                                case "listPlace":
-                                    return UploadReader.ReadValidLookupField(dr, field, (int)defaultValue, listPlace);
+                                //case "listPlace":
+                                //    return UploadReader.ReadValidLookupField(dr, field, (int)defaultValue, listPlace);
                                 case "listRegion":
                                     return UploadReader.ReadValidLookupField(dr, field, (int)defaultValue, listRegion);
                                 case "listStatus":
@@ -268,8 +268,8 @@ namespace Pro.Lib.Upload
                 case "listCity":
                     return UploadReader.ReadLookupField(dr, field, defaultValue, listCity);
                 case "listGender":
-                case "listPlace":
-                    return UploadReader.ReadLookupField(dr, field, defaultValue, listPlace);
+                //case "listPlace":
+                //    return UploadReader.ReadLookupField(dr, field, defaultValue, listPlace);
                 case "listRegion":
                     return UploadReader.ReadLookupField(dr, field, defaultValue, listRegion);
                 case "listStatus":
@@ -332,7 +332,7 @@ namespace Pro.Lib.Upload
                 throw new UploadException(exception2);
             }
         }
-
+        /*
         internal int CreateUploadTables(DataTable dtFile, bool updateExists)//, ContactsUploadMethod method)
         {
 
@@ -412,7 +412,7 @@ namespace Pro.Lib.Upload
                     values[4] = UploadReader.ReadField(row, "FatherName", null);
                     values[5] = UploadReader.ReadField(row, "Address", null);
                     values[6] = UploadReader.ReadLookupField(row, "City", 0, listCity);
-                    values[7] = UploadReader.ReadLookupField(row, "PlaceOfBirth", 0, listPlace);
+                    values[7] = 0;// UploadReader.ReadLookupField(row, "PlaceOfBirth", 0, listPlace);
                     values[8] = UploadReader.ReadStrDateField(row, "Birthday", "");
                     values[9] = UploadReader.ReadSexField(row, "Gender", "U");
                     values[10] = cellNumber;// UploadReader.ReadMobileField(row, "CellPhone", null);
@@ -473,7 +473,7 @@ namespace Pro.Lib.Upload
  
             return count;
         }
-
+        */
         internal int CreateUploadTableStg(DataTable dtFile, bool updateExists)//, ContactsUploadMethod method)
         {
 
