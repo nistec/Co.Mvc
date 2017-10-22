@@ -17,9 +17,10 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
+            Nistec.Control.Runtime();
 
-            string BrokerPw = AppSettingsContext.GetValue("TranzilaAutoCharge_BrokerPw");
-            Console.Write(BrokerPw);
+            //string BrokerPw = AppSettingsContext.GetValue("TranzilaAutoCharge_BrokerPw");
+            //Console.Write(BrokerPw);
 
             //Nistec.Controller.Window(args);
             //return;

@@ -35,6 +35,26 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Nistec.Channels, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Sources\Nistec.Channels.dll</HintPath>
+    </Reference>
+    <Reference Include="Nistec.Imex, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Sources\Nistec.Imex.dll</HintPath>
+    </Reference>
+    <Reference Include="Nistec.Lib, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Sources\Nistec.Lib.dll</HintPath>
+    </Reference>
+    <Reference Include="Nistec.Logger, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Sources\Nistec.Logger.dll</HintPath>
+    </Reference>
+    <Reference Include="Nistec.Web, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Sources\Nistec.Web.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -48,22 +68,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Imex\Nistec.Imex.csproj">
-      <Project>{d88a851b-a6d6-4f42-85d4-b1caf36fdacc}</Project>
-      <Name>Nistec.Imex</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Lib\Nistec.Lib.csproj">
-      <Project>{54f52ed5-aecd-47c6-93d8-7b3358ba7f8c}</Project>
-      <Name>Nistec.Lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Logger\Nistec.Logger.csproj">
-      <Project>{e510dd2c-859c-476c-9901-60edfc5e71f1}</Project>
-      <Name>Nistec.Logger</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Web\Nistec.Web.csproj">
-      <Project>{8c4cff01-180e-41a1-9234-0c1b1e207ae5}</Project>
-      <Name>Nistec.Web</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Lib\Pro.Lib\Pro.Lib.csproj">
       <Project>{b84526d5-435e-4d56-b323-dbffafe54940}</Project>
       <Name>Pro.Lib</Name>
