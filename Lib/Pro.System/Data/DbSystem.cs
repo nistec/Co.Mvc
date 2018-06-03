@@ -165,12 +165,12 @@ namespace ProSystem.Data
         {
             CacheKey = DbContextCache.GetKey<T>(Settings.ProjectName, entityCacheGroups, accountId, userId);
         }
-        public override IList<T> GetList(params object[] keyValueParameters)
+        public override IList<T> ExecOrViewList(params object[] keyValueParameters)
         {
             //int ttl = 3;
             return DbContextCache.EntityList<DbSystem, T>(CacheKey, keyValueParameters);
         }
-        protected override void OnChanged(UpdateCommandType commandType)
+        protected override void OnChanged(ProcedureType commandType)
         {
             DbContextCache.Remove(CacheKey);
         }

@@ -75,7 +75,7 @@ function app_ticket_def(dataModel,userInfo,isdialog) {
     this.UserRole = userInfo.UserRole;
     this.AllowEdit = (this.UserRole > 4) ? 1 : 0;
     this.IsDialog = isdialog;
-
+    this.uploader;
     var slf = this;
 
     $("#AccountId").val(this.AccountId);
@@ -120,10 +120,17 @@ function app_ticket_def(dataModel,userInfo,isdialog) {
                     if ($("#jqxgrid4")[0].childElementCount == 0)
                         app_tickets_form.load(slf.Model, slf.UserInfo);
                     break;
-                case"ui-id-5":
-                    if ($("#iframe-files").attr('src') === undefined)
-                        var op = slf.Model.Option;
-                    app_iframe.attachIframe('iframe-files', '/Media/_MediaFiles?refid=' + slf.TicketId + '&refType=t&op=' + op, '100%', '350px', true);
+                case "ui-id-5":
+
+                    if (slf.uploader == null) {
+                        slf.uploader = new app_media_uploader("#task-files");
+                        slf.uploader.init(slf.TaskId, 't');
+                        slf.uploader.show();
+                    }
+
+                    //if ($("#iframe-files").attr('src') === undefined)
+                    //    var op = slf.Model.Option;
+                    //app_iframe.attachIframe('iframe-files', '/Media/_MediaFiles?refid=' + slf.TicketId + '&refType=t&op=' + op, '100%', '350px', true);
                     break;
             }
         }

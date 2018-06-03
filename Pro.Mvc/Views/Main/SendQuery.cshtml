@@ -50,55 +50,55 @@
 <div class="top-space"></div>
 
 <div class="global-view">
-    <div class="container-box"  >
+    <div class="container-box">
+        <div class="panel-area">
+            <h3 class="rtl panel-area-title">דוחות דיוור</h3>
 
-        <h3 class="rtl">דוחות דיוור</h3>
+            <form id="form" action="/Main/SendReport" method="post">
+                @*<input type="hidden" id="AuthAccountId" name="AuthAccountId" />*@
 
-        <form id="form" action="/Main/SendReport" method="post">
-            @*<input type="hidden" id="AuthAccountId" name="AuthAccountId" />*@
+                <div id="tab-adv">
+                    <div id="ReportType" name="ReportType"></div>
+                    <div style="height:10px"></div>
+                    <fieldset>
+                        <label for="allCell">סלולאר</label>
+                        <input type="radio" id="allCell" name="Platform" value="1" checked class="input-radio" />
+                        <label for="allEmail">דואר אלקטרוני</label>
+                        <input type="radio" id="allEmail" name="Platform" value="2" class="input-radio" />
+                    </fieldset>
 
-            <div id="tab-adv">
-                <div id="ReportType" name="ReportType"></div>
+                    <ul>
+                        @*<li class="headline">סוג דיוור</li>
+                        <li><input type="radio" id="allCell" name="Platform" value="1" />&nbsp;<span>דיוור לסלולאר</span></li>
+                        <li><input type="radio" id="allEmail" name="Platform" value="2" />&nbsp;<span>דיוור למייל</span></li>*@
+
+                        <li class="headline">נמען</li>
+                        <li><input type="text" name="Target" style="width:220px" maxlength="100" /></li>
+                        @*<li class="headline">טלפון נייד</li>
+                        <li><input type="text" name="CellPhone" style="width:120px" maxlength="15" /></li>*@
+                        <li class="headline">מועד שליחה</li>
+                        <li>
+                            <div style="vertical-align:top">
+                                <span>מ:</span><br />
+                                <div id="SendDateFrom" name="SendDateFrom"></div><br />
+                                <span>עד:</span><br />
+                                <div id="SendDateTo" name="SendDateTo"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
                 <div style="height:10px"></div>
-                <fieldset>
-                    <label for="allCell">סלולאר</label>
-                    <input type="radio" id="allCell" name="Platform" value="1" checked class="input-radio" />
-                    <label for="allEmail">דואר אלקטרוני</label>
-                    <input type="radio" id="allEmail" name="Platform" value="2" class="input-radio" />
-                </fieldset>
-
-                <ul>
-                    @*<li class="headline">סוג דיוור</li>
-                    <li><input type="radio" id="allCell" name="Platform" value="1" />&nbsp;<span>דיוור לסלולאר</span></li>
-                    <li><input type="radio" id="allEmail" name="Platform" value="2" />&nbsp;<span>דיוור למייל</span></li>*@
-
-                    <li class="headline">נמען</li>
-                    <li><input type="text" name="Target" style="width:220px" maxlength="100" /></li>
-                    @*<li class="headline">טלפון נייד</li>
-                    <li><input type="text" name="CellPhone" style="width:120px" maxlength="15" /></li>*@
-                    <li class="headline">מועד שליחה</li>
-                    <li>
-                        <div style="vertical-align:top">
-                            <span>מ:</span><br />
-                            <div id="SendDateFrom" name="SendDateFrom"></div><br />
-                            <span>עד:</span><br />
-                            <div id="SendDateTo" name="SendDateTo"></div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div style="height:10px"></div>
-            <div>
-                <input type="radio" id="rdDefault" name="op" value="/Main/SendReport" checked="checked" />&nbsp;<span>הצגת נמענים למסך</span>
-                <div class="@exportClass"><input type="radio" id="rdExport" name="op" value="/Main/SendExport" />&nbsp;<span>ייצוא לקובץ</span></div>
-            </div>
-            <div style="height:10px"></div>
-            <div>
-                <input type="submit" value="הצג" class="btn-default btn2" />
-                <input type="reset" value="נקה" class="btn-default btn2" />
-            </div>
-        </form>
-
+                <div>
+                    <input type="radio" id="rdDefault" name="op" value="/Main/SendReport" checked="checked" />&nbsp;<span>הצגת נמענים למסך</span>
+                    <div class="@exportClass"><input type="radio" id="rdExport" name="op" value="/Main/SendExport" />&nbsp;<span>ייצוא לקובץ</span></div>
+                </div>
+                <div style="height:10px"></div>
+                <div>
+                    <input type="submit" value="הצג" class="btn-default btn2" />
+                    <input type="reset" value="נקה" class="btn-default btn2" />
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

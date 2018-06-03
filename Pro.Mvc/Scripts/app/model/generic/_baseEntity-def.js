@@ -19,7 +19,7 @@ function app_genericEntity_def(entity) {
 
         var data = entity.getDataCommand(rowid, rowdata, command);
 
-        var url = command == 2 ? entity.deleteUrl : entity.updateUrl;
+        var url = command === 2 ? entity.deleteUrl : entity.updateUrl;
 
         $.ajax({
             dataType: 'json',
@@ -100,7 +100,7 @@ function app_genericEntity_def(entity) {
             $("#updaterowbutton").jqxButton();
             $("#refreshbutton").jqxButton();
 
-            if (entity.AllowEdit == 0) {
+            if (entity.AllowEdit === 0) {
                 $("#addrowbutton").hide();
                 $("#deleterowbutton").hide();
                 $("#updaterowbutton").hide();
@@ -133,7 +133,7 @@ function app_genericEntity_def(entity) {
                 if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
                     var id = $("#jqxgrid").jqxGrid('getrowid', selectedrowindex);
                     var result = confirm("האם למחוק?");
-                    if (result == true) {
+                    if (result === true) {
                         //Logic to delete the item
                         var commit = $("#jqxgrid").jqxGrid('deleterow', id);
                     }
@@ -180,7 +180,7 @@ function app_genericEntity_def(entity) {
     });
 
     $('#jqxgrid').on('rowdoubleclick', function (event) {
-        if (entity.AllowEdit == 0) {
+        if (entity.AllowEdit === 0) {
             return;
         };
         var args = event.args;
@@ -200,7 +200,7 @@ function app_genericEntity_def(entity) {
             if (isValid) {
                 var row = entity.createRowData();
 
-                if ($("#insertFlag").val() == '0') {
+                if ($("#insertFlag").val() === '0') {
                     $('#jqxgrid').jqxGrid('addrow', null, row);
                 }
                 else if (editrow >= 0) {
@@ -214,7 +214,7 @@ function app_genericEntity_def(entity) {
 
     });
 
-    if (entity.AllowEdit == 0) {
+    if (entity.AllowEdit === 0) {
         $("#Cancel").hide();
         $("#Save").hide();
         $(".note-edit").hide();

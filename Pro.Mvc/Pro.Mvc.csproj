@@ -22,6 +22,7 @@
     <IISExpressUseClassicPipelineMode />
     <TargetFrameworkProfile />
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,26 +53,6 @@
       <HintPath>..\packages\CaptchaMvc.Mvc4.1.5.0\lib\net40-full\CaptchaMvc.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Nistec.Data, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Sources\Nistec.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Nistec.Imex, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Sources\Nistec.Imex.dll</HintPath>
-    </Reference>
-    <Reference Include="Nistec.Lib, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Sources\Nistec.Lib.dll</HintPath>
-    </Reference>
-    <Reference Include="Nistec.Logger, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Sources\Nistec.Logger.dll</HintPath>
-    </Reference>
-    <Reference Include="Nistec.Web, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Sources\Nistec.Web.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -104,7 +85,7 @@
     </Reference>
     <Reference Include="System.Net.Http">
       <Private>True</Private>
-      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
@@ -112,7 +93,7 @@
     </Reference>
     <Reference Include="System.Net.Http.WebRequest">
       <Private>True</Private>
-      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Net.Http.WebRequest.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -203,6 +184,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="Content\css\css.txt" />
     <Content Include="Content\css\images\loading.gif" />
+    <Content Include="Content\css\images\select-15.png" />
     <Content Include="Content\css\style-rtl.css" />
     <Content Include="Content\css\reset.css" />
     <Content Include="Content\mifkad\css\html5reset-1.6.1.css" />
@@ -215,6 +197,7 @@
     <Content Include="Images\icons\comment-green-24.png" />
     <Content Include="Images\icons\diagonal-24.png" />
     <Content Include="Images\icons\diagonal-gold-24.png" />
+    <Content Include="Images\icons\diagonal-red-24.png" />
     <Content Include="Images\icons\event-24.png" />
     <Content Include="Images\icons\event-gold-24.png" />
     <Content Include="Images\icons\event-orange-24.png" />
@@ -409,6 +392,7 @@
     <Content Include="jqwidgets\jqxdata.js" />
     <Content Include="jqwidgets\jqxdatatable.js" />
     <Content Include="jqwidgets\jqxdate.js" />
+    <Content Include="jqwidgets\__jqxdatetimeinput.js" />
     <Content Include="jqwidgets\jqxdatetimeinput.js" />
     <Content Include="jqwidgets\jqxdocking.js" />
     <Content Include="jqwidgets\jqxdockinglayout.js" />
@@ -785,6 +769,7 @@
     <Content Include="jqwidgets\styles\jqx.glacier.css" />
     <Content Include="jqwidgets\styles\jqx.highcontrast.css" />
     <Content Include="jqwidgets\styles\jqx.light.css" />
+    <Content Include="jqwidgets\styles\jqx.nis_metro.css" />
     <Content Include="jqwidgets\styles\jqx.metro.css" />
     <Content Include="jqwidgets\styles\jqx.metrodark.css" />
     <Content Include="jqwidgets\styles\jqx.mobile.css" />
@@ -802,15 +787,16 @@
     <Content Include="jqwidgets\styles\jqx.ui-sunny.css" />
     <Content Include="jqwidgets\styles\jqx.web.css" />
     <Content Include="jqwidgets\styles\jqx.windowsphone.css" />
+    <Content Include="Scripts\app\app-jqx-tree-grid-1.0.js" />
     <Content Include="Scripts\app\app-jqx-grid-1.0.js" />
-    <Content Include="Scripts\app\app-wizard.js" />
+    <Content Include="Scripts\app\app-wizard-1.0.js" />
     <Content Include="Scripts\app\app-uploads.js" />
-    <Content Include="Scripts\app\app-jqx-grid.js" />
     <Content Include="Scripts\app\app-media.js" />
     <Content Include="Scripts\app\app-form.css" />
     <Content Include="Scripts\app\app-global.js" />
     <Content Include="Scripts\app\cms\cms_page-edit.js" />
     <Content Include="Scripts\app\cms\cms_wizard-builder.js" />
+    <Content Include="Scripts\app\app-builder.js" />
     <Content Include="Scripts\app\globalization\app.culture.he-IL.js" />
     <Content Include="Scripts\app\images\add.gif" />
     <Content Include="Scripts\app\images\delete.gif" />
@@ -822,6 +808,11 @@
     <Content Include="Scripts\app\images\search.gif" />
     <Content Include="Scripts\app\cms\cms_content-grid.js" />
     <Content Include="Scripts\app\cms\cms_content-def.js" />
+    <Content Include="Scripts\app\lol-framework.js" />
+    <Content Include="Scripts\app\lol-js.js" />
+    <Content Include="Scripts\app\main\members.js" />
+    <Content Include="Scripts\app\main\sms.js" />
+    <Content Include="Scripts\app\model\generic\task-entity-def.js" />
     <Content Include="Scripts\app\model\prop-def-def.js" />
     <Content Include="Scripts\app\model\generic\category-def.js" />
     <Content Include="Scripts\app\model\generic\user-def.js" />
@@ -835,29 +826,30 @@
     <Content Include="Scripts\app\main\sendreport-grid.js" />
     <Content Include="Scripts\app\registry\member-info.js" />
     <Content Include="Scripts\app\system\calendar.js" />
+    <Content Include="Scripts\app\system\report-sub-tasks.js" />
+    <Content Include="Scripts\app\system\report-docs-grid.js" />
+    <Content Include="Scripts\app\system\report-topics-grid.js" />
+    <Content Include="Scripts\app\system\task-base.js" />
+    <Content Include="Scripts\app\system\system-models.js" />
+    <Content Include="Scripts\app\system\topic-def.js" />
+    <Content Include="Scripts\app\system\doc-def.js" />
     <Content Include="Scripts\app\system\task-form-temp.js" />
     <Content Include="Scripts\app\system\ad-def-members.js" />
     <Content Include="Scripts\app\system\ad-users-def.js" />
     <Content Include="Scripts\app\system\ad-team-def.js" />
     <Content Include="Scripts\app\system\ad-def.js" />
     <Content Include="Scripts\app\system\reminder.js" />
-    <Content Include="Scripts\app\system\task-user.js" />
-    <Content Include="Scripts\app\system\_ex\ticket-def.js" />
-    <Content Include="Scripts\app\system\_ex\task-user-0.js" />
-    <Content Include="Scripts\app\system\task-new.js" />
+    <Content Include="Scripts\app\system\task-user-v1.js" />
     <Content Include="Scripts\app\system\task-items.js" />
-    <Content Include="Scripts\app\system\tasks-grid.js" />
+    <Content Include="Scripts\app\system\report-tasks-grid.js" />
     <Content Include="Scripts\app\system\task-def.js" />
     <Content Include="Scripts\app\uploads-1.js" />
     <Content Include="Scripts\app\view\unpayed-grid.js" />
     <Content Include="Scripts\app\main\signup-grid.js" />
     <Content Include="Scripts\app\model\reports.js" />
     <Content Include="Scripts\app\main\payments-grid.js" />
-    <Content Include="Scripts\app\main\members-query.js" />
     <Content Include="Scripts\app\registry\mifkad.js" />
     <Content Include="Scripts\app\registry\signup-def.js" />
-    <Content Include="Scripts\app\main\members-def.js" />
-    <Content Include="Scripts\app\main\members-grid.js" />
     <Content Include="Scripts\app\app-jqx-1.0.js" />
     <Content Include="Scripts\app\app-model-1.0.js" />
     <Content Include="Scripts\app\app-cms.css" />
@@ -1545,6 +1537,13 @@
     <Content Include="Scripts\jq\mobile\jquery.mobile-1.4.5.min.css" />
     <Content Include="Scripts\jq\mobile\jquery.mobile-1.4.5.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\plagins\autocomplete\demo.html" />
+    <Content Include="Scripts\plagins\autocomplete\easy-autocomplete.css" />
+    <Content Include="Scripts\plagins\autocomplete\easy-autocomplete.min.css" />
+    <Content Include="Scripts\plagins\autocomplete\easy-autocomplete.themes.css" />
+    <Content Include="Scripts\plagins\autocomplete\easy-autocomplete.themes.min.css" />
+    <Content Include="Scripts\plagins\autocomplete\jquery.easy-autocomplete.js" />
+    <Content Include="Scripts\plagins\autocomplete\jquery.easy-autocomplete.min.js" />
     <Content Include="Scripts\plagins\filemanager\dist\images\application.png" />
     <Content Include="Scripts\plagins\filemanager\dist\images\code.png" />
     <Content Include="Scripts\plagins\filemanager\dist\images\css.png" />
@@ -1787,6 +1786,72 @@
     <Content Include="Scripts\jq\ui\1.9.2\jquery-ui.min.js" />
     <Content Include="Scripts\mc\mc-all.js" />
     <Content Include="Scripts\plagins\popbox\images\wait.gif" />
+    <Content Include="Scripts\plagins\select\css\select2.css" />
+    <Content Include="Scripts\plagins\select\css\select2.min.css" />
+    <Content Include="Scripts\plagins\select\select2.full.js" />
+    <Content Include="Scripts\plagins\select\select2.full.min.js" />
+    <Content Include="Scripts\plagins\select\select2.js" />
+    <Content Include="Scripts\plagins\select\select2.min.js" />
+    <Content Include="Scripts\plagins\select\i18n\af.js" />
+    <Content Include="Scripts\plagins\select\i18n\ar.js" />
+    <Content Include="Scripts\plagins\select\i18n\az.js" />
+    <Content Include="Scripts\plagins\select\i18n\bg.js" />
+    <Content Include="Scripts\plagins\select\i18n\bs.js" />
+    <Content Include="Scripts\plagins\select\i18n\ca.js" />
+    <Content Include="Scripts\plagins\select\i18n\cs.js" />
+    <Content Include="Scripts\plagins\select\i18n\da.js" />
+    <Content Include="Scripts\plagins\select\i18n\de.js" />
+    <Content Include="Scripts\plagins\select\i18n\dsb.js" />
+    <Content Include="Scripts\plagins\select\i18n\el.js" />
+    <Content Include="Scripts\plagins\select\i18n\en.js" />
+    <Content Include="Scripts\plagins\select\i18n\es.js" />
+    <Content Include="Scripts\plagins\select\i18n\et.js" />
+    <Content Include="Scripts\plagins\select\i18n\eu.js" />
+    <Content Include="Scripts\plagins\select\i18n\fa.js" />
+    <Content Include="Scripts\plagins\select\i18n\fi.js" />
+    <Content Include="Scripts\plagins\select\i18n\fr.js" />
+    <Content Include="Scripts\plagins\select\i18n\gl.js" />
+    <Content Include="Scripts\plagins\select\i18n\he.js" />
+    <Content Include="Scripts\plagins\select\i18n\hi.js" />
+    <Content Include="Scripts\plagins\select\i18n\hr.js" />
+    <Content Include="Scripts\plagins\select\i18n\hsb.js" />
+    <Content Include="Scripts\plagins\select\i18n\hu.js" />
+    <Content Include="Scripts\plagins\select\i18n\hy.js" />
+    <Content Include="Scripts\plagins\select\i18n\id.js" />
+    <Content Include="Scripts\plagins\select\i18n\is.js" />
+    <Content Include="Scripts\plagins\select\i18n\it.js" />
+    <Content Include="Scripts\plagins\select\i18n\ja.js" />
+    <Content Include="Scripts\plagins\select\i18n\km.js" />
+    <Content Include="Scripts\plagins\select\i18n\ko.js" />
+    <Content Include="Scripts\plagins\select\i18n\lt.js" />
+    <Content Include="Scripts\plagins\select\i18n\lv.js" />
+    <Content Include="Scripts\plagins\select\i18n\mk.js" />
+    <Content Include="Scripts\plagins\select\i18n\ms.js" />
+    <Content Include="Scripts\plagins\select\i18n\nb.js" />
+    <Content Include="Scripts\plagins\select\i18n\nl.js" />
+    <Content Include="Scripts\plagins\select\i18n\pl.js" />
+    <Content Include="Scripts\plagins\select\i18n\ps.js" />
+    <Content Include="Scripts\plagins\select\i18n\pt-BR.js" />
+    <Content Include="Scripts\plagins\select\i18n\pt.js" />
+    <Content Include="Scripts\plagins\select\i18n\ro.js" />
+    <Content Include="Scripts\plagins\select\i18n\ru.js" />
+    <Content Include="Scripts\plagins\select\i18n\sk.js" />
+    <Content Include="Scripts\plagins\select\i18n\sl.js" />
+    <Content Include="Scripts\plagins\select\i18n\sr-Cyrl.js" />
+    <Content Include="Scripts\plagins\select\i18n\sr.js" />
+    <Content Include="Scripts\plagins\select\i18n\sv.js" />
+    <Content Include="Scripts\plagins\select\i18n\th.js" />
+    <Content Include="Scripts\plagins\select\i18n\tk.js" />
+    <Content Include="Scripts\plagins\select\i18n\tr.js" />
+    <Content Include="Scripts\plagins\select\i18n\uk.js" />
+    <Content Include="Scripts\plagins\select\i18n\vi.js" />
+    <Content Include="Scripts\plagins\select\i18n\zh-CN.js" />
+    <Content Include="Scripts\plagins\select\i18n\zh-TW.js" />
+    <Content Include="Scripts\plagins\select\test\announcements-4.0.html" />
+    <Content Include="Scripts\plagins\select\test\community.html" />
+    <Content Include="Scripts\plagins\select\test\examples.html" />
+    <Content Include="Scripts\plagins\select\test\index.html" />
+    <Content Include="Scripts\plagins\select\test\options.html" />
     <Content Include="Scripts\plagins\sidebar\css\reset.css" />
     <Content Include="Scripts\plagins\sidebar\css\style-rtl.css" />
     <Content Include="Scripts\plagins\sidebar\css\style.css" />
@@ -1805,9 +1870,22 @@
     <Content Include="Scripts\plagins\sidebar\js\modernizr.js" />
     <Content Include="Scripts\plagins\steps\jquery.steps.js" />
     <Content Include="Scripts\plagins\steps\jquery.steps.min.js" />
-    <Content Include="Scripts\plagins\tabs\responsive-tabs.css" />
-    <Content Include="Scripts\plagins\tabs\responsiveTabs.js" />
-    <Content Include="Scripts\plagins\tabs\responsiveTabs.min.js" />
+    <Content Include="Scripts\plagins\tabs\jcxwizard-light.css" />
+    <Content Include="Scripts\plagins\tabs\jcxWizard.js" />
+    <Content Include="Scripts\plagins\tabs\jcxtabs-light.min.css" />
+    <Content Include="Scripts\plagins\tabs\jcxtabs-light.css" />
+    <Content Include="Scripts\plagins\tabs\jcxtabs.js" />
+    <Content Include="Scripts\plagins\tabs\_ex\jcxtabs.min-0.js" />
+    <Content Include="Scripts\plagins\tabs\jcxtabs.min.js" />
+    <Content Include="Scripts\plagins\tabs\responsive-tabs-dark.css" />
+    <Content Include="Scripts\plagins\tabs\_v-0\responsive-tabs.css" />
+    <Content Include="Scripts\plagins\tabs\_v-0\responsiveTabs.js" />
+    <Content Include="Scripts\plagins\tabs\_v-0\responsiveTabs.min.js" />
+    <Content Include="Scripts\plagins\timer\stopwatch.js" />
+    <Content Include="Scripts\plagins\timer\_ex\constants.js" />
+    <Content Include="Scripts\plagins\timer\_ex\index.js" />
+    <Content Include="Scripts\plagins\timer\_ex\Timer.js" />
+    <Content Include="Scripts\plagins\timer\_ex\utils.js" />
     <Content Include="Scripts\plagins\vex\css\vex-theme-bottom-right-corner.css" />
     <Content Include="Scripts\plagins\vex\css\vex-theme-default.css" />
     <Content Include="Scripts\plagins\vex\css\vex-theme-flat-attack.css" />
@@ -1965,6 +2043,11 @@
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\Logoff.cshtml" />
     <Content Include="Views\Common\_MemberDlg.cshtml" />
+    <Content Include="Scripts\plagins\autocomplete\maps\easy-autocomplete.css.map" />
+    <Content Include="Scripts\plagins\autocomplete\maps\easy-autocomplete.min.css.map" />
+    <Content Include="Scripts\plagins\autocomplete\maps\easy-autocomplete.themes.css.map" />
+    <Content Include="Scripts\plagins\autocomplete\maps\easy-autocomplete.themes.min.css.map" />
+    <Content Include="Scripts\plagins\autocomplete\resources\countries.json" />
     <None Include="Views\Home\_exclude\demoform.cshtml" />
     <Content Include="Scripts\plagins\popbox\api.html" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -2260,7 +2343,6 @@
     <Content Include="Views\Media\MembersUpload.cshtml" />
     <Content Include="Views\Home\_exclude\Login.cshtml" />
     <Content Include="Views\System\Tasks.cshtml" />
-    <Content Include="Views\System\TaskEdit.cshtml" />
     <Content Include="Views\System\_TaskComment.cshtml" />
     <Content Include="Views\Media\_MediaFiles.cshtml" />
     <Content Include="Views\System\TaskNew.cshtml" />
@@ -2273,13 +2355,25 @@
     <Content Include="Views\System\AdTeamDef.cshtml" />
     <Content Include="Views\System\UsersDef.cshtml" />
     <Content Include="Views\System\_TicketAction.cshtml" />
-    <Content Include="Views\System\TicketEdit.cshtml" />
-    <Content Include="Views\System\TicketNew.cshtml" />
     <Content Include="Views\System\Calendar.cshtml" />
     <Content Include="Views\System\_TaskFormTemplate.cshtml" />
     <Content Include="Views\System\TaskUser.cshtml" />
     <Content Include="Views\System\Reminder.cshtml" />
     <Content Include="Views\Main\_MembersQuery.cshtml" />
+    <Content Include="Views\System\TaskEdit.cshtml" />
+    <Content Include="Views\System\TicketEdit.cshtml" />
+    <Content Include="Views\System\TicketNew.cshtml" />
+    <Content Include="Views\System\TaskInfo.cshtml" />
+    <Content Include="Views\System\TopicEdit.cshtml" />
+    <Content Include="Views\System\TopicNew.cshtml" />
+    <Content Include="Views\System\ReportTopics.cshtml" />
+    <Content Include="Views\System\SystemBoard.cshtml" />
+    <Content Include="Views\System\ReportSubTask.cshtml" />
+    <Content Include="Views\System\ReportTasks.cshtml" />
+    <Content Include="Views\System\ReportDocs.cshtml" />
+    <Content Include="Views\System\DocNew.cshtml" />
+    <Content Include="Views\System\DocEdit.cshtml" />
+    <Content Include="Views\System\DefEntity.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\camera.css" />
@@ -2386,8 +2480,9 @@
     <Folder Include="App_Data\" />
     <Folder Include="Images\_obsolete\" />
     <Folder Include="Scripts\app\admin\" />
+    <Folder Include="Scripts\app\system\_ex\_v-0\" />
+    <Folder Include="Scripts\app\system\_v-1\" />
     <Folder Include="Scripts\app\_old\" />
-    <Folder Include="Scripts\plagins\tabs\_ex\" />
     <Folder Include="Scripts\_exclude\" />
     <Folder Include="Views\Account\_ex\" />
     <Folder Include="Views\Cms\_ex\" />
@@ -2399,6 +2494,8 @@
     <Folder Include="Views\Main\_ex\" />
     <Folder Include="Views\Main\_upload\" />
     <Folder Include="Views\System\_ex\" />
+    <Folder Include="Views\System\_v-0\" />
+    <Folder Include="Views\System\_v-1\" />
     <Folder Include="Views\_exclude\_v-menu\" />
     <Folder Include="_files\" />
   </ItemGroup>
@@ -2406,6 +2503,26 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Data\Nistec.Data\Nistec.Data.csproj">
+      <Project>{d5fd6c68-86ea-48bf-8f6d-29ce57419500}</Project>
+      <Name>Nistec.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Imex\Nistec.Imex.csproj">
+      <Project>{d88a851b-a6d6-4f42-85d4-b1caf36fdacc}</Project>
+      <Name>Nistec.Imex</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Lib\Nistec.Lib.csproj">
+      <Project>{54f52ed5-aecd-47c6-93d8-7b3358ba7f8c}</Project>
+      <Name>Nistec.Lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Logger\Nistec.Logger.csproj">
+      <Project>{e510dd2c-859c-476c-9901-60edfc5e71f1}</Project>
+      <Name>Nistec.Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Web\Nistec.Web.csproj">
+      <Project>{8c4cff01-180e-41a1-9234-0c1b1e207ae5}</Project>
+      <Name>Nistec.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lib\Pro.Lib\Pro.Lib.csproj">
       <Project>{b84526d5-435e-4d56-b323-dbffafe54940}</Project>
       <Name>Pro.Lib</Name>

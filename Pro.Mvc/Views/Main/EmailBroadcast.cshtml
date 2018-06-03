@@ -8,9 +8,6 @@
 <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
 <script type="text/javascript" src="~/jqwidgets/jqxcolorpicker.js"></script>
    <script type="text/javascript" src="~/Scripts/app/dateFormat.js"></script>
-   @*<script type="text/javascript" src="~/Scripts/plagins/blockUI.js"></script>
-   <script type="text/javascript" src="~/Scripts/jq/jquery.ui.1.11.1.js"></script>
-   <link rel="stylesheet" href="~/Scripts/jq/css/jquery-ui.css" type="text/css" />*@
 
     <style type="text/css">
         .styledTable {
@@ -284,14 +281,14 @@
 
 <div class="global-view">
     <div class="container-box">
-        <h3 class="rtl">שליחת דואר אלקטרוני</h3>
-        <div style="height: 10px;">
-
-        </div>
+        
 
         
-            <div id="tag-form">
+            <div id="tag-form" class="panel-area">
+                <h3 class="rtl panel-area-title">שליחת דואר אלקטרוני</h3>
+                <div style="height: 10px;">
 
+                </div>
                 <form class="form" id="form" method="post" action="@Url.Action("SendMailCategory", "Main")">
                     <input type="hidden" id="Message" name="Message" />
                     <div id="wizard">
@@ -366,13 +363,15 @@
                         </div>
 
                     </div>
-                    <div id="wizard-steps">
-                        <a href="#" class="btn-tab prev-tab ">הקודם</a>
-                        <a href="#" class="btn-tab  next-tab">הבא</a>
-                        <a id="submit" href="#" class="btn-tab  end-tab">סיום</a>
-                        <input type="text" id="wizard-validation" readonly />
-                    </div>
+                    
             </form>
+        </div>
+
+        <div class="panel-area" id="wizard-steps">
+            <a href="#" class="btn-tab prev-tab ">הקודם</a>
+            <a href="#" class="btn-tab  next-tab">הבא</a>
+            <a id="submit" href="#" class="btn-tab  end-tab">סיום</a>
+            <input type="text" id="wizard-validation" readonly />
         </div>
     </div>
 </div>

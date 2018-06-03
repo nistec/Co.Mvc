@@ -34,50 +34,79 @@ var app_jqxform = {
                 input.val('');
         });
     },
-    loadDataForm: function (form, record,isjqx) {
-        
+    setInputFormValue: function (tag, value) {
+        if (value !== undefined && value != null) {
+            var str = value.toString();
+            if (str.match(/Date/gi)) {
+                var d = formatJsonShortDate(value)
+                $(tag).val(d);
+            }
+            else if (typeof value === 'boolean')
+                $(tag).attr("checked", value);
+            else
+                $(tag).val(value);
+        }
+        else {
+            $(tag).val(null);
+        }
+    },
+    loadDataForm: function (form, record, isjqx, exclude) {
+
         if (isjqx === undefined)
             isjqx = true;
-
+        "jqx-widget jqx-dropdownlist-state-normal jqx-rc-all jqx-fill-state-normal jqx-default"
+        "$("#MediaType")[0].children.MediaType.parentElement.className"
         $('#' + form + ' input, #' + form + ' select, #' + form + ' textarea').each(function (index) {
             var input = $(this);
-
             var tag = input.attr('name');
+            var currentId = $(this).attr('id');
+            var type = input.prop('tagName');
             if (tag !== undefined) {
+                var isexclude = false;
+                if (exclude) {
+                    isexclude = (exclude.indexOf(tag)) >= 0;
+                }
                 //var type=input.prop('type');
                 //var id = input.attr('id');
                 var value = record[tag];
+                if (!isexclude) {
 
-                if (isjqx) {
-                    if (value !== undefined && value != null) {
-                        var str = value.toString();
-                        if (str.match(/Date/gi)) {
-                            var d = formatJsonShortDate(value)
-                            $('form#' + form + ' [name=' + tag + ']').val(d);  //$('#' + tag).val(d);
+                    if (isjqx) {
+                        if (value !== undefined && value != null) {
+                            var str = value.toString();
+                            if (str.match(/Date/gi)) {
+                                var d = formatJsonShortDate(value)
+                                $('form#' + form + ' [name=' + tag + ']').val(d);  //$('#' + tag).val(d);
+                            }
+                            else if (typeof value === 'boolean')
+                                $('form#' + form + ' [name=' + tag + ']').attr("checked", value);  //$('#' + tag).attr("checked", value);
+                           else if (currentId === tag)
+                                $('#' + currentId).val(value);
+                           else if (value === "")
+                                input.val(value);
+                           else
+                                $('form#' + form + ' [name=' + tag + ']').val(value);  //$('#' + tag).val(value);
                         }
-                        else if (typeof value === 'boolean')
-                            $('form#' + form + ' [name=' + tag + ']').attr("checked", value);  //$('#' + tag).attr("checked", value);
-                        else
-                            $('form#' + form + ' [name=' + tag + ']').val(value);  //$('#' + tag).val(value);
+                        else {
+                            //if (!tag.match(/Date/gi))
+                            $('form#' + form + ' [name=' + tag + ']').val(null);  //$('#' + tag).val(null);
+                        }
                     }
                     else {
-                        $('form#' + form + ' [name=' + tag + ']').val(null);  //$('#' + tag).val(null);
-                    }
-                }
-                else {
-                    if (value !== undefined && value != null) {
-                        var str = value.toString();
-                        if (str.match(/Date/gi)) {
-                            var d = formatJsonShortDate(value)
-                            input.val(d);
+                        if (value !== undefined && value != null) {
+                            var str = value.toString();
+                            if (str.match(/Date/gi)) {
+                                var d = formatJsonShortDate(value)
+                                input.val(d);
+                            }
+                            else if (typeof value === 'boolean')
+                                input.attr("checked", value);
+                            else
+                                input.val(value);
                         }
-                        else if (typeof value === 'boolean')
-                            input.attr("checked", value);
-                        else
-                            input.val(value);
-                    }
-                    else {
-                        input.val(null);
+                        else {
+                            input.val(null);
+                        }
                     }
                 }
             }
@@ -104,9 +133,6 @@ var app_jqxform = {
             inputType = 'input';
 
         return $(form).find(inputType+'[' + attrName + '=' + tag + ']');
-    },
-    CreateDateTimeInput: function (input) {
-        $("#" + input).jqxDateTimeInput({ formatString: 'dd/MM/yyyy', value: null });
     },
     jqxForm_Redirect: function (form, redirectTo, action) {
         if (action == null || action === undefined)
@@ -156,6 +182,57 @@ var app_jqxform = {
             }
         }
         $(form).jqxValidator('validate', validationResult);
+    },
+    CreateDateTimeInput: function (input) {
+        $("#" + input).jqxDateTimeInput({ formatString: 'dd/MM/yyyy', value: null });
+    },
+
+    validateCombo: function (input) {
+        var index = $("#" + input).jqxComboBox('getSelectedIndex');
+        if (index >= 0) { return true; } return false;
+    },
+    validateDropDown: function (input) {
+        var index = $("#" + input).jqxDropDownList('getSelectedIndex');
+        if (index >= 0) { return true; } return false;
+    },
+    validateNumber: function (input) {
+        var value = $("#" + input).val();
+        return value > 0;
+    },
+    validateNumeric: function (input) {
+        var value = $("#" + input).val();
+        return $.isNumeric(value);
+    },
+    validateDate: function (input, minYear, maxYear) {
+        var date = $("#" + input).jqxDateTimeInput('value');
+        if (date == null || date === undefined)
+            return false;
+
+        if (typeof minYear === 'undefined' || minYear == null) { minYear = 2000; }
+        if (typeof maxYear === 'undefined' || maxYear == null) { maxYear = 2999; }
+
+        return date.getFullYear() >= minYear && date.getFullYear() <= maxYear;
+    },
+    formSubmitValidator: function (form, funcSuccess) {
+
+        var actionurl = $(form).attr('action');
+
+        $(form).jqxValidator('validate', function (isValid) {
+            if (isValid) {
+                $.ajax({
+                    url: actionurl,
+                    type: 'post',
+                    dataType: 'json',
+                    data: $(form).serialize(),
+                    success: function (data) {
+                        funcSuccess(data);
+                    },
+                    error: function (jqXHR, status, error) {
+                        app_dialog.alert(error);
+                    }
+                });
+            }
+        });
     }
     //validateCombo: function (input) {
     //    var index = $("#" + input).jqxComboBox('getSelectedIndex');
@@ -367,7 +444,7 @@ var app_jqxcombos = {
         }
     },
     createComboAdapter: function (valueMember, displayMember, tag, url, width, dropDownHeight, async) {
-        var srcAdapter = app_jqx.createtDataAdapter(valueMember, displayMember, url, async);
+        var srcAdapter = app_jqx.createDataAdapter(valueMember, displayMember, url, async);
         var autoDropDownHeight = true;
         if (typeof width === 'undefined' || width == 0) { width = 240; }
         if (typeof dropDownHeight === 'undefined' || dropDownHeight == 0)
@@ -389,7 +466,7 @@ var app_jqxcombos = {
     },
 
     createComboSelectorAdapter: function (valueMember, displayMember, selector, url, width, dropDownHeight, async) {
-        var srcAdapter = app_jqx.createtDataAdapter(valueMember, displayMember, url, async);
+        var srcAdapter = app_jqx.createDataAdapter(valueMember, displayMember, url, async);
         var autoDropDownHeight = true;
         if (typeof width === 'undefined' || width == 0) { width = 240; }
         if (typeof dropDownHeight === 'undefined' || dropDownHeight == 0)
@@ -431,7 +508,7 @@ var app_jqxcombos = {
     },
 
     createComboCheckAdapter: function (valueMember, displayMember, tag, url, width, dropDownHeight, async, output) {
-        var srcAdapter = app_jqx.createtDataAdapter(valueMember, displayMember, url, async);
+        var srcAdapter = app_jqx.createDataAdapter(valueMember, displayMember, url, async);
         var autoDropDownHeight = true;
         if (typeof width === 'undefined' || width == 0) { width = 240; }
         if (typeof dropDownHeight === 'undefined' || dropDownHeight == 0)
@@ -459,7 +536,7 @@ var app_jqxcombos = {
     },
 
     createDropDownAdapter: function (valueMember, displayMember, tag, url, width, dropDownHeight, async, placeHolder) {
-        var srcAdapter = app_jqx.createtDataAdapter(valueMember, displayMember, url, async);
+        var srcAdapter = app_jqx.createDataAdapter(valueMember, displayMember, url, async);
         var autoDropDownHeight = true;
         if (typeof width === 'undefined' || width == 0) { width = 240; }
         if (typeof placeHolder === 'undefined' || placeHolder == '') { placeHolder = 'נא לבחור'; }
@@ -482,7 +559,7 @@ var app_jqxcombos = {
         return srcAdapter;
     },
     createDropDownAdapterTag: function (valueMember, displayMember, tag, url, width, dropDownHeight, async, placeHolder) {
-        var srcAdapter = app_jqx.createtDataAdapter(valueMember, displayMember, url, async);
+        var srcAdapter = app_jqx.createDataAdapter(valueMember, displayMember, url, async);
         var autoDropDownHeight = true;
         if (typeof width === 'undefined' || width == 0) { width = 240; }
         if (typeof placeHolder === 'undefined' || placeHolder == '') { placeHolder = 'נא לבחור'; }
@@ -505,7 +582,7 @@ var app_jqxcombos = {
         return srcAdapter;
     },
     createListAdapter: function (valueMember, displayMember, tagList, url, width, height, async, output) {
-        var srcAdapter = app_jqx.createtDataAdapter(valueMember, displayMember, url, async);
+        var srcAdapter = app_jqx.createDataAdapter(valueMember, displayMember, url, async);
         $("#" + tagList.replace('#', '')).jqxListBox(
         {
             rtl: true,
@@ -524,7 +601,7 @@ var app_jqxcombos = {
     },
 
     createCheckListAdapter: function (valueMember, displayMember, tagList, url, width, height, async, output) {
-        var srcAdapter = app_jqx.createtDataAdapter(valueMember, displayMember, url, async);
+        var srcAdapter = app_jqx.createDataAdapter(valueMember, displayMember, url, async);
         $("#" + tagList.replace('#', '')).jqxListBox(
         {
             rtl: true,
@@ -752,17 +829,17 @@ var app_jqx = {
         //$(tagWindow).jqxWindow({ position: { x: parseInt(offset.left) + parseInt(offset.width) / 2, y: parseInt(offset.top) + 60 } });
         //$(tagWindow).jqxWindow('open');
     },
-    displayWindow: function (tagWindow, tagBtn,ismodal) {
+    displayWindow: function (tagWindow, tagBtn, ismodal) {
 
         var size = app_global.documentWidth();
         var height = size[1];
         var width = size[0];
-        
+
         var offset = $(tagBtn).offset();
         var btnWidth = $(tagBtn).outerWidth();
         var btnHeight = $(tagBtn).outerHeight();
 
-        var maxWidth = Math.min(width-50, $(tagWindow).outerWidth());
+        var maxWidth = Math.min(width - 50, $(tagWindow).outerWidth());
         var posx = Math.max(0, parseInt(btnWidth) + parseInt(offset.left) - maxWidth);
         var posy = parseInt(offset.top) + btnHeight;
         $(tagWindow).jqxWindow({ rtl: true, isModal: ismodal, width: maxWidth, maxWidth: maxWidth, position: { x: posx, y: posy } });
@@ -771,7 +848,7 @@ var app_jqx = {
     closeWindow: function (tagWindow) {
         $(tagWindow).jqxWindow('close');
     },
-    displayPopover: function (tagWindow, tagBtn,title,ismodal) {
+    displayPopover: function (tagWindow, tagBtn, title, ismodal) {
 
         if (ismodal === undefined)
             ismodal = false;
@@ -781,12 +858,12 @@ var app_jqx = {
         var size = app_global.documentWidth();
         var height = size[1];
         var width = size[0];
-        
+
         var offset = $(tagBtn).offset();
         var btnWidth = $(tagBtn).outerWidth();
         var btnHeight = $(tagBtn).outerHeight();
 
-        var maxWidth = Math.min(width-50, $(tagWindow).outerWidth());
+        var maxWidth = Math.min(width - 50, $(tagWindow).outerWidth());
         var posx = Math.max(0, parseInt(btnWidth) + parseInt(offset.left) - maxWidth);
         var posy = parseInt(offset.top) + btnHeight;
 
@@ -801,38 +878,164 @@ var app_jqx = {
         $(tagWindow).jqxPopover('close');
     },
 
-    createtDataAdapter: function (valueMember, displayMember, url, async) {
+    createDataAdapter: function (valueMember, displayMember, url, async) {
         if (typeof async === 'undefined') { async = true; }
         var source =
-                {
-                    dataType: "json",
-                    async: async,
-                    dataFields: [
-                        { name: valueMember },
-                        { name: displayMember }
-                    ],
-                    type: 'POST',
-                    url: url
-                };
+            {
+                dataType: "json",
+                async: async,
+                dataFields: [
+                    { name: valueMember },
+                    { name: displayMember }
+                ],
+                type: 'POST',
+                url: url
+            };
         var srcAdapter = new $.jqx.dataAdapter(source);
         return srcAdapter;
     },
-    createtDataAdapterData: function (valueMember, displayMember, url, async,data) {
+    createDataAdapterData: function (valueMember, displayMember, url, async, data) {
         if (typeof async === 'undefined') { async = true; }
         var source =
-                {
-                    dataType: "json",
-                    async: async,
-                    dataFields: [
-                        { name: valueMember },
-                        { name: displayMember }
-                    ],
-                    type: 'POST',
-                    data:data,
-                    url: url
-                };
+            {
+                dataType: "json",
+                async: async,
+                dataFields: [
+                    { name: valueMember },
+                    { name: displayMember }
+                ],
+                type: 'POST',
+                data: data,
+                url: url
+            };
         var srcAdapter = new $.jqx.dataAdapter(source);
         return srcAdapter;
+    },
+    createDataAdapterAsync: function (valueMember, displayMember, url, data, callback, beforeLoaded) {
+        var source =
+            {
+                dataType: "json",
+                async: true,
+                dataFields: [
+                    { name: valueMember },
+                    { name: displayMember }
+                ],
+                type: 'POST',
+                url: url
+            };
+        if (data)
+            source.data = data;
+
+        var srcAdapter = new $.jqx.dataAdapter(source, {
+            loadComplete: function (records) {
+                if (callback)
+                    callback('completed', records);
+            },
+            loadError: function (jqXHR, status, error) {
+                if (callback)
+                    callback('error', error);
+            },
+            beforeLoadComplete: function (records) {
+                if (beforeLoaded)
+                    beforeLoaded('before', records);
+            }
+        });
+
+        return srcAdapter;
+    },
+    createDisplayAdapterAsync: function (displayMember, url, data, callback, beforeLoaded) {
+        var source =
+            {
+                dataType: "json",
+                async: true,
+                dataFields: [
+                    { name: displayMember }
+                ],
+                type: 'POST',
+                url: url
+            };
+        if (data)
+            source.data = data;
+
+        var srcAdapter = new $.jqx.dataAdapter(source, {
+            loadComplete: function (records) {
+                if (callback)
+                    callback('completed', records);
+            },
+            loadError: function (jqXHR, status, error) {
+                if (callback)
+                    callback('error', error);
+            },
+            beforeLoadComplete: function (records) {
+                if (beforeLoaded)
+                    beforeLoaded('before', records);
+            }
+        });
+
+        return srcAdapter;
+    },
+    createArrayAdapterAsync: function (url, data, callback, beforeLoaded) {
+
+        var source =
+            {
+                dataType: "json",
+                async: true,
+                type: 'POST',
+                url: url
+            };
+        if (data)
+            source.data = data;
+
+        var srcAdapter = new $.jqx.dataAdapter(source, {
+            loadComplete: function (records) {
+
+                if (callback)
+                    callback('completed', records);
+            },
+            loadError: function (jqXHR, status, error) {
+                if (callback)
+                    callback('error', error);
+            },
+            beforeLoadComplete: function (records) {
+                if (beforeLoaded)
+                    beforeLoaded('before', records);
+            }
+        });
+
+        //srcAdapter.dataBind();
+        return srcAdapter;
+    },
+
+    gridRowDelete: function (url, data, msgConfirm, async) {
+
+        if (typeof async === 'undefined') { async = true; }
+        if (typeof msgConfirm === 'undefined') { msgConfirm = "?"; }
+
+        var title = "האם למחוק " + msgConfirm;
+
+        if (!confirm(title))
+            return false;
+
+        $.ajax({
+            async: async,
+            type: "POST",
+            url: url,
+            data: data,
+            //contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                $("#jqxgrid").jqxGrid('source').dataBind();
+            },
+            error: function (e) {
+                alert(e);
+                return false;
+            }
+        });
+    },
+    triggerDialogComboBox: function (id, combo) {
+        $(combo).jqxComboBox("source").dataBind();
+        $(combo).val(id);
+        app_dialog.dialogIframClose();
     },
     loaderOpen: function (loaderTag) {
         if (loaderTag === undefined)
@@ -851,12 +1054,12 @@ var app_jqx = {
         //   tag = '.popover';
         //}
         $(tag).jqxTooltip({
-            trigger: 'click' ,
+            trigger: 'click',
             //showArrow:true, 
-            autoHide: false ,
-            closeOnClick: true, 
+            autoHide: false,
+            closeOnClick: true,
             position: 'top',
-            theme:'energyblue',
+            theme: 'energyblue',
             content: content,
             width: width
             //height:30
@@ -877,7 +1080,7 @@ var app_jqx = {
         // Create a jqxDropDownList
         $(tag).jqxDropDownList({
             rtl: true,
-            autoDropDownHeight:true,
+            autoDropDownHeight: true,
             source: source,
             theme: 'energyblue',
             width: width,
@@ -890,6 +1093,59 @@ var app_jqx = {
             $(tag).on('change', function (event) {
                 $(tagTarget).val(event.args.item.value);
             });
+    },
+    getInputAutoValue: function (tag, valueIfNull) {
+        var item = $(tag).val();
+        if (item) {
+            return item.value;
+        }
+        return valueIfNull;
+    },
+    setInputAutoValue: function (tag, value) {
+        tag = "#" + tag.replace("#", "");
+        var records = $(tag).jqxInput("source");
+        if (value && records) {
+            var item = $.grep(records, function (e) { return e.value == value; });
+            //var item = app_jqx.findRecordByValue(records, value);
+            if (item && item.length > 0)
+                $(tag).jqxInput('val', { label: item[0].label, value: item[0].value });
+        }
+    },
+    findRecordByField: function (records, field, value) {
+
+        return $.grep(records, function (item) { return item[field] == value; });
+
+        //var result = records.find(x => x[field] === value);
+        //return result;
+
+        //  return records.filter(function (item) {
+        //      return item[field] == value
+        //  }
+        //);
+    },
+    findRecordByValue: function (records, value) {
+
+        //var result = records.find(x => x.value === value);
+        return $.grep(records, function (item) { return item.value == value; });
+        //return records.filter(function (item) {
+        //    return item.value == value
+        //}
+        //);
+    },
+    findRecordByField: function (dataAdapter, id, field) {
+        var records = dataAdapter.records;
+        var rec = $.grep(records, function (item) { return item[field] == id; });
+        if (rec && rec.length > 0) {
+            return rec[0];
+        }
+        return null;
+    },
+    findRecordValueByField: function (dataAdapter, id, field, fieldValue) {
+        var record = app_jqx.findRecordByField(dataAdapter, id, field);
+        if (record) {
+            return record[fieldValue];
+        }
+        return null;
     }
 };
 
@@ -932,6 +1188,353 @@ var app_jqx_validation = {
     }
 };
 
+//============================================================================================ app_jqx_adapter
+
+var app_jqx_adapter = {
+    createComboArrayAsync: function (displayMember, tag, url, data, width, dropDownHeight, autoComplete, value, callback) {
+        tag = "#" + tag.replace("#", "");
+        var autoDropDownHeight = true;
+        if (typeof width === 'undefined' || width == 0) { width = 200; }
+        if (typeof dropDownHeight === 'undefined' || dropDownHeight == 0)
+            dropDownHeight = 200;
+        else
+            autoDropDownHeight = false;
+        if (autoComplete === undefined) autoComplete = false;
+
+        var srcAdapter = app_jqx.createDisplayAdapterAsync(displayMember, url, data, function (status, records) {
+
+            var srcArray = new Array();
+
+            jQuery.each(records, function (index, value) {
+                srcArray.push(value);
+            });
+
+            $(tag).jqxComboBox(
+           {
+               rtl: true,
+               source: srcArray,
+               multiSelect: true,
+               width: width,
+               //autoComplete: autoComplete,
+               dropDownHeight: dropDownHeight,
+               autoDropDownHeight: autoDropDownHeight,
+               //displayMember: displayMember,
+               //valueMember: valueMember
+           });
+
+            if (value)
+                $(tag).val(value);
+            if (callback)
+                callback(status, records);
+        });
+        srcAdapter.dataBind();
+
+        return srcAdapter;
+    },
+    createComboDisplayAsync: function (displayMember, tag, url, data, width, dropDownHeight, autoComplete, value, callback) {
+        tag = "#" + tag.replace("#", "");
+        var autoDropDownHeight = true;
+        if (typeof width === 'undefined' || width == 0) { width = 200; }
+        if (typeof dropDownHeight === 'undefined' || dropDownHeight == 0)
+            dropDownHeight = 200;
+        else
+            autoDropDownHeight = false;
+        if (autoComplete === undefined) autoComplete = false;
+        var srcAdapter = app_jqx.createDisplayAdapterAsync(displayMember, url, data, function (status, records) {
+            if (value)
+                $(tag).val(value);
+            if (callback)
+                callback(status, records);
+        });
+
+        $(tag).jqxComboBox(
+         {
+             rtl: true,
+             source: srcAdapter,
+             multiSelect: true,
+             width: width,
+             autoComplete: autoComplete,
+             dropDownHeight: dropDownHeight,
+             autoDropDownHeight: autoDropDownHeight,
+             displayMember: displayMember,
+             valueMember: displayMember
+         });
+
+        return srcAdapter;
+    },
+    setInputValue: function (tag, value, label, enable) {
+        if (value) {
+            $(tag).jqxInput('val', { label: label, value: value });
+            if (enable)
+                $(tag).jqxInput({ disabled: false });
+        }
+    },
+    setInputAdapterValue: function (tag, value) {
+        tag = "#" + tag.replace("#", "");
+        var records = $(tag).jqxInput("source");
+        if (value && records) {
+            var item = $.grep(records, function (e) { return e.value == value; });
+            //var item = app_jqx.findRecordByValue(records, value);
+            if (item && item.length > 0)
+                $(tag).jqxInput('val', { label: item[0].label, value: item[0].value });
+        }
+    },
+    setInputAutoValue: function (tag, valueMember, displayMember, value, records) {
+        tag = "#" + tag.replace("#", "");
+        if (value) {
+            var item = $.grep(records, function (e) { return e[field] == value; });
+            //var item = app_jqx.findRecordByField(records, valueMember, value);
+            if (item && item.length > 0)
+                $(tag).jqxInput('val', { label: item[0][displayMember], value: item[0][valueMember] });
+        }
+    },
+    createDropDownAdapterAsync: function (valueMember, displayMember, tag, url, data, width, dropDownHeight, placeHolder, value, callback) {
+        tag = "#" + tag.replace("#", "");
+        var srcAdapter = app_jqx.createDataAdapterAsync(valueMember, displayMember, url, data, function (status, records) {
+            if (value)
+                $(tag).val(value);
+            if (callback)
+                callback(status, records);
+        });
+        var autoDropDownHeight = true;
+        if (typeof width === 'undefined' || width == 0) { width = 200; }
+        if (typeof dropDownHeight === 'undefined' || dropDownHeight == 0)
+            dropDownHeight = 200;
+        else
+            autoDropDownHeight = false;
+
+        if (placeHolder === undefined || placeHolder==null)
+            placeHolder = 'נא לבחור';
+
+        $("#" + tag.replace("#", "")).jqxDropDownList(
+        {
+            rtl: true,
+            source: srcAdapter,
+            width: width,
+            dropDownHeight: dropDownHeight,
+            autoDropDownHeight: autoDropDownHeight,
+            placeHolder: placeHolder,
+            displayMember: displayMember,
+            valueMember: valueMember
+        });
+        return srcAdapter;
+    },
+    createComboAdapterAsync: function (valueMember, displayMember, tag, url, data, width, dropDownHeight, autoComplete, value, callback) {
+        tag = "#" + tag.replace("#", "");
+        var srcAdapter = app_jqx.createDataAdapterAsync(valueMember, displayMember, url, data, function (status, records) {
+            if (value)
+                $(tag).val(value);
+            if (callback)
+                callback(status, records);
+        });
+        var autoDropDownHeight = true;
+        if (typeof width === 'undefined' || width == 0) { width = 200; }
+        if (typeof dropDownHeight === 'undefined' || dropDownHeight == 0)
+            dropDownHeight = 200;
+        else
+            autoDropDownHeight = false;
+        if (autoComplete === undefined) autoComplete = false;
+
+        $(tag).jqxComboBox(
+        {
+            rtl: true,
+            source: srcAdapter,
+            width: width,
+            autoComplete: autoComplete,
+            dropDownHeight: dropDownHeight,
+            autoDropDownHeight: autoDropDownHeight,
+            displayMember: displayMember,
+            valueMember: valueMember
+        });
+        return srcAdapter;
+    },
+    createListAdapterAsync: function (valueMember, displayMember, tagList, url, data, width, height, ischeckboxes, output, value, callback) {
+        tagList = "#" + tagList.replace("#", "");
+
+        var srcAdapter = app_jqx.createDataAdapterAsync(valueMember, displayMember, url, data, function (status, records) {
+            if (value)
+                $(tag).val(value);
+            if (callback)
+                callback(status, records);
+        });
+        if (ischeckboxes === undefined) ischeckboxes = false;
+
+        $(tagList).jqxListBox(
+        {
+            rtl: true,
+            checkboxes: ischeckboxes,
+            source: srcAdapter,
+            width: width,
+            height: height,
+            displayMember: displayMember,
+            valueMember: valueMember
+        });
+        if (output) {
+            $(tagList).on('change', function (event) {
+                app_jqxcombos.listBoxToInput(tagList, output);
+            });
+        }
+        return srcAdapter;
+    }, 
+    createArrayInputAutoAdapterAsync: function (tag, url, data, width, items, placeHolder, value, callback) {
+        tag = "#" + tag.replace("#", "");
+
+        var srcAdapter = app_jqx.createArrayAdapterAsync(url, data, function (status, records) {
+
+            $(tag).jqxInput({ source: records });
+
+            if (value)
+                $(tag).val(value);
+
+            if (callback)
+                callback(status, records);
+
+        });
+
+        srcAdapter.dataBind();
+
+        if (typeof width === 'undefined' || width == 0) { width = 200; }
+        if (typeof items === 'undefined' || items == 0)
+            items = 10;
+        if (placeHolder === undefined || placeHolder == null) placeHolder = null;// "...";
+
+        $(tag).jqxInput(
+            {
+                rtl: true,
+                height: 25,
+                //source: srcAdapter,
+                width: width,
+                placeHolder: placeHolder,
+                items: items
+                //displayMember: displayMember,
+                //valueMember: displayMember
+            });
+
+        $(tag).keydown(function (event) {
+            if (event.which == 8) {//backspace
+                if ($(tag).is('[readonly]'))
+                    event.preventDefault();
+                else if (!$(this).val())
+                    event.preventDefault();
+            }
+        });
+
+        return srcAdapter;
+    },
+    createInputAutoAdapterAsync: function (valueMember, displayMember, tag, url, data, width, items, placeHolder, value, callback) {
+        tag = "#" + tag.replace("#", "");
+        var srcAdapter = app_jqx.createDataAdapterAsync(valueMember, displayMember, url, data, function (status, records) {
+            if (value && status == 'completed') {
+                var item = app_jqx.findRecordByField(records, valueMember, value);
+                if (item && item.length > 0)
+                    $(tag).jqxInput('val', { label: item[0][displayMember], value: item[0][valueMember] });
+            }
+            if (callback)
+                callback(status, records);
+        });
+        if (typeof width === 'undefined' || width == 0) { width = 200; }
+        if (typeof items === 'undefined' || items == 0)
+            items = 10;
+        if (placeHolder === undefined || placeHolder == null) placeHolder = null;// "...";
+
+        $(tag).jqxInput(
+        {
+            rtl: true,
+            height: 25,
+            source: srcAdapter,
+            width: width,
+            placeHolder: placeHolder,
+            items: items,
+            displayMember: displayMember,
+            valueMember: valueMember
+        });
+
+        $(tag).keydown(function (event) {
+            if (event.which == 8) {//backspace
+                if ($(tag).is('[readonly]'))
+                    event.preventDefault();
+                else if (!$(this).val())
+                    event.preventDefault();
+            }
+        });
+
+       
+        //$(tag).keyup(function (e) {
+        //    if (e.keyCode == 8) console.log('backspace trapped')
+        //})
+
+        //$(tag).on('change', function (event) {
+        //    if ($(this).is('[readonly]')) { return; }
+        //    //var type = event.args.type; // keyboard, mouse or null depending on how the value was changed.
+        //    var value = $(tag).val();
+        //    if (value == null || value == "") {
+        //        $(this).empty();
+        //    }
+        //});
+
+        //$(tag).on('select', function (event) {
+        //    if (event.args) {
+        //        var item = event.args.item;
+        //        if (item) {
+        //            var valueelement = $("<div></div>");
+        //            valueelement.text("Value: " + item.value);
+        //            var labelelement = $("<div></div>");
+        //            labelelement.text("Label: " + item.label);
+        //        }
+        //    }
+        //});
+
+        return srcAdapter;
+    },
+    createComboCheckAdapterAsync: function (valueMember, displayMember, tag, url, data, width, dropDownHeight, output, value, callback) {
+        tag = "#" + tag.replace("#", "");
+        var srcAdapter = app_jqx.createDataAdapterAsync(valueMember, displayMember, url, data, function (status, records) {
+            //if (value)
+            //    $(tag).val(value);
+            if (value) {
+                var items = value.toString().split(",");
+                for (index = 0; index < items.length; ++index) {
+                    var item = $(tag).jqxComboBox('getItemByValue', items[index]);
+                    if (item)
+                        $(tag).jqxComboBox('checkIndex', item.index);
+                }
+            };
+            if (callback)
+                callback(status, records);
+        });
+
+        var autoDropDownHeight = true;
+        if (typeof width === 'undefined' || width == 0) { width = 240; }
+        if (typeof dropDownHeight === 'undefined' || dropDownHeight == 0)
+            dropDownHeight = 200;
+        else
+            autoDropDownHeight = false;
+
+        $(tag).jqxComboBox(
+        {
+            rtl: true,
+            checkboxes: true,
+            source: srcAdapter,
+            width: width,
+            dropDownHeight: dropDownHeight,
+            autoDropDownHeight: autoDropDownHeight,
+            displayMember: displayMember,
+            valueMember: valueMember
+        });
+        $(tag).keydown(function (event) {
+            if (event.which == 8) {
+                event.preventDefault();
+            }
+        });
+        if (output) {
+            $(tag).on('checkChange', function (event) {
+                app_jqxcombos.comboCheckBoxToInput(tag, output);
+            });
+        }
+        return srcAdapter;
+    }
+
+};
 
 //============================================================================================ app_notify
 

@@ -13,7 +13,8 @@ namespace Pro.Mvc.Controllers
 
         protected string GetClientIp(HttpRequestMessage request = null)
         {
-            request = request ?? Request;
+            request = request ?? Request; 
+
 
             if (request.Properties.ContainsKey("MS_HttpContext"))
             {

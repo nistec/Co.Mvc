@@ -21,13 +21,13 @@
             text-align: right;
         }
 
-        #divInputUpload {
+        /*#divInputUpload {
             width: 100px;
             height: 25px;
             text-align: center;
             border: solid 1px #C7C7C7;
             background-color: #15C8D8;
-        }
+        }*/
 
         .styledTable {
             direction: rtl;
@@ -323,7 +323,11 @@
 
 <div class="global-view">
     <div class="container-box">
-        <h3 class="rtl">קליטת מנויים מקובץ</h3>
+
+        <div id="hTitle" class="panel-page-header rtl">
+            <span id="hTitle-text" style="margin:10px">קליטת מנויים מקובץ</span>
+        </div>
+
         <div class="rtl">
             <a href="javascript:location.reload();" id="btnRefresh">חדש</a> | 
             <a href="~/_Doc/members.xls">תבנית לטעינה</a>
@@ -331,7 +335,8 @@
         <input type="hidden" id="uploadKey" />
         <div style="height: 10px;">
         </div>
-        <div id="tag-form">
+        <div id="tag-form" class="panel-area">
+
             <input id="uploadFile" type="hidden" />
             <div id="wizard">
                 <ul>
@@ -344,12 +349,10 @@
                     <h3>טעינת קובץ</h3>
                     <div style="margin:10px">
                         <div id="divInputUpload">
-                            <span class="btn btn-success fileinput-button">
-                                <i class="glyphicon glyphicon-plus"></i>
-                                <span>בחירת קובץ</span>
-                                <!-- The file input field used as target for the file upload widget -->
+                            <span class="btn-sm btn-success fileinput-button">
+                                <i class="glyphicon glyphicon-plus"><span>בחירת קובץ</span></i>
                                 <input id="fileupload" type="file" name="files[]" multiple>
-                            </span>
+                            </span><span>&nbsp;</span>
                         </div>
                         <br>
                         <br>
@@ -403,13 +406,12 @@
                 </div>
             </div>
 
-            <div id="wizard-steps">
-                <a href="#" class="btn-tab prev-tab ">הקודם</a>
-                <a href="#" class="btn-tab  next-tab">הבא</a>
-                <a id="submit" href="javascript:location.reload();" class="btn-tab  end-tab">סיום</a>
-                <input type="text" id="wizard-validation" readonly />
-            </div>
-
+        </div>
+        <div class="panel-area" id="wizard-steps1">
+            <a href="#" class="btn-tab prev-tab ">הקודם</a>
+            <a href="#" class="btn-tab  next-tab">הבא</a>
+            <a id="submit" href="javascript:location.reload();" class="btn-tab  end-tab">סיום</a>
+            <input type="text" id="wizard-validation" readonly />
         </div>
     </div>
 </div>

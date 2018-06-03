@@ -129,7 +129,7 @@
                 }
             });
 
-        var srcCategoryAdapter = app_jqx.createtDataAdapter("PropId", "PropName", '@Url.Action("GetCategoriesView", "Common")', true);
+        var srcCategoryAdapter = app_jqx.createDataAdapter("PropId", "PropName", '@Url.Action("GetCategoriesView", "Common")', true);
         app_jqxcombos.createListBox(srcCategoryAdapter, "PropId", "PropName", "listCategory", 240, 200);
         app_jqxcombos.createComboBox(srcCategoryAdapter, "PropId", "PropName", "syncCategory", 240, 120);
 

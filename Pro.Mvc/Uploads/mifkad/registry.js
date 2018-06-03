@@ -10,6 +10,16 @@ function registry_credit() {
 function registry_confirm() {
     this.AccountId = 2;
 };
+function registry_validateAge(d, age) {
+    var now = new Date();
+    var d1Y = d.getFullYear();
+    var d2Y = now.getFullYear();
+    var d1M = d.getMonth();
+    var d2M = now.getMonth();
+    var m = (d2M + 12 * d2Y) - (d1M + 12 * d1Y);
+
+    return m > (age * 12)
+};
 
 function registry_custom() {
 
@@ -32,7 +42,7 @@ function registry_custom() {
     $('#Birthday').datepicker({
         regional: ["he"],
         isRTL: true,
-        yearRange: "1925:1999",
+        yearRange: "1925:2002",
         changeMonth: true,
         changeYear: true,
         showButtonPanel: true,
@@ -246,7 +256,8 @@ registry_custom.prototype.loadControls = function () {
                 var date = $("#Birthday").datepicker("getDate");
                 if (date == null || date === undefined)
                     return false;
-                return (date.getFullYear() >= 1900 && date.getFullYear() <= 1999);
+                return registry_validateAge(date, 17);
+                //return (date.getFullYear() >= 1900 && date.getFullYear() <= 1999);
                 }
             },
              {
@@ -339,7 +350,7 @@ function registry_custom_ex() {
     $('#Birthday1').datepicker({
         regional: ["he"],
         isRTL: true,
-        yearRange: "1925:1999",
+        yearRange: "1925:2002",
         changeMonth: true,
         changeYear: true,
         showButtonPanel: true,
@@ -364,7 +375,7 @@ function registry_custom_ex() {
         //dayNames: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"],
         //monthNames: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"],
         //monthNamesShort: [ "ינו", "פבר", "מרץ", "אפר", "מאי", "יונ", "יול", "אוג", "ספט", "אוק", "נוב", "דצמ" ],
-        yearRange: "1925:1999",
+        yearRange: "1925:2002",
         changeMonth: true,
         changeYear: true,
         showButtonPanel: true,
@@ -689,7 +700,8 @@ registry_custom_ex.prototype.loadControls = function () {
                   var date = $("#Birthday1").datepicker("getDate");
                   if (date == null || date === undefined)
                       return false;
-                  return (date.getFullYear() >= 1900 && date.getFullYear() <= 1999);
+                  return registry_validateAge(date, 17);
+                  //return (date.getFullYear() >= 1900 && date.getFullYear() <= 1999);
               }
           },
           {
@@ -788,7 +800,8 @@ registry_custom_ex.prototype.loadControls = function () {
                 var date = $("#Birthday2").datepicker("getDate");
                 if (date == null || date === undefined)
                     return false;
-                return (date.getFullYear() >= 1900 && date.getFullYear() <= 1999);
+                return registry_validateAge(date, 17);
+                //return (date.getFullYear() >= 1900 && date.getFullYear() <= 1999);
             }
         },
          {

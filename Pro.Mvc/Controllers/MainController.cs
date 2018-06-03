@@ -91,18 +91,18 @@ namespace Pro.Mvc.Controllers
 
                 //RestApi api = new RestApi(accountId);
                 //model = api.SendSms(Message, PersonalDisplay, list, isPersonal);
-                
-                
+
+
                 var Acc = AccountProperty.View(accountId);
-                var targets = SmsSender.GetTargetList(accountId, uid,isPersonal);
-                model=SmsSender.Send(Acc, Message, PersonalDisplay, targets);
+                var targets = SmsSender.GetTargetList(accountId, uid, isPersonal);
+                model = SmsSender.Send(Acc, Message, PersonalDisplay, targets);
 
 
                 //if (model.Count > 0)
                 //{
                 //    return GoFinal("sms-ok", model.ToMessage());
                 //}
-                     return GoFinal("sms-ok", model.ToMessage());
+                return GoFinal("sms-ok", model.ToMessage());
             }
             catch (Exception ex)
             {
@@ -131,7 +131,7 @@ namespace Pro.Mvc.Controllers
                     return GoWarn("rule-error", "");
                 }
                 var Acc = AccountProperty.View(accountId);
-                var targets = SmsSender.GetTargetsByCategory(accountId, isPersonal, category,PersonalDisplay, isAll);
+                var targets = SmsSender.GetTargetsByCategory(accountId, isPersonal, category, PersonalDisplay, isAll);
                 model = SmsSender.SendMultimedia(Acc, Message, Body, PersonalDisplay, targets);
 
                 return GoFinal("sms-ok", model.ToMessage());
@@ -157,7 +157,7 @@ namespace Pro.Mvc.Controllers
                 //string category = Request["Category"];
                 //bool isAll = Types.ToBool(Request["allCategory"], false);
                 //DateTime TimeToSend = Types.ToDateTime(Request["TimeToSend"],DateTime.Now);
-                
+
                 //if (!RuleContext.ValidateRule(accountId, AccountsRules.EnableSms))
                 //{
                 //    return GoWarn("rule-error", "");
@@ -217,105 +217,105 @@ namespace Pro.Mvc.Controllers
             //return Json(model, JsonRequestBehavior.AllowGet);
         }
 
-/*
-        public ActionResult SendSmsMultimedia()
-        {
-            ApiResult model = null;
-            try
-            {
-                string Message = Request["Message"];
-                string Body = HttpUtility.UrlDecode(Request["Body"]);
-                string PersonalDisplay = Request["PersonalDisplay"];
-                bool isPersonal = string.IsNullOrEmpty(PersonalDisplay) ? false : true;
-                int category = Types.ToInt(Request["Category"]);
-                bool isAll = Types.ToBool(Request["IsAll"], false);
-
-                int accountId = GetAccountId();
-                int uid = GetUser();
-                if (!RuleContext.ValidateRule(accountId, AccountsRules.EnableSms))
+        /*
+                public ActionResult SendSmsMultimedia()
                 {
-                    return GoWarn("rule-error", "");
+                    ApiResult model = null;
+                    try
+                    {
+                        string Message = Request["Message"];
+                        string Body = HttpUtility.UrlDecode(Request["Body"]);
+                        string PersonalDisplay = Request["PersonalDisplay"];
+                        bool isPersonal = string.IsNullOrEmpty(PersonalDisplay) ? false : true;
+                        int category = Types.ToInt(Request["Category"]);
+                        bool isAll = Types.ToBool(Request["IsAll"], false);
+
+                        int accountId = GetAccountId();
+                        int uid = GetUser();
+                        if (!RuleContext.ValidateRule(accountId, AccountsRules.EnableSms))
+                        {
+                            return GoWarn("rule-error", "");
+                        }
+                        var Acc = AccountProperty.View(accountId);
+                        var targets = SmsSender.GetTargetsByCategory(accountId, isPersonal, category, isAll);
+                        model = SmsSender.SendMultimedia(Acc, Message,Body, PersonalDisplay, targets);
+
+                        return GoFinal("sms-ok", model.ToMessage());
+                    }
+                    catch (Exception ex)
+                    {
+                        model = ApiResult.Error(ex.Message);
+                        return GoWarn("sms-error", model.ToMessage());
+                    }
+                    //return Json(model, JsonRequestBehavior.AllowGet);
                 }
-                var Acc = AccountProperty.View(accountId);
-                var targets = SmsSender.GetTargetsByCategory(accountId, isPersonal, category, isAll);
-                model = SmsSender.SendMultimedia(Acc, Message,Body, PersonalDisplay, targets);
-
-                return GoFinal("sms-ok", model.ToMessage());
-            }
-            catch (Exception ex)
-            {
-                model = ApiResult.Error(ex.Message);
-                return GoWarn("sms-error", model.ToMessage());
-            }
-            //return Json(model, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult SendSmsCategory()
-        {
-            ApiResult model = null;
-            try
-            {
-                int accountId = GetAccountId();
-                int uid = GetUser();
-
-                string Message = Request["Message"];
-                string PersonalDisplay = Request["PersonalDisplay"];
-                bool isPersonal = string.IsNullOrEmpty(PersonalDisplay) ? false : true;
-                int category = Types.ToInt( Request["Category"]);
-                bool isAll = Types.ToBool(Request["allCategory"], false);
-
-                if (!RuleContext.ValidateRule(accountId, AccountsRules.EnableSms))
+                public ActionResult SendSmsCategory()
                 {
-                    return GoWarn("rule-error", "");
+                    ApiResult model = null;
+                    try
+                    {
+                        int accountId = GetAccountId();
+                        int uid = GetUser();
+
+                        string Message = Request["Message"];
+                        string PersonalDisplay = Request["PersonalDisplay"];
+                        bool isPersonal = string.IsNullOrEmpty(PersonalDisplay) ? false : true;
+                        int category = Types.ToInt( Request["Category"]);
+                        bool isAll = Types.ToBool(Request["allCategory"], false);
+
+                        if (!RuleContext.ValidateRule(accountId, AccountsRules.EnableSms))
+                        {
+                            return GoWarn("rule-error", "");
+                        }
+
+
+                        var Acc = AccountProperty.View(accountId);
+                        var targets = SmsSender.GetTargetsByCategory(accountId, isPersonal, category, isAll);
+                        model = SmsSender.Send(Acc, Message, PersonalDisplay, targets);
+
+                        return GoFinal("sms-ok", model.ToMessage());
+                    }
+                    catch (Exception ex)
+                    {
+                        model = ApiResult.Error(ex.Message);
+                        return GoWarn("sms-error", model.ToMessage());
+                    }
+                    //return Json(model, JsonRequestBehavior.AllowGet);
                 }
-
-
-                var Acc = AccountProperty.View(accountId);
-                var targets = SmsSender.GetTargetsByCategory(accountId, isPersonal, category, isAll);
-                model = SmsSender.Send(Acc, Message, PersonalDisplay, targets);
-
-                return GoFinal("sms-ok", model.ToMessage());
-            }
-            catch (Exception ex)
-            {
-                model = ApiResult.Error(ex.Message);
-                return GoWarn("sms-error", model.ToMessage());
-            }
-            //return Json(model, JsonRequestBehavior.AllowGet);
-        }
-        public ActionResult SendMailCategory()
-        {
-            ApiResult model = null;
-            try
-            {
-                string Message = HttpUtility.UrlDecode(Request["Message"]);
-                string Subject = Request["Subject"];
-                string PersonalDisplay = Request["PersonalDisplay"];
-                bool isPersonal = string.IsNullOrEmpty(PersonalDisplay) ? false : true;
-                int category = Types.ToInt(Request["Category"]);
-                bool isAll = Types.ToBool(Request["allCategory"], false);
-
-                int accountId = GetAccountId();
-                int uid = GetUser();
-                if (!RuleContext.ValidateRule(accountId, AccountsRules.EnableMail))
+                public ActionResult SendMailCategory()
                 {
-                    return GoWarn("rule-error", "");
+                    ApiResult model = null;
+                    try
+                    {
+                        string Message = HttpUtility.UrlDecode(Request["Message"]);
+                        string Subject = Request["Subject"];
+                        string PersonalDisplay = Request["PersonalDisplay"];
+                        bool isPersonal = string.IsNullOrEmpty(PersonalDisplay) ? false : true;
+                        int category = Types.ToInt(Request["Category"]);
+                        bool isAll = Types.ToBool(Request["allCategory"], false);
+
+                        int accountId = GetAccountId();
+                        int uid = GetUser();
+                        if (!RuleContext.ValidateRule(accountId, AccountsRules.EnableMail))
+                        {
+                            return GoWarn("rule-error", "");
+                        }
+                        var Acc = AccountProperty.View(accountId);
+                        var targets = MailSender.GetTargetsByCategory(accountId, isPersonal, category, isAll);
+                        model = MailSender.Send(Acc, Message, Subject, PersonalDisplay, targets);
+
+                        return GoFinal("mail-ok", model.ToMessage());
+                    }
+                    catch (Exception ex)
+                    {
+                        model = ApiResult.Error(ex.Message);
+                        return GoWarn("mail-error", model.ToMessage());
+                    }
+                    //return Json(model, JsonRequestBehavior.AllowGet);
                 }
-                var Acc = AccountProperty.View(accountId);
-                var targets = MailSender.GetTargetsByCategory(accountId, isPersonal, category, isAll);
-                model = MailSender.Send(Acc, Message, Subject, PersonalDisplay, targets);
 
-                return GoFinal("mail-ok", model.ToMessage());
-            }
-            catch (Exception ex)
-            {
-                model = ApiResult.Error(ex.Message);
-                return GoWarn("mail-error", model.ToMessage());
-            }
-            //return Json(model, JsonRequestBehavior.AllowGet);
-        }
-
-*/
-#endregion
+        */
+        #endregion
 
         #region Members query
 
@@ -323,28 +323,36 @@ namespace Pro.Mvc.Controllers
         public ActionResult Members()
         {
             MemberQuery query = new MemberQuery(Request.QueryString, 1);
-            var su=GetSignedUser();
+            var su = GetSignedUser(false);
+            if (su == null)
+            {
+                return RedirectToLogin();
+            }
             query.AccountId = su.AccountId;
             query.UserId = su.UserId;
             query.ExType = su.GetDataValue<int>("ExType");
             //query.QueryType = 1;
-            return View(true,query);
+            return View(true, query);
         }
 
         [HttpPost]
         [ActionName("Members")]
         public ActionResult MembersPost()
         {
-            MemberQuery query = new MemberQuery(Request.Form,0);
-            var su = GetSignedUser();
+            MemberQuery query = new MemberQuery(Request.Form, 0);
+            var su = GetSignedUser(false);
+            if (su == null)
+            {
+                return RedirectToLogin();
+            }
             query.AccountId = su.AccountId;
             query.UserId = su.UserId;
             query.ExType = su.GetDataValue<int>("ExType");
             //query.QueryType = 0;
-            return View(true,query);
+            return View(true, query);
         }
 
-       
+
 
         [HttpPost]
         public JsonResult GetMembersTargets(
@@ -365,7 +373,7 @@ namespace Pro.Mvc.Controllers
            int ExEnum1,
            int ExEnum2,
            int ExEnum3,
-            //int Status,
+           //int Status,
            int BirthdayMonth,
            int JoinedFrom,
            int JoinedTo,
@@ -379,10 +387,10 @@ namespace Pro.Mvc.Controllers
                 string key = string.Format("GetTargets_{0}_{1}", AccountId, UserId);
                 CacheRemove(key);
 
-                 MemberQuery query = new MemberQuery()
+                MemberQuery query = new MemberQuery()
                 {
                     AccountId = AccountId,
-                    UserId=UserId,
+                    UserId = UserId,
                     Address = Address,
                     AgeFrom = AgeFrom,
                     AgeTo = AgeTo,
@@ -394,16 +402,16 @@ namespace Pro.Mvc.Controllers
                     JoinedFrom = JoinedFrom,
                     JoinedTo = JoinedTo,
                     MemberId = MemberId,
-                    ExId=ExId,
-                    CellPhone=CellPhone,
-                    Email=Email,
+                    ExId = ExId,
+                    CellPhone = CellPhone,
+                    Email = Email,
                     Name = Name,
                     //Place = Place,
                     QueryType = QueryType,
                     Region = Region,
-                    ExEnum1=ExEnum1,
-                    ExEnum2=ExEnum2,
-                    ExEnum3=ExEnum3,
+                    ExEnum1 = ExEnum1,
+                    ExEnum2 = ExEnum2,
+                    ExEnum3 = ExEnum3,
                     //Status = Status,
                     PageNum = 0,
                     PageSize = 999999999
@@ -424,7 +432,7 @@ namespace Pro.Mvc.Controllers
 
         public ActionResult MailTargets()
         {
-            MemberQuery query = new MemberQuery(Request.Form,22);
+            MemberQuery query = new MemberQuery(Request.Form, 22);
             query.AccountId = GetAccountId();
             query.UserId = GetUser();
             query.QueryType = 22;
@@ -433,7 +441,7 @@ namespace Pro.Mvc.Controllers
 
         public ActionResult MembersExport()
         {
-            MemberQuery query = new MemberQuery(Request.Form,20);
+            MemberQuery query = new MemberQuery(Request.Form, 20);
             query.AccountId = GetAccountId();
             query.UserId = GetUser();
             query.QueryType = 20;
@@ -490,7 +498,7 @@ namespace Pro.Mvc.Controllers
         {
             int uid = GetUser();
             int accountId = GetAccountId();
-            var list= TargetView.ViewList(accountId, uid);
+            var list = TargetView.ViewList(accountId, uid);
             return TargetView.ToJson(list, isPrsonal);
         }
         #endregion 
@@ -527,7 +535,7 @@ namespace Pro.Mvc.Controllers
         //    return View();
         //}
 
-        
+
         //public ActionResult MembersGrid()
         //{
         //    return View(true);
@@ -545,15 +553,23 @@ namespace Pro.Mvc.Controllers
 
         public JsonResult GetMembersGrid()
         {
-            MemberQuery query = new MemberQuery(Request);
-            query.Normelize();
-            var usr = GetSignedUser();
-            query.AccountId = usr.AccountId;
-            
-            var list = MemberContext.ListQueryView(query);
-            var row = list.FirstOrDefault<MemberListView>();
-            int totalRows = row == null ? 0 : row.TotalRows;
-            return QueryPagerServer<MemberListView>(list, totalRows, query.PageSize, query.PageNum);
+            try
+            {
+                MemberQuery query = new MemberQuery(Request);
+                query.Normelize();
+                var su = GetSignedUser(true);
+                query.AccountId = su.AccountId;
+
+                var list = MemberContext.ListQueryView(query);
+                //var row = list.FirstOrDefault<MemberListView>();
+                //int totalRows = row == null ? 0 : row.TotalRows;
+                return QueryPagerServer<MemberListView>(list, su.UserId);//, totalRows);//, query.PageSize, query.PageNum);
+            }
+            catch (Exception)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
+
+            }
         }
 
 
@@ -597,7 +613,7 @@ namespace Pro.Mvc.Controllers
             ResultModel model = null;
             try
             {
-                var usr = GetSignedUser();
+                var usr = GetSignedUser(true);
                 a = EntityContext.Create<MemberItem>(Request.Form);
                 a.AccountId = usr.AccountId;
                 var exType = usr.GetDataValue<int>("ExType");
@@ -787,13 +803,14 @@ namespace Pro.Mvc.Controllers
             try
             {
                 PaymentQuery query = new PaymentQuery(Request);
-                query.AccountId = GetAccountId();
+                var su = GetSignedUser(true);
+                query.AccountId = su.AccountId;
 
                 query.Normelize();
                 var list = PaymentContext.ListQueryView(query);
                 var row = list.FirstOrDefault<PaymentReportView>();
                 int totalRows = row == null ? 0 : row.TotalRows;
-                return QueryPagerServer<PaymentReportView>(list, totalRows, query.PageSize, query.PageNum);
+                return QueryPagerServer<PaymentReportView>(list, totalRows, su.UserId);
 
             }
             catch(Exception ex)
@@ -843,14 +860,22 @@ namespace Pro.Mvc.Controllers
 
         public JsonResult GetSignupGrid()
         {
+            try
+            {
+                SignupQuery query = new SignupQuery(Request, GetAccountId());
+                var su = GetSignedUser(true);
+                query.AccountId = su.AccountId;
+                query.Normelize();
+                var list = SignupContext.ListQueryView(query);
+                var row = list.FirstOrDefault<SignupReportView>();
+                int totalRows = row == null ? 0 : row.TotalRows;
+                return QueryPagerServer<SignupAccountView>(list, totalRows, su.UserId);
+            }
+            catch (Exception)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
 
-            SignupQuery query = new SignupQuery(Request, GetAccountId());
-
-            query.Normelize();
-            var list = SignupContext.ListQueryView(query);
-            var row = list.FirstOrDefault<SignupReportView>();
-            int totalRows = row == null ? 0 : row.TotalRows;
-            return QueryPagerServer<SignupAccountView>(list, totalRows, query.PageSize, query.PageNum);
+            }
         }
 
 

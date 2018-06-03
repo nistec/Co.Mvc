@@ -63,7 +63,7 @@ namespace Pro.Mvc.Models
         public Ti Id { get; set; }
         public Tp PId { get; set; }
         public string Args { get; set; }
-        public object Result { get; set; }
+        public object Data { get; set; }
 
         public bool IsEdit
         {

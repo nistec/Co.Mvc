@@ -136,12 +136,14 @@
         
         if ( mq == 'mobile' && topNavigation.parents('.nbr-side-nav').length == 0 ) {
         	detachElements();
-			topNavigation.appendTo(sidebar);
+            $('.nbr-side-nav').css('z-index', 99200);
+            topNavigation.appendTo(sidebar);
 			searchForm.removeClass('is-hidden').prependTo(sidebar);
 		} else if ( ( mq == 'tablet' || mq == 'desktop') &&  topNavigation.parents('.nbr-side-nav').length > 0 ) {
 			detachElements();
+            $('.nbr-side-nav').css('z-index', 100);
 			searchForm.insertAfter(header.find('.nbr-logo'));
-			topNavigation.appendTo(header.find('.nbr-nav'));
+            topNavigation.appendTo(header.find('.nbr-nav'));
 		}
 		checkSelected(mq);
 		resizing = false;

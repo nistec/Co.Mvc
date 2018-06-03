@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <!-- Using jQuery with a CDN -->
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <!-- JS file -->
+    <script src="jquery.easy-autocomplete.min.js"></script>
+
+    <!-- CSS file -->
+    <link rel="stylesheet" href="easy-autocomplete.min.css">
+
+    <!-- Additional CSS Themes file - not required-->
+    <link rel="stylesheet" href="easy-autocomplete.themes.min.css"> 
+
+    <script type="text/javascript">
+        var options = {
+            data: ["blue", "green", "pink", "red", "yellow"]
+        };
+
+        $("#basics").easyAutocomplete(options);
+    </script>
+
+    <script type="text/javascript">
+
+    var options = {
+        url: "resources/countries.json",
+
+        getValue: "name",
+
+        list: {
+            match: {
+                enabled: true
+            }
+        }
+    };
+
+    $("#provider-json").easyAutocomplete(options);
+    </script>
+
+    <script type="text/javascript">
+
+    var options = {
+    url: function(phrase) {
+    return "api/countrySearch.php?phrase=" + phrase + "&format=json";
+    },
+
+    getValue: "name"
+    };
+
+    $("#provider-remote").easyAutocomplete(options);
+    </script>
+
+</head>
+<body>
+
+    <div>
+        <input id="basics" />
+    </div>
+    <div>
+        <input id="provider-json" />
+    </div>
+
+    <div>
+        <input id="provider-remote" />
+    </div>
+
+
+
+</body>
+</html>

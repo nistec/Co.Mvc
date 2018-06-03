@@ -25,6 +25,7 @@ function triggerWizControlQuery(dataModel) {
     members_grid.loadQuery(dataModel)
     wizard.wizHome();
 }
+
 //============================================================================================ app_members_grid
 (function ($) {
 
@@ -52,7 +53,7 @@ app_members_grid = {
                { name: 'Address', type: 'string' },
                { name: 'CityName', type: 'string' },
                { name: 'JoiningDate', type: 'date' },
-              // { name: 'PlaceName', type: 'string' },
+               { name: 'CompanyName', type: 'string' },
                { name: 'BirthDateYear', type: 'number' },
               // { name: 'ChargeName', type: 'string' },
                { name: 'BranchName', type: 'string' },
@@ -512,6 +513,13 @@ app_members_grid = {
                       app_jqxgrid.buildFilterPanel(filterPanel, datafield);
                   }
               },
+            {
+                text: 'שם חברה', dataField: 'CompanyName', width: 160, cellsalign: 'right', align: 'center',
+                filtertype: "custom",
+                createfilterpanel: function (datafield, filterPanel) {
+                    app_jqxgrid.buildFilterPanel(filterPanel, datafield);
+                }
+            },
               {
                   text: ' עיר   ', dataField: 'CityName', cellsalign: 'right', align: 'center',
                   filtertype: "custom",
@@ -571,7 +579,48 @@ app_members_grid = {
             //app_popup.memberEdit(id);
             slf.edit();
         });
+       
 
+        //// Create a jqxDropDownList
+        //$("#jqxColumns").jqxDropDownList({ checkboxes: true, source: dataAdapter, displayMember: "ContactName", valueMember: "CompanyName", width: 200, height: 25 });
+        //$("#jqxWidget").jqxDropDownList('checkIndex', 0);
+        //// subscribe to the checkChange event.
+        //$("#jqxWidget").on('checkChange', function (event) {
+        //    if (event.args) {
+        //        var item = event.args.item;
+        //        if (item) {
+        //            var valueelement = $("<div></div>");
+        //            valueelement.text("Value: " + item.value);
+        //            var labelelement = $("<div></div>");
+        //            labelelement.text("Label: " + item.label);
+        //            var checkedelement = $("<div></div>");
+        //            checkedelement.text("Checked: " + item.checked);
+        //            $("#selectionlog").children().remove();
+        //            $("#selectionlog").append(labelelement);
+        //            $("#selectionlog").append(valueelement);
+        //            $("#selectionlog").append(checkedelement);
+        //            var items = $("#jqxWidget").jqxDropDownList('getCheckedItems');
+        //            var checkedItems = "";
+        //            $.each(items, function (index) {
+        //                checkedItems += this.label + ", ";
+        //            });
+        //            $("#checkedItemsLog").text(checkedItems);
+        //        }
+        //    }
+        //});
+
+        //var listSource = [{ label: 'Name', value: 'name', checked: false }, { label: 'Beverage Type', value: 'type', checked: true }, { label: 'Calories', value: 'calories', checked: true }, { label: 'Total Fat', value: 'totalfat', checked: true }, { label: 'Protein', value: 'protein', checked: true }];
+        //$("#jqxlistbox").jqxDropDownList({ source: columnList, width: 200, height: 25, checkboxes: true });
+        //$("#jqxlistbox").on('checkChange', function (event) {
+        //    $("#jqxgrid").jqxGrid('beginupdate');
+        //    if (event.args.checked) {
+        //        $("#jqxgrid").jqxGrid('showcolumn', event.args.value);
+        //    }
+        //    else {
+        //        $("#jqxgrid").jqxGrid('hidecolumn', event.args.value);
+        //    }
+        //    $("#jqxgrid").jqxGrid('endupdate');
+        //});
     },
     //memberDelete: function (rcdid) {
     //    if (!confirm('האם למחוק את המנוי ' + rcdid)) {
@@ -1054,11 +1103,15 @@ app_members_grid = {
     }
 
 };
+
+})(jQuery)
+
+
 var app_members_def_control = function (tagWindow) {
 
     this.wizControl,
-    this.dataSource;
-    this.init = function (dataModel, userInfo,extype) {
+    this.dataSource,
+    this.init = function (dataModel, userInfo, extype) {
         this.RecordId = dataModel.Id;
         this.UserInfo = userInfo;
         this.AccountId = userInfo.AccountId;
@@ -1066,7 +1119,7 @@ var app_members_def_control = function (tagWindow) {
         //this.UserRole = userInfo.UserRole;
         //this.AllowEdit = (this.UserRole > 4) ? 1 : 0;
 
-        
+
 
         this.dataSource =
                  {
@@ -1078,8 +1131,8 @@ var app_members_def_control = function (tagWindow) {
                  };
         var pasive = dataModel.Option == "a" ? " pasive" : "";
         var html =
-    '<div id="fcWindow" style="border-top:solid 2px #15C8D8">' +
-         '<div id="fcBody" style="background-color:#fff;border:solid 1px #15C8D8">' +
+    '<div id="fcWindow">' +
+         '<div id="fcBody">' +
             '<form class="fcForm" id="fcForm" method="post" action="/Main/MemberUpdate">' +
                 '<div style="direction: rtl; text-align: right;">' +
                     '<input type="hidden" id="ExType" />' +
@@ -1088,7 +1141,7 @@ var app_members_def_control = function (tagWindow) {
                     '<input type="hidden" id="Categories" name="Categories" value="" />' +
                     '<div class="tab-container">' +
                          '<div id="tab-personal" class="tab-group">' +
-                            '<h3>פרטים אישיים</h3>' +
+                            '<h3 class="panel-area-title">פרטים אישיים</h3>' +
                             '<div class="form-group">' +
                                 '<div class="field">תעודת זהות :</div>' +
                                 '<input id="MemberId" name="MemberId" type="text" class="text-mid" />' +
@@ -1115,7 +1168,7 @@ var app_members_def_control = function (tagWindow) {
                             '</div>' +
                             '<div class="form-group">' +
                                 '<div class="field">תאריך לידה:</div>' +
-                                '<div id="Birthday" name="Birthday"></div>' +
+                                '<div id="Birthday" name="Birthday" data-type="date"></div>' +
                             '</div>' +
                             '<div class="form-group">' +
                                 '<div class="field">טלפון נייד:</div>' +
@@ -1135,7 +1188,7 @@ var app_members_def_control = function (tagWindow) {
                             '</div>' +
                         '</div>' +
                         '<div id="tab-general" class="tab-group">' +
-                            '<h3>פרטים כלליים</h3>' +
+                            '<h3 class="panel-area-title">פרטים כלליים</h3>' +
         '<div class="form-group">' +
             '<div class="field">סניף :</div>' +
             '<div id="Branch" name="Branch"></div>' +
@@ -1196,7 +1249,7 @@ var app_members_def_control = function (tagWindow) {
         '</div>' +
     '</div>' +
     '<div id="tab-notes" class="tab-group">' +
-        '<h3>הערות</h3>' +
+        '<h3 class="panel-area-title">הערות</h3>' +
         '<div class="form-group">' +
             '<div class="field">הערות:</div>' +
             '<textarea id="Note" name="Note" style="width:100%;height:60px"></textarea>' +
@@ -1211,27 +1264,27 @@ var app_members_def_control = function (tagWindow) {
         '</div>' +
     '</div>' +
     '</div>' +
-    '<div style="clear: both;"></div>'+
+    '<div style="clear: both;"></div>' +
     '</div>' +
     '</form>' +
     '</div>' +
     '</div>' +
     '</div>';
 
-    //    '<div style="height: 5px"></div>' +
-    //'<p id="validator-message" style="color:red"></p>' +
-    //'<div style="display:none">' +
-    //'<input id="fcSubmit" class="btn-default btn7" type="button" value="עדכון" />' +
-    //'<input id="fcCancel" class="btn-default btn7" type="button" value="ניקוי" />' +
-    //'</div>' +
+        //    '<div style="height: 5px"></div>' +
+        //'<p id="validator-message" style="color:red"></p>' +
+        //'<div style="display:none">' +
+        //'<input id="fcSubmit" class="btn-default btn7" type="button" value="עדכון" />' +
+        //'<input id="fcCancel" class="btn-default btn7" type="button" value="ניקוי" />' +
+        //'</div>' +
 
         if (this.wizControl == null) {
             this.wizControl = new wiz_control("member_def", tagWindow);
             this.wizControl.init(html, this.ExType, function (data) {
 
-
-                $('#Birthday').jqxDateTimeInput({ showCalendarButton: true, width: '150px', rtl: true });
                 $('#Birthday').val('');
+                $('#Birthday').jqxDateTimeInput({ width: '150px', rtl: true });
+                
 
                 app_jqx_list.enum1ComboAdapter();
                 app_jqx_list.enum2ComboAdapter();
@@ -1290,7 +1343,7 @@ var app_members_def_control = function (tagWindow) {
                     animationDuration: 0,
                     rules: input_rules
                 });
-
+                $('#fcForm').jqxValidator('hide');
             });
         }
         else {
@@ -1305,7 +1358,10 @@ var app_members_def_control = function (tagWindow) {
         if (this.RecordId > 0) {
             this.wizControl.load("fcForm", this.dataSource, function (record) {
 
-                app_jqxform.loadDataForm("fcForm", record);
+                app_jqxform.loadDataForm("fcForm", record);//, true, ["Birthday"]);
+
+                //if (record.Birthday)
+                //    $("#Birthday").val(record.Birthday)
 
                 app_jqxcombos.selectCheckList("listCategory", record.Categories);
 
@@ -1330,7 +1386,11 @@ var app_members_def_control = function (tagWindow) {
                 app_dialog.alert(data.Message);
                 if (data.Status >= 0) {
                     //if (slf.IsDialog) {
-                    window.parent.triggerWizControlCompleted("member_def",data.OutputId);
+
+                    if (window.parent.triggerWizControlCompleted)
+                        window.parent.triggerWizControlCompleted("member_def", data.OutputId);
+                    else if (triggerWizControlCompleted)
+                        triggerWizControlCompleted("member_def", data.OutputId);
 
                     //    //$('#fcForm').reset();
                     //}
@@ -1341,8 +1401,22 @@ var app_members_def_control = function (tagWindow) {
                 }
             }
         );
+    },
+    this.doClear = function () {
+        this.wizControl.clearDataForm("fcForm");
+        app_jqxcombos.clearCheckList("#listCategory");
+    },
+    this.doSubmitAdd = function () {
+        this.wizControl.doSubmit(
+            function () {
+                app_jqxcombos.renderCheckList("listCategory", "Categories");
+            },
+            function (data) {
+                app_dialog.alert(data.Message);
+                //if (data.Status >= 0) {
+                //    window.parent.triggerWizControlCompleted("member_def", data.OutputId);
+                //}
+            }
+        );
     }
 };
-
-})(jQuery)
-

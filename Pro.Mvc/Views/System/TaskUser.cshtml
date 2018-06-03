@@ -1,5 +1,5 @@
 ﻿@{
-   
+
     //ViewBag.Title = "System";
     Layout = "~/Views/Shared/_View.cshtml";
     int rcdid = Nistec.Types.ToInt(Request["id"]);
@@ -10,11 +10,22 @@
 @section head {
 
     @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
     <script src="~/jqwidgets/jqxkanban.nis.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script src="~/Scripts/app/system/system-models.js"></script>
+
     <script type="text/javascript" src="~/jqwidgets/jqxsortable.js"></script>
-    <script type="text/javascript" src="~/Scripts/app/system/task-user.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/task-user-v1.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxbuttongroup.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxradiobutton.js"></script>
+
+    <!-- reminder-->
+    <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script src="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.js"></script>
+    <link href="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.css" rel="stylesheet" />
+
 
     <style type="text/css">
 
@@ -48,10 +59,13 @@
         .switch-item {
             /*direction: rtl;
             padding: 4px 12px;*/
-            width:60px;
+            width: 60px;
         }
-        i {padding-left:4px;
+
+        i {
+            padding-left: 4px;
         }
+
         .jqx-grid-cell {
             border-left: none;
             border-right: none;
@@ -94,28 +108,30 @@
 @section scripts {
 
     <script type="text/javascript">
+        var theme = 'nis_metro';
 
-   
     $(document).ready(function () {
         JSON.useDateParser();
-        var theme = 'Arctic';
         var uinfo = JSON.parse('@userInfo');
-       
+
         app_tasks_active.load(uinfo);
-        
+
         $("#Status-group").jqxButtonGroup({ mode: 'radio', rtl: true });
         $("#Status-group").on('buttonclick', function (event) {
             var val = $(event.args.button).data('val');
             if (val == '0')
-                app.redirectTo('/System/TaskNew');
-            else if (val == '1')
-                app.redirectTo('/System/ReminderNew');
+                app.redirectTo('/System/TopicNew?pid=0');
+            if (val == '1')
+                app.redirectTo('/System/TaskNew?pid=0');
             else if (val == '2')
-                app.redirectTo('/System/TicketNew');
+                app.redirectTo('/System/ReminderNew?pid=0');
+            else if (val == '3')
+                app.redirectTo('/System/TicketNew?pid=0');
             else if (val == '100')
-                app.redirectTo('/System/Tasks');
-            else
-                app_tasks_active.reload(val);
+                $("#task-Board").toggle();
+                //app.redirectTo('/System/ReportTasks');
+            //else
+            //    app_tasks_active.reload();
             //$("#StatusFilter").val(val);
             //slf.statusFilter = val;
             //dataAdapter.dataBind();
@@ -123,7 +139,7 @@
         });
     });
 
-</script>
+    </script>
 }
 
 <div class="breadcrumbs">
@@ -133,35 +149,100 @@
 
     <div id="wiz-container">
 
+        <div class="panel-page-header rtl">המשימות שלי</div>
+        <div style="height:5px"></div>
+
         <div class="rtl" style="height:44px">
-                <div>המשימות שלי</div>
-                <div id='Status-group' class="switch-group rtl">
-                    <div class="switch-item" id="Status-New" data-val="0" title="משימה חדשה">משימה<i class="fa fa-plus-square-o"></i></div>
-                    <div class="switch-item" id="Status-Reminder" data-val="1" title="תזכורת חדשה">תזכורת<i class="fa fa-calendar-o"></i></div>
-                    <div class="switch-item" id="Status-Ticket" data-val="2" title="פתיחת סוגיה">סוגיה<i class="fa fa-edit"></i></div>
-                    <div class="switch-item" id="Task-Report" data-val="100" title="דוח משימות">דוח<i class="fa fa-newspaper-o"></i></div>
+            <div id='Status-group' class="panel-area switch-group rtl">
+                <div class="switch-item pasive" id="Status-Topic" data-val="0" title="סוגיה חדשה"><a href="#">סוגיה<i class="fa fa-plus-square-o"></i></a></div>
+                <div class="switch-item" id="Status-Task" data-val="1" title="משימה חדשה"><a href="#">משימה<i class="fa fa-plus-square-o"></i></a></div>
+                <div class="switch-item" id="Status-Reminder" data-val="2" title="תזכורת חדשה"><a href="#">תזכורת<i class="fa fa-calendar-o"></i></a></div>
+                <div class="switch-item" id="Status-Ticket" data-val="3" title="פתיחת כרטיס"><a href="#">כרטיס<i class="fa fa-edit"></i></a></div>
+                <div class="switch-item" id="Task-Report" data-val="100" title="ניהול משימות"><a href="#">ניהול<i class="fa fa-newspaper-o"></i></a></div>
+                @*<div class="switch-item" id="Topic-Report" data-val="101" title="דוח כללי"><a href="#">נושאים<i class="fa fa-newspaper-o"></i></a></div>*@
+            </div>
+        </div>
+        <div id="task-Board" class="rtl" style="display:none">
+           
+        </div>
+
+        <div id="QuickReminder-window"></div>
+
+        <div id="exp-today" class="panel-area tab-panel1" style="padding:0 !important">
+            <div class="panel-area-title rtl">
+                <span>משימות ותזכורות להיום</span><span> </span><a id="quick-reminder" href="#"><i class="fa fa-calendar-o"></i></a>
+            </div>
+            <div class="expander-entry">
+                <div class="grid-wrap1 rtl">
+                    <div id="taskToday" style="position:relative;z-index:1;"></div>
                 </div>
             </div>
-            
-        <div id="jqxWidget">
-                <div id="fcBody" style="margin: 0;"><!--max-height:700px;overflow-y:auto;overflow-x:hidden-->
-                    <input type="hidden" id="AccountId" name="AccountId" value="" />
-                    <input type="hidden" id="StatusFilter" value="" />
-                    <div id="kanban" style="position:relative;z-index:1;"></div>
+        </div>
+
+        <div id="jqxWidget" class="panel-area">
+            <div id="fcBody" style="margin: 0;height:600px">
+                <!--max-height:700px;overflow-y:auto;overflow-x:hidden-->
+                <input type="hidden" id="AccountId" name="AccountId" value="" />
+                <input type="hidden" id="StatusFilter" value="" />
+                <div id="kanban" style="position:relative;z-index:1;height:100%"></div>
+            </div>
+        </div>
+
+        <div id="exp-assign" class="panel-area tab-panel1" style="padding:0 !important">
+            <div class="panel-area-title">שיתוף</div>
+            <div class="expander-entry">
+                <div class="grid-wrap1 rtl">
+                    <div id="jqxgrid" style="position:relative;z-index:1;"></div>
                 </div>
             </div>
+        </div>
 
     </div>
 </div>
 <!--end of content-wrapper-->
- 
-    <script type="text/javascript">
-        app_menu.activeLayoutMenu("liSystem");
-        app_menu.breadcrumbs("System", "Tasks", 'en');
+<!--footer-->
+<footer>
+    <div class="container">
+        <div class="thumbnail-footer">
+            <figure><img src="~/images/site/page1_icon1.png" alt=""></figure>
+        </div>
+        <div class="col-lg-12">
+            <ul class="follow_icon rtl">
+                <li class="padding-r10">
+                    <a href="~/System/Calendar" title="יומן">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> יומן
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/SystemBoard">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> דוחות
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/AdUsersDef" title="משתמשים">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> משתמשים
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/AdDef" title="קבוצות">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> קבוצות
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/AdTeamDef" title="צוותים">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> צוותים
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-        
-
-    </script>
+    </div>
+</footer>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("System", "Tasks", 'en');
+    app_task_model.taskBoard("#task-Board");
+</script>
 
 
 

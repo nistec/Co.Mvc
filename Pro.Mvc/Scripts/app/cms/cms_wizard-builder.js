@@ -246,7 +246,7 @@ app_cms_wizard_builder.prototype.appendValidator = function (field, name, requir
     if (field == 'Gender') {
         if (required)
             this.input_rules.push("\n{input: '#Gender', message: 'חובה לציין מין!', action: 'keyup, select', rule: function (input, commit) {" +
-                    "var index = $('Gender').jqxComboBox('getSelectedIndex');" +
+                    "var index = $('#Gender').jqxComboBox('getSelectedIndex');" +
                     "return index != -1;}}");
     }
     if (field == 'Birthday') {

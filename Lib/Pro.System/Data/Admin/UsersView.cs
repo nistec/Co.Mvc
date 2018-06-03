@@ -31,7 +31,7 @@ namespace ProSystem.Data.Entities
             //int ttl = 3;
             return DbContextCache.EntityList<DbSystem, T>(CacheKey, new object[] { "UserId", UserId });
         }
-        protected override void OnChanged(UpdateCommandType commandType)
+        protected override void OnChanged(ProcedureType commandType)
         {
             DbContextCache.Remove(CacheKey);
         }
@@ -98,7 +98,7 @@ namespace ProSystem.Data.Entities
         }
     }
 
-    [EntityMapping("vw_UserTeam")]
+    [EntityMapping("vw_UserTeam",ProcListView = "sp_UsersOrTeam")]
     public class UserTeamProfile : IEntityItem
     {
         public int UserTeamId

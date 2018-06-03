@@ -1,4 +1,7 @@
-﻿using Nistec.Data.Entities;
+﻿using Nistec.Data;
+using Nistec.Data.Entities;
+using Nistec.Web.Controls;
+using ProSystem.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +10,57 @@ using System.Threading.Tasks;
 
 namespace ProSystem.Data
 {
+
+    public class EntityModelContext<T> : EntityContext<DbSystem, T> where T : IEntityItem
+    {
+
+        public static void Refresh(int accountId, int userId, string EntityCacheGroups)
+        {
+            DbContextCache.Remove<T>(Settings.ProjectName, EntityCacheGroups, accountId, userId);
+        }
+        public static EntityModelContext<T> Get(int accountId, int userId, string EntityCacheGroups)
+        {
+            return new EntityModelContext<T>(accountId,userId, EntityCacheGroups);
+        }
+        public EntityModelContext(int accountId, int userId, string EntityCacheGroups)
+        {
+            if ((userId > 0 || accountId > 0) && EntityCacheGroups != null)
+                CacheKey = DbContextCache.GetKey<T>(Settings.ProjectName, EntityCacheGroups, accountId, userId);
+        }
+        protected EntityModelContext()
+        {
+        }
+
+        public IList<T> GetList()
+        {
+            //int ttl = 3;
+            return DbContextCache.EntityList<DbSystem, T>(CacheKey, null);
+        }
+        public IList<T> GetList(params object[] keyValueParameters)
+        {
+            //int ttl = 3;
+            return DbContextCache.EntityList<DbSystem, T>(CacheKey, keyValueParameters);
+        }
+        //public IList<VW> GetList<VW>(params object[] keyValueParameters) where VW : IEntityItem
+        //{
+        //    //int ttl = 3;
+        //    return DbContextCache.EntityList<DbSystem, VW>(CacheKey, keyValueParameters);
+        //}
+        //public IList<VW> ExecuteList<VW>(params object[] keyValueParameters) where VW : IEntityItem
+        //{
+        //    //int ttl = 3;
+        //    return DbContextCache.ExecuteList<DbSystem, VW>(CacheKey, keyValueParameters);
+        //}
+        protected override void OnChanged(ProcedureType commandType)
+        {
+            DbContextCache.Remove(CacheKey);
+        }
+        public FormResult GetFormResult(EntityCommandResult res, string reason)
+        {
+            return FormResult.Get(res, EntityName, reason);//.GetFormResult(res.AffectedRecords, this.EntityName, reason, res.GetIdentityValue<int>());
+        }
+    }
+
     /*
     public class EntityResultModel
     {

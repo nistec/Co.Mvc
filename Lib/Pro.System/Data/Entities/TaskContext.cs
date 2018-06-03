@@ -11,6 +11,7 @@ using Nistec.Web.Controls;
 using System.Web;
 using Nistec.Generic;
 using Nistec.Serialization;
+using ProSystem.Query;
 
 namespace ProSystem.Data.Entities
 {
@@ -41,7 +42,7 @@ namespace ProSystem.Data.Entities
             //int ttl = 3;
             return DbContextCache.EntityList<DbSystem, T>(CacheKey, new object[] { "Task_Id", taskId });
         }
-        protected override void OnChanged(UpdateCommandType commandType)
+        protected override void OnChanged(ProcedureType commandType)
         {
             DbContextCache.Remove(CacheKey);
         }
@@ -82,13 +83,7 @@ namespace ProSystem.Data.Entities
 
         #region update
 
-        //public static int DoSave(TaskItem entity,UpdateCommandType commandTy)
-        //{
-        //    if (entity.TaskId>0)
-        //        return DoSave(entity.TaskId, entity.AccountId, entity, UpdateCommandType.Update);
-        //    return DoSave(entity.TaskId, entity.AccountId, entity, UpdateCommandType.Insert);
-
-        //}
+     /*
         public static int DoInsert(TaskItem entity)
         {
             entity.TaskId=TaskContext.NewTaskId();
@@ -124,7 +119,86 @@ namespace ProSystem.Data.Entities
                 }
             return 0;
         }
+*/
+        public static int Task_AddOrUpdate(TaskItem item)
+        {
+            object[] values = new object[]
+            {
+"TaskId", item.TaskId
+,"TaskSubject", item.TaskSubject
+,"TaskBody", item.TaskBody
+,"Task_Type", item.Task_Type
+,"Task_Parent", item.Task_Parent
+,"Project_Id", item.Project_Id
+,"UserId", item.UserId
+//,"CreatedDate", item.CreatedDate
+,"DueDate", item.DueDate
+,"StartedDate", item.StartedDate
+,"EndedDate", item.EndedDate
+,"EstimateStartTime", item.EstimateStartTime
+,"EstimateTakenTime", item.EstimateTakenTime
+,"AccountId", item.AccountId
+,"TaskStatus", item.TaskStatus
+//,"IsShare",item.IsShare
+,"Priority", item.Priority
+,"Budget",item.Budget
+,"TotalTime", item.TotalTime
+,"TimePart", item.TimePart
+,"AssignBy", item.AssignBy
+,"ColorFlag", item.ColorFlag
+,"TeamId", item.TeamId
+//,"LastUpdate", item.LastUpdate
+,"LastAct", item.LastAct
+,"RemindDate", item.DueDate
+,"TaskModel", item.TaskModel
+,"ClientId", item.ClientId
+,"ClientDetails", item.ClientDetails
+,"AssignByAccount", item.AssignByAccount
+,"Tags", item.Tags
+,"Lang", item.Lang
+,"AssignTo", item.AssignTo
+,"ShareType", item.ShareType
+,"Folder", item.Folder
+            };
 
+
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteReturnValue("sp_Task_AddOrUpdate", 0, values);
+        }
+
+        #endregion
+
+        #region reminder
+        /*
+        public static int Remainder_AddOrUpdate(ReminderItem item)
+        {
+            object[] values = new object[]
+            {
+            "TaskId",item.TaskId
+            ,"TaskSubject",item.TaskSubject
+            ,"TaskBody",item.TaskBody
+            ,"Task_Parent",item.Task_Parent
+            ,"Project_Id",item.Project_Id
+            ,"UserId",item.UserId
+            ,"DueDate",item.DueDate
+            ,"AccountId",item.AccountId 
+            ,"TaskStatus",item.TaskStatus 
+            //,"IsShare",item.IsShare 
+            ,"AssignBy",item.AssignBy 
+            ,"ColorFlag",item.ColorFlag 
+            ,"RemindDate",item.RemindDate
+            ,"ClientId",item.ClientId
+            ,"Tags",item.Tags
+            ,"Lang",item.Lang
+            ,"AssignTo",item.AssignTo
+            ,"ShareType",item.ShareType
+            };
+
+
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteReturnValue("sp_Task_Reminder_AddOrUpdate", 0, values);
+        }
+        */
         #endregion
 
         #region static
@@ -142,11 +216,26 @@ namespace ProSystem.Data.Entities
             using (var db = DbContext.Create<DbSystem>())
                 return db.ExecuteReturnValue("sp_Task_Status_Change",0, "TaskId", TaskId, "UserId", UserId, "Status", Status,"Act",Act,"ColorFlag",ColorFlag);
         }
-
-        public static IEnumerable<TaskUserItem> TaskUserKanban(int AccountId, int UserId, int Status = 0, bool IsShare = false)
+        public static int Task_Expired(int TaskId, int UserId, string Act)
         {
             using (var db = DbContext.Create<DbSystem>())
-                return db.ExecuteList<TaskUserItem>("sp_Task_User_kanban", "AccountId", AccountId, "UserId", UserId, "Status", Status, "IsShare", IsShare);
+                return db.ExecuteReturnValue("sp_Task_Status_Change", 0, "TaskId", TaskId, "UserId", UserId, "Status", 16, "Act", Act, "IsExpired", true);
+        }
+
+        public static IEnumerable<TaskUserItem> TaskUserKanban(int AccountId, int UserId, int Status = 0)
+        {
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteList<TaskUserItem>("sp_Task_User_kanban_v1", "AccountId", AccountId, "UserId", UserId, "Status", Status);
+        }
+        public static IEnumerable<TaskItem> TaskUserToday(int AccountId, int UserId)
+        {
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteList<TaskItem>("sp_Task_User_Today", "AccountId", AccountId, "UserId", UserId);
+        }
+        public static IEnumerable<TaskItem> TaskUserShare(int AccountId, int UserId)
+        {
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteList<TaskItem>("sp_Task_User_Share", "AccountId", AccountId, "UserId", UserId);
         }
 
         //public static IEnumerable<TaskItem> TaskUserList(int AccountId, int UserId, int Status=0)
@@ -160,7 +249,7 @@ namespace ProSystem.Data.Entities
         //    using (var db = DbContext.Create<DbSystem>())
         //        return db.ExecuteList<TaskItem>("sp_Task_User", "AccountId",AccountId,"UserId",UserId,"Status",Status,"IncludeShare",IncludeShare,"ProjectId",ProjectId,"TaskParent",TaskParent);
         //}
-  
+
         public static IEnumerable<TaskItem> TaskList()
         {
             using (var db = DbContext.Create<DbSystem>())
@@ -175,7 +264,15 @@ namespace ProSystem.Data.Entities
                 return db.EntityItemGet<TaskItem>(MappingName, "TaskId", TaskId);
             }
         }
-
+        public static TaskItemInfo GetInfo(int TaskId)
+        {
+            if (TaskId == 0)
+                return new TaskItemInfo();
+            using (var db = DbContext.Create<DbSystem>())
+            {
+                return db.EntityProcGet<TaskItemInfo>("TaskId", TaskId);
+            }
+        }
         public static string GetJson(int TaskId)
         {
             using (var db = DbContext.Create<DbSystem>())
@@ -214,15 +311,15 @@ namespace ProSystem.Data.Entities
             }
         }
 
-        public static DataTable GetReminders()
-        {
-            using (var db = DbContext.Create<DbSystem>())
-            {
-                var dt = db.QueryDataTable(MappingName, "TaskModel", "R");
-                return dt;
+        //public static DataTable GetReminders()
+        //{
+        //    using (var db = DbContext.Create<DbSystem>())
+        //    {
+        //        var dt = db.QueryDataTable(MappingName, "TaskModel", "R");
+        //        return dt;
                
-            }
-        }
+        //    }
+        //}
 
         //public static IEnumerable<TaskListView> ViewByAccount(int AccountId)
         //{
@@ -241,17 +338,101 @@ namespace ProSystem.Data.Entities
         //        return db.EntityItemList<TaskListView>("vw_Task", "AccountId", AccountId, "UserId", UserId);
         //}
 
-        public static IEnumerable<TaskListView> ViewTasks(int AccountId, int UserId, int AssignBy, int TaskStatus)
+        public static IEnumerable<TaskListView> ViewDocs(int AccountId, int UserId, int AssignBy, int TaskStatus)
         {
-            int PageSize=0;
-            int PageNum=0;
-            
+            int PageSize = 0;
+            int PageNum = 0;
+
             using (var db = DbContext.Create<DbSystem>())
-                return db.ExecuteList<TaskListView>("sp_Task_Report", "PageSize",PageSize,"PageNum",PageNum, "AccountId", AccountId, "UserId", UserId,"AssignBy",AssignBy,"TaskStatus",TaskStatus);
+                return db.ExecuteList<TaskListView>("sp_Task_Docs_Report", "PageSize", PageSize, "PageNum", PageNum, "AccountId", AccountId, "UserId", UserId, "AssignBy", AssignBy, "TaskStatus", TaskStatus);
+        }
+        public static IEnumerable<TaskListView> ViewTopics(int AccountId, int UserId, int AssignBy, int TaskStatus)
+        {
+            int PageSize = 0;
+            int PageNum = 0;
+
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteList<TaskListView>("sp_Task_Topic_Report", "PageSize", PageSize, "PageNum", PageNum, "AccountId", AccountId, "UserId", UserId, "AssignBy", AssignBy, "TaskStatus", TaskStatus);
+        }
+        public static IEnumerable<SubTaskListView> ViewSubTask(int AccountId, int UserId, int AssignBy, int TaskStatus,DateTime? DateFrom, DateTime? DateTo)
+        {
+            int PageSize = 0;
+            int PageNum = 0;
+
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteList<SubTaskListView>("sp_Task_Report_Action", "PageSize", PageSize, "PageNum", PageNum, "AccountId", AccountId, "UserId", UserId, "AssignBy", AssignBy, "TaskStatus", TaskStatus, "DateFrom", DateFrom, "DateTo", DateTo);
+        }
+
+        //public static IEnumerable<TaskListView> ViewTasks(int AccountId, int UserId, int AssignBy, int TaskStatus)
+        //{
+        //    int PageSize=0;
+        //    int PageNum=0;
+            
+        //    using (var db = DbContext.Create<DbSystem>())
+        //        return db.ExecuteList<TaskListView>("sp_Task_Report", "PageSize",PageSize,"PageNum",PageNum, "AccountId", AccountId, "UserId", UserId,"AssignBy",AssignBy,"TaskStatus",TaskStatus);
+        //}
+        
+         public static IEnumerable<TaskListView> ViewTasks(TaskQuery q)
+        {
+
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteList<TaskListView>("sp_Task_Report", "PageSize", q.PageSize, "PageNum", q.PageNum, "AccountId", q.AccountId, "UserId", q.UserId, "AssignBy", q.AssignBy, "TaskStatus", q.TaskStatus);
+        }
+        public static IList<string> ViewTagsList(int AccountId)
+        {
+            string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, "Tags");
+            return WebCache.GetOrCreateList<string>(key, () => GetTagsList(AccountId), EntityProCache.DefaultCacheTtl);
+        }
+
+        public static IList<string> GetTagsList(int AccountId)
+        {
+            using (var db = DbContext.Create<DbSystem>())
+                return db.Query<string>("select Tag from Tags where AccountId=@AccountId", "AccountId", AccountId);
+        }
+
+        public static string ViewTagsJson(int AccountId)
+        {
+            string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, "Tags");
+            return WebCache.GetOrCreate<string>(key, () => GetTagsJson(AccountId), EntityProCache.DefaultCacheTtl);
+        }
+
+        public static string GetTagsJson(int AccountId)
+        {
+            using (var db = DbContext.Create<DbSystem>())
+                return db.QueryJson("select Tag from Tags where AccountId=@AccountId", "AccountId", AccountId);
+        }
+
+
+        //public static IList<string> ViewTaskFoldersList(int AccountId, string TaskModel)
+        //{
+        //    string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, "Tags");
+        //    return WebCache.GetOrCreateList<string>(key, () =>
+        //    {
+        //        using (var db = DbContext.Create<DbSystem>())
+        //            return db.Query<string>("select Folder from Tasks where AccountId=@AccountId", "AccountId", AccountId, "TaskModel", TaskModel);
+        //    },
+        //    EntityProCache.DefaultCacheTtl);
+        //}
+        //public static IList<string> GetTaskFoldersList(int AccountId, string TaskModel)
+        //{
+        //    using (var db = DbContext.Create<DbSystem>())
+        //        return db.Query<string>("select Folder from Tasks where AccountId=@AccountId", "AccountId", AccountId, "TaskModel", TaskModel);
+        //}
+
+        //public static string ViewTaskFoldersJson(int AccountId, string TaskModel)
+        //{
+        //    string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, "Tags");
+        //    return WebCache.GetOrCreate<string>(key, () => GetTagsJson(AccountId), EntityProCache.DefaultCacheTtl);
+        //}
+
+        public static string GetTasksFoldersJson(int AccountId)//, string TaskModel)
+        {
+            using (var db = DbContext.Get<DbSystem>())
+                return db.QueryJsonArray("select Folder from Folders where AccountId=@AccountId", "AccountId", AccountId);
         }
 
         #endregion
- 
+
         #region edit/add
 
         public static EntityCommandResult TaskTimerUpdate(TaskTimer item)
@@ -283,6 +464,33 @@ namespace ProSystem.Data.Entities
             return res;
         }
 
+        public static int TaskFormStart(int ItemId, int UserId)
+        {
+            int res = 0;
+            using (var Db = DbContext.Get<DbSystem>())
+            {
+                res = Db.ExecuteCommandUpdate("Task_Form", "StartDate=@StartDate,UserId=@UserId", "ItemId=@ItemId", "StartDate", DateTime.Now, "UserId", UserId, "ItemId", ItemId);
+            }
+            return res;
+        }
+        public static int TopicTaskFormStart(int TopicId ,int ItemId)//,string TaskSubject, string TaskBody, int AssignTo,DateTime TaskDueDate)
+        {
+            int res = 0;
+            using (var Db = DbContext.Get<DbSystem>())
+            {
+                res = Db.ExecuteNonQuery("sp_Task_Topic_Form_Add", "TopicId", TopicId, "ItemId", ItemId);//, "TaskSubject", TaskSubject, "TaskBody", TaskBody, "AssignTo", AssignTo, "TaskDueDate",TaskDueDate);
+            }
+            return res;
+        }
+        public static int DocTaskFormStart(int DocId, int ItemId)//,string TaskSubject, string TaskBody, int AssignTo,DateTime TaskDueDate)
+        {
+            int res = 0;
+            using (var Db = DbContext.Get<DbSystem>())
+            {
+                res = Db.ExecuteNonQuery("sp_Task_Doc_Form_Add", "DocId", DocId, "ItemId", ItemId);//, "TaskSubject", TaskSubject, "TaskBody", TaskBody, "AssignTo", AssignTo, "TaskDueDate",TaskDueDate);
+            }
+            return res;
+        }
         //public static int TaskTimerStart(int TaskId,int UserId, string Subject)
         //{
         //    int Mode = 0;
@@ -356,7 +564,7 @@ namespace ProSystem.Data.Entities
 
     }
     [EntityMapping("vw_Task")]
-    public class TaskListView : TaskItem
+    public class TaskListView : TaskItem, IEntityListItem
     {
         public static IList<TaskListView> GetList(int UserId, int userId, int ttl)
         {
@@ -366,11 +574,34 @@ namespace ProSystem.Data.Entities
 
         public string ProjectName { get; set; }
         public string StatusName { get; set; }
-        public string DisplayName { get; set; }
+        //public string DisplayName { get; set; }
         public string TaskTypeName { get; set; }
-        public string AssignByName { get; set; }
+        //public string AssignByName { get; set; }
         public string TotalTimeView { get; set; }
-        
+        public int TotalRows { get; set; }
+
+    }
+    [EntityMapping(ProcListView = "sp_Task_Report_Action")]
+    public class SubTaskListView : IEntityItem
+    {
+        public int TaskParent { get; set; }
+        public int SubId { get; set; }
+        public int TaskId { get; set; }
+        public DateTime SubDate { get; set; }
+        public string SubType { get; set; }
+        public string SubText { get; set; }
+        public string TaskSubject { get; set; }
+        public int SubUserId { get; set; }
+        public string SubDisplayName { get; set; }
+        public int TaskStatus { get; set; }
+        public DateTime DueDate { get; set; }
+        public DateTime LastUpdate { get; set; }
+        public string StatusName { get; set; }
+        public string AssignByName { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public int RowId { get; set; }
+        public int TotalRows { get; set; }
+
     }
     public class TaskUserItem : IEntityItem
     {
@@ -379,16 +610,27 @@ namespace ProSystem.Data.Entities
         public int TaskId { get; set; }
         public string TaskSubject { get; set; }
         public string TaskTypeName { get; set; }
-      
+        public string TaskBody { get; set; }
+
         [EntityProperty(EntityPropertyType.View)]
         public DateTime CreatedDate { get; set; }
         public string ColorFlag { get; set; }
         public string TaskState { get; set; }
         public string TaskModel { get; set; }
-        //public string Tags { get; set; }
+        public string Tags { get; set; }
     }
-   
-    
+
+    [EntityMapping(ProcGet = "sp_Task_Get_Info")]
+    public class TaskItemInfo : TaskItem
+    {
+        public int Comments { get; set; }
+        public int Assigns { get; set; }
+        public int Timers { get; set; }
+        public int Items { get; set; }
+        public int Files { get; set; }
+
+    }
+
     [EntityMapping("Task","vw_Task","משימה")]
     public class TaskItem : IEntityItem
     {
@@ -410,7 +652,8 @@ namespace ProSystem.Data.Entities
         public int EstimateTakenTime { get; set; }
         public int AccountId { get; set; }
         public int TaskStatus { get; set; }
-        public bool IsShare { get; set; }
+        //public bool IsShare { get; set; }
+        public int ShareType { get; set; }
         public int Priority { get; set; }
         public decimal Budget { get; set; }
         public int TotalTime { get; set; }
@@ -444,13 +687,69 @@ namespace ProSystem.Data.Entities
          public int AssignByAccount { get; set; }
          public string ClientDetails { get; set; }
          public string Tags { get; set; }
+        public string Lang { get; set; }
+        public string AssignTo { get; set; }
+        public string Folder { get; set; }
         public string ToHtml()
         {
             return EntityProperties.ToHtmlTable<TaskItem>(this, null, null, true);
         }
     }
 
-     [EntityMapping("Task_Assignments", "vw_Task_Assignments", "היסטוריה", ProcInsert = "sp_Task_Assign")]
+//    [EntityMapping("Task", "vw_Task", "תזכורת")]
+//    public class ReminderItem : IEntityItem
+//    {
+
+///*
+//sp_Task_Reminder_Add
+//@TaskId int
+//,@TaskSubject varchar(50)
+//,@TaskBody varchar(max)
+//,@Task_Parent int
+//,@Project_Id int
+//,@UserId int
+//, @DueDate datetime
+//,@AccountId int
+//,@TaskStatus tinyint
+//, @IsShare bit
+//,@AssignBy int
+//,@ColorFlag varchar(10)
+//,@RemindDate date
+//,@ClientId int
+//,@Lang varchar(10)
+//,@AssignTo varchar(500)
+//*/
+
+//        [EntityProperty(EntityPropertyType.Key)]
+//        public int TaskId { get; set; }
+//        public string TaskSubject { get; set; }
+//        public string TaskBody { get; set; }
+//        public int Task_Parent { get; set; }
+//        public int Project_Id { get; set; }
+//        public int UserId { get; set; }
+//        [EntityProperty(EntityPropertyType.View)]
+//        public DateTime CreatedDate { get; set; }
+//        public DateTime? DueDate { get; set; }
+//        public int AccountId { get; set; }
+//        public int TaskStatus { get; set; }
+//        //public bool IsShare { get; set; }
+//        public int ShareType { get; set; }
+//        public int AssignBy { get; set; }
+//        public string ColorFlag { get; set; }
+//        [EntityProperty(EntityPropertyType.Optional)]
+//        public DateTime LastUpdate { get; set; }
+//        public DateTime RemindDate { get; set; }
+//        public int ClientId { get; set; }
+//        public string Lang { get; set; }
+//        public string Tags { get; set; }
+//        public string AssignTo { get; set; }
+//        public string ToHtml()
+//        {
+//            return EntityProperties.ToHtmlTable<ReminderItem>(this, null, null, true);
+//        }
+//    }
+
+    [EntityMapping("Task_Assignments", "vw_Task_Assignments", "היסטוריה", ProcInsert = "sp_Task_Assign")]
     public class TaskAssignment : IEntityItem
     {
 
@@ -553,7 +852,7 @@ namespace ProSystem.Data.Entities
     }
 
 
-     [EntityMapping("Task_Form", "vw_Task_Form","מעקב ביצוע")]
+     [EntityMapping("Task_Form", "vw_Task_Form","פעולות")]
     public class TaskForm : IEntityItem
     {
         public int Task_Id { get; set; }
@@ -565,12 +864,18 @@ namespace ProSystem.Data.Entities
         [EntityProperty(EntityPropertyType.View)]
         public DateTime ItemDate { get; set; }
         public DateTime? DoneDate { get; set; }
+        public DateTime? StartDate { get; set; }
         public string DoneComment { get; set; }
         public bool DoneStatus { get; set; }
         public int UserId { get; set; }
         [EntityProperty(EntityPropertyType.Optional)]
         public string DisplayName { get; set; }
         public int AssignBy { get; set; }
+        public int Duration { get; set; }
+        public DateTime? ItemDueDate { get; set; }
+        public int ItemAssignTo { get; set; }
+        public int ItemTask { get; set; }
+        public string ItemSubject { get; set; }
     }
 
     //[EntityMapping("Task_Files", "vw_Task_Files")]
@@ -639,7 +944,7 @@ namespace ProSystem.Data.Entities
     //    public string UserName { get; set; }
     //}
 
-     [EntityMapping("Task_Action", "vw_Task_Action", "פעולות לביצוע")]
+    [EntityMapping("Task_Action", "vw_Task_Action", "פעולות לביצוע")]
      public class TaskAction : IEntityItem
      {
          public int Task_Id { get; set; }
@@ -695,30 +1000,8 @@ namespace ProSystem.Data.Entities
          public int OrderBy { get; set; }
          public bool Required { get; set; }
      }
-     public class TaskQuery //: IEntityItem
-    {
-         public int TaskId { get; set; }
-        public int UserId { get; set; }
-        public int AccountId { get; set; }
-        public string Mode { get; set; }//g-a-u-d
-        public int Id { get; set; }
-        public int AssignBy { get; set; }
-        public int TaskStatus { get; set; }
-        public TaskQuery()
-        {
-        }
-        public TaskQuery(HttpRequestBase Request)
-        {
-            TaskId = Types.ToInt(Request["TaskId"]);
-            AccountId = Types.ToInt(Request["AccountId"]);
-            UserId = Types.ToInt(Request["UserId"]);
-            var assignMe = Types.ToBool(Request["assignMe"],false);
-            TaskStatus = Types.ToInt(Request["state"]);
-           
-            Id = Types.ToInt(Request["id"]);
-            Mode = Request["op"];
-        }
-    }
+
+    
 
     [Flags]
     public enum TaskStatus

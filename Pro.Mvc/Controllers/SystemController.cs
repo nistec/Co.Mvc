@@ -18,7 +18,8 @@ using Nistec.Serialization;
 using PRO=Pro.Data.Entities;
 using ProSystem.Data;
 using Nistec.Web.Controls;
-
+using ProSystem.Query;
+using ProSystem.Data.Enums;
 
 namespace Pro.Mvc.Controllers
 {
@@ -243,6 +244,19 @@ namespace Pro.Mvc.Controllers
         #region lists
 
         [HttpPost]
+        public JsonResult GetEnumTypesList(string model)
+        {
+            int accountId = GetAccountId();
+            return Json(EnumTypes.ViewList(accountId, model), JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult GetEnumStatusList(string model)
+        {
+            int accountId = GetAccountId();
+            return Json(EnumStatus.ViewList(model), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
         public JsonResult GetTaskFormTypeList()
         {
             int accountId = GetAccountId();
@@ -262,13 +276,27 @@ namespace Pro.Mvc.Controllers
         {
             int accountId = GetAccountId();
             int userId = GetUser();
-            return Json(UserContext<UserTeamProfile>.GetEntityList("AccountId",accountId,"UserId", userId), JsonRequestBehavior.AllowGet);
+
+            var list = UserContext<UserTeamProfile>.ExecEntityList("AccountId", accountId, "UserId", userId);
+            return Json(list, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
-        public JsonResult GetTaskTypeList()
+        public JsonResult GetUsersList()
         {
             int accountId = GetAccountId();
-            return Json(TaskTypeEntity.ViewList(accountId), JsonRequestBehavior.AllowGet);
+            //int userId = GetUser();
+
+            var list = UserContext<UserItemInfo>.GetEntityList("ParentId", accountId);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        
+
+        [HttpPost]
+        public JsonResult GetTaskTypeList(string model)
+        {
+            int accountId = GetAccountId();
+            return Json(TaskTypeEntity.ViewList(accountId, model), JsonRequestBehavior.AllowGet);
             //return Json(EntityProCache.ViewEntityList<TaskTypeEntity>(EntityCacheGroups.Enums, TaskTypeEntity.TableName, accountId), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
@@ -305,8 +333,159 @@ namespace Pro.Mvc.Controllers
             int accountId = GetAccountId();
             //int userId = GetUser();
             var db = new ProjectContext(accountId);
-            return Json(db.GetList("AccountId", accountId), JsonRequestBehavior.AllowGet);
+            return Json(db.ExecOrViewList("AccountId", accountId), JsonRequestBehavior.AllowGet);
         }
+        //[HttpPost]
+        //public JsonResult GetTagsList()
+        //{
+        //    int accountId = GetAccountId();
+        //    var tags = TaskContext.GetTagsList(accountId);
+        //    return Json(tags, JsonRequestBehavior.AllowGet);
+        //    //return GetJsonResult(tags);
+        //}
+        public ContentResult GetTagsList()
+        {
+            int accountId = GetAccountId();
+            var tags = TaskContext.ViewTagsJson(accountId);
+            //return Json(tags, JsonRequestBehavior.AllowGet);
+            return GetJsonResult(tags);
+        }
+        [HttpPost]
+        public ContentResult GetTaskFolderList()
+        {
+            int accountId = GetAccountId();
+            var tags = TaskContext.GetTasksFoldersJson(accountId);
+            return GetJsonResult(tags);
+        }
+
+        #endregion
+
+        #region Common Properties
+
+        [HttpPost]
+        public JsonResult DefEntityView(string entity)
+        {
+            int accountId = GetAccountId();
+
+            switch (entity)
+            {
+                case "task_type":
+                    return Json(EntityPro.ViewEntityList<TaskTypeEntity>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, ListsTypes.Task_Types), JsonRequestBehavior.AllowGet);
+                case "topic_type":
+                    return Json(EntityPro.ViewEntityList<TaskTypeEntity>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, ListsTypes.Topic_Types), JsonRequestBehavior.AllowGet);
+                case "ticket_type":
+                    return Json(EntityPro.ViewEntityList<TaskTypeEntity>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, ListsTypes.Ticket_Types), JsonRequestBehavior.AllowGet);
+                case "doc_type":
+                    return Json(EntityPro.ViewEntityList<TaskTypeEntity>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, ListsTypes.Doc_Types), JsonRequestBehavior.AllowGet);
+                //case "tags":
+                //    return Json(EntityPro.ViewEntityList<string>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, ListsTypes.Tags), JsonRequestBehavior.AllowGet);
+                default:
+                    return Json(null, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        //[HttpPost]
+        //public JsonResult DefEntityEnumView(string entity)
+        //{
+        //    int accountId = GetAccountId();
+
+        //    switch (entity)
+        //    {
+        //        case "status":
+        //            return Json(PropsEnum.EntityEnum.ViewEntityList<PropsEnum.StatusView>(PropsEnum.StatusView.TableName, "Status", accountId), JsonRequestBehavior.AllowGet);
+        //        //case "category":
+        //        //    return Json(EntityEnum.ViewEntityList<CategoryView>(CategoryView.TableName, "Category", accountId), JsonRequestBehavior.AllowGet);
+        //        //case "region":
+        //        //    return Json(EntityEnum.ViewEntityList<RegionView>(RegionView.TableName, "Region", accountId), JsonRequestBehavior.AllowGet);
+        //        case "role":
+        //            return Json(PropsEnum.EntityEnum.ViewEntityList<PropsEnum.RoleView>(PropsEnum.RoleView.TableName, "Role", accountId), JsonRequestBehavior.AllowGet);
+        //        default:
+        //            return Json(null, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
+
+        #endregion
+
+        #region Def Entity
+
+        public ActionResult DefEntity(string entity)
+        {
+            switch (entity)
+            {
+                case "task_type":
+                    ViewBag.TagPropId = TaskTypeEntity.TagPropId;
+                    ViewBag.TagPropName = TaskTypeEntity.TagPropName;
+                    ViewBag.TagPropTitle = TaskTypeEntity.TagPropTitle;
+                    break;
+                case "topic_type":
+                    ViewBag.TagPropId = TaskTypeEntity.TagPropId;
+                    ViewBag.TagPropName = TaskTypeEntity.TagPropNameTopic;
+                    ViewBag.TagPropTitle = TaskTypeEntity.TagPropNameTopic;
+                    break;
+                case "ticket_type":
+                    ViewBag.TagPropId = TaskTypeEntity.TagPropId;
+                    ViewBag.TagPropName = TaskTypeEntity.TagPropNameTicket;
+                    ViewBag.TagPropTitle = TaskTypeEntity.TagPropNameTicket;
+                    break;
+                case "doc_type":
+                    ViewBag.TagPropId = TaskTypeEntity.TagPropId;
+                    ViewBag.TagPropName = TaskTypeEntity.TagPropNameDoc;
+                    ViewBag.TagPropTitle = TaskTypeEntity.TagPropNameDoc;
+                    break;
+            }
+
+            return View(true);
+        }
+
+
+        [HttpPost]
+        public JsonResult DefEntityUpdate(int PropId, string PropName, string EntityType, int command)
+        {
+            //ValidateAdmin();
+            int result = 0;
+            ResultModel rm = null;
+            int accountId = GetAccountId();
+            try
+            {
+
+                if ((UpdateCommandType)command == UpdateCommandType.Delete)
+                {
+                    result = EntityPro.DoDelete(TaskTypeEntity.TableName, EntityType, PropId, 0, accountId);
+                }
+                else
+                {
+
+                    switch (EntityType)
+                    {
+                        case "task_type":
+                            result = EntityPro.DoSave<TaskTypeEntity>(new TaskTypeEntity() { PropId = PropId, PropName = PropName, AccountId = accountId, TaskModel = "T" }, ListsTypes.Task_Types, (UpdateCommandType)command); break;
+                        case "topic_type":
+                            result = EntityPro.DoSave<TaskTypeEntity>(new TaskTypeEntity() { PropId = PropId, PropName = PropName, AccountId = accountId, TaskModel = "P" }, ListsTypes.Topic_Types, (UpdateCommandType)command); break;
+                        case "ticket_type":
+                            result = EntityPro.DoSave<TaskTypeEntity>(new TaskTypeEntity() { PropId = PropId, PropName = PropName, AccountId = accountId, TaskModel = "E" }, ListsTypes.Ticket_Types, (UpdateCommandType)command); break;
+                        case "doc_type":
+                            result = EntityPro.DoSave<TaskTypeEntity>(new TaskTypeEntity() { PropId = PropId, PropName = PropName, AccountId = accountId, TaskModel = "D" }, ListsTypes.Doc_Types, (UpdateCommandType)command); break;
+                        //case "tags":
+                        //    result = EntityPro.DoSave<TaskTypeEntity>(PropId, PropName, accountId, (UpdateCommandType)command); break;
+                    }
+                }
+                rm = new ResultModel(result);
+            }
+            catch (Exception ex)
+            {
+                string err = ex.Message;
+                result = -1;
+                rm = new ResultModel()
+                {
+                    Status = result,
+                    Message = err
+                };
+            }
+            return Json(rm, JsonRequestBehavior.AllowGet);
+        }
+
+
+
         #endregion
 
         #region Lookups
@@ -334,7 +513,7 @@ namespace Pro.Mvc.Controllers
         {
             int accountId = GetAccountId();
             var value = SystemLookups.Project("ProjectName", "AccountId", accountId, "ProjectId", id);
-            return Json(ContentModel.Get(value), JsonRequestBehavior.AllowGet);
+            return Json(value);// ContentModel.Get(value), JsonRequestBehavior.AllowGet);
         }
 
     
@@ -411,21 +590,21 @@ namespace Pro.Mvc.Controllers
         {
             int accountId = GetAccountId();
             var db = new AdContext<AdItemRel>(accountId);
-            return Json(db.GetList("AccountId", accountId, "GroupId", id), JsonRequestBehavior.AllowGet);
+            return Json(db.ExecOrViewList("AccountId", accountId, "GroupId", id), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public ActionResult AdDefRelAll(int id)
         {
             int accountId = GetAccountId();
             var db = new AdContext<AdItemRelAll>(accountId);
-            return Json(db.GetList("GroupId", id, "AccountId", accountId, "IsAll", 2), JsonRequestBehavior.AllowGet);
+            return Json(db.ExecOrViewList("GroupId", id, "AccountId", accountId, "IsAll", 2), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public ActionResult AdDefRelToAdd(int id)
         {
             int accountId = GetAccountId();
             var db = new AdContext<AdItemRelAll>(accountId);
-            return Json(db.GetList("GroupId", id, "AccountId", accountId, "IsAll", 1), JsonRequestBehavior.AllowGet);
+            return Json(db.ExecOrViewList("GroupId", id, "AccountId", accountId, "IsAll", 1), JsonRequestBehavior.AllowGet);
         }
 
          [HttpPost]
@@ -496,13 +675,17 @@ namespace Pro.Mvc.Controllers
         [HttpPost]
         public ActionResult AdUserDefList()
         {
-            var su= GetSignedUser();
+            var su= GetSignedUser(false);
+            if (su == null)
+            {
+                return RedirectToLogin();
+            }
             //int parentId = su.ParentId;
             int userId = su.UserId;
             int accountId = su.AccountId;
             
             var db = new AdContext<AdUserProfile>(accountId);
-            var list = db.GetList("AccountId", accountId, "UserId", userId);
+            var list = db.ExecOrViewList("AccountId", accountId, "UserId", userId);
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
@@ -564,7 +747,7 @@ namespace Pro.Mvc.Controllers
                 int accountId = GetAccountId();
                 context = new AdContext<AdUserProfile>(accountId);
                 context.Set(Request.Form);
-                context.Validate(UpdateCommandType.Insert);
+                context.Validate(ProcedureType.Insert);
                 var cur=context.Current;
                 var res = context.Upsert(UpsertType.Insert,ReturnValueType.ReturnValue , "DisplayName", cur.DisplayName,
                     "Email", cur.Email,
@@ -595,7 +778,11 @@ namespace Pro.Mvc.Controllers
             AdContext<AdUserProfile> context = null;
             try
             {
-                var user=GetSignedUser();
+                var user=GetSignedUser(true);
+                if (user == null)
+                {
+                    return RedirectToLogin();
+                }
                 ValidateDelete(user.UserId, "AdUserDefDelete");
 
                 int accountId = user.AccountId;
@@ -682,21 +869,21 @@ namespace Pro.Mvc.Controllers
         {
             int accountId = GetAccountId();
             var db = new AdContext<AdTeamItemRel>(accountId);
-            return Json(db.GetList("AccountId", accountId, "TeamId", id), JsonRequestBehavior.AllowGet);
+            return Json(db.ExecOrViewList("AccountId", accountId, "TeamId", id), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public ActionResult AdTeamDefRelAll(int id)
         {
             int accountId = GetAccountId();
             var db = new AdContext<AdTeamItemRelAll>(accountId);
-            return Json(db.GetList("TeamId", id, "AccountId", accountId, "IsAll", 2), JsonRequestBehavior.AllowGet);
+            return Json(db.ExecOrViewList("TeamId", id, "AccountId", accountId, "IsAll", 2), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public ActionResult AdTeamDefRelToAdd(int id)
         {
             int accountId = GetAccountId();
             var db = new AdContext<AdTeamItemRelAll>(accountId);
-            return Json(db.GetList("TeamId", id, "AccountId", accountId, "IsAll", 1), JsonRequestBehavior.AllowGet);
+            return Json(db.ExecOrViewList("TeamId", id, "AccountId", accountId, "IsAll", 1), JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -910,6 +1097,660 @@ namespace Pro.Mvc.Controllers
         }
         #endregion
 
+        #region Reports
+        
+        [HttpGet]
+        public ActionResult SystemBoard()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult ReportTasks()
+        {
+            var userinfo = LoadUserInfo();
+            TaskQuery model = new TaskQuery()
+            {
+                AccountId = userinfo.AccountId,
+                UserId = userinfo.UserId
+            };
+            return View(userinfo, model);
+        }
+        [HttpGet]
+        public ActionResult ReportTopics()
+        {
+            var userinfo = LoadUserInfo();
+            TaskQuery model = new TaskQuery()
+            {
+                AccountId = userinfo.AccountId,
+                UserId = userinfo.UserId
+            };
+            return View(userinfo, model);
+        }
+        //[HttpGet]
+        //public ActionResult ReportDocs()
+        //{
+        //    var userinfo = LoadUserInfo();
+        //    TaskQuery model = new TaskQuery()
+        //    {
+        //        AccountId = userinfo.AccountId,
+        //        UserId = userinfo.UserId
+        //    };
+        //    return View(userinfo, model);
+        //}
+        [HttpGet]
+        public ActionResult ReportSubTask()
+        {
+            var userinfo = LoadUserInfo();
+            TaskQuery model = new TaskQuery()
+            {
+                AccountId = userinfo.AccountId,
+                UserId = userinfo.UserId
+            };
+            return View(userinfo, model);
+        }
+        [HttpPost]
+        public ActionResult GetSubTaskGrid()
+        {
+            TaskQuery query = new TaskQuery(Request,false);
+            var list = TaskContext.ViewSubTask(query.AccountId, query.UserId, query.AssignBy, query.TaskStatus,query.DateFrom,query.DateTo);
+            //var row = list.FirstOrDefault<MemberListView>();
+            //int totalRows = row == null ? 0 : row.TotalRows;
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+        #region topic
+
+       
+        [HttpGet]
+        public ActionResult Topics()
+        {
+            var userinfo = LoadUserInfo();
+            TaskQuery model = new TaskQuery()
+            {
+                AccountId = userinfo.AccountId,
+                UserId = userinfo.UserId
+            };
+            return View(userinfo, model);
+        }
+
+        [HttpPost]
+        public ActionResult GetTopicGrid()
+        {
+            TaskQuery query = new TaskQuery(Request,false);
+            var list = TaskContext.ViewTopics(query.AccountId, query.UserId, query.AssignBy, query.TaskStatus);
+            //var row = list.FirstOrDefault<MemberListView>();
+            //int totalRows = row == null ? 0 : row.TotalRows;
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult TopicNew(int pid)
+        {
+            //TaskContext.NewTaskId()
+            return View(true, new EditTaskModel() { PId = pid });
+        }
+        [HttpGet]
+        public ActionResult TopicStart(int id)
+        {
+            int accountId = GetAccountId();
+            int user = GetUser();
+            TaskContext.Task_Status_Change(id, user, 2, "אתחול סוגיה", null);
+            return View(true, "TopicEdit", new EditTaskModel() { Id = id, Option = "e" });//, Data = TaskContext.Get(id) });
+        }
+
+        [HttpGet]
+        public ActionResult TopicEdit(int id)
+        {
+            return View(true, new EditTaskModel() { Id = id, Option = "e" });//, Data = TaskContext.Get(id) });
+        }
+        [HttpGet]
+        public ActionResult TopicInfo(int id)
+        {
+            return View(true, "TopicEdit", new EditTaskModel() { Id = id, Option = "g" });//, Data = TaskContext.Get(id) });
+        }
+
+        [HttpPost]
+        public JsonResult TopicTaskFormStart(int id, int itemId)
+        {
+            TaskContext<TaskForm> context = null;
+            try
+            {
+                int userId = GetUser();
+                var res = TaskContext.TopicTaskFormStart(id, itemId);
+                return Json(new FormResult(res), JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetError(context.EntityName, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        #endregion
+
+        #region docs old
+        /*
+
+        [HttpGet]
+        public ActionResult Docs()
+        {
+            var userinfo = LoadUserInfo();
+            TaskQuery model = new TaskQuery()
+            {
+                AccountId = userinfo.AccountId,
+                UserId = userinfo.UserId
+            };
+            return View(userinfo, model);
+        }
+
+        [HttpPost]
+        public ActionResult GetDocGrid()
+        {
+            TaskQuery query = new TaskQuery(Request,true);
+            var list = TaskContext.ViewDocs(query.AccountId, query.UserId, query.AssignBy, query.TaskStatus);
+            //var row = list.FirstOrDefault<MemberListView>();
+            //int totalRows = row == null ? 0 : row.TotalRows;
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult DocNew(int pid)
+        {
+            //TaskContext.NewTaskId()
+            return View(true, new EditTaskModel() { PId = pid });
+        }
+        [HttpGet]
+        public ActionResult DocStart(int id)
+        {
+            int accountId = GetAccountId();
+            int user = GetUser();
+            TaskContext.Task_Status_Change(id, user, 2, "אתחול מסמך", null);
+            return View(true, "DocEdit", new EditTaskModel() { Id = id, Option = "e" });//, Data = TaskContext.Get(id) });
+        }
+
+        [HttpGet]
+        public ActionResult DocEdit(int id)
+        {
+            return View(true, new EditTaskModel() { Id = id, Option = "e" });//, Data = TaskContext.Get(id) });
+        }
+        [HttpGet]
+        public ActionResult DocInfo(int id)
+        {
+            return View(true, "DocEdit", new EditTaskModel() { Id = id, Option = "g" });//, Data = TaskContext.Get(id) });
+        }
+
+        [HttpPost]
+        public JsonResult DocTaskFormStart(int id, int itemId)
+        {
+            TaskContext<TaskForm> context = null;
+            try
+            {
+                int userId = GetUser();
+                var res = TaskContext.TopicTaskFormStart(id, itemId);
+                return Json(new FormResult(res), JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetError(context.EntityName, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
+        */
+        #endregion
+
+        #region docs
+
+
+        [HttpGet]
+        public ActionResult ReportDocs()
+        {
+            var userinfo = LoadUserInfo();
+            QueryModel model = new QueryModel()
+            {
+                AccountId = userinfo.AccountId,
+                UserId = userinfo.UserId
+            };
+            return View(userinfo, model);
+        }
+
+        [HttpPost]
+        public ActionResult GetDocGrid()
+        {
+            string action = "תיעוד מסמכים";
+            try
+            {
+
+                int AssignBy = Types.ToInt(Request["AssignBy"]);
+                int DocStatus = Types.ToInt(Request["DocStatus"]);
+
+                var signedUser = GetSignedUser(true);
+                int userId = signedUser.UserId;
+                int accountId = signedUser.AccountId;
+
+                var list = DocsContext.ViewDocs(accountId, userId, AssignBy, DocStatus);
+                //var row = list.FirstOrDefault<MemberListView>();
+                //int totalRows = row == null ? 0 : row.TotalRows;
+                return Json(list, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult DocNew(int pid)
+        {
+            //TaskContext.NewTaskId()
+            return View(true, new EditTaskModel() { PId = pid });
+        }
+
+        //[HttpGet]
+        //public ActionResult DocStart(int id)
+        //{
+        //    int accountId = GetAccountId();
+        //    int user = GetUser();
+        //    TaskContext.Task_Status_Change(id, user, 2, "אתחול מסמך", null);
+        //    return View(true, "DocEdit", new EditTaskModel() { Id = id, Option = "e" });
+        //}
+
+        [HttpGet]
+        public ActionResult DocEdit(int id)
+        {
+            return View(true, new EditTaskModel() { Id = id, Option = "e" });
+        }
+        [HttpGet]
+        public ActionResult DocInfo(int id)
+        {
+            return View(true, "DocEdit", new EditTaskModel() { Id = id, Option = "g" });
+        }
+
+        [HttpPost]
+        public ContentResult GetDocEdit()
+        {
+            int id = Types.ToInt(Request["id"]);
+
+            string json = "";
+            DocItem item = null;
+            if (id > 0)
+            {
+                item = DocsContext.Get(id).Get("DocId", id);
+            }
+            else
+            {
+                int accountId = GetAccountId();
+                item = new DocItem() { AccountId = accountId };// DbSystem.SysCounters(2) };
+            }
+            if (item != null)
+                json = JsonSerializer.Serialize(item);
+            return base.GetJsonResult(json);
+        }
+
+        [HttpPost]
+        public ContentResult GetDocInfo()
+        {
+            int id = Types.ToInt(Request["id"]);
+
+            string json = "";
+            DocItem item = null;
+            if (id > 0)
+            {
+                item = DocsContext.Get(id).Get("DocId", id);
+            }
+            else
+            {
+                //int accountId = GetAccountId();
+                //item = new DocItem() { AccountId = accountId };
+                return base.GetJsonResult(null);
+            }
+            if (item != null)
+                json = JsonSerializer.Serialize(item);
+            return base.GetJsonResult(json);
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult UpdateNewDoc()
+        {
+
+            int res = 0;
+            string action = "תיעוד מסמך";
+            DocItem a = null;
+            try
+            {
+                a = EntityContext.Create<DocItem>(Request.Form);
+
+                EntityValidator validator = EntityValidator.ValidateEntity(a, action, "he");
+                if (!validator.IsValid)
+                {
+                    return Json(GetFormResult(-1, action, validator.Result, 0), JsonRequestBehavior.AllowGet);
+
+                }
+                var signedUser = GetSignedUser(true);
+                int user = signedUser.UserId;
+                int accountId = signedUser.AccountId;
+                if (a.DocStatus < 1)
+                    a.DocStatus = 1;
+
+                if (a.DocId == 0)
+                {
+                    //a.AssignByAccount = accountId;
+                    a.AccountId = accountId;
+                    a.AssignBy = user;
+                }
+
+                int docId = DocsContext.Get(accountId).AddOrUpdate(a);
+                res = docId > 0 ? 1 : 0;
+                return Json(ResultModel.GetFormResult(res, action, null, docId), JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult UpdateDoc()
+        {
+
+            //int res = 0;
+            string action = "תיעוד מסמך";
+            DocItem a = null;
+            try
+            {
+
+                a = EntityContext.Create<DocItem>(Request.Form);
+                var su = GetSignedUser(true);
+                a.AccountId = su.AccountId;
+                a.UserId = a.UserId == 0 ?su.UserId : a.UserId;
+
+                EntityValidator validator = EntityValidator.ValidateEntity(a, action, "he");
+                if (!validator.IsValid)
+                {
+                    return Json( new FormResult()
+                    {
+                        Message = validator.Result,
+                        Status = -1,
+                        Title = action
+                    });
+
+                }
+                //int user = GetUser();
+                //var res = TaskContext.DoUpdate(item);
+                var res = DocsContext.Get(su.AccountId).AddOrUpdate(a);
+                return Json(new FormResult(res)
+                {
+                    OutputId = (res > 0) ? a.DocId : 0,
+                    Title = action
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult ArchiveDoc(int id)
+        {
+
+            int res = 0;
+            string action = "ארכוב תיעוד";
+            //MemberCategoryView a = null;
+            try
+            {
+                int accountId = GetAccountId();
+                res = DocsContext.Get(accountId).ArchiveDocs(id, accountId);
+                string message = res > 0 ? "המסמך אורכב בהצלחה" : "המסמך לא אורכב";
+                var model = new ResultModel() { Status = res, Title = action, Message = message, Link = null, OutputId = 0 };
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult DeleteDoc(int id)
+        {
+
+            int res = 0;
+            string action = "הסרת תיעוד";
+            //MemberCategoryView a = null;
+            try
+            {
+                int accountId = GetAccountId();
+                //not supported
+                //res = DocsContext.Get(accountId).Delete("DocId",id, "AccountId",accountId);
+                string message = res > 0 ? "המסמך הוסר בהצלחה" : "המסמך לא הוסר";
+                var model = new ResultModel() { Status = res, Title = action, Message = message, Link = null, OutputId = 0 };
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GetDocsCommentGrid(int pid)
+        {
+            var context = new EntityContext<DbSystem, DocComment>();
+            return Json(context.ViewList("Doc_Id", pid), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ContentResult GetDocCommentEdit()
+        {
+            string json = "";
+            try
+            {
+                int id = Types.ToInt(Request["id"]);
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+
+                var context = new EntityContext<DbSystem, DocComment>();
+                var item = context.Get("CommentId", id);
+
+                if (item != null)
+                    json = JsonSerializer.Serialize(item);
+                return base.GetJsonResult(json);
+
+            }
+            catch (Exception ex)
+            {
+                return base.GetJsonResult(json);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DocCommentUpdate()
+        {
+            EntityContext <DbSystem,DocComment> context = null;
+            string action = "עדכון הערה";
+            try
+            {
+                var su = GetSignedUser(true);
+                var userId = su.UserId;
+
+                context = new EntityContext<DbSystem, DocComment>();
+                context.Set(Request.Form);
+                context.Current.UserId = GetUser();
+                context.Current.AccountId = GetAccountId();
+                var res = context.Upsert();//.SaveChanges();
+                res.Set(FormResult.GetResultMessage(res.AffectedRecords, action), action);
+                return Json(res, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetError(context.EntityName, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DocCommentDelete(int id)
+        {
+            int res = 0;
+            string action = "הערות";
+            try
+            {
+                var context = new EntityContext<DbSystem,DocComment>();
+                res = context.Delete("CommentId", id);
+                return Json(GetFormResult(res, action, null, id), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GetDocsFormGrid(int pid)
+        {
+            var context = new EntityContext<DbSystem, DocForm>();
+            return Json(context.ViewList("Doc_Id", pid), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ContentResult GetDocFormEdit()
+        {
+            string json = "";
+            try
+            {
+                //int taskid = Types.ToInt(Request["taskid"]);
+                int id = Types.ToInt(Request["id"]);
+                var su = GetSignedUser(false);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+                
+                var context = new EntityContext<DbSystem, DocForm>();
+                var item = context.Get("ItemId", id);
+
+                if (item != null)
+                    json = JsonSerializer.Serialize(item);
+
+                return base.GetJsonResult(json);
+            }
+            catch (Exception ex)
+            {
+                return base.GetJsonResult(json);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DocFormUpdate()
+        {
+            string action = "תיעוד טופס";
+            EntityContext<DbSystem, DocForm> context = null;
+            try
+            {
+                int userId = GetUser();
+                context = new EntityContext<DbSystem, DocForm>();
+                context.Set(Request.Form);
+                var cur = context.Current;
+                if (cur.DoneStatus)
+                    cur.DoneDate = DateTime.Now;
+                //if (cur.AssignBy == 0)
+                //    cur.AssignBy = userId;
+                var res = context.SaveChanges();
+                res.Set(FormResult.GetResultMessage(res.AffectedRecords, action), action);
+
+                return Json(res, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetError(context.EntityName, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DocFormChecked(int id, bool done)
+        {
+            string action = "תיעוד טופס";
+            EntityContext<DbSystem, DocForm> context = null;
+            try
+            {
+                int userId = GetUser();
+                context = new EntityContext<DbSystem, DocForm>();
+                var item = context.Get("ItemId", id);
+                item.DoneStatus = done;
+                if (done)
+                {
+                    item.DoneDate = DateTime.Now;
+                    //if (item.StartDate == null)
+                    //    item.StartDate = DateTime.Now;
+                }
+                else
+                {
+                    item.DoneDate = null;//new Nullable<DateTime>().Value;
+                }
+
+                //if (item.AssignBy == 0)
+                //    item.AssignBy = userId;
+                context.Set(item);
+                var res = context.SaveChanges();
+                res.Set(FormResult.GetResultMessage(res.AffectedRecords, action), action);
+
+                return Json(res, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetError(context.EntityName, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public JsonResult DocFormStart(int id)
+        {
+            string action = "אתחול טופס";
+            try
+            {
+                int userId = GetUser();
+                var res = DocsContext.DocFormStart(id, userId);
+                return Json(new FormResult(res), JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetError(action, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DocFormDelete(int id)
+        {
+            int res = 0;
+            string action = "מחיקת שורה";
+            try
+            {
+                //var context = new DocsContext(0);
+                var context = new EntityContext<DbSystem, DocForm>();
+                res = context.Delete("ItemId", id);
+                return Json(GetFormResult(res, action, null, id), JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        #endregion
+
         #region Task
 
         [HttpGet]
@@ -926,21 +1767,25 @@ namespace Pro.Mvc.Controllers
         [HttpPost]
         public ActionResult GetTasksGrid()
         {
-            TaskQuery query = new TaskQuery(Request);
-            var list = TaskContext.ViewTasks(query.AccountId, query.UserId, query.AssignBy,query.TaskStatus);
-            //var row = list.FirstOrDefault<MemberListView>();
-            //int totalRows = row == null ? 0 : row.TotalRows;
-            return Json(list, JsonRequestBehavior.AllowGet);
+            try
+            {
+                TaskQuery query = new TaskQuery(Request, false);
+                var su = GetSignedUser(true);
+                query.AccountId = su.AccountId;
+                var list = TaskContext.ViewTasks(query);//.AccountId, query.UserId, query.AssignBy,query.TaskStatus);
+                                                        //var row = list.FirstOrDefault<MemberListView>();
+                                                        //int totalRows = row == null ? 0 : row.TotalRows;
+                return Json(list, JsonRequestBehavior.AllowGet);
+                //return QueryPagerServer<TaskListView>(list,su.UserId);
+            }
+            catch (Exception)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
+
+            }
         }
 
-        [HttpPost]
-        public JsonResult GetTaskInfo(int id)
-        {
-            var view = TaskContext.Get(id);
-            string title = "פרטים";
-            var model = new InfoModel() { Id = id, Title = title, Value = view.ToHtml() };
-            return Json(model, JsonRequestBehavior.AllowGet);
-        }
+        
 
         [HttpGet]
         public ActionResult TaskUser()
@@ -951,25 +1796,66 @@ namespace Pro.Mvc.Controllers
         [HttpPost]
         public JsonResult TaskUserKanban()
         {
-            var userinfo = GetSignedUser();
-            int status = Types.ToInt(Request["Status"]);
-            bool isshare = Types.ToBool(Request["IsShare"], false);
-            int accountId = userinfo.AccountId;//GetAccountId();
-            int userId = userinfo.UserId;// GetUser();
-            var view = TaskContext.TaskUserKanban(accountId, userId, status, isshare);
-            return Json(view, JsonRequestBehavior.AllowGet);
+            try
+            {
+                var userinfo = GetSignedUser(true);
 
+                int status = Types.ToInt(Request["Status"]);
+                //bool isshare = Types.ToBool(Request["IsShare"], false);
+                int accountId = userinfo.AccountId;//GetAccountId();
+                int userId = userinfo.UserId;// GetUser();
+                var view = TaskContext.TaskUserKanban(accountId, userId, status);
+                return Json(view, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
         }
-
+        [HttpPost]
+        public JsonResult TaskUserToday()
+        {
+            try
+            {
+                var userinfo = GetSignedUser(true);
+                //bool isshare = Types.ToBool(Request["IsShare"], false);
+                int accountId = userinfo.AccountId;//GetAccountId();
+                int userId = userinfo.UserId;// GetUser();
+                var view = TaskContext.TaskUserToday(accountId, userId);
+                return Json(view, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public JsonResult TaskUserShare()
+        {
+            try
+            {
+                var userinfo = GetSignedUser(true);
+                //bool isshare = Types.ToBool(Request["IsShare"], false);
+                int accountId = userinfo.AccountId;//GetAccountId();
+                int userId = userinfo.UserId;// GetUser();
+                var view = TaskContext.TaskUserShare(accountId, userId);
+                return Json(view, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
+        }
         [HttpGet]
         public ActionResult TaskEdit(int id)
         {
-            return View(true,new EditTaskModel() { PId = id, Option = "e" });
+            return View(true,new EditTaskModel() { Id = id,  Option = "e" });//, Data = TaskContext.Get(id) });
         }
         [HttpGet]
         public ActionResult TaskInfo(int id)
         {
-            return View(true, "TaskEdit", new EditTaskModel() { PId = id, Option = "g" });
+            //return View(true, "TaskEdit", new EditTaskModel() { Id = id, Option = "g", Data = TaskContext.Get(id) });
+            return View(true, new EditTaskModel() { Id = id, Option = "g" });//, Data = TaskContext.GetInfo(id) });
         }
         [HttpGet]
         public ActionResult TaskStart(int id)
@@ -979,7 +1865,7 @@ namespace Pro.Mvc.Controllers
             int accountId = userinfo.AccountId;// GetAccountId();
             int user = userinfo.UserId;// GetUser();
             TaskContext.Task_Status_Change(id, user, 2, "אתחול משימה", null);
-            return View(userinfo, "TaskEdit", new EditTaskModel() { PId = id, Option = "e" });
+            return View(userinfo, "TaskEdit", new EditTaskModel() { Id = id, Option = "e" });//, Data = TaskContext.Get(id) });
         }
         [HttpGet]
         public ActionResult _TaskEdit(Guid id)
@@ -1005,10 +1891,38 @@ namespace Pro.Mvc.Controllers
             }
             if (item != null)
                 json = JsonSerializer.Serialize(item);
-
             return base.GetJsonResult(json);
-
         }
+
+        [HttpPost]
+        public ContentResult GetTaskInfo()
+        {
+            int id = Types.ToInt(Request["id"]);
+
+            string json = "";
+            TaskItem item = null;
+            if (id > 0)
+            {
+                item = TaskContext.GetInfo(id);//, accountId);
+            }
+            else
+            {
+                int accountId = GetAccountId();
+                item = new TaskItem() { AccountId = accountId };// DbSystem.SysCounters(2) };
+            }
+            if (item != null)
+                json = JsonSerializer.Serialize(item);
+            return base.GetJsonResult(json);
+        }
+
+        //[HttpPost]
+        //public JsonResult GetTaskInfo(int id)
+        //{
+        //    var view = TaskContext.Get(id);
+        //    string title = "פרטים";
+        //    var model = new InfoModel() { Id = id, Title = title, Value = view.ToHtml() };
+        //    return Json(model, JsonRequestBehavior.AllowGet);
+        //}
 
         [HttpPost]
         // [ValidateAntiForgeryToken]
@@ -1032,6 +1946,25 @@ namespace Pro.Mvc.Controllers
         }
 
         [HttpPost]
+        public JsonResult TaskExpired(int TaskId)
+        {
+            string action = "ארכוב משימה";
+            try
+            {
+                var signedUser = GetSignedUser(true);
+                int accountId = signedUser.AccountId;
+                int user = signedUser.UserId;
+                int res = TaskContext.Task_Expired(TaskId, user, "ארכוב משימה");
+
+                return Json(FormResult.Get(res, action), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
         public JsonResult TaskCompleted()
         {
             string action = "סיום משימה";
@@ -1041,8 +1974,9 @@ namespace Pro.Mvc.Controllers
                 var result = TaskItemUpdate(item, action);
                 if (result.Status > 0)
                 {
-                    int accountId = GetAccountId();
-                    int user = GetUser();
+                    var signedUser = GetSignedUser(true);
+                    int accountId = signedUser.AccountId;
+                    int user = signedUser.UserId;
                     int res = TaskContext.Task_Status_Change(item.TaskId, user, 16, "סיום משימה", null);
                     if(res>0)
                     {
@@ -1079,7 +2013,7 @@ namespace Pro.Mvc.Controllers
         {
             item.AccountId = item.AccountId == 0 ? GetAccountId() : item.AccountId;
             item.UserId = item.UserId == 0 ? GetUser() : item.UserId;
-            EntityValidator validator = EntityValidator.ValidateEntity(item, "הגדרת מנוי", "he");
+            EntityValidator validator = EntityValidator.ValidateEntity(item, "עדכון משימה", "he");
             if (!validator.IsValid)
             {
                 return new FormResult()
@@ -1091,7 +2025,8 @@ namespace Pro.Mvc.Controllers
 
             }
             int user = GetUser();
-            var res = TaskContext.DoUpdate(item);
+            //var res = TaskContext.DoUpdate(item);
+            var res=TaskContext.Task_AddOrUpdate(item);
             return new FormResult(res)
             {
                 OutputId = (res > 0) ? item.TaskId : 0,
@@ -1163,7 +2098,7 @@ namespace Pro.Mvc.Controllers
                 //        message = "המנוי לא הוסר"; break;
                 //}
 
-                var model = new ResultModel() { Status = res, Title = "הסרת מנוי", Message = message, Link = null, OutputId = 0 };
+                var model = new ResultModel() { Status = res, Title = "הסרת משימה", Message = message, Link = null, OutputId = 0 };
 
                 return Json(model, JsonRequestBehavior.AllowGet);
 
@@ -1217,10 +2152,12 @@ namespace Pro.Mvc.Controllers
         public ContentResult GetTaskCommentEdit()
         {
             //int taskid = Types.ToInt(Request["taskid"]);
+            var su = GetSignedUser(false);
             int id = Types.ToInt(Request["id"]);
-            int accountId = GetAccountId();
+            int accountId = su.AccountId;
+            int userId = su.UserId;
             string json = "";
-            var context = new TaskContext<TaskComment>(GetUser());
+            var context = new TaskContext<TaskComment>(userId);
             var item = context.Get("CommentId", id);
 
             if (item != null)
@@ -1575,9 +2512,11 @@ namespace Pro.Mvc.Controllers
         {
             //int taskid = Types.ToInt(Request["taskid"]);
             int id = Types.ToInt(Request["id"]);
-            int accountId = GetAccountId();
+            var su = GetSignedUser(false);
+            int accountId = su.AccountId;
+            int userId = su.UserId;
             string json = "";
-            var context = new TaskContext<TaskForm>(GetUser());
+            var context = new TaskContext<TaskForm>(userId);
             var item = context.Get("ItemId", id);
 
             if (item != null)
@@ -1592,8 +2531,12 @@ namespace Pro.Mvc.Controllers
         //    TaskContext<TaskForm> context = null;
         //    try
         //    {
-        //        context = new TaskContext<TaskForm>(GetUser());
+        //        int userId = GetUser();
+        //        context = new TaskContext<TaskForm>(userId);
         //        context.Set(Request.Form);
+        //        var cur = context.Current;
+        //        if (cur.AssignBy == 0)
+        //            cur.AssignBy = userId;
         //        var res = context.Upsert(UpsertType.Insert);//.Insert();
         //        var model = context.GetFormResult(res, null);
         //        return Json(model, JsonRequestBehavior.AllowGet);
@@ -1604,13 +2547,14 @@ namespace Pro.Mvc.Controllers
         //        return Json(GetFormResult(-1, context.EntityName, ex.Message, 0), JsonRequestBehavior.AllowGet);
         //    }
         //}
+
         [HttpPost]
         public JsonResult TaskFormUpdate()
         {
             TaskContext<TaskForm> context = null;
             try
             {
-                int userId=GetUser();
+                int userId = GetUser();
                 context = new TaskContext<TaskForm>(userId);
                 context.Set(Request.Form);
                 var cur = context.Current;
@@ -1620,13 +2564,13 @@ namespace Pro.Mvc.Controllers
                     cur.AssignBy = userId;
                 var res = context.SaveChanges();
                 return Json(context.GetFormResult(res, null), JsonRequestBehavior.AllowGet);
-
             }
             catch (Exception ex)
             {
                 return Json(FormResult.GetError(context.EntityName, ex.Message), JsonRequestBehavior.AllowGet);
             }
         }
+
         [HttpPost]
         public JsonResult TaskFormChecked(int id,bool done)
         {
@@ -1638,9 +2582,16 @@ namespace Pro.Mvc.Controllers
                 var item = context.Get("ItemId", id);
                 item.DoneStatus = done;
                 if (done)
+                {
                     item.DoneDate = DateTime.Now;
+                    //if (item.StartDate == null)
+                    //    item.StartDate = DateTime.Now;
+                }
                 else
+                {
                     item.DoneDate = null;//new Nullable<DateTime>().Value;
+                }
+
                 if (item.AssignBy == 0)
                     item.AssignBy = userId;
                 context.Set(item);
@@ -1653,6 +2604,23 @@ namespace Pro.Mvc.Controllers
                 return Json(FormResult.GetError(context.EntityName, ex.Message), JsonRequestBehavior.AllowGet);
             }
         }
+        [HttpPost]
+        public JsonResult TaskFormStart(int id)
+        {
+            TaskContext<TaskForm> context = null;
+            try
+            {
+                int userId = GetUser();
+                var res = TaskContext.TaskFormStart(id, userId);
+                return Json(new FormResult(res), JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetError(context.EntityName, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
+        
         [HttpPost]
         public JsonResult TaskFormDelete(int id)
         {
@@ -1777,10 +2745,10 @@ namespace Pro.Mvc.Controllers
         #region TaskNew
 
         [HttpGet]
-        public ActionResult TaskNew()
+        public ActionResult TaskNew(int pid)
         {
             //TaskContext.NewTaskId() 
-            return View(true,new EditTaskModel() { PId = 0});
+            return View(true,new EditTaskModel() { PId = pid });
         }
 
 
@@ -1802,20 +2770,34 @@ namespace Pro.Mvc.Controllers
                     return Json(GetFormResult(-1, action, validator.Result, 0), JsonRequestBehavior.AllowGet);
 
                 }
-                int user = GetUser();
-                int accountId = GetAccountId();
-                if (a.TaskId > 0)
-                {
-                    res = TaskContext.DoUpdate(a);
-                }
-                else
+                var signedUser = GetSignedUser(true);
+                int user = signedUser.UserId;
+                int accountId = signedUser.AccountId;
+                if (a.TaskStatus < 1)
+                    a.TaskStatus = 1;
+
+                //if (a.TaskId > 0)
+                //{
+                //    res = TaskContext.DoUpdate(a);
+                //}
+                //else
+                //{
+                //    a.AssignByAccount = accountId;
+                //    a.AccountId = accountId;
+                //    a.AssignBy = user;
+                //    res = TaskContext.DoInsert(a);
+                //}
+
+                if (a.TaskId == 0)
                 {
                     a.AssignByAccount = accountId;
                     a.AccountId = accountId;
                     a.AssignBy = user;
-                    res = TaskContext.DoInsert(a);
                 }
-                return Json(ResultModel.GetFormResult(res, action, null, a.TaskId), JsonRequestBehavior.AllowGet);
+
+                int taskId = TaskContext.Task_AddOrUpdate(a);
+                res = taskId > 0 ? 1 : 0;
+                return Json(ResultModel.GetFormResult(res, action, null, taskId), JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception ex)
@@ -1825,13 +2807,34 @@ namespace Pro.Mvc.Controllers
         }
         #endregion
 
-        #region Reminder
+        #region Reminder old
+        /*
+        [HttpPost]
+        public ContentResult GetReminderEdit()
+        {
+            int id = Types.ToInt(Request["id"]);
+
+            string json = "";
+            TaskItem item = null;
+            if (id > 0)
+            {
+                item = TaskContext.Get(id);//, accountId);
+            }
+            else
+            {
+                int accountId = GetAccountId();
+                item = new TaskItem() { AccountId = accountId };// DbSystem.SysCounters(2) };
+            }
+            if (item != null)
+                json = JsonSerializer.Serialize(item);
+            return base.GetJsonResult(json);
+        }
 
         [HttpGet]
-        public ActionResult ReminderNew()
+        public ActionResult ReminderNew(int pid)
         {
             //TaskContext.NewTaskId() 
-            return View(true,"Reminder",new EditTaskModel() { PId = 0 });
+            return View(true,"Reminder",new EditTaskModel() { PId = pid });
         }
         [HttpGet]
         public ActionResult ReminderEdit(int id)
@@ -1847,13 +2850,13 @@ namespace Pro.Mvc.Controllers
             //datat=Nistec.Serialization.JsonSerializer.Deserialize<System.Data.DataTable>(nisjson);
             //Console.WriteLine(datat.TableName);
 
-            var model = new EditTaskModel() { PId = id, Option = "e", Result = TaskContext.Get(id) };
+            var model = new EditTaskModel() { Id = id, Option = "e" };//, Data = TaskContext.Get(id) };
             return View(true,"Reminder", model);
         }
         [HttpGet]
         public ActionResult ReminderInfo(int id)
         {
-            return View(true,"Reminder", new EditTaskModel() { PId = id, Option = "g", Result = TaskContext.Get(id) });
+            return View(true,"Reminder", new EditTaskModel() { Id = id, Option = "g" });//, Data = TaskContext.Get(id) });
         }      
 
         [HttpPost]
@@ -1863,10 +2866,10 @@ namespace Pro.Mvc.Controllers
 
             int res = 0;
             string action = "תזכורת";
-            TaskItem a = null;
+            ReminderItem a = null;
             try
             {
-                a = EntityContext.Create<TaskItem>(Request.Form);
+                a = EntityContext.Create<ReminderItem>(Request.Form);
 
                 EntityValidator validator = EntityValidator.ValidateEntity(a, "הגדרת תזכורת", "he");
                 if (!validator.IsValid)
@@ -1878,15 +2881,15 @@ namespace Pro.Mvc.Controllers
                 int accountId = GetAccountId();
                 if (a.TaskId > 0)
                 {
-                    res = TaskContext.DoUpdate(a);
+                    res = TaskContext.Remainder_AddOrUpdate(a);
                 }
                 else
                 {
                     a.UserId = user;
-                    a.AssignByAccount = accountId;
+                    //a.AssignByAccount = accountId;
                     a.AccountId = accountId;
                     a.AssignBy = user;
-                    res = TaskContext.DoInsert(a);
+                    res = TaskContext.Remainder_AddOrUpdate(a);
                 }
                 return Json(ResultModel.GetFormResult(res, action, null, a.TaskId), JsonRequestBehavior.AllowGet);
 
@@ -1894,6 +2897,186 @@ namespace Pro.Mvc.Controllers
             catch (Exception ex)
             {
                 return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+        */
+        #endregion
+
+        #region Reminder
+
+        [HttpPost]
+        public ContentResult GetReminderEdit()
+        {
+            try
+            {
+                int id = Types.ToInt(Request["id"]);
+
+                string json = "";
+                ReminderItem item = null;
+
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+
+
+                if (id > 0)
+                {
+                    item = ReminderContext.Get(accountId).Get("RemindId",id);//, accountId);
+                }
+                else
+                {
+                    item = new ReminderItem() { AccountId = accountId, AssignBy = userId };// DbSystem.SysCounters(2) };
+                }
+                if (item != null)
+                    json = JsonSerializer.Serialize(item);
+                return base.GetJsonResult(json);
+            }
+            catch (Exception ex)
+            {
+                return base.GetJsonResult(GetFormResult(-1, "תזכורת", ex.Message, 0).ToJson());
+            }
+        }
+
+        [HttpGet]
+        public ActionResult ReminderNew(int pid)
+        {
+            //TaskContext.NewTaskId() 
+            return View(true, "Reminder", new EditTaskModel() { PId = pid });
+        }
+
+        [HttpGet]
+        public ActionResult ReminderEdit(int id)
+        {
+            var model = new EditTaskModel() { Id = id, Option = "e" };
+            return View(true, "Reminder", model);
+        }
+        [HttpGet]
+        public ActionResult ReminderInfo(int id)
+        {
+            return View(true, "Reminder", new EditTaskModel() { Id = id, Option = "g" });
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult ReminderUpdate()
+        {
+
+            int res = 0;
+            string action = "תזכורת";
+            ReminderItem a = null;
+            try
+            {
+                a = EntityContext.Create<ReminderItem>(Request.Form);
+
+                EntityValidator validator = EntityValidator.ValidateEntity(a, "הגדרת תזכורת", "he");
+                if (!validator.IsValid)
+                {
+                    return Json(GetFormResult(-1, action, validator.Result, 0), JsonRequestBehavior.AllowGet);
+
+                }
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+                               
+                if (a.RemindId > 0)
+                {
+                    res = ReminderContext.Get(accountId).AddOrUpdate(a);
+                }
+                else
+                {
+                    a.UserId = userId;
+                    //a.AssignByAccount = accountId;
+                    a.AccountId = accountId;
+                    a.AssignBy = userId;
+                    res = ReminderContext.Get(accountId).AddOrUpdate(a);
+                }
+                return Json(ResultModel.GetFormResult(res, action, null, a.RemindId), JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult ArchiveReminder(int id)
+        {
+
+            int res = 0;
+            string action = "ארכוב תזכורת";
+            //MemberCategoryView a = null;
+            try
+            {
+                int accountId = GetAccountId();
+                res = ReminderContext.Get(accountId).Archive(id, accountId);
+                string message = GetResultMessage(res, action );
+                var model = new ResultModel() { Status = res, Title = action, Message = message, Link = null, OutputId = 0 };
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult DeleteReminder(int id)
+        {
+            int res = 0;
+            string action = "הסרת תזכורת";
+            try
+            {
+                int accountId = GetAccountId();
+                //not supported
+                res = ReminderContext.Get(accountId).Delete("RemindId", id, "AccountId",accountId);
+                string message = GetResultMessage(res, action);
+                var model = new ResultModel() { Status = res, Title = action, Message = message, Link = null, OutputId = 0 };
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GetReminderGrid()
+        {
+            try
+            {
+
+                ReminderMode Mode = (ReminderMode)Types.ToInt(Request["Mode"]);
+                int AccountId = Types.ToInt(Request["AccountId"]);
+                int UserId = Types.ToInt(Request["UserId"]);
+                int RemindStatus = Types.ToInt(Request["RemindStatus"]);
+                int AssignBy = Types.ToInt(Request["AssignBy"]);
+
+                //ReminderQuery query = new ReminderQuery(Request, false);
+                var su = GetSignedUser(true);
+                AccountId = su.AccountId;
+                UserId = su.UserId;
+
+                //var parameters=QueryFilter.GetParameters("PageSize", 0, "PageNum", 0, "Mode", (int)Mode, "AccountId", AccountId, "UserId", UserId, "AssignBy", AssignBy, "RemindStatus", RemindStatus)
+
+                var list = ReminderContext.View(Mode, AccountId, UserId, AssignBy, RemindStatus);
+                return Json(list, JsonRequestBehavior.AllowGet);
+
+                //var row = list.FirstOrDefault<MemberListView>();
+                //int totalRows = row == null ? 0 : row.TotalRows;
+                //return QueryPagerServer<ReminderListView>(list,su.UserId);
+            }
+            catch (Exception)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
+
             }
         }
         #endregion
@@ -1905,10 +3088,10 @@ namespace Pro.Mvc.Controllers
         {
             int accountId=GetAccountId();
             var db=new TaskContext<TaskFormTemplate>(GetUser());
-            var list=db.GetList("AccountId", accountId);
+            var list=db.ExecOrViewList("AccountId", accountId);
             var model = new EntityModel()
             {
-                Data = Json(db.GetList("AccountId", accountId))
+                Data = Json(db.ExecOrViewList("AccountId", accountId))
             };
             return View(model);
         }
@@ -1917,7 +3100,7 @@ namespace Pro.Mvc.Controllers
         public ActionResult GetTasksFormTemplate(int FormId)
         {
             var db = new TaskContext<TaskFormTemplate>(0);
-            return Json(db.GetList("FormId", FormId), JsonRequestBehavior.AllowGet);
+            return Json(db.ExecOrViewList("FormId", FormId), JsonRequestBehavior.AllowGet);
         }
 
 
@@ -1962,29 +3145,29 @@ namespace Pro.Mvc.Controllers
         #region ticket
 
         [HttpGet]
-        public ActionResult TicketNew()
+        public ActionResult TicketNew(int pid)
         {
             //TaskContext.NewTaskId()
-            return View(true,new EditTaskModel() { PId = 0 });
+            return View(true,new EditTaskModel() { PId = pid });
         }
         [HttpGet]
         public ActionResult TicketStart(int id)
         {
             int accountId = GetAccountId();
             int user = GetUser();
-            TaskContext.Task_Status_Change(id, user, 2, "אתחול סוגיה", null);
-            return View("TicketEdit", new EditTaskModel() { PId = id, Option = "e" });
+            TaskContext.Task_Status_Change(id, user, 2, "אתחול כרטיס", null);
+            return View(true, "TicketEdit", new EditTaskModel() { Id = id, Option = "e" });//, Data = TaskContext.Get(id) });
         }
            
         [HttpGet]
         public ActionResult TicketEdit(int id)
         {
-            return View(true,new EditTaskModel() { PId = id, Option = "e" });
+            return View(true,new EditTaskModel() { Id = id, Option = "e" });// , Data = TaskContext.Get(id) });
         }
         [HttpGet]
         public ActionResult TicketInfo(int id)
         {
-            return View(true,"TicketEdit", new EditTaskModel() { PId = id, Option = "g" });
+            return View(true,"TicketEdit", new EditTaskModel() { Id = id, Option = "g" });//, Data = TaskContext.Get(id) });
         }
        
         
@@ -1996,7 +3179,7 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult Calendar()
         {
-            return View(true,new EditTaskModel() { PId = 0, Option="g" });
+            return View(true,new EditTaskModel() { PId = 0,  Option ="g" });
         }
 
         [HttpPost]
@@ -2104,18 +3287,27 @@ namespace Pro.Mvc.Controllers
                 }
                 int user = GetUser();
                 int accountId = GetAccountId();
-                if (a.TaskId > 0)
-                {
-                    res = TaskContext.DoUpdate(a);
-                }
-                else
+                //if (a.TaskId > 0)
+                //{
+                //    res = TaskContext.DoUpdate(a);
+                //}
+                //else
+                //{
+                //    a.UserId = user;
+                //    a.AssignByAccount = accountId;
+                //    a.AccountId = accountId;
+                //    a.AssignBy = user;
+                //    res = TaskContext.DoInsert(a);
+                //}
+
+                if (a.TaskId == 0)
                 {
                     a.UserId = user;
                     a.AssignByAccount = accountId;
                     a.AccountId = accountId;
                     a.AssignBy = user;
-                    res = TaskContext.DoInsert(a);
                 }
+                res = TaskContext.Task_AddOrUpdate(a);
                 return Json(ResultModel.GetFormResult(res, action, null, a.TaskId), JsonRequestBehavior.AllowGet);
 
             }
@@ -2129,6 +3321,168 @@ namespace Pro.Mvc.Controllers
 
         #region Project
 
+
+        [HttpGet]
+        public ActionResult Project()
+        {
+            var userinfo = LoadUserInfo();
+            QueryModel model = new QueryModel()
+            {
+                AccountId = userinfo.AccountId,
+                UserId = userinfo.UserId
+            };
+            return View(userinfo, model);
+        }
+
+        [HttpPost]
+        public ActionResult GetProjectGrid()
+        {
+
+            var userinfo = LoadUserInfo();
+            QueryModel model = new QueryModel()
+            {
+                AccountId = userinfo.AccountId,
+                UserId = userinfo.UserId,
+                //Args[""]=Types.ToInt(Request[""])
+            };
+
+            var list = ProjectContext.Get(userinfo.AccountId).ViewList("AccountId", model.AccountId, "UserId", model.UserId);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult ProjectNew(int pid)
+        {
+            return View(true, new EditTaskModel() { PId = pid });
+        }
+
+        //[HttpGet]
+        //public ActionResult ProjectStart(int id)
+        //{
+        //    int accountId = GetAccountId();
+        //    int user = GetUser();
+        //    ProjectContext.Task_Status_Change(id, user, 2, "אתחול מסמך", null);
+        //    return View(true, "DocEdit", new EditTaskModel() { Id = id, Option = "e" });//, Data = TaskContext.Get(id) });
+        //}
+
+        [HttpGet]
+        public ActionResult ProjectEdit(int id)
+        {
+            return View(true, new EditTaskModel() { Id = id, Option = "e" });//, Data = TaskContext.Get(id) });
+        }
+        [HttpGet]
+        public ActionResult ProjectInfo(int id)
+        {
+            return View(true, "ProjectEdit", new EditTaskModel() { Id = id, Option = "g" });//, Data = TaskContext.Get(id) });
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult UpdateNewProject()
+        {
+            string action = "עדכון פרוייקט";
+            try
+            {
+                var su = GetSignedUser(true);
+                int user = su.UserId;
+                int accountId = su.AccountId;
+
+                var context=ProjectContext.Get(accountId);
+                context.Set(Request.Form);
+                context.Current.UserId = su.UserId;
+                context.Current.AccountId = su.AccountId;
+                var validator = context.Validate(action, "he");
+                if (!validator.IsValid)
+                {
+                    return Json(FormResult.GetFormResult(-1, action, validator.Result), JsonRequestBehavior.AllowGet);
+                }
+                var res=context.Insert();
+                res.Set(FormResult.GetResultMessage(res.AffectedRecords, action), action);
+                return Json(res, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetFormResult(-1, action, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult UpdateProjectc()
+        {
+            string action = "עדכון פרוייקט";
+            try
+            {
+
+                var su = GetSignedUser(true);
+                var context = ProjectContext.Get(su.AccountId);
+                context.Set(Request.Form);
+                context.Current.AccountId = su.AccountId;
+                context.Current.UserId = su.UserId;
+                var validator = context.Validate(action, "he");
+                if (!validator.IsValid)
+                {
+                    return Json(new FormResult()
+                    {
+                        Message = validator.Result,
+                        Status = -1,
+                        Title = action
+                    });
+                }
+                var res = context.SaveChanges();
+                res.Set(FormResult.GetResultMessage(res.AffectedRecords,action), action);
+                return Json(res);
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetFormResult(-1, action, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult ArchiveProject(int id)
+        {
+
+            int res = 0;
+            string action = "ארכוב פרוייקט";
+            try
+            {
+                int accountId = GetAccountId();
+                res = ProjectContext.Get(accountId).ArchiveDocs(id, accountId);
+                return Json(new FormResult(res,action), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetFormResult(-1, action, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult DeleteProject(int id)
+        {
+
+            int res = 0;
+            string action = "הסרת פרוייקט";
+            try
+            {
+                int accountId = GetAccountId();
+                //not supported
+                //res = ProjectContext.Get(accountId).Delete("DocId",id, "AccountId",accountId);
+                string message = res > 0 ? "המסמך הוסר בהצלחה" : "המסמך לא הוסר";
+                var model = new ResultModel() { Status = res, Title = action, Message = message, Link = null, OutputId = 0 };
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetFormResult(-1, action, ex.Message), JsonRequestBehavior.AllowGet);
+            }
+        }
 
         #endregion
 

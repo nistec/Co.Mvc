@@ -86,7 +86,7 @@ namespace Pro.Lib.Payments
         int currency=1;
         int cred_type = 1;
 
-        static string BrokerPw = null;
+        static string BrokerPw = "baityehuditok";//znXKJ2
 
         public static void RunAuto()
         {
@@ -174,7 +174,10 @@ namespace Pro.Lib.Payments
                 string args = string.Format("supplier={0}&TranzilaPW={1}&TranzilaTK={2}&expdate={3}&sum={4}&currency=1&cred_type=1", terminal, BrokerPw, item.Token, item.ExpDate, item.Payed);
                 TraceHelper.Log("PaymentRecharge", "Recharge-request", args, item.Payed_Id.ToString(), item.QueueId.ToString());
                 Netlog.DebugFormat("PaymentRecharge request:{0}", args);
+
                 ack = HttpClientUtil.DoPostForm(url, args, 60);
+                //Netlog.DebugFormat("DoPostForm request:{0},{1}", url, args);
+
                 Console.WriteLine(ack.Response);
                 Netlog.DebugFormat("PaymentRecharge response:{0}", ack.Response);
 

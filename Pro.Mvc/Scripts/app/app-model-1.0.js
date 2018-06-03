@@ -1,8 +1,23 @@
 ﻿//app-model
+String.prototype.jsonEscape = function () { return this.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t").replace(/\f/g, "\\f").replace(/"/g, "\\\"").replace(/'/g, "\\\'").replace(/\&/g, "\\&"); }
+
+$("select").selectmenu({
+    width: 200,
+    open: function (event, ui) {
+        $(this).selectmenu("menuWidget").hide().slideDown("fast");
+    },
+    close: function (event, ui) {
+        var $menuWudget = $(this).selectmenu("menuWidget");
+        $menuWudget.parent().show();
+        $menuWudget.slideUp("fast");
+    }
+});
+
 var config = {
     base: '',//'/party'
     debug: false,
-    mobileWidth:'300px'
+    mobileWidth: '300px',
+    defaultColor:'#46d6db'
 };
 
 app = {
@@ -45,12 +60,11 @@ app = {
         // similar behavior as clicking on a link
         window.location.href = url;
     },
-    goReferrer:function(){
+    goReferrer: function () {
         var ref = document.referrer;
-        if(ref!==null && ref!=='')
-        {
-            if(ref.match(/:\/\/(.[^/]+)/)[1])
-                window.location.href =ref;
+        if (ref !== null && ref !== '') {
+            if (ref.match(/:\/\/(.[^/]+)/)[1])
+                window.location.href = ref;
         }
     },
     refresh: function () {
@@ -108,8 +122,16 @@ app = {
                 function (index) {
                     var input = $(this);
                     var tag = input.attr('name');
-                    if (tag !== undefined)
-                        postData.push(tag + "=" + encodeURIComponent(input.val()));
+                    if (tag !== undefined) {
+                        var val = input.val();
+                        if (input[0].type == "checkbox")
+                            val = input[0].checked;
+                        else if (val) {
+                            if (typeof val === 'object')
+                                val = val.value;
+                        }
+                        postData.push(tag + "=" + encodeURIComponent(val));
+                    }
                     //alert('Type: ' + input.attr('type') + 'Name: ' + input.attr('name') + 'Value: ' + input.val());
                 }
             );
@@ -123,7 +145,16 @@ app = {
                 var input = $(this);
                 var tag = input.attr('name');
                 if (tag !== undefined)
-                    postData.push(tag + "=" + encodeURIComponent(input.val()));
+                    var val = input.val();
+                if (input[0].type == "checkbox")
+                    val = input[0].checked;
+                else if (val) {
+                    if (typeof val === 'object')
+                        val = val.value;
+                }
+                else
+                    val = "";
+                postData.push(tag + "=" + encodeURIComponent(val));
                 //alert('Type: ' + input.attr('type') + 'Name: ' + input.attr('name') + 'Value: ' + input.val());
             }
         );
@@ -132,15 +163,22 @@ app = {
     serializeEx: function (formInputs, exArgs) {
         var postData = [];
         //form + ' input, ' + form + ' select, ' + form + 'hidden'
-        $(formInputs).each(
-            function (index) {
-                var input = $(this);
-                var tag = input.attr('name');
-                if (tag !== undefined)
-                    postData.push(tag + "=" + encodeURIComponent(input.val()));
-                //alert('Type: ' + input.attr('type') + 'Name: ' + input.attr('name') + 'Value: ' + input.val());
+        $(formInputs).each(function (index) {
+            var input = $(this);
+            var tag = input.attr('name');
+            if (tag !== undefined) {
+                var val = input.val();
+                if (input[0].type == "checkbox")
+                    val = input[0].checked;
+                else if (val) {
+                    if (typeof val === 'object')
+                        val = val.value;
+                }
+                else
+                    val = "";
+                postData.push(tag + "=" + encodeURIComponent(val));
             }
-        );
+        });
         if (exArgs) {
             for (var i = 0; i < exArgs.length; i++) {
                 postData.push(exArgs[i].key + "=" + encodeURIComponent(exArgs[i].value));
@@ -169,14 +207,15 @@ app = {
     },
     htmlEscape: function (str) {
         return str
-            
+
             //.replace(/{/g, '&#123;')
             //.replace(/}/g, '&#125;')
             //.replace('/', '&#47;')
             //.replace(/%/g, '&#37;')
             .replace(/&/g, '&amp;')
             .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;')
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, '&apos;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
     },
@@ -187,7 +226,8 @@ app = {
             //.replace(/&#47;/g, '/')
             //.replace(/&#37;/g, '%')
             .replace(/&quot;/g, '"')
-            .replace(/&#39;/g, "'")
+            .replace(/\\\\/g, "\\")//
+            .replace(/&apos;/g, "'")
             .replace(/&lt;/g, '<')
             .replace(/&gt;/g, '>')
             .replace(/&amp;/g, '&');
@@ -195,7 +235,7 @@ app = {
     htmlText: function (html) {
         //var text = jQuery(html).text();
         //value.replace(/(<([^>]+)>)/ig, "");
-        var text=html.replace(/<(?:.|\n)*?>/gm, '');
+        var text = html.replace(/<(?:.|\n)*?>/gm, '');
         return text;
         //return html.replace(/<(?:.|\n)*?>/gm, '');
     },
@@ -214,14 +254,14 @@ app = {
             return v.toString(16);
         });
     },
-    UUIDv4:function() {
-    var d = new Date().getTime();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = (d + Math.random() * 16) % 16 | 0;
-        d = Math.floor(d / 16);
-        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-    });
-    return uuid;
+    UUIDv4: function () {
+        var d = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+        return uuid;
     },
     UUID: function (v) {
         var d = new Date().getTime();
@@ -250,7 +290,7 @@ app = {
     //    return Math.uuid(8, 16) // 8 digits, base 16
     ////"19D954C3"
     //},
-    jsonToHtml: function (json,appendTo) {
+    jsonToHtml: function (json, appendTo) {
         var ul = $('<ul>').appendTo(appendTo);//('body');
         //var json = { items: ['item 1', 'item 2', 'item 3'] };
         $(json.items).each(function (index, item) {
@@ -271,6 +311,72 @@ app = {
             );
         }
     },
+    parseJsonDate: function (value) {
+
+        if (typeof value === 'string') {
+            var strd = /\/Date\((\d*)\)\//.exec(value);
+            return (strd) ? new Date(+strd[1]) : value;
+        }
+        return value;
+        //value = new Date(parseInt(value.replace("/Date(", "").replace(")/", ""), 10));
+        //return new Date(value);
+    },
+    jsonDateToString : function (value,addTime) {
+
+        if (typeof value === 'string') {
+            var strd = /\/Date\((\d*)\)\//.exec(value);
+            if (strd) {
+                var d = new Date(+strd[1]);
+                return app.dateToString(d,addTime);
+            }
+        }
+
+        return value;
+        //value = new Date(parseInt(value.replace("/Date(", "").replace(")/", ""), 10));
+        //return new Date(value);
+    },
+    dateToString: function (d, addTime) {
+
+        //if (d === typeof (Date)) {
+                if (addTime)
+                    return d.toLocaleString().replace(/[^T0-9\-/\:\. (am|pm)]/gi, "");
+                else
+                    return d.toLocaleDateString().replace(/[^T0-9\-/\:\. (am|pm)]/gi, "");
+        //}
+
+        //return d;
+    },
+    toLocalDateTimeString: function (strdate) {
+        /*
+        var d = new Date();
+        d + '';                // "Sun Dec 08 2013 18:55:38 GMT+0100"
+        d.toDateString();      // "Sun Dec 08 2013"
+        d.toISOString();       // "2013-12-08T17:55:38.130Z"
+        d.toLocaleDateString() // "8/12/2013" on my system
+        d.toLocaleString()     // "8/12/2013 18.55.38" on my system
+        d.toUTCString()        // "Sun, 08 Dec 2013 17:55:38 GMT"
+        */
+        return app.formatDateTimeString(strdate);
+
+        //if (strdate === undefined || strdate == null || strdate == '')
+        //    return '';
+        //if (typeof strdate === 'string') {
+        //    var strd = /\/Date\((\d*)\)\//.exec(strdate);
+        //    if (strd)
+        //        return app.dateToString(new Date(+strd[1]), true);
+        //}
+        //if (strdate === typeof (Date))
+        //    return app.dateToString(strdate, true);
+        //var d = new Date(strdate);
+        //if (d.toString() == "NaN" || d.toString() == "Invalid Date") {
+        //    //    if ($.jqx.dataFormat) {
+        //    //        f = $.jqx.dataFormat.tryparsedate(new Date(value));
+        //    //        return f;
+        //    //   }
+        //    return '';
+        //}
+        //return app.dateToString(d,true);
+    },
     toLocalDateString: function (strdate) {
         /*
         var d = new Date();
@@ -281,26 +387,90 @@ app = {
         d.toLocaleString()     // "8/12/2013 18.55.38" on my system
         d.toUTCString()        // "Sun, 08 Dec 2013 17:55:38 GMT"
         */
-        if (strdate === undefined || strdate == null || strdate == '')
+
+        return app.formatDateTimeString(strdate, 'dd/mm/yyyy');
+
+        //if (strdate === undefined || strdate == null || strdate == '')
+        //    return '';
+        //if (typeof strdate === 'string') {
+        //    var strd = /\/Date\((\d*)\)\//.exec(strdate);
+        //    if (strd)
+        //        return app.dateToString(new Date(+strd[1]));
+        //}
+        //if (strdate === typeof (Date)) {
+        //    return app.dateToString(strdate);
+        //}
+        //var d = new Date(strdate);
+        //if (d.toString() == "NaN" || d.toString() == "Invalid Date") {
+        //    //    if ($.jqx.dataFormat) {
+        //    //        f = $.jqx.dataFormat.tryparsedate(new Date(value));
+        //    //        return f;
+        //    //   }
+        //    return '';
+        //}
+        //return app.dateToString(d);
+    },
+    formatDateTimeIso: function (date, format) {
+        return formatDateTimeString(date,'yyyy-mm-dd hh:mm:ss');
+    },
+    formatDateTimeString: function (date, format) {
+
+        if (date === undefined || date == null || date == '')
             return '';
-        if(strdate===typeof(Date))
-            return strdate.toLocaleDateString();
-        var d = new Date(strdate);
-        if (d.toString() == "NaN" || d.toString() == "Invalid Date") {
-            //    if ($.jqx.dataFormat) {
-            //        f = $.jqx.dataFormat.tryparsedate(new Date(value));
-            //        return f;
-            //   }
-            return '';
+        if (format === undefined || format == null)
+            format = 'dd/mm/yyyy hh:mm:ss';
+
+        //if (date === typeof (Date)) {
+        //    return date.format(format);
+        //}
+        if (date instanceof Date){// && typeof date.getMonth === 'function') {
+            return date.format(format);
         }
-        return d.toLocaleDateString();
+        else {//if (typeof date === 'string') {
+
+            var strdate = date.toString();
+            if (strdate.indexOf('Date') != -1) {
+                var jdate = app.parseJsonDate(date);
+                if (jdate){// && jdate === typeof (Date)) {
+                    return jdate.format(format);
+                }
+            }
+
+            var d = new Date(date);
+            return d.format(format);
+
+            //if (d) {
+            //    return d.format(format);
+            //}
+            //else {
+            //    var jdate = app.parseJsonDate(date);
+            //    if (jdate && jdate === typeof (Date)) {
+            //        return jdate.format(format);
+            //    }
+            //    return jdate;
+            //}
+        }
     },
     formatDateString: function (date, format) {
-        if (date === undefined || date == null || date == '')
-            return null;
-
+        
         if (format === undefined || format == null)
             format = 'dd/mm/yyyy';
+        return app.formatDateTimeString(date, format);
+
+
+        //if (date === undefined || date == null || date == '')
+        //    return null;
+
+        //if (date === typeof (Date)) {
+        //    return date.format(format);
+        //}
+        //else if (typeof date === 'string') {
+        //    var strd = /\/Date\((\d*)\)\//.exec(date);
+        //    if (strd) {
+        //        var f = new Date(+strd[1]);
+        //        return date.format(format);
+        //    }
+        //}
 
         //var f = new Date(value);
         //if (f.toString() == "NaN" || f.toString() == "Invalid Date") {
@@ -310,8 +480,8 @@ app = {
         //    }
         //}
 
-        var f = new Date(parseInt(date.toString().replace("/Date(", "").replace(")/", ""), 10));
-        return f.format(format);
+        //var f = new Date(parseInt(date.toString().replace("/Date(", "").replace(")/", ""), 10));
+        //return f.format(format);
 
     },
     toggle: function (tag) {
@@ -347,8 +517,109 @@ app = {
         } else {
             evt.cancelBubble = true;
         }
+    },
+    disableSelect: function (tag) {
+        $(tag+ " option").not(':selected').each(function (index) {
+            $(this).prop('disabled', true);
+        });
     }
+   
 };
+
+
+//============================================================================================ app_perms
+
+var app_perms = {
+    isReadonly: function (option) {
+        return option ? /^[^aef]/i.test(option) : false; 
+        //return option === 'r' || option === 'g';
+    },
+    isEditable: function (option, addAlso) {
+        return option ? /^[aef]/i.test(option) : false; 
+        //return (option === 'e') || (option === 'a' && addAlso);
+    },
+    isAddable: function (option) {
+        return (option.indexOf('a') != -1);
+    },
+    isDelable: function (option) {
+        return (option.indexOf('d') != -1);
+        //return option === 'd';
+    },
+    //getPerm: function (option, perms) {
+    //    //g-e-a-d-f
+    //    if (perms === undefined || perms == null)
+    //        return false;
+    //    if (perms === 'f')
+    //        return true;
+
+    //    switch (option) {
+    //        case 'e':
+    //            return perms === 'e';
+    //        case 'a':
+    //            return perms === 'a';
+    //        case 'd':
+    //            return perms === 'd';
+    //        case 'g':
+    //        case 'r':
+    //            return perms === 'g';
+    //        default:
+    //            return (option.indexOf(perms) != -1);
+    //    }
+    //},
+    readonlyForm: function (form, readonly) {
+
+        if (readonly === undefined || readonly === null)
+            readonly = true;
+        $('#' + form + ' input, #' + form + ' select, #' + form + ' textarea').each(function (index) {
+            var input = $(this);
+            var type = input.attr('type');
+            if (type !== 'button' && type !== 'submit' && type !== 'reset')//(type == 'check' || type == 'radio' || type == 'text' || type == 'number' || type == 'date')
+            {
+                input.prop('readonly', readonly);
+            }
+        });
+    },
+    //readonlyOptions: function (inputs, option) {
+    //    var readonly = option ? app_perms.isReadonly(option) : true;
+    //    $.each(inputs, function (index, value) {
+    //        $('#' + value).prop('readonly', readonly);
+    //    });
+    //},
+    readonlyItems: function (inputs, readonly, option) {
+
+        if (readonly === undefined || readonly === null || readonly === 'NA')
+            readonly = option ? app_perms.isReadonly(option) : true;
+        $.each(inputs, function (index, value) {
+            $('#' + value).prop('readonly', readonly);
+        });
+    },
+    //pasiveItems: function (inputs, option, perms) {
+    //    var perm = app_perms.getPerm(option, perms);
+    //    $.each(inputs, function (index, value) {
+    //        $('#' + form + '#' + value).removeClass('pasive');
+    //    });
+    //},
+    readonlyInput: function (tag, readonly) {
+        if (readonly === undefined || readonly === null)
+            readonly = true;
+        $(tag).prop('readonly', readonly);
+    },
+    disabledInput: function (tag, disabled) {
+        if (disabled === undefined || disabled === null)
+            disabled = true;
+        $(tag).prop('disabled', disabled);
+    }
+
+    //readonlyInput: function (tag, option, perms) {
+    //    //var perm = app_perms.getPerm(option, perms);
+    //    var readonly = option != perms;
+    //    $(tag).prop('readonly', app_perms.isReadonly(option));
+    //},
+    //disabledInput: function (tag, option) {
+    //    //var perm = app_perms.isReadonly(option, perms);
+    //    $(tag).prop('disabled', app_perms.isReadonly(option));
+    //}
+}
 
 //============================================================================================ app_global
 
@@ -480,14 +751,24 @@ var app_messenger = {
             //}
         });
         //msg.on('action:click', function () {
-        //    return msg;// alert('Hey, you retried!');
+        //    return msg;//app_dialog.alert('Hey, you retried!');
         //});
 
         //msg.on('action:retry', function () {
-        //    return alert('Hey, you retried!');
+        //    returnapp_dialog.alert('Hey, you retried!');
         //});
 
         //Messenger().post(message);
+    },
+    Error: function (message, showClose) {
+        if (typeof showClose === 'undefined') {
+            showClose = true;
+        }
+        Messenger().post({
+            message: message,
+            type: "error",
+            showCloseButton: showClose
+        });
     },
     Dialog: function (data, callback, args) {
         var type = (data.Status > 0) ? 'success' : 'error';
@@ -578,130 +859,70 @@ var app_messenger = {
 };
 
 
+//============================================================================================ app_model
 
-//============================================================================================ app_rout
+var app_model = {
 
-//    var app_rout = {
-
-//    isAllowEdit: function (allowEdit) {
-//        if (allowEdit == 0) {
-//            app_dialog.alert('You have no permission for this action.');
-//        }
-//    },
-
-//    redirectToMembers: function () {
-//        app.redirectTo("/Main/Members");
-//    },
-//};
-
-//============================================================================================ app_members
-
-//var app_members = {
-
-//    displayMemberFields: function () {
-
-//        $.ajax({
-//            url: '/Common/GetMemberFieldsView',
-//            type: 'post',
-//            dataType: 'json',
-//            //data: { },
-//            success: function (data) {
-//                if (data) {
-//                    $("#ExType").val(data.ExType);
-
-//                    if (data.ExEnum1 == "")
-//                        $("#divEnum1").hide();
-//                    else
-//                        $("#lblEnum1").text(data.ExEnum1);
-
-//                    if (data.ExEnum2 == "")
-//                        $("#divEnum2").hide();
-//                    else
-//                        $("#lblEnum2").text(data.ExEnum2);
-
-//                    if (data.ExEnum3 == "")
-//                        $("#divEnum3").hide();
-//                    else
-//                        $("#lblEnum3").text(data.ExEnum3);
-
-//                    if (data.ExField1 == "")
-//                        $("#divField1").hide();
-//                    else
-//                        $("#lblExField1").text(data.ExField1);
-
-//                    if (data.ExField2 == "")
-//                        $("#divField2").hide();
-//                    else
-//                        $("#lblExField2").text(data.ExField2);
-
-//                    if (data.ExField3 == "")
-//                        $("#divField3").hide();
-//                    else
-//                        $("#lblExField3").text(data.ExField3);
-
-//                    if (data.ExId == "")
-//                        $("#divExId").hide();
-//                    else
-//                        $("#lblExId").text(data.ExId);
-
-//                }
-//            },
-//            error: function (jqXHR, status, error) {
-//                app_dialog.alert(error);
-//            }
-//        });
-//    }
-//};
+    postModel: function (url, postData, callback) {
+        $.ajax({
+            async: false,
+            url: url,
+            type: "POST",
+            dataType: 'json',
+            //contentType: "application/json; charset=utf-8",
+            //contentType: "application/x-www-form-urlencoded;charset=utf-8",
+            data: postData,
+            success: function (data) {
+                if (callback);
+                callback(data);
+            },
+            error: function (jqXHR, status, error) {
+                app_dialog.alert(error);
+            }
+        });
+        //return false;
+    }
+};
 
 //============================================================================================ app_query
 
 var app_query = {
 
-    //doFormSubmit: function (formtype) {
+ 
+    doFormSubmit: function (formTag, actionUrl, formData, callback) {
+        //e.preventDefault();
+        if (actionUrl === undefined || actionUrl == null)
+            actionUrl = $(formTag).attr('action');
 
-    //    var actionurl = this.getFormAction(formtype);
-    //    $.ajax({
-    //        url: actionurl,
-    //        type: 'post',
-    //        //dataType: 'json',
-    //        data: $('#' + formtype).serialize(),
-    //        //success: function (data) {
-    //        //},
-    //        error: function (jqXHR, status, error) {
-    //            app_dialog.alert(error);
-    //        }
-    //    });
-    //},
-    //update: function () {
+        if (formData === undefined || formData == null)
+            formData = $(formTag).serialize();// app.serialize(formTag);
 
-    //    var actionurl = $('#fcTaskForm').attr('action');
+        var validationResult = function (isValid) {
+            if (isValid) {
+                $.ajax({
+                    url: actionUrl,
+                    type: 'post',
+                    dataType: 'json',
+                    data: formData,
+                    success: function (data) {
+                        if (callback)
+                            callback(data);
+                        else
+                            app_messenger.Post(data);
+                    },
+                    error: function (jqXHR, status, error) {
+                        app_messenger.Notify(error, 'error');
+                    }
+                });
+            }
+            else {
+                //not valid
+            }
+        }
+        $(formTag).jqxValidator('validate', validationResult);
 
-    //    var validationResult = function (isValid) {
-    //        if (isValid) {
-    //            $.ajax({
-    //                url: actionurl,
-    //                type: 'post',
-    //                dataType: 'json',
-    //                data: $('#fcTaskForm').serialize(),
-    //                success: function (data) {
-    //                    if (data.Status > 0) {
-    //                        app_messenger.Post(data);
-    //                        $('#jqxgrid4').jqxGrid('source').dataBind();
-    //                    }
-    //                    else
-    //                        app_messenger.Post(data, 'error');
-    //                },
-    //                error: function (jqXHR, status, error) {
-    //                    app_messenger.Post(error, 'error');
-    //                }
-    //            });
-    //        }
-    //    }
-    //    $('#fcForm').jqxValidator('validate', validationResult);
-    //},
-    
-
-
+        return this;
+    },
     doFormPost: function (formTag, callback, preSubmit, validatorTag) {
         if (validatorTag)
             $(validatorTag).empty();
@@ -817,11 +1038,12 @@ var app_query = {
             success: function (data) {
                 console.log(data);
                 if (callback) {
-                        callback(data.Content);
+                    callback(data);//.Content);
                 }
             },
             error: function (jqXHR, status, error) {
-                app_dialog.alert(error);
+                //app_dialog.alert(error);
+                app_messenger.Error(error);
             }
         });
     }
@@ -902,114 +1124,6 @@ var app_validation = {
     }
 };
 
-//============================================================================================ app_popup
-
-//var app_popup = {
-
-//    memberEdit: function (id) {
-//        //return popupIframe(app.appPath() + "/Common/_MemberEdit?id=" + id, "500", "600");
-        
-//        return app_dialog.dialogIframe(app.appPath() + "/Common/_MemberEdit?id=" + id, "500", "600","מנוי "+ id);
-//    },
-//    managementEdit: function (id) {
-//        //return popupIframe(app.appPath() + "/Common/_ManagementEdit?id=" + id, "500", "600");
-//        return app_dialog.dialogIframe(app.appPath() + "/Common/_ManagementEdit?id=" + id, "500", "600", "מנוי " + id);
-//    },
-//    cmsHtmlEditor: function (extid) {
-//        if (app_validation.notForMobile())
-//            return;
-//        //return popupIframe("/Cms/CmsContentEdit?extid=" + extid, "850", "600");
-
-//        return app_dialog.dialogIframe("/Cms/CmsHtmlEdit?extid=" + extid, "850", "600", "Cms Html Editor")
-//    },
-//    cmsTextEditor: function (extid) {
-//        if (app_validation.notForMobile())
-//            return;
-//        //return popupIframe("/Cms/CmsContentEdit?extid=" + extid, "850", "600");
-
-//        return app_dialog.dialogIframe("/Cms/CmsTextEdit?extid=" + extid, "850", "600", "Cms Text Editor")
-//    },
-//    cmsPageSettings: function (pageType) {
-//        if (app_validation.notForMobile())
-//            return;
-//        return app_dialog.dialogIframe("/Cms/CmsPageSettings?pageType=" + pageType, "850", "600", "Cms Text Editor")
-//    },
-//    cmsPreview: function (folder, pageType) {
-//        if (app_validation.notForMobile())
-//            return;
-//        var path = "/Preview/" + pageType + "/" + folder;
-//        return app_dialog.dialogIframe(path, "850", "600", "Cms Preview",true)
-//    },
-//    batchMessageView: function (id) {
-       
-//        return app_dialog.dialogIframe(app.appPath() + "/Common/_BatchMessageView?id=" + id, "400", "400", "נוסח הודעה " + id);
-//    },
-//    gridView: function (src,title) {
-//        return app_dialog.dialogIframe(app.appPath() + src, "850", "600", title);
-//    }
-//}
-
-//============================================================================================ app_const
-
-//var app_const = {
-
-//    adminLink: '<a href="/Admin/Manager">מנהל מערכת</a>',
-//    accountsLink: '<a href="/Admin/DefAccount">ניהול לקוחות</a>'
-//};
-
-//============================================================================================ app_menu
-
-//var app_menu = {
-
-//     activeLayoutMenu: function (li) {
-//        //$("#cssmenu>ul>li.active").removeClass("active");
-//        //$("#cssmenu>ul>li#" + li).addClass("active");
-
-//         $("#mainnav>ul>li.active").removeClass("active");
-//         $("#mainnav>ul>li#" + li).addClass("active");
-
-//    },
-
-//    printObject: function (obj) {
-//        //debugObjectKeys(obj);
-//        var o = obj;
-//    },
-
-//    breadcrumbs: function (section, page, lang) {
-
-//        var breadcrumbs = $(".breadcrumbs");
-//        breadcrumbs.text('');
-//        var b = $('<div style="text-align:left;direction:ltr;"></div>')
-
-//        if (lang === undefined || lang == 'en') {
-//            b.append($('<a href="/home/index">Home</a>'));
-//            b.append($('<span> >> </span>'));
-//            b.append($('<a href="/home/main">Main</a>'));
-//            b.append($('<span> >> </span>'));
-
-//            b.append('' + section + ' >> ' + page + ' |  ');
-//            b.append('<a href="javascript:parent.history.back()">Back</a>');
-
-//            //var path = document.referrer;
-//            //var page = app.getUrlPage(path);
-//            //b.append($('<a href="' + path + '">' + page.split('?')[0] + '</a>'));
-//            //b.append($('<span> >> </span>'));
-//            //var curPage = app.getUrlPage(location.href);
-//            //b.append($('<span> ' + curPage.split('?')[0] + ' </span>'));
-//        }
-//        else {
-//            b.append($('<a href="/home/index">דף הבית</a>'));
-//            b.append($('<span> >> </span>'));
-//            b.append($('<a href="/home/main">ראשי</a>'));
-//            b.append($('<span> >> </span>'));
-//            b.append('' + section + ' >> ' + page + ' |  ');
-//            b.append('<a href="javascript:parent.history.back()">חזרה</a>');
-
-//        }
-//        b.appendTo(breadcrumbs);
-//    }
-//};
-
 
 //============================================================================================ app_dialog
 
@@ -1038,6 +1152,52 @@ var app_dialog = {
                     }
                 ],
             });
+    },
+    notify: function (msg, callback, args) {
+        var d = $('<div id="alert-message" title="..." style="direction:rtl;">' +
+             '<div style="margin-right: 20px;margin-top:10px;">' +
+             '<p>' + msg + '</p></div></div>').dialog({
+                 modal: true,
+                 show: 'fade',
+                 hide: 'fade',
+                 dialogClass: 'ui-dialog-osx',
+                 buttons: [
+                     {
+                         text: "אישור",
+                         "class": 'btn-dialog',
+                         click: function () {
+                             $(this).dialog("close");
+                             if (callback) {
+                                 callback(args);
+                             }
+                         }
+                     }
+                 ],
+             });
+        setTimeout(function () {
+            d.dialog("close");
+        }, 2000);
+    },
+    confirm: function (message, callback, args) {
+        var divmessage = $('<div class="rtl">' + message + '</div>');
+        var dialog = $("<div class='bdialog'></div>").append(divmessage).appendTo("body").dialog({
+            resizable: false,
+            height: "auto",
+            width: 350,
+            modal: true,
+            dialogClass: 'ui-dialog-osx',
+            buttons: {
+                "אישור": function () {
+                    //res = true;
+                    $(this).dialog("close");
+                    if (callback)
+                        callback(args);
+                },
+                "ביטול": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
     },
 
     popMessage: function (caption, msg, mode, callback, args) {
@@ -1181,6 +1341,31 @@ var app_dialog = {
         });
     },
 
+    dialogDiv: function (tag, width, height, title, scrolling) {
+        if (!scrolling)
+            scrolling = 'no';
+        if (app.IsMobile()) {
+            width = config.mobileWidth;
+        }
+        var container = $(tag);
+        var dialog = $("<div class='bdialog'></div>").append(container).appendTo("body").dialog({
+            autoOpen: false,
+            modal: true,
+            resizable: false,
+            width: "auto",
+            height: "auto",
+            title: title,
+            dialogClass: 'ui-dialog-osx',
+            //create: function (event, ui) {
+            //    $(".ui-widget-header").hide();
+            //},
+            close: function () {
+                iframe.attr("src", "");
+            }
+        });
+        dialog.dialog("open");
+        return dialog;
+    },
     dialogIframe: function (src, width, height, title, scrolling) {
         if (!scrolling)
             scrolling = 'no';
@@ -1254,27 +1439,6 @@ var app_dialog = {
                     $(this).dialog("close");
                     if (callback)
                         callback('cancel', args);
-                }
-            }
-        });
-    },
-    confirm: function (message, callback, args) {
-        var divmessage = $('<div class="rtl">'+message+'</div>');
-        var dialog = $("<div class='bdialog'></div>").append(divmessage).appendTo("body").dialog({
-            resizable: false,
-            height: "auto",
-            width: 350,
-            modal: true,
-            dialogClass: 'ui-dialog-osx',
-            buttons: {
-                "אישור": function () {
-                    //res = true;
-                    $(this).dialog("close");
-                    if (callback)
-                        callback(args);
-                },
-                "ביטול": function () {
-                    $(this).dialog("close");
                 }
             }
         });
@@ -1401,7 +1565,83 @@ var app_dialog = {
 //============================================================================================ app_iframe
 
 var app_iframe = {
+    panelClose: function (tag, doempty) {
+        tag = tag.replace("#", "");
+        $("#" + tag).hide();
+        if (doempty)
+            $("#" + tag).empty();
+    },
+    panelSwitchClose: function (parentName, isSwitch, doempty) {
+        parentName = parentName.replace("#", "");
+        var tag = parentName + "-panel";
+        $("#" + tag).hide();
+        if (isSwitch)
+            $("#" + parentName).show();
+        if (doempty)
+            $("#" + tag).empty();
+    },
+    appendPanelSwitch: function (parentName, src, width, height, scroll, title) {
+        parentName = parentName.replace("#", "");
+        var tag = parentName + "-panel";
 
+        if ($("#" + tag).length == 0) {
+            $("#" + parentName).after('<div id="' + tag + '" class="panel-window"></div>');
+        }
+        else {
+            $("#" + tag).empty();
+        }
+
+        $("#" + parentName).hide();
+
+        //app_iframe.showPanel("#" + tag, src, width, height, scroll, title);
+        $("#" + tag).empty();
+        var panel = $('<div class="panel-header"></div>');
+        panel.append('<span style="float:right">' + title + '</span>');
+        var close = $('<a href="#" style="float:left;margin:5px 10px"><i class="fa fa-close" style="font-size:16px"></i></a>')
+          .on("click", function (e) {
+              e.preventDefault();
+              $("#" + tag).hide();
+              $("#" + parentName).show();
+              $("#" + tag).empty();
+          });
+        panel.append(close);
+        $("#" + tag).append(panel);
+
+        app_iframe.appendIframe(tag, src, width, height, scroll);
+
+        $("#" + tag).show();
+    },
+    appendPanel: function (parentName, src, width, height, scroll, title) {
+        parentName = parentName.replace("#", "");
+        var tag = parentName + "-panel";
+
+        if ($("#" + tag).length == 0) {
+            $("#" + parentName).after('<div id="' + tag + '" class="panel-window"></div>');
+        }
+        else {
+            $("#" + tag).empty();
+        }
+
+        app_iframe.showPanel("#" + tag, src, width, height, scroll, title);
+
+    },
+    showPanel: function (tag, src, width, height, scroll, title) {
+        $(tag).empty();
+        var panel = $('<div class="panel-header"></div>');
+        panel.append('<span style="float:right">' + title + '</span>');
+        var close = $('<a href="#" style="float:left;margin:5px 10px"><i class="fa fa-close" style="font-size:16px"></i></a>')
+          .on("click", function (e) {
+              e.preventDefault();
+              $(tag).hide();
+              $(tag).empty();
+          });
+        panel.append(close);
+        $(tag).append(panel);
+
+        app_iframe.appendIframe(tag, src, width, height, scroll);
+
+        $(tag).show();
+    },
     appendIframe: function (div, src, width, height, scrolling,loaderTag) {
         if (app.IsMobile()) {
             width = config.mobileWidth;
@@ -1602,6 +1842,100 @@ var app_iframe = {
 
 var app_form = {
 
+    loadDataForm: function (form, record, exclude) {
+
+        $('#' + form + ' input, #' + form + ' select, #' + form + ' textarea').each(function (index) {
+            var input = $(this);
+            var tag = input.attr('name');
+            var datatype = $(this).attr("data-type");
+            var datafield = $(this).attr("data-field");
+            var currentId = $(this).attr('id');
+            //var type = input.prop('tagName');
+
+            if (datafield !== undefined && datafield !== null)
+                tag = datafield;
+
+            if (tag !== undefined) {
+                var isexclude = false;
+                if (exclude) {
+                    isexclude = (exclude.indexOf(tag)) >= 0;
+                }
+
+                var value = record[tag];
+                if (!isexclude) {
+
+                    if (input.length > 0) {
+                        var parent = input[0].parentElement;
+
+                        if (parent && $(parent).hasClass("jqx-widget"))
+                            datatype = "jqx-widget";
+                    }
+
+                    if (value !== undefined && value != null) {
+
+                        switch (datatype) {
+                            case "datetime":
+                                input.val(app.formatDateTimeString(value)); break;
+                            case "date":
+                                input.val(app.formatDateString(value)); break;
+                            case "bool":
+                                input.attr("checked", value); break;
+                            case "select-input":
+                                $('form#' + form + '#' + tag).val(value);
+                                $('form#' + form + ' [name=' + tag + ']').val(value);
+                                break;
+                            case "jqx-widget":
+                            case "jqx-dropdwon":
+                                //$('form#' + form + '#' + tag).val(value);
+                                $('form#' + form + ' [name=' + tag + ']').val(value);
+                                break;
+                            case "lookup":
+                                app_lookup.setInput(form, tag, value);
+                                break;
+
+                            default:
+
+                                var str = value.toString();
+                                if (str.match(/Date/gi)) {
+                                    var d = formatJsonShortDate(value)
+                                    app_form.setInputValue(input,form, currentId, tag, d);
+                                }
+                                //else if (typeof value === 'boolean')
+                                //    input.attr("checked", value); 
+                                //else if (currentId === tag)
+                                //    $('#' + currentId).val(value);
+                                else
+                                    app_form.setInputValue(input, form, currentId, tag, value);
+                                break;
+                        }
+                    }
+                    else {
+                        app_form.setInputValue(input, form, currentId, tag, null); //$('#' + tag).val(null);
+                    }
+                    
+                }
+            }
+        });
+    },
+    setInputValue: function (input, form, id, tag, value) {
+
+        if (id == 'input' + tag) {//for jqx
+            if (typeof value === 'boolean')
+                $('form#' + form + ' [name=' + tag + ']').attr("checked", value);
+            else
+                $('form#' + form + ' [name=' + tag + ']').val(value);
+        }
+        else if (typeof value === 'boolean')
+            input.attr("checked", value); 
+        else
+            input.val(value);
+    },
+    setDateNow: function (tag) {
+        $(tag).val(app.toLocalDateString(Date.now()));
+    },
+    setDateTimeNow: function (tag) {
+        $(tag).val(app.toLocalDateTimeString(Date.now()));
+    },
     getCheckedBox: function (classname) {
         var selected = $("." + classname + ":checked");
         if (!selected.val()) {
@@ -1649,7 +1983,68 @@ var app_form = {
 };
 
 var app_control = {
+    selectTag: function (tag, width) {
+        if (width === undefined)
+            width = 200;
 
+        //$(tag).selectmenu({
+        //    width: width,
+        //    open: function (event, ui) {
+        //        $(this).selectmenu("menuWidget").hide().slideDown("fast");
+        //    },
+        //    close: function (event, ui) {
+        //        var $menuWidget = $(this).selectmenu("menuWidget");
+        //        $menuWidget.parent().show();
+        //        $menuWidget.slideUp("fast");
+        //    }
+        //});
+        $(tag).css('width', width);
+    },
+    fillSelect: function (tag, url, data, valueField, labelField, selectValue) {
+
+        $(tag).empty()
+        var $dropDown = $(tag);
+        $.ajax({
+            type: "post",
+            dataType: 'json',
+            url: url,
+            data: data,
+            success: function (data) {
+                // Parse the returned json data
+                //var opts = $.parseJSON(data);
+                $.each(data, function (i, d) {
+                    $dropDown.append($("<option></option>").css('padding', '28px')
+                        .attr("value", d[valueField])
+                        .text(d[labelField]));
+                });
+                if (selectValue) {
+                    $dropDown.val(selectValue);
+                }
+            }
+        });
+    },
+    appendSelectRecords: function (tag, records, valueField, labelField) {
+
+        // var selectValues = { "0": "ללא", "1": "צוות", "2": "פרטי", "3": "לפי בחירה" };
+        $(tag).empty();
+        var $dropDown = $(tag);
+        $.each(selectValues, function (i, record) {
+            $dropDown.append($("<option></option>")
+                .attr("value", record[valueField])
+                .text(record[labelField]));
+        });
+    },
+    appendSelectOptions: function (tag, selectValues) {
+
+       // var selectValues = { "0": "ללא", "1": "צוות", "2": "פרטי", "3": "לפי בחירה" };
+        $(tag).empty();
+        var $dropDown = $(tag);
+        $.each(selectValues, function (key, value) {
+            $dropDown.append($("<option></option>")
+                .attr("value", key)
+                .text(value));
+        });
+    },
     datepicker: function (selector, yearRange,formValidator) {
 
         $(selector).datepicker({
@@ -1692,3 +2087,186 @@ var app_control = {
     }
 }
 
+
+
+//============================================================================================ app_popup
+
+//var app_popup = {
+
+//    memberEdit: function (id) {
+//        //return popupIframe(app.appPath() + "/Common/_MemberEdit?id=" + id, "500", "600");
+
+//        return app_dialog.dialogIframe(app.appPath() + "/Common/_MemberEdit?id=" + id, "500", "600","מנוי "+ id);
+//    },
+//    managementEdit: function (id) {
+//        //return popupIframe(app.appPath() + "/Common/_ManagementEdit?id=" + id, "500", "600");
+//        return app_dialog.dialogIframe(app.appPath() + "/Common/_ManagementEdit?id=" + id, "500", "600", "מנוי " + id);
+//    },
+//    cmsHtmlEditor: function (extid) {
+//        if (app_validation.notForMobile())
+//            return;
+//        //return popupIframe("/Cms/CmsContentEdit?extid=" + extid, "850", "600");
+
+//        return app_dialog.dialogIframe("/Cms/CmsHtmlEdit?extid=" + extid, "850", "600", "Cms Html Editor")
+//    },
+//    cmsTextEditor: function (extid) {
+//        if (app_validation.notForMobile())
+//            return;
+//        //return popupIframe("/Cms/CmsContentEdit?extid=" + extid, "850", "600");
+
+//        return app_dialog.dialogIframe("/Cms/CmsTextEdit?extid=" + extid, "850", "600", "Cms Text Editor")
+//    },
+//    cmsPageSettings: function (pageType) {
+//        if (app_validation.notForMobile())
+//            return;
+//        return app_dialog.dialogIframe("/Cms/CmsPageSettings?pageType=" + pageType, "850", "600", "Cms Text Editor")
+//    },
+//    cmsPreview: function (folder, pageType) {
+//        if (app_validation.notForMobile())
+//            return;
+//        var path = "/Preview/" + pageType + "/" + folder;
+//        return app_dialog.dialogIframe(path, "850", "600", "Cms Preview",true)
+//    },
+//    batchMessageView: function (id) {
+
+//        return app_dialog.dialogIframe(app.appPath() + "/Common/_BatchMessageView?id=" + id, "400", "400", "נוסח הודעה " + id);
+//    },
+//    gridView: function (src,title) {
+//        return app_dialog.dialogIframe(app.appPath() + src, "850", "600", title);
+//    }
+//}
+
+//============================================================================================ app_const
+
+//var app_const = {
+
+//    adminLink: '<a href="/Admin/Manager">מנהל מערכת</a>',
+//    accountsLink: '<a href="/Admin/DefAccount">ניהול לקוחות</a>'
+//};
+
+//============================================================================================ app_menu
+
+//var app_menu = {
+
+//     activeLayoutMenu: function (li) {
+//        //$("#cssmenu>ul>li.active").removeClass("active");
+//        //$("#cssmenu>ul>li#" + li).addClass("active");
+
+//         $("#mainnav>ul>li.active").removeClass("active");
+//         $("#mainnav>ul>li#" + li).addClass("active");
+
+//    },
+
+//    printObject: function (obj) {
+//        //debugObjectKeys(obj);
+//        var o = obj;
+//    },
+
+//    breadcrumbs: function (section, page, lang) {
+
+//        var breadcrumbs = $(".breadcrumbs");
+//        breadcrumbs.text('');
+//        var b = $('<div style="text-align:left;direction:ltr;"></div>')
+
+//        if (lang === undefined || lang == 'en') {
+//            b.append($('<a href="/home/index">Home</a>'));
+//            b.append($('<span> >> </span>'));
+//            b.append($('<a href="/home/main">Main</a>'));
+//            b.append($('<span> >> </span>'));
+
+//            b.append('' + section + ' >> ' + page + ' |  ');
+//            b.append('<a href="javascript:parent.history.back()">Back</a>');
+
+//            //var path = document.referrer;
+//            //var page = app.getUrlPage(path);
+//            //b.append($('<a href="' + path + '">' + page.split('?')[0] + '</a>'));
+//            //b.append($('<span> >> </span>'));
+//            //var curPage = app.getUrlPage(location.href);
+//            //b.append($('<span> ' + curPage.split('?')[0] + ' </span>'));
+//        }
+//        else {
+//            b.append($('<a href="/home/index">דף הבית</a>'));
+//            b.append($('<span> >> </span>'));
+//            b.append($('<a href="/home/main">ראשי</a>'));
+//            b.append($('<span> >> </span>'));
+//            b.append('' + section + ' >> ' + page + ' |  ');
+//            b.append('<a href="javascript:parent.history.back()">חזרה</a>');
+
+//        }
+//        b.appendTo(breadcrumbs);
+//    }
+//};
+
+//============================================================================================ app_rout
+
+//    var app_rout = {
+
+//    isAllowEdit: function (allowEdit) {
+//        if (allowEdit == 0) {
+//            app_dialog.alert('You have no permission for this action.');
+//        }
+//    },
+
+//    redirectToMembers: function () {
+//        app.redirectTo("/Main/Members");
+//    },
+//};
+
+//============================================================================================ app_members
+
+//var app_members = {
+
+//    displayMemberFields: function () {
+
+//        $.ajax({
+//            url: '/Common/GetMemberFieldsView',
+//            type: 'post',
+//            dataType: 'json',
+//            //data: { },
+//            success: function (data) {
+//                if (data) {
+//                    $("#ExType").val(data.ExType);
+
+//                    if (data.ExEnum1 == "")
+//                        $("#divEnum1").hide();
+//                    else
+//                        $("#lblEnum1").text(data.ExEnum1);
+
+//                    if (data.ExEnum2 == "")
+//                        $("#divEnum2").hide();
+//                    else
+//                        $("#lblEnum2").text(data.ExEnum2);
+
+//                    if (data.ExEnum3 == "")
+//                        $("#divEnum3").hide();
+//                    else
+//                        $("#lblEnum3").text(data.ExEnum3);
+
+//                    if (data.ExField1 == "")
+//                        $("#divField1").hide();
+//                    else
+//                        $("#lblExField1").text(data.ExField1);
+
+//                    if (data.ExField2 == "")
+//                        $("#divField2").hide();
+//                    else
+//                        $("#lblExField2").text(data.ExField2);
+
+//                    if (data.ExField3 == "")
+//                        $("#divField3").hide();
+//                    else
+//                        $("#lblExField3").text(data.ExField3);
+
+//                    if (data.ExId == "")
+//                        $("#divExId").hide();
+//                    else
+//                        $("#lblExId").text(data.ExId);
+
+//                }
+//            },
+//            error: function (jqXHR, status, error) {
+//                app_dialog.alert(error);
+//            }
+//        });
+//    }
+//};

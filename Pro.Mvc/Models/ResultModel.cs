@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -45,6 +46,11 @@ namespace Pro.Mvc.Models
                 Message = "עודכן בהצלחה";
             else if (status < 0)
                 Message = "אירעה שגיאה, הנתונים לא עודכנו";
+        }
+
+        public string ToJson()
+        {
+            return JsonConvert.SerializeObject(this);
         }
 
         //public ResultModel(int status,string action)

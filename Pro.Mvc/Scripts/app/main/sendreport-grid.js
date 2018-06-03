@@ -242,16 +242,16 @@ app_sendreport_grid = {
                    text: 'מספר פעולה', dataField: 'MessageId', width: 100, cellsalign: 'right', align: 'center'
                },
                 {
-                    text: '  נמען  ', dataField: 'Target', cellsalign: 'right', align: 'center'
+                    text: '  נמען  ', dataField: 'Target', width: 150, cellsalign: 'right', align: 'center'
                 },
               {
-                  text: 'פרסונאל', dataField: 'Personal', cellsalign: 'right', align: 'center'
+                  text: 'פרסונאל', dataField: 'Personal', width: 150, cellsalign: 'right', align: 'center'
               },
               {
-                  text: 'יחי-חיוב', dataField: 'Units', width: 100, cellsalign: 'right', align: 'center'
+                  text: 'יחי-חיוב', dataField: 'Units', width: 80, cellsalign: 'right', align: 'center'
               },
              {
-                 text: 'מחיר', dataField: 'Price', width: 100, cellsalign: 'right', align: 'center'
+                 text: 'מחיר', dataField: 'Price', width: 80, cellsalign: 'right', align: 'center'
              },   
              {
                  text: 'מס-שליחה', dataField: 'BatchId', width: 100, cellsalign: 'right', align: 'center', filtertype: 'equal'
@@ -260,9 +260,9 @@ app_sendreport_grid = {
                  text: 'מס-סידורי', dataField: 'ItemIndex', width: 100, cellsalign: 'right', align: 'center', filtertype: 'equal'
              },
               {
-                  text: 'סטאטוס', dataField: 'StatusName', width: 150, cellsalign: 'right', align: 'center'
+                  text: 'סטאטוס', dataField: 'StatusName', width: 80, cellsalign: 'right', align: 'center'
               },
-              { text: 'מועד שליחה', type: 'date', dataField: 'SentTime', filtertype: 'range', width: 180, cellsformat: 'd', cellsalign: 'right', align: 'center' }
+              { text: 'מועד שליחה', type: 'date', dataField: 'SentTime', filtertype: 'range', width: 150, cellsformat: 'd', cellsalign: 'right', align: 'center' }
             ]
         });
     },

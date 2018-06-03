@@ -1,0 +1,300 @@
+﻿@model Pro.Mvc.Models.EditTaskModel
+@{
+    //ViewBag.Title = "System";
+    Layout = "~/Views/Shared/_View.cshtml";
+    var dataModel = @Html.Raw(Json.Encode(Model)); 
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+    
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js?ver=20180001"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/task-reminder.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
+
+    <script src="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.js"></script>
+    <link href="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.css" rel="stylesheet" />
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+         select {
+            direction: rtl;
+            text-align: right;
+        }
+        #TaskBody{
+            min-height:100px;border:solid 1px #c7c1c1;background-color:#fff;overflow-x:hidden;
+        }
+        #jqxExp-1 {
+            border: solid 1px #dbd6d6;
+        }
+    </style>
+
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+        var theme = 'nis_metro';
+    //var wizard;
+    var task_def;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var uinfo = JSON.parse('@userInfo');
+
+        //wizard = new app_wiztabs();
+        //wizard.displayStep(1);
+
+        task_def = new app_reminder(JSON.parse('@dataModel'), uinfo, 'R');
+        task_def.init();
+        @*task_def = app_reminder.init(JSON.parse('@dataModel') , uinfo, 'R');*@
+
+
+        //$('#reset').on('click', function () {
+        //    location.reload();
+        //});
+
+        //$('#fcClear').on('click', function (e) {
+        //    //app_messenger.Post("הודעה");
+        //    $('#fcForm')[0].reset();
+        //    $('#fcForm').jqxValidator('hide');
+        //});
+
+        //$('#fcCancel').on('click', function (e) {
+        //    task_def.doCancel();
+        //});
+        //$('#fcSubmit').on('click', function (e) {
+        //    task_def.doSubmit();
+        //});
+        //$('#fcFinished').on('click', function (e) {
+        //    task_def.doSubmit('finished');
+        //});
+    });
+
+    </script>
+}
+
+<div class="breadcrumbs">
+</div>
+
+
+<div class="global-view">
+    <div id="wiz-container" class="container">
+
+        <div id="hTitle" class="panel-page-header rtl">
+            <span id="hTitle-text" style="margin:10px">תזכורת</span>
+        </div>
+        <div style="height:5px"></div>
+
+            <div id="accordion" style="margin: 0 auto; display: block; direction: rtl">
+               
+                        <div id="exp-0" class="panel-area">
+                            <div id="hxp-0" class="panel-area-title">תזכורת</div>
+                            <div class="expander-entry" style="margin:10px">
+                                <form class="fcForm" id="fcForm" method="post" action="/System/ReminderUpdate">
+                                    <input type="hidden" id="TaskId" name="TaskId" value="0" />
+                                    <input type="hidden" id="TaskModel" name="TaskModel" value="R" />
+                                    <input type="hidden" id="AccountId" name="AccountId" value="" />
+                                    <input type="hidden" id="UserId" name="UserId" value="" />
+                                    <input type="hidden" id="TeamId" name="TeamId" value="" />
+                                    @*<input type="hidden" id="Task_Parent" name="Task_Parent" value="" />*@
+                                    @*<input type="hidden" id="TaskStatus" name="TaskStatus" value="1" />*@
+                                    <input type="hidden" id="Task_Type" name="Task_Type" value="0" />
+
+                                    <div id="tab-content" class="tab-content" dir="rtl">
+                                        <div class="form-group">
+                                            <div class="field">
+                                                אל:
+                                            </div>
+                                            <div id="AssignTo"></div>
+                                        </div>
+                                        <div class="form-group" id="TaskSubject-div">
+                                            <div class="field">
+                                                נושא:
+                                            </div>
+                                            <input id="TaskSubject" name="TaskSubject" type="text" style="width:80%;max-width:600px;" />
+                                        </div>
+                                        <div class="form-group" id="TaskBody-div">
+                                            <div class="field">
+                                                תיאור: <span><a id="TaskBody-btn-view" href="#"><i class="fa fa-search-plus" style="font-size:16px"></i></a></span>
+                                            </div>
+                                            <textarea id="TaskBody" name="TaskBody" class="text-content"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                תאריך לביצוע:
+                                            </div>
+                                            <div id="DueDate" name="DueDate"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                אופן התזכור:
+                                            </div>
+                                            <select id="RemindPlatform">
+                                                <option selected value="0">מערכת</option>
+                                                <option value="1">מסרון</option>
+                                                <option value="2">דואר אלקטרוני</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group pasive">
+                                            <div class="field">
+                                                צבע :
+                                            </div>
+                                            <select id="ColorFlag" name="ColorFlag">
+                                                <option value="#46d6db">Turquoise</option>
+                                                <option value="#7bd148">Green</option>
+                                                <option value="#5484ed">Bold blue</option>
+                                                <option value="#a4bdfc">Blue</option>
+                                                <option value="#7ae7bf">Light green</option>
+                                                <option value="#51b749">Bold green</option>
+                                                <option value="#fbd75b">Yellow</option>
+                                                <option value="#ffb878">Orange</option>
+                                                <option value="#ff887c">Red</option>
+                                                <option value="#dc2127">Bold red</option>
+                                                <option value="#dbadff">Purple</option>
+                                            </select>
+                                        </div>
+                                        <div id="TaskStatus-group" class="form-group">
+                                            <div class="field">
+                                                סטאטוס :
+                                            </div>
+                                            <input type="text" id="TaskStatus" name="TaskStatus" class="text-normal" readonly />
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                נוצר ב:
+                                            </div>
+                                            <input type="text" id="CreatedDate" name="CreatedDate" class="text-mid label" readonly="readonly" data-type="datetime" />
+                                        </div>
+
+                                        <div id="jqxExp-1" class="panel-area rtl">
+
+                                            <div class="panel-area-title">
+                                                <a id="a-jqxExp-1" href="#">פרטים נוספים</a>
+                                            </div>
+
+                                            @*<div class="panel-area-title">
+                פרטים נוספים
+            </div>
+            <div class="panel-area rtl" style="border:none">*@
+                                            <div id="jqxExp-box" style="display:none">
+                                                <div id="Task_Parent-group" class="form-group">
+                                                    <div class="field">
+                                                        משימת אב:
+                                                    </div>
+                                                    <input type="text" id="Task_Parent" name="Task_Parent" readonly /><a id="Task_Parent-link" href="#" title="הצג משימת אב"><i class="fa fa-search-plus"></i></a>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        פרוייקט:
+                                                    </div>
+                                                    <input type="text" id="Project_Id" name="Project_Id" /><i class="fa fa-search"></i>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        לקוח\מנוי:
+                                                    </div>
+                                                    <input type="text" id="ClientId" name="ClientId" /><i class="fa fa-search"></i>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        תגיות:
+                                                    </div>
+                                                    <div id="Tags" name="Tags"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="height: 5px"></div>
+                                        <div class="panel-areaB">
+                                            <input id="fcSubmit" class="btn-default btn7 w-60" type="button" value="עדכון" />
+                                            <input id="fcEnd" class="btn-default btn7 w-60" style="display:none" type="button" value="סיום" />
+                                            <input id="fcCancel" class="btn-default btn7 w-60" type="button" value="x" />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+           
+            </div>
+   
+     </div>
+</div>
+<!--end of content-wrapper-->
+<!--footer-->
+<footer>
+    <div class="container">
+        <div class="thumbnail-footer">
+            <figure><img src="~/images/site/page1_icon1.png" alt=""></figure>
+        </div>
+        <div class="col-lg-12">
+            <ul class="follow_icon rtl">
+                <li class="padding-r10">
+                    <a href="~/System/Calendar" title="יומן">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> יומן
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/TaskUser" title="משימות">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> משימות
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/AdUsersDef" title="משתמשים">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> משתמשים
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/AdDef" title="קבוצות">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> קבוצות
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/AdTeamDef" title="צוותים">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> צוותים
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <hr style="width:50%;">
+        <div class="col-lg-12">
+            <ul class="follow_icon rtl">
+                <li class="padding-r10">
+                    <a href="~/System/TaskNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> משימה חדשה
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/TicketNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> כרטיס
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/ReminderNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> תזכורת
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/Tasks">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> דוח משימות
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</footer> 
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
+</script>
+
+
+

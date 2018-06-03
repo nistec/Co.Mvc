@@ -59,7 +59,7 @@ namespace ProSystem.Data.Entities
         {
             return DbContextCache.EntityList<DbSystem, CalendarItem>(CacheKey, new object[] { "CalendarId", CalendarId });
         }
-        protected override void OnChanged(UpdateCommandType commandType)
+        protected override void OnChanged(ProcedureType commandType)
         {
             DbContextCache.Remove(CacheKey);
         }

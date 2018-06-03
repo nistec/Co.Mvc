@@ -12,6 +12,21 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,26 +50,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Nistec.Channels, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Sources\Nistec.Channels.dll</HintPath>
-    </Reference>
-    <Reference Include="Nistec.Data, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Sources\Nistec.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Nistec.Imex, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Sources\Nistec.Imex.dll</HintPath>
-    </Reference>
-    <Reference Include="Nistec.Lib, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Sources\Nistec.Lib.dll</HintPath>
-    </Reference>
-    <Reference Include="Nistec.Logger, Version=4.0.2.0, Culture=neutral, PublicKeyToken=734a739868a76423, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Sources\Nistec.Logger.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
@@ -85,6 +80,30 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Channels\Nistec.Channels\Nistec.Channels.csproj">
+      <Project>{0839a364-a34d-4143-ad4c-aef4c7b232ac}</Project>
+      <Name>Nistec.Channels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Data\Nistec.Data\Nistec.Data.csproj">
+      <Project>{d5fd6c68-86ea-48bf-8f6d-29ce57419500}</Project>
+      <Name>Nistec.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Imex\Nistec.Imex.csproj">
+      <Project>{d88a851b-a6d6-4f42-85d4-b1caf36fdacc}</Project>
+      <Name>Nistec.Imex</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Lib\Nistec.Lib.csproj">
+      <Project>{54f52ed5-aecd-47c6-93d8-7b3358ba7f8c}</Project>
+      <Name>Nistec.Lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Logger\Nistec.Logger.csproj">
+      <Project>{e510dd2c-859c-476c-9901-60edfc5e71f1}</Project>
+      <Name>Nistec.Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Web\Nistec.Web.csproj">
+      <Project>{8c4cff01-180e-41a1-9234-0c1b1e207ae5}</Project>
+      <Name>Nistec.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Pro.Server\Pro.Server.csproj">
       <Project>{14363797-b532-4d77-9b48-cf8614076079}</Project>
       <Name>Pro.Server</Name>
@@ -97,6 +116,13 @@
       <Project>{08ee976c-6767-40d0-9c07-b6c5afb9dba1}</Project>
       <Name>Pro.System</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

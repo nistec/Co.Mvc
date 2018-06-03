@@ -25,6 +25,90 @@ namespace Pro.Mvc.Controllers
     public class CommonController : BaseController
     {
 
+        #region Lookups
+
+        [HttpPost]
+        public JsonResult Lookup_Autocomplete(string type, string search)
+        {
+            int accountId = GetAccountId();
+            var list = DbLookups.Autocomplete(accountId, type, search);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult Lookup_DisplayList(string type)
+        {
+            int accountId = GetAccountId();
+            var list = DbLookups.DisplayList(accountId, type);
+            return Json(list, JsonRequestBehavior.AllowGet);
+
+        }
+
+        [HttpPost]
+        public JsonResult Lookup_GetList(string type)
+        {
+            int accountId = GetAccountId();
+
+            switch (type)
+            {
+                case "members":
+                    return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "BranchId", "BranchName", "lu_Members", accountId), JsonRequestBehavior.AllowGet);
+                case "branch":
+                    return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "BranchId", "BranchName", "Branch", accountId), JsonRequestBehavior.AllowGet);
+                case "charge":
+                    return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "ChargeId", "ChargeName", "Charge", accountId), JsonRequestBehavior.AllowGet);
+                case "city":
+                    return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "CityId", "CityName", "Cities", accountId), JsonRequestBehavior.AllowGet);
+                //case "place":
+                //    return Json(EntityPro.ViewEntityList<PlaceView>(EntityGroups.Enums, PlaceView.TableName, accountId), JsonRequestBehavior.AllowGet);
+                case "region":
+                    return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "RegionId", "RegionName", "Region", accountId), JsonRequestBehavior.AllowGet);
+                case "category":
+                    return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "CategoryId", "CategoryName", "Categories", accountId), JsonRequestBehavior.AllowGet);
+                case "role":
+                    return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "RoleId", "RoleName", "Roles", accountId), JsonRequestBehavior.AllowGet);
+                case "status":
+                    return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "StatusId", "StatusName", "Status", accountId), JsonRequestBehavior.AllowGet);
+                case "enum1":
+                case "exenum1":
+                    return Json(DbLookups.ViewEnumList(EntityGroups.Enums, "PropId", "PropName", "Enum", accountId, 1), JsonRequestBehavior.AllowGet);
+                case "enum2":
+                case "exenum2":
+                    return Json(DbLookups.ViewEnumList(EntityGroups.Enums, "PropId", "PropName", "Enum", accountId, 1), JsonRequestBehavior.AllowGet);
+                case "enum3":
+                case "exenum3":
+                    return Json(DbLookups.ViewEnumList(EntityGroups.Enums, "PropId", "PropName", "Enum", accountId, 1), JsonRequestBehavior.AllowGet);
+                default:
+                    return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "Value", "Label", type, accountId), JsonRequestBehavior.AllowGet);
+
+                    //return Json(null, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult Lookup_EnumList(int type)
+        {
+            int accountId = GetAccountId();
+            return Json(DbLookups.ViewEnumList(accountId, type), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult Lookup_MemberDisplay(int id)
+        {
+            int accountId = GetAccountId();
+            var value = DbLookups.Member_Display("DisplayName", "AccountId", accountId, "RecordId", id);
+            return Json(value);// ContentModel.Get(value), JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult Lookup_UserDisplay(int id)
+        {
+            int accountId = GetAccountId();
+            var value = DbLookups.UserProfile("DisplayName", "AccountId", accountId, "UserId", id);
+            return Json(value);// ContentModel.Get(value), JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
         #region Common Properties
 
         [HttpPost]
@@ -1137,29 +1221,6 @@ namespace Pro.Mvc.Controllers
         #endregion
 
 
-        [HttpPost]
-        public JsonResult Lookup_Autocomplete(string type,string search)
-        {
-            int accountId = GetAccountId();
-            var list = DbLookups.Autocomplete(accountId, type, search);
-            return Json(list, JsonRequestBehavior.AllowGet);
-        }
-
-         [HttpPost]
-        public JsonResult Lookup_DisplayList(string type)
-        {
-            int accountId = GetAccountId();
-            var list=DbLookups.DisplayList(accountId,type);
-            return Json(list, JsonRequestBehavior.AllowGet);
-
-        }
-        [HttpPost]
-        public JsonResult Lookup_MemberDisplay(int id)
-        {
-            int accountId = GetAccountId();
-            var value = DbLookups.Member_Display("DisplayName","AccountId", accountId, "RecordId", id);
-            return Json(ContentModel.Get(value), JsonRequestBehavior.AllowGet);
-        }
 
 
         //public ViewResult _MemberDlg()

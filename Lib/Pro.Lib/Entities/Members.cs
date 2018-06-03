@@ -584,12 +584,12 @@ namespace Pro.Data.Entities
     {
         public static void Refresh(int AccountId)
         {
-            DbContextCache.Remove<T>(Settings.ProjectName, EntityCacheGroups.Members, AccountId, 0);
+            DbContextCache.Remove<T>(Settings.ProjectName, EntityGroups.Members, AccountId, 0);
         }
         public MemberContext(int accountId)
         {
             if (accountId > 0)
-                CacheKey = DbContextCache.GetKey<T>(Settings.ProjectName, EntityCacheGroups.Members, accountId, 0);
+                CacheKey = DbContextCache.GetKey<T>(Settings.ProjectName, EntityGroups.Members, accountId, 0);
         }
         public IList<T> GetList()
         {
@@ -599,7 +599,7 @@ namespace Pro.Data.Entities
         {
             return DbContextCache.EntityList<DbPro, T>(CacheKey, new object[] { "AccountId", accountId });
         }
-        protected override void OnChanged(UpdateCommandType commandType)
+        protected override void OnChanged(ProcedureType commandType)
         {
             DbContextCache.Remove(CacheKey);
         }
@@ -610,7 +610,7 @@ namespace Pro.Data.Entities
 
     }
 
-    public class MemberListView : IEntityItem
+    public class MemberListView : IEntityItem,IEntityListItem
     {
 
         //public const string MappingName = "vw_Members";
@@ -632,8 +632,10 @@ namespace Pro.Data.Entities
         [EntityProperty(EntityPropertyType.Identity)]
         public int RecordId { get; set; }
 
+
         #region view
-        
+        public string CompanyName { get; set; }
+
         public string MemberName { get; set; }
         public string CityName { get; set; }
         public string BranchName { get; set; }

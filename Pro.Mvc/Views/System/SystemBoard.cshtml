@@ -1,0 +1,81 @@
+﻿@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    ViewBag.Title = "Tasks";
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    <script src="~/Scripts/app/system/system-models.js"></script>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+   
+    var theme = 'nis_metro';
+    $(document).ready(function () {
+        JSON.useDateParser();
+       
+  });
+
+    </script>
+}
+
+
+<div class="breadcrumbs">
+</div>
+<div class="top-space"></div>
+
+<div class="global-view">
+    <div class="container-box">
+
+        <div id="hTitle" class="panel-page-header rtl">
+            <span id="hTitle-text" style="margin:10px">ניהול</span>
+        </div>
+        <div style="height:5px"></div>
+
+        <div id="task-Board" class="rtl">
+         
+        </div>
+
+
+        @*<div class="panel-area">
+            <div class="panel-area-title" id="hxp-title">צור</div>
+            <ul class="rtl">
+                <li class="padding-r10">
+                    <a href="~/System/TopicNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i><span> סוגיה </span>
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/TaskNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i><span> משימה </span>
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/ReminderNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i><span> תזכורת </span>
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/TicketNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i><span> כרטיס </span>
+                    </a>
+                </li>
+            </ul>
+        </div>*@
+
+    </div>
+</div>
+
+<!--footer-->
+<footer>
+</footer> 
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("System", "Tasks", 'en');
+    app_menu.footer("task");
+    app_task_model.taskBoard("#task-Board");
+</script>
+

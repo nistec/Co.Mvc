@@ -1,0 +1,185 @@
+﻿@model ProSystem.Query.TaskQuery
+@{
+    Layout = "~/Views/Shared/_View.cshtml";
+    ViewBag.Title = "Tasks";
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+<script src="~/jqwidgets/jqxgrid.grouping.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/report-tasks-grid.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+
+        /*.jqx-grid-cell {
+            border: none;
+        }
+        .wiz-tab {
+            display:none;
+        }
+        .wiz-tab.active {
+             display: block;
+        }*/
+    .green {
+        color:black\9;
+        background-color: #19a709;
+    }
+    .yellow {
+        color: black\9;
+        background-color: yellow;
+    }
+    .red {
+        color: black\9;
+        background-color: #e83636;
+    }
+    .green:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .green:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: #19a709;
+    }
+   .yellow:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .yellow:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: yellow;
+    }
+    .red:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .red:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: #e83636;
+    }
+</style>
+
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    
+        var theme = 'nis_metro';
+    $(document).ready(function () {
+        JSON.useDateParser();
+    
+        task_grid = app_tasks_grid.load(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
+
+        app_jqxgrid.gridFilterEx(this, $("#grid-toolbar"), columnList, dateList);
+
+        $("#tbFilter").jqxButton({ width: 16, height: 16 });
+        $("#tbFilterRemove").jqxButton({ width: 16, height: 16 });
+
+        $("#tbFilter").on('click', function () {
+            task_grid.reload();
+        });
+        $("#tbFilterRemove").on('click', function () {
+            $("#chkAssignBy").prop("checked", false);
+            $("#rdStateAll").prop("checked", true);
+            $('#TaskState').val(0);
+            task_grid.reload();
+        });
+        $("#chkAssignBy").on('change', function () {
+            task_grid.reload();
+        });
+
+        $('#tb_form input').on('change', function () {
+            var state = $('input[name=TaskState]:checked').val();//$('input[name=TaskState]:checked', '#tb_form').val();
+            $('#TaskState').val(state);
+            //app_jqxgrid.searchFilter('TaskStatus', state, 'EQUAL', "#jqxgrid");
+            task_grid.reload();
+            //alert($('#TaskState').val());
+        });
+
+  });
+
+        
+
+        //function triggerCategoriesComplete(memid) {
+        //    members_categoriesRefresh();
+        //    app_dialog.dialogClose(members_grid.NScustomers.categoriesDialog);
+        //};
+
+        //function members_categoriesRefresh() {
+        //    members_grid.categoriesRefresh();
+        //};
+        //function members_categoriesDelete(id, rcdid) {
+        //    members_grid.categoriesDelete(id, rcdid);
+        //}
+
+       
+        var columnList = [
+         { label: 'מספר משימה', value: 'TaskId', checked: false },
+         { label: 'סוג משימה', value: 'TaskTypeName', checked: false },
+         { label: 'פרוייקט', value: 'ProjectName', checked: false },
+         { label: 'מבצע המשימה', value: 'DisplayName', checked: false },
+         { label: 'יוצר המשימה', value: 'AssignByName', checked: false },
+         { label: 'סטאטוס', value: 'StatusName', checked: false },
+         { label: 'נושא', value: 'TaskSubject', checked: false },
+         { label: 'לקוח', value: 'ClientDetails', checked: false },
+         { label: 'תוכן', value: 'TaskBody', checked: false }
+        ];
+        var dateList = [
+         { label: 'מועד רישום', value: 'CreatedDate', checked: false },
+         { label: 'מועד לביצוע', value: 'DueDate', checked: false },
+         { label: 'מועד עדכון', value: 'LastUpdate', checked: false },
+         { label: 'מועד התחלה', value: 'StartedDate', checked: false },
+         { label: 'מועד סיום', value: 'EndedDate', checked: false },
+         { label: 'מועד התחלה משוער', value: 'EstimateStartTime', checked: false }
+        ];
+
+        
+
+    </script>
+}
+
+
+<div class="breadcrumbs">
+</div>
+<div class="top-space"></div>
+
+<div class="global-view">
+    <div class="container">
+        <h3 class="rtl"><label>ניהול משימות</label> <label title="משימה חדשה"><a href="~/System/TaskNew?pid=0"><i class="fa fa-newspaper-o"></i></a></label></h3>
+        <div class="grid-wrap rtl">
+            <div id="grid-toolbar-options" class="grid-toolbar" style="font-size: 80%;">
+                <form id="tb_form">
+                    <input type="hidden" id="TaskState" value="0" />
+                    <div style="height:5px"></div>
+                    <div style="display:inline;float:right">
+                        <input type="checkbox" id="chkAssignBy" /><span>הצג משימות שנוצרו על ידי בלבד</span>
+                        <span> | </span>
+                        <span>הצג משימות</span>
+                        <input type="radio" name="TaskState" value="1" /><span>ממתינות בלבד</span>
+                        <input type="radio" name="TaskState" value="2" /><span>פעילות בלבד</span>
+                        <input type="radio" name="TaskState" value="16" /><span>סגורות בלבד</span>
+                        <input type="radio" name="TaskState" value="0" id="rdStateAll" checked="checked" /><span>הכל</span>
+                        <span> . </span>
+                    </div>
+
+                    <div id="tbFilter" style="margin-left: 5px; float: right; " title='סינון'><img src='../scripts/app/images/filter.gif'></div>
+                    <div id="tbFilterRemove" style="margin-left: 5px; float: right;" title='ביטול סינון'><img src='../scripts/app/images/filterRemove.gif'></div>
+                </form>
+            </div>
+            <div id="grid-toolbar" class="grid-toolbar"></div>
+
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--footer-->
+<footer>
+</footer> 
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("System", "Tasks", 'en');
+    app_menu.footer("task");
+</script>
+

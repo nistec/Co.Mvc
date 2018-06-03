@@ -10,7 +10,7 @@ using ProSystem;
 
 namespace ProSystem.Data.Entities
 {
-
+    
     public class AdContext<T> : EntityContext<DbSystem, T> where T : IEntityItem
     {
         public static void Refresh(int AccountId)
@@ -38,7 +38,7 @@ namespace ProSystem.Data.Entities
         {
             return DbContextCache.EntityList<DbSystem, T>(CacheKey, new object[] { "AccountId", accountId });
         }
-        protected override void OnChanged(UpdateCommandType commandType)
+        protected override void OnChanged(ProcedureType commandType)
         {
             DbContextCache.Remove(CacheKey);
         }

@@ -13,12 +13,12 @@
     <title>@ViewBag.Title</title>
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <!--CSS-->
-    <link rel="stylesheet" href="~/Content/css/reset.css">
-    <link rel="stylesheet" href="~/Content/css/style.css">
+    @*<link rel="stylesheet" href="~/Content/css/reset.css">*@
+    <link rel="stylesheet" href="~/Content/css/style-rtl.css">
     <link rel="stylesheet" href="~/Content/css/view-form.css" type="text/css" />
     <link href="~/Content/fonts/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/jqwidgets/styles/jqx.base.css" type="text/css" />
-    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.arctic.css" type="text/css" />
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.nis_metro.css" type="text/css" />
     <link rel="stylesheet" href="~/scripts/plagins/sidebar/css/style-rtl.css">
     <link href="~/Scripts/jq/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet" />
     @*<script src="~/scripts/plagins/sidebar/js/modernizr.js"></script>*@
@@ -45,30 +45,6 @@
     <link href="~/Scripts/HubSpot/messenger/css/messenger-rtl.css" rel="stylesheet" />
     <link href="~/Scripts/HubSpot/messenger/css/messenger-theme-flat.css" rel="stylesheet" />
 
-    @*<script src="~/Scripts/HubSpot/tether/js/tether.min.js"></script>
-    <script src="~/Scripts/HubSpot/drop/js/drop.min.js"></script>
-    <link href="~/Scripts/HubSpot/drop/css/drop-theme-arrows.css" rel="stylesheet" />*@
-
-   
-
-     @*<script src="~/Scripts/plagins/popbox/bpopup.js"></script>
-     <link rel="stylesheet" href="~/Scripts/plagins/popbox/bpopup.css" type="text/css" />*@
-
-    @*<script src="~/Scripts/bootstrap/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">*@
-
-    @*<script src="~/Scripts/plagins/cssmenu/cssmenu.js"></script>
-    <link rel="stylesheet" href="~/Scripts/plagins/cssmenu/cssmenu-rtl.css">*@
-
-@*    <script src="~/Scripts/plagins/modal.js"></script>*@
-
- 
-    @*<script src="~/Scripts/plagins/vex/vex.combined.min.js"></script>
-    <link rel="stylesheet" href="~/Scripts/plagins/vex/css/vex.css" />
-    <link rel="stylesheet" href="~/Scripts/plagins/vex/css/vex-theme-os.css" />
-    <script>
-        vex.defaultOptions.className = 'vex-theme-os';
-    </script>*@
 
    @RenderSection("head", required: false)
  
@@ -122,40 +98,40 @@
                     <a href="#0">מנויים</a>
                     <ul class="submeunav">
                         @*<li>
-                            <a href="~/Main/MembersQuery" title="מנויים">
-                                <img src="~/Images/icons/item.png" alt="" />איתור מנויים
-                            </a>
-                        </li>*@
+                                <a href="~/Main/MembersQuery" title="מנויים">
+                                    <i class="fa fa-angle-double-left" style="font-size:20px"></i> איתור מנויים
+                                </a>
+                            </li>*@
                         <li>
                             <a href="~/Main/Members" title="מנויים">
-                                <img src="~/Images/icons/item.png" alt="" />רשימת מנויים
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> רשימת מנויים
                             </a>
                         </li>
-                        @*<li>
-                            <a href="~/Main/MemberEdit" title="הוספת מנוי">
-                                <img src="~/Images/icons/item.png" alt="" />הוספת מנוי
+                        <li>
+                            <a href="~/Main/MembersAdd" title="הוספת מנוי">
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> הוספת מנוי
                             </a>
-                        </li>*@
+                        </li>
                         <li>
                             <a href="~/Main/MembersUpload" title="קליטה מקובץ">
-                                <img src="~/Images/icons/item.png" alt="" />קליטה מקובץ
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> קליטה מקובץ
                             </a>
                         </li>
                         @*<li>
-                            <a href="~/Main/MembersRemove" title="הסרת מנויים">
-                                <img src="~/Images/icons/item.png" alt="" />הסרת מנויים
-                            </a>
-                        </li>*@
+                                <a href="~/Main/MembersRemove" title="הסרת מנויים">
+                                    <i class="fa fa-angle-double-left" style="font-size:20px"></i> הסרת מנויים
+                                </a>
+                            </li>*@
                         <li>
                             <a href="~/Main/PaymentsQuery" title="תשלומים">
-                                <img src="~/Images/icons/item.png" alt="" />איתור תשלומים
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> איתור תשלומים
                             </a>
                         </li>
                         @*<li>
-                            <a href="~/Main/SignupQuery" title="איתור נרשמים">
-                                <img src="~/Images/icons/item.png" alt="" />איתור נרשמים
-                            </a>
-                        </li>*@
+                                <a href="~/Main/SignupQuery" title="איתור נרשמים">
+                                    <i class="fa fa-angle-double-left" style="font-size:20px"></i> איתור נרשמים
+                                </a>
+                            </li>*@
 
                     </ul>
                 </li>
@@ -165,22 +141,22 @@
                     <ul class="submeunav">
                         <li>
                             <a href="~/Main/SmsBroadcast">
-                                <img src="~/Images/icons/item.png" alt="" />שליחת מסרון
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> שליחת מסרון
                             </a>
                         </li>
                         <!--<li>
-                        <a href="~/Main/SmsMultimedia">
-                            <img src="~/Images/icons/item.png" alt="" />שליחת מסרון מולטימדיה
-                        </a>
-                    </li>-->
+                            <a href="~/Main/SmsMultimedia">
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> שליחת מסרון מולטימדיה
+                            </a>
+                        </li>-->
                         <li>
                             <a href="~/Main/EmailBroadcast">
-                                <img src="~/Images/icons/item.png" alt="" />שליחת דואר אלקטרוני
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> שליחת דואר אלקטרוני
                             </a>
                         </li>
                         <li>
                             <a href="~/Main/SendQuery">
-                                <img src="~/Images/icons/item.png" alt="" />דוחות דיוור
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> דוחות דיוור
                             </a>
                         </li>
                     </ul>
@@ -191,27 +167,27 @@
                     <ul class="submeunav">
                         <li>
                             <a href="~/Common/DefCategory">
-                                <img src="~/Images/icons/item.png" alt="" />סיווגים
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> סיווגים
                             </a>
                         </li>
                         <li>
                             <a href="~/Common/DefPrice">
-                                <img src="~/Images/icons/item.png" alt="" />מחירון
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> מחירון
                             </a>
                         </li>
                         <li>
                             <a href="~/Common/DefCampaign">
-                                <img src="~/Images/icons/item.png" alt="" />קמפיין
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> קמפיין
                             </a>
                         </li>
                         <li>
                             <a href="~/Common/DefEntity?entity=branch">
-                                <img src="~/Images/icons/item.png" alt="" />הגדרות כלליות
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> הגדרות כלליות
                             </a>
                         </li>
                         <li>
                             <a href="~/Common/DefCity">
-                                <img src="~/Images/icons/item.png" alt="" />יישובים
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> יישובים
                             </a>
                         </li>
                     </ul>
@@ -222,7 +198,7 @@
                     <ul>
                         <li>
                             <a href="~/Report/ReportQuery" title="דוחות התפלגות נתונים">
-                                <img src="~/Images/icons/item.png" alt="" />דוחות סטטיסטיים
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> דוחות סטטיסטיים
                             </a>
                         </li>
                     </ul>
@@ -233,62 +209,62 @@
                     <ul>
                         <li>
                             <a href="~/Cms/CmsWizardPages" title="עריכת תוכן כללי">
-                                <img src="~/Images/icons/item.png" alt="" />עריכת תוכן כללי
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> עריכת תוכן כללי
                             </a>
                         </li>
                         <li>
                             <a href="~/Cms/CmsWizardForm" title="עריכת טופס רישום">
-                                <img src="~/Images/icons/item.png" alt="" />עריכת טופס רישום
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> עריכת טופס רישום
                             </a>
                         </li>
                         <li>
                             <a href="~/Cms/CmsMedia" title="מדיה">
-                                <img src="~/Images/icons/item.png" alt="" />מדיה
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> מדיה
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li id="liSystem" class="nbr-has-children users">
-                    <a href="#0">ניהול</a>
+                    <a id="liSystem-a" href="~/System/SystemBoard">ניהול</a>
                     <ul>
                         <li>
                             <a href="~/System/Calendar" title="יומן">
-                                <img src="~/Images/icons/item.png" alt="" />יומן
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> יומן
                             </a>
                         </li>
                         <li>
                             <a href="~/System/TaskUser" title="משימות">
-                                <img src="~/Images/icons/item.png" alt="" />משימות
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> משימות
                             </a>
                         </li>
                         <li>
                             <a href="~/System/AdUsersDef" title="משתמשים">
-                                <img src="~/Images/icons/item.png" alt="" />משתמשים
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> משתמשים
                             </a>
                         </li>
                         <li>
                             <a href="~/System/AdDef" title="קבוצות">
-                                <img src="~/Images/icons/item.png" alt="" />קבוצות
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> קבוצות
                             </a>
                         </li>
                         <li>
                             <a href="~/System/AdTeamDef" title="צוותים">
-                                <img src="~/Images/icons/item.png" alt="" />צוותים
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> צוותים
                             </a>
                         </li>
                         @*<li>
-                            <a href="~/System/DefUser"><img src="~/Images/icons/item.png" alt="" />פרטים</a>
-                        </li>*@
+                                <a href="~/System/DefUser"><i class="fa fa-angle-double-left" style="font-size:20px"></i> פרטים</a>
+                            </li>*@
                         <li>
-                            <a href="~/Account/Logoff"><img src="~/Images/icons/item.png" alt="" />יציאה</a>
+                            <a href="~/Account/Logoff"><i class="fa fa-angle-double-left" style="font-size:20px"></i> יציאה</a>
                         </li>
                     </ul>
                 </li>
             </ul>
             <!--<ul style="direction:rtl">
-            <li class="nbr-label">משני</li>
+                <li class="nbr-label">משני</li>
 
-        </ul>-->
+            </ul>-->
             <!--<ul>
                  <li class="nbr-label">פעולות</li>
                  <li class="action-btn"><a href="#0">+ הפעלה</a></li>
@@ -311,109 +287,109 @@
     </main> <!-- .nbr-main-content -->
     <!--footer-->
     <footer class="footer">
-        
-                <div class="container" style="margin-top:0px;margin-bottom:30px">
-                    <div class="row" style="width:100%">
-                        <div class="col-lg-12">
-                            <figure><img src="~/images/site/page1_icon1.png" alt=""></figure>
-                            <p class="title">מה חדש</p>
-                            <span class="hr"><em></em></span>
-                            <p>ובכן הרבה.</p>
-                           
-                        </div>
+
+        @*<div class="container" style="margin-top:0px;margin-bottom:30px">
+                <div class="row" style="width:100%">
+                    <div class="col-lg-12">
+                        <figure><img src="~/images/site/page1_icon1.png" alt=""></figure>
+                        <p class="title">מה חדש</p>
+                        <span class="hr"><em></em></span>
+                        <p>ובכן הרבה.</p>
+
                     </div>
                 </div>
+            </div>*@
 
-        <hr style="width:50%;">
-           @*
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <ul class="follow_icon">
-                        <li style="width:20%">
-                            <div class="caption-footer">
-                                <p class="description-footer">דיווח על תקלה</p>
-                                <p>לדווח על תקלה , באג או כל הערה תתקבל בברכה ותיענה בהקדם האפשרי.</p>
-                                <a href="/System/TicketNew" class="btn-default btn1">פתיחת כרטיס <span></span></a>
-                            </div>
-                        </li>
-                        <li style="width:20%">
-                            <div class="caption-footer">
-                                <p class="description-footer">הרצאות מומחה</p>
-                                <p>להזמנת הרצאה מקצועית בתחום השיווק האטומטי.</p>
-                                <a href="#" class="btn-default btn1">הזמנה <span></span></a>
-                            </div>
-                        </li>
-                        <li style="width:20%">
-                            <div class="caption-footer">
-                                <p class="description-footer">תמיכה מקצועית</p>
-                                <p>לקבלת הדרכה והצעות לשימושים האפשריים בארגון .</p>
-                                <a href="#" class="btn-default btn1">בקשה <span></span></a>
-                            </div>
-                        </li>
-                        <li style="width:20%">
-                            <div class="caption-footer">
-                                <p class="description-footer">שיתוף עסקי</p>
-                                <p>מייטי פתוחה להצעות לשיתוף עסקי, כל יוזמה תתקבל בברכה.</p>
-                                <a href="#" class="btn-default btn1">להצעה <span></span></a>
-                            </div>
-                        </li>
-                     </ul>
-                </div>
-            </div>
-            <div class="top-box"></div>
-        </div>
-        *@
-     
- 
-
-
+        @*<hr style="width:50%;">*@
+        @*
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
                         <ul class="follow_icon">
-                            <li>
-                                <a href="#">
-                                    <img src="~/images/site/follow_icon1.png" alt="">
-                                </a>
+                            <li style="width:20%">
+                                <div class="caption-footer">
+                                    <p class="description-footer">דיווח על תקלה</p>
+                                    <p>לדווח על תקלה , באג או כל הערה תתקבל בברכה ותיענה בהקדם האפשרי.</p>
+                                    <a href="/System/TicketNew" class="btn-default btn1">פתיחת כרטיס <span></span></a>
+                                </div>
                             </li>
-                            <li>
-                                <a href="#">
-                                    <img src="~/images/site/follow_icon2.png" alt="">
-                                </a>
+                            <li style="width:20%">
+                                <div class="caption-footer">
+                                    <p class="description-footer">הרצאות מומחה</p>
+                                    <p>להזמנת הרצאה מקצועית בתחום השיווק האטומטי.</p>
+                                    <a href="#" class="btn-default btn1">הזמנה <span></span></a>
+                                </div>
                             </li>
-                            <li>
-                                <a href="#">
-                                    <img src="~/images/site/follow_icon3.png" alt="">
-                                </a>
+                            <li style="width:20%">
+                                <div class="caption-footer">
+                                    <p class="description-footer">תמיכה מקצועית</p>
+                                    <p>לקבלת הדרכה והצעות לשימושים האפשריים בארגון .</p>
+                                    <a href="#" class="btn-default btn1">בקשה <span></span></a>
+                                </div>
                             </li>
-                            <li>
-                                <a href="#">
-                                    <img src="~/images/site/follow_icon4.png" alt="">
-                                </a>
+                            <li style="width:20%">
+                                <div class="caption-footer">
+                                    <p class="description-footer">שיתוף עסקי</p>
+                                    <p>מייטי פתוחה להצעות לשיתוף עסקי, כל יוזמה תתקבל בברכה.</p>
+                                    <a href="#" class="btn-default btn1">להצעה <span></span></a>
+                                </div>
                             </li>
-                            <li>
-                                <a href="#">
-                                    <img src="~/images/site/follow_icon5.png" alt="">
-                                </a>
-                            </li>
-                        </ul>
-                        <p>&copy; <em id="copyright-year"></em><a href="#">Privacy policy</a></p>
+                         </ul>
                     </div>
                 </div>
                 <div class="top-box"></div>
             </div>
+        *@
+
+
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="follow_icon">
+                        <li>
+                            <a href="#">
+                                <img src="~/images/site/follow_icon1.png" alt="">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="~/images/site/follow_icon2.png" alt="">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="~/images/site/follow_icon3.png" alt="">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="~/images/site/follow_icon4.png" alt="">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <img src="~/images/site/follow_icon5.png" alt="">
+                            </a>
+                        </li>
+                    </ul>
+                    <p>&copy; <em id="copyright-year"></em><a href="#">Privacy policy</a></p>
+                </div>
+            </div>
+            <div class="top-box"></div>
+        </div>
         <div class="thumbnail-footer">
             <figure><img src="~/images/site/page1_symbol1.png" alt=""></figure>
             <div class="caption-footer">
                 <p class="title">Tel:972 74 7020802</p>
                 <p class="title">Email:<a href="#">info@my-t.co.il</a></p>
                 <p class="title">Myt:6 Koifman, Tel Aviv, 6801298. Israel</p>
-                
+
             </div>
         </div>
-            <!-- {%FOOTER_LINK} -->
-</footer>
+        <!-- {%FOOTER_LINK} -->
+    </footer>
     <script type="text/javascript">
         app_messenger.Init('bottom-right', 'flat');
     </script>

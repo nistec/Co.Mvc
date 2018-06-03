@@ -19,7 +19,7 @@ function triggerTaskFormCompleted(data) {
 }
 function getCurrentDate(addDays) {
     var date = new Date();
-    if (addDays !== undefined && addDays != 0)
+    if (addDays !== undefined && addDays !== 0)
         date.setDate(date.getDate() + addDays);
     return date;
 }
@@ -27,7 +27,7 @@ function getFirstDayOf(addDays) {
     var date = new Date();
     var diff = date.getDay() * -1;
     date.setDate(date.getDate() + diff);
-    if (addDays !== undefined && addDays != 0)
+    if (addDays !== undefined && addDays !== 0)
         date.setDate(date.getDate() + addDays);
     return date.toISOString();
 }
@@ -103,7 +103,7 @@ function app_scheduler_def(dataModel, userInfo) {
         localData: slf.appointments
     };
 
-    var shareDataAdapter = app_jqx.createtDataAdapterData("UserId", "ShareUser", '/System/AdShareList', true, { 'id': 3 });
+    var shareDataAdapter = app_jqx.createDataAdapterData("UserId", "ShareUser", '/System/AdShareList', true, { 'id': 3 });
     app_jqxcombos.setComboSourceAdapter("UserId", "ShareUser", "ActiveUser", shareDataAdapter, '200px');
     $("#ActiveUser").on('change', function (event) {
         var args = event.args;
@@ -111,7 +111,7 @@ function app_scheduler_def(dataModel, userInfo) {
             var item = args.item;
             var arg = item.label.split('@');
             //$('#UserId').val(arg[0]);
-            if (slf.ActiveUser != item.value)
+            if (slf.ActiveUser !== item.value)
             {
                 slf.ActiveUser = item.value;
                 var edit = item.label.split('@')[1];
@@ -140,7 +140,7 @@ function app_scheduler_def(dataModel, userInfo) {
                     //}
                 }
                 slf.Source.localData = slf.appointments;
-                if (slf.Loaded == 0) {
+                if (slf.Loaded === 0) {
                     
                     slf.load();
                     //$("#scheduler").jqxScheduler({ 'scrollTop': 280, editDialog: slf.AllowEdit == 1 });
@@ -151,7 +151,7 @@ function app_scheduler_def(dataModel, userInfo) {
                     //adapter._source.localData = slf.appointments;
                     //adapter.loadedData = slf.appointments;
                     //adapter.dataBind();
-                    $("#scheduler").jqxScheduler({ source: new $.jqx.dataAdapter(slf.Source), editDialog: slf.AllowEdit == 1 });
+                    $("#scheduler").jqxScheduler({ source: new $.jqx.dataAdapter(slf.Source), editDialog: slf.AllowEdit === 1 });
                     var d = getFirstDayHourOf(slf.TimeFrom);
                     //alert(d.getFullYear() + ' , ' + (d.getMonth()+1) + ', ' + (d.getDate() +1) + ' , ' + d.getHours());
                     $("#scheduler").jqxScheduler('selectCell', new $.jqx.date(d.getFullYear(), d.getMonth() + 1, d.getDate()+1, 12, 0, 0));
@@ -243,7 +243,7 @@ function app_scheduler_def(dataModel, userInfo) {
             width: '100%',
             height: 600,
             enableHover: false,
-            editDialog : slf.AllowEdit == 1,
+            editDialog : slf.AllowEdit === 1,
             editDialogDateTimeFormatString: 'dd/MM/yyyy HH:mm',
             editDialogDateFormatString: 'dd/MM/yyyy',
             rtl: true,
@@ -265,7 +265,7 @@ function app_scheduler_def(dataModel, userInfo) {
             //    //var src = $("#scheduler").jqxScheduler('source');
             //    //var length = src.records.length;
             //    //console.log(length);
-            //    alert("rendered");
+            //   app_dialog.alert("rendered");
             //},
  
             localization: {
@@ -415,8 +415,8 @@ function app_scheduler_def(dataModel, userInfo) {
                     tentative: "Tentative",
                     busy: "Busy",
                     outOfOffice: "Out of Office"
-                },
-                loadingErrorMessage: "The data is still loading and you cannot set a property or call a method. You can do that once the data binding is completed. jqxScheduler raises the 'bindingComplete' event when the binding is completed.",
+                }
+                //loadingErrorMessage: "The data is still loading and you cannot set a property or call a method. You can do that once the data binding is completed. jqxScheduler raises the 'bindingComplete' event when the binding is completed.",
             },
             resources:
             {
@@ -477,12 +477,12 @@ function app_scheduler_def(dataModel, userInfo) {
         d.toLocaleString()     // "8/12/2013 18.55.38" on my system
         d.toUTCString()        // "Sun, 08 Dec 2013 17:55:38 GMT"
         */
-        if (strdate === undefined || strdate == null || strdate == '')
+        if (strdate === undefined || strdate === null || strdate === '')
             return '';
         if(strdate===typeof(Date))
             return strdate.toLocaleDateString();
         var d = new Date(strdate);
-        if (d.toString() == "NaN" || d.toString() == "Invalid Date") {
+        if (d.toString() === "NaN" || d.toString() === "Invalid Date") {
                 if ($.jqx.dataFormat) {
                     f = $.jqx.dataFormat.tryparsedate(new Date(strdate));
                     return f;

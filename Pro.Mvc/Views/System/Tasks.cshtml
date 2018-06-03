@@ -11,7 +11,7 @@
     @Scripts.Render("~/bundles/jqxgrid")
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/Scripts/app/system/tasks-grid.js"></script>
-    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js?ver=20180001"></script>
 
     <style type="text/css">
         input {
@@ -27,8 +27,32 @@
         .wiz-tab.active {
              display: block;
         }*/
+    .green {
+        color:black\9;
+        background-color: #19a709;
+    }
+    .yellow {
+        color: black\9;
+        background-color: yellow;
+    }
+    .red {
+        color: black\9;
+        background-color: #e83636;
+    }
+    .green:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .green:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: #19a709;
+    }
+   .yellow:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .yellow:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: yellow;
+    }
+    .red:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .red:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+        color: black;
+        background-color: #e83636;
+    }
+</style>
 
-    </style>
 }
 
 
@@ -38,10 +62,9 @@
 
     //var NScustomers = {};
     
-
+        var theme = 'nis_metro';
     $(document).ready(function () {
         JSON.useDateParser();
-        var theme = 'Arctic';
     
         task_grid = app_tasks_grid.load(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
 
@@ -102,6 +125,7 @@
         var dateList = [
          { label: 'מועד רישום', value: 'CreatedDate', checked: false },
          { label: 'מועד לביצוע', value: 'DueDate', checked: false },
+         { label: 'מועד עדכון', value: 'LastUpdate', checked: false },
          { label: 'מועד התחלה', value: 'StartedDate', checked: false },
          { label: 'מועד סיום', value: 'EndedDate', checked: false },
          { label: 'מועד התחלה משוער', value: 'EstimateStartTime', checked: false }
@@ -148,6 +172,69 @@
             </div>
      </div>
 </div>
+
+<!--footer-->
+<footer>
+    <div class="container">
+        <div class="thumbnail-footer">
+            <figure><img src="~/images/site/page1_icon1.png" alt=""></figure>
+        </div>
+        <div class="col-lg-12">
+            <ul class="follow_icon rtl">
+                <li class="padding-r10">
+                    <a href="~/System/Calendar" title="יומן">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> יומן
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/TaskUser" title="משימות">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> משימות
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/AdUsersDef" title="משתמשים">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> משתמשים
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/AdDef" title="קבוצות">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> קבוצות
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/AdTeamDef" title="צוותים">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> צוותים
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <hr style="width:50%;">
+        <div class="col-lg-12">
+            <ul class="follow_icon rtl">
+                <li class="padding-r10">
+                    <a href="~/System/TopicNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> סוגיה
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/TaskNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> משימה חדשה
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/TicketNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> כרטיס
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="~/System/ReminderNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> תזכורת
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</footer> 
 <script type="text/javascript">
     app_menu.activeLayoutMenu("liSystem");
     app_menu.breadcrumbs("System", "Tasks", 'en');

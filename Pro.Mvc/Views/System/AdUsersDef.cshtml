@@ -7,7 +7,7 @@
      @Scripts.Render("~/bundles/jqx")
      @Scripts.Render("~/bundles/jqxgrid")
     <script type="text/javascript" src="~/Scripts/app/system/ad-users-def.js"></script>
-<script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+<script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js?ver=20180001"></script>
 }
 @section scripts {
  <script type="text/javascript">
@@ -27,7 +27,11 @@
 <div class="global">
     
     <div class="container">
-        <h3 class="rtl">הגדרות כלליות-<span>משתמשים</span></h3>
+
+        <div id="hTitle" class="panel-page-header rtl">
+            <span id="hTitle-text" style="margin:10px">הגדרות כלליות-<span>משתמשים</span></span>
+        </div>
+
         <div class="grid-wrap rtl">
              <div id="jqxWidget">
                  @*<a href="AdDef">קבוצות</a>

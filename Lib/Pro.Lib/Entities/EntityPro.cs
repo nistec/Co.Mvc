@@ -21,13 +21,21 @@ using System.Web.Caching;
 namespace Pro.Data.Entities
 {
 
-     public static class EntityGroups
+    public static class EntityGroups
     {
-         public const string Enums = "Enums";
-         public const string Reports = "Reports";
-         public const string Registry = "Registry";
+        public const string Enums = "Enums";
+        public const string Members = "Members";
+        public const string Settings = "Settings";
+        public const string Reports = "Reports";
+        public const string Registry = "Registry";
     }
 
+    //public enum EntityGroups2
+    //{
+    //    Enums,
+    //    Reports,
+    //    Registry,
+    //}
     public class EntityPro
     {
 

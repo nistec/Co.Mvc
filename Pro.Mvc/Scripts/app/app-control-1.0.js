@@ -1,11 +1,24 @@
 ﻿//============================================================================================ app_control
 
 var app_common = {
-  
-    refreshEntity: function (entity, callback) {
-        app_query.doPost("/Common/RefreshEntity", {'entity': entity }, callback);
-    }
 
+    refreshEntity: function (entity, callback) {
+        app_query.doPost("/Common/RefreshEntity", { 'entity': entity }, callback);
+    }
+};
+
+//============================================================================================ app_style
+var app_style = {
+
+    langAlign: function (lang) {
+
+        switch (lang) {
+            case "en":
+                return 'left';
+            default:
+                return 'right';
+        }
+    }
 };
 
 //============================================================================================ app_rout
@@ -13,7 +26,7 @@ var app_common = {
 var app_rout = {
 
     isAllowEdit: function (allowEdit) {
-        if (allowEdit == 0) {
+        if (allowEdit === 0) {
             app_dialog.alert('You have no permission for this action.');
         }
     },
@@ -26,21 +39,280 @@ var app_rout = {
 //============================================================================================ app_lookups
 
 app_lookups = {
+    setInput: function (form, tagName, value) {
 
-    lookup:function(url,id,tag){
+        switch (tagName) {
+            case "UserId":
+            case "AssignBy":
+                $('form#' + form + ' [name=' + tagName + ']').val(value);
+                app_lookup.user_name('#' + tagName, value);
+        }
+    },
+    lookup: function (tag,url, id) {
 
-        if (id > 0)
+        if (id && id > 0)
             app_query.doLookup(url, { 'id': id }, function (content) {
-            $(tag).val(content);
-        });
-   },
-    member_name: function (id, tag) {
-        app_lookups.lookup('/Common/Lookup_MemberDisplay', id, tag);
+                $(tag).val(content);
+            });
     },
-    project_name: function (id, tag) {
-        app_lookups.lookup('/System/Lookup_ProjectName', id, tag);
+    user_name: function (tag, id) {
+        app_lookups.lookup(tag,'/Common/Lookup_UserDisplay', id);
     },
+    member_name: function (tag,id) {
+        app_lookups.lookup(tag,'/Common/Lookup_MemberDisplay', id);
+    },
+    project_name: function (tag,id) {
+        app_lookups.lookup(tag,'/System/Lookup_ProjectName', id);
+    }
+};
 
+
+//============================================================================================ app_select
+
+var app_select = {
+
+    lookupFieldValue: function (form, tag, records, value) {
+        var tag = tag.replace('#', '');
+        var item = $.grep(records, function (item) { return item.value == value; });
+        if (item && item.length > 0) {
+            $('#' + tag).val(item[0].text);
+            $('form#' + form + ' [name=' + tag + ']').val(item[0].value);
+        }
+    },
+    loadSelect: function (tag, selectValues, width, value, lookupForm) {
+        if (lookupForm && value >= 0) {
+            app_select.lookupFieldValue(lookupForm, tag, selectValues, value);
+        }
+        else {
+            if (width === undefined || width == 0)
+                width = 120;
+            app_control.selectTag(tag, width);
+            app_control.appendSelectOptions(tag, selectValues);
+            if (value >= 0)
+                $(tag).val(value);
+        }
+    },
+    loadSelectInput: function (form, tag, selectValues, width, value) {
+        if (width === undefined || width == 0)
+            width = 120;
+        app_control.selectTag(tag, width);
+        app_control.appendSelectOptions(tag, selectValues);
+        $(tag).change(function () {
+            var tagname = tag.replace('#', '');
+            $('form#' + form + ' [name=' + tagname + ']').val(this.value);
+        });
+        if (value >= 0)
+            $(tag).val(value);
+    },
+    AdsStatus: function (form, tag, value) {
+        if (tag === undefined)
+            tag = "#Status";
+        var selectValues = { "0": "ממתין", "1": "פעיל", "2": "דחוי" };
+        app_select.loadSelectInput(form, tag, selectValues, 0, value);
+    },
+    PriceType: function (tag, value) {
+        if (tag === undefined)
+            tag = "#PriceType";
+        var selectValues = { "1": "מעטפת", "2": "גמר מלא" };
+        app_select.loadSelect(tag, selectValues, 150, value);
+    },
+    ManagementFeeType: function (tag, value) {
+        if (tag === undefined)
+            tag = "#ManagementFeeType";
+        var selectValues = { "0": "לא ידוע", "1": "אין", "2": "ידוע" };
+        app_select.loadSelect(tag, selectValues, 150, value);
+    },
+    OwnerType: function (tag, value, lookup) {
+        if (tag === undefined)
+            tag = "#OwnerType";
+        var selectValues = { "1": "פרטית", "2": "מנהל", "3": "אחר" };
+        app_select.loadSelect(tag, selectValues, 0, value, lookup);
+    },
+    PropertyType: function (tag, value, lookup) {
+        if (tag === undefined)
+            tag = "#PropertyType";
+        var selectValues = { "0": "יחידה", "1": "עדכון מידע", "2": "סוכן", "3": "מגרש" };
+        app_select.loadSelect(tag, selectValues, 0, value, lookup);
+    },
+    TransType: function (tag, value, lookup) {
+        if (tag === undefined)
+            tag = "#TransType";
+        var selectValues = { "1": "עסקה מצד הדייר/רוכש", "2": "עסקה מצד בעל הנכס/מוכר", "3": "עסקת ייעוץ" };
+        app_select.loadSelect(tag, selectValues, 0, value, lookup);
+    },
+    enumTypes_load: function (tag, model, selectValue) {
+
+        app_control.selectTag(tag, 200);
+        app_control.fillSelect(tag, '/System/GetEnumTypesList', { 'model': model }, "PropId", "PropName", selectValue);
+    },
+};
+//============================================================================================ app_task
+
+app_tasks = {
+    taskEdit: function (id, model) {
+        var obj = model === undefined ? 'Task': app_tasks.taskModelObject(model);
+        app.redirectTo('/System/' + obj +'Edit?id=' + id);
+    },
+    taskInfo: function (id, model) {
+        var obj = model === undefined ? 'Task' : app_tasks.taskModelObject(model);
+        app.redirectTo('/System/' + obj +'Info?id=' + id);
+    },
+    //topicEdit: function (id, model) {
+    //    var obj = model === undefined ? 'Task' : app_tasks.taskModelObject(model);
+    //    app.redirectTo('/System/' + obj + 'Edit?id=' + id);
+    //},
+    //topicInfo: function (id, model) {
+    //    var obj = model === undefined ? 'Task' : app_tasks.taskModelObject(model);
+    //    app.redirectTo('/System/' + obj + 'Info?id=' + id);
+    //},
+    //ticketEdit: function (id, model) {
+    //    var obj = model === undefined ? 'Task' : app_tasks.taskModelObject(model);
+    //    app.redirectTo('/System/' + obj + 'Edit?id=' + id);
+    //},
+    //ticketInfo: function (id, model) {
+    //    var obj = model === undefined ? 'Task' : app_tasks.taskModelObject(model);
+    //    app.redirectTo('/System/' + obj + 'Info?id=' + id);
+    //},
+    taskTitle:function(taskModel){
+        switch (taskModel) {
+            case "E":
+                return 'כרטיס';
+            case "T":
+                return 'משימה';
+            case "P":
+                return 'סוגיה';
+            case "R":
+                return 'תזכורת';
+            case "C":
+                return 'יומן';
+            case "D":
+                return 'מסמך';
+            default:
+                return 'משימה';
+        }
+    },
+    setTaskStatus: function (tag, value) {
+        $(tag).val(value);
+        var status = app_tasks.taskStatus(value);
+        $(tag + '-display').text(status);
+        $(tag + '-color').css('color', app_tasks.statusColor(status));
+    },
+    taskStatus: function (value) {
+        /*
+1	Open	פתוח	O	new	    #e82121
+2	Started	בטיפול	S	work	#f0f20c
+4	Paused	מושהה	P	work	#f19b60
+8	None	מבוטל	N	done	#ba5cdb
+16	Close	סגור	C	done	#6bbd49
+        */
+        switch (value) {
+            case 1:
+                return 'פתוח';
+            case 2:
+                return 'בטיפול';
+            case 4:
+                return 'מושהה';
+            case 8:
+                return 'מבוטל ';
+            case 16:
+                return 'סגור';
+            default:
+                return 'פתוח';
+        }
+    },
+    statusColor:function(value){
+        /*
+1	Open	פתוח	O	new	    #e82121
+2	Started	בטיפול	S	work	#f0f20c
+4	Paused	מושהה	P	work	#f19b60
+8	None	מבוטל	N	done	#ba5cdb
+16	Close	סגור	C	done	#6bbd49
+
+        */
+
+        switch (value) {
+            case "1":
+            case "Open":
+            case "פתוח":
+                return '#e82121';
+            case "2":
+            case "Started":
+            case "בטיפול":
+                return '#f0f20c';
+            case "4":
+            case "Paused":
+            case "מושהה":
+                return '#f19b60';
+            case "8":
+            case "None":
+            case "מבוטל":
+                return '#ba5cdb ';
+            case "16":
+            case "Close":
+            case "סגור":
+                return '#6bbd49';
+            default:
+                return '#e82121';
+        }
+    },
+    setPermsType: function (tag) {
+
+        if (tag === undefined)
+            tag = "#PermsType";
+        var selectValues = { "0": "ללא", "1": "צוות", "2": "פרטי" };//, "3": "לפי בחירה" };
+        app_control.selectTag(tag,120);
+        app_control.appendSelectOptions(tag, selectValues);
+    },
+    setShareType: function (tag) {
+
+        if (tag === undefined)
+            tag = "#ShareType";
+        var selectValues = { "0": "ללא", "1": "צוות", "2": "פרטי", "3": "לפי בחירה" };
+        app_control.selectTag(tag,120);
+        app_control.appendSelectOptions(tag, selectValues);
+    },
+    setColorFlag: function (tag) {
+        if (tag === undefined)
+            tag = "#ColorFlag";
+
+        var selectValues = { "#46d6db": "Turquoise", "#7bd148": "Green", "#5484ed": "Bold blue", "#a4bdfc": "Blue", "#7ae7bf": "Light green", "#51b749": "Bold green", "#fbd75b": "Yellow", "#ffb878": "Orange", "#ff887c": "Red", "#dc2127": "Bold red", "#dbadff": "Purple" };
+        app_control.appendSelectOptions(tag, selectValues);
+    },
+    taskModelObject: function (model) {
+        /*
+        TaskModel	0	T	Task	משימה
+        TaskModel	1	E	Ticket	כרטיס
+        TaskModel	2	R	Reminder	תזכורות
+        TaskModel	3	C	Calendar	יומן
+        TaskModel	4	P	Topic	סוגיה
+        */
+        switch (model) {
+            case "T":
+                return "Task";
+            case "P":
+                return "Topic";
+            case "E":
+                return "Ticket";
+            case "R":
+                return "Reminder";
+            case "C":
+                return "Calendar";
+            case "D":
+                return "Doc";
+            default:
+                return "Task";
+        }
+    },
+    enumTypes_load: function (tag, model, selectValue) {
+
+        app_control.selectTag(tag,200);
+        app_control.fillSelect(tag, '/System/GetEnumTypesList', { 'model': model }, "PropId", "PropName", selectValue); 
+
+        //app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag, '/System/GetEnumTypesList', { 'model': model }, 0, 120, true, null, function (status, records) {
+        //    if (field && record[field] >= 0)
+        //        $(tag).val(record[field]);
+        //});
+    }
 };
 
 //============================================================================================ app_ComboDlg
@@ -54,11 +326,12 @@ app_lookups = {
 //}
 
 function app_ComboDlg(tagName,tagDisplay,callback) {
-
+    this.selectedItem;
     this.inputTag = tagName + '-combo';
+    this.submitTag = tagName + '-submit';
     this.windowTag = tagName + '-window';
     this.tagId = tagName.replace('#', '');
-    if (tagDisplay === undefined || tagDisplay == null)
+    if (tagDisplay === undefined || tagDisplay === null)
         tagDisplay = tagName + '-display';
     else
 
@@ -69,12 +342,17 @@ function app_ComboDlg(tagName,tagDisplay,callback) {
     },
     this.init = function (valueField, displayField, url,type, hideArrow) {
         var slf = this;
-        var selectedItem;
+        //var selectedItem;
         this.title = $(tagName + "-name").text();
         var container = $(tagName + "-container");
         var window = $('<div id="' + this.tagId + '-window"></div>');
         //window.append('<div id="' + this.tagId + '-title"></div>');
         window.append('<div id="' + this.tagId + '-combo"></div>');
+        var button = $('<a href="#" id="' + this.tagId + '-submit" style="float:left">click Ok or Type Enter <i class="fa fa-check-square" style="font-size:20px" title="Ok"></i></a>')
+        .on('click', function (ev) {
+            slf.select();
+        });
+        window.append(button);
         container.append(window);
 
         var source =
@@ -86,31 +364,34 @@ function app_ComboDlg(tagName,tagDisplay,callback) {
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
 
-        app_jqxcombos.setComboSourceAdapter(valueField, displayField, this.inputTag, dataAdapter, '100%');//, dropDownHeight, async) {
+        app_jqxcombos.setComboSourceAdapter(valueField, displayField, this.inputTag, dataAdapter, '100%','200px');//, dropDownHeight, async) {
         if (hideArrow)
             $(slf.inputTag).jqxComboBox({ showArrow: false });
         //$(tagName + "-title").text(title);
+       
 
         $(this.inputTag).on('keypress', function (ev) {
             var keycode = (ev.keyCode ? ev.keyCode : ev.which);
-            if (keycode == '13') {
+            if (keycode === '13') {
                 slf.select();
             }
         })
-
+ 
+        
         $(this.inputTag).on('select', function (event) {
             var args = event.args;
             if (args && args.index >= 0) {
                 var type = args.type; // keyboard, mouse or null depending on how the item was selected.
                 slf.selectedItem = args.item;
-                if (type == 'mouse') {
-                    slf.select();
-                }
+                //if (type == 'mouse') {
+                //    slf.select();
+                //}
                 //else if (type == 'keyboard') {
                 //    slf.select();
                 //}
             }
         });
+        
         //$(this.windowTag).on('open', function (event) {
         //    var value = $(tagName).val();
         //    if (value) {
@@ -131,6 +412,8 @@ function app_ComboDlg(tagName,tagDisplay,callback) {
             }, 1000);
         }
         app_jqx.displayPopover(this.windowTag, tagDisplay, this.title);
+        //$(this.inputTag).focus();
+        $(this.inputTag).jqxComboBox('focus');
 
         //$(this.windowTag).jqxWindow('bringToFront');
         //$(this.windowTag).jqxWindow('focus');
@@ -162,45 +445,46 @@ function app_ComboDlg(tagName,tagDisplay,callback) {
 
 var app_members = {
 
-    displayMemberFields: function (url,data) {
-	    if(url===undefined || url==null)
-	        url='/Common/GetMemberFieldsView';
+    displayMemberFields: function (url, data) {
 
-		$.ajax({
-		    url: url,
-			type: 'post',
-			dataType: 'json',
-			data: data,
-			success: function (data) {
+        if (url === undefined || url === null)
+            url = '/Common/GetMemberFieldsView';
 
-			    $(".field-ex").hide();
+        $.ajax({
+            url: url,
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            success: function (data) {
 
-				if (data) {
-					$("#ExType").val(data.ExType);
+                $(".field-ex").hide();
 
-					app_members.displayExField(data.ExId, "ExId");
-					app_members.displayExField(data.ExEnum1, "ExEnum1");
-					app_members.displayExField(data.ExEnum2, "ExEnum2");
-					app_members.displayExField(data.ExEnum3, "ExEnum3");
-					app_members.displayExField(data.ExField1, "ExField1");
-					app_members.displayExField(data.ExField2, "ExField2");
-					app_members.displayExField(data.ExField3, "ExField3");
-					app_members.displayExField(data.ExRef1, "ExRef1");
-					app_members.displayExField(data.ExRef2, "ExRef2");
-					app_members.displayExField(data.ExRef3, "ExRef3");
+                if (data) {
+                    $("#ExType").val(data.ExType);
 
-				    //app.hideOrData("#divEnum1", data.ExEnum1, "");
+                    app_members.displayExField(data.ExId, "ExId");
+                    app_members.displayExField(data.ExEnum1, "ExEnum1");
+                    app_members.displayExField(data.ExEnum2, "ExEnum2");
+                    app_members.displayExField(data.ExEnum3, "ExEnum3");
+                    app_members.displayExField(data.ExField1, "ExField1");
+                    app_members.displayExField(data.ExField2, "ExField2");
+                    app_members.displayExField(data.ExField3, "ExField3");
+                    app_members.displayExField(data.ExRef1, "ExRef1");
+                    app_members.displayExField(data.ExRef2, "ExRef2");
+                    app_members.displayExField(data.ExRef3, "ExRef3");
 
-					//app_members.displayExField(data.ExId, "#divExId", "#lblExId");
-					//app_members.displayExField(data.ExEnum1, "#divEnum1", "#lblEnum1");
-					//app_members.displayExField(data.ExEnum2, "#divEnum2", "#lblEnum2");
-					//app_members.displayExField(data.ExEnum3, "#divEnum3", "#lblEnum3");
-					//app_members.displayExField(data.ExField1, "#divField1", "#lblExField1");
-					//app_members.displayExField(data.ExField2, "#divField2", "#lblExField2");
-					//app_members.displayExField(data.ExField3, "#divField3", "#lblExField3");
-					//app_members.displayExField(data.ExRef1, "#divExRef1", "#lblExRef1");
-					//app_members.displayExField(data.ExRef2, "#divExRef2", "#lblExRef2");
-					//app_members.displayExField(data.ExRef3, "#divExRef3", "#lblExRef3");
+                    //app.hideOrData("#divEnum1", data.ExEnum1, "");
+
+                    //app_members.displayExField(data.ExId, "#divExId", "#lblExId");
+                    //app_members.displayExField(data.ExEnum1, "#divEnum1", "#lblEnum1");
+                    //app_members.displayExField(data.ExEnum2, "#divEnum2", "#lblEnum2");
+                    //app_members.displayExField(data.ExEnum3, "#divEnum3", "#lblEnum3");
+                    //app_members.displayExField(data.ExField1, "#divField1", "#lblExField1");
+                    //app_members.displayExField(data.ExField2, "#divField2", "#lblExField2");
+                    //app_members.displayExField(data.ExField3, "#divField3", "#lblExField3");
+                    //app_members.displayExField(data.ExRef1, "#divExRef1", "#lblExRef1");
+                    //app_members.displayExField(data.ExRef2, "#divExRef2", "#lblExRef2");
+                    //app_members.displayExField(data.ExRef3, "#divExRef3", "#lblExRef3");
 
                     /*
 					if (data.ExEnum1 == "")
@@ -253,16 +537,16 @@ var app_members = {
 					else
 					    $("#lblExRef3").text(data.ExRef3);
                     */
-				}
-			},
-			error: function (jqXHR, status, error) {
-				app_dialog.alert(error);
-			}
-		});
+                }
+            },
+            error: function (jqXHR, status, error) {
+                app_dialog.alert(error);
+            }
+        });
     },
     displayExField: function (exval,fieldname,match) {
 
-        if (exval == "")
+        if (exval === "")
             $("#div" + fieldname).hide();
         else {
             $("#lbl" + fieldname).text(exval);
@@ -482,17 +766,40 @@ var app_menu = {
         breadcrumbs.text('');
         var b = $('<div style="text-align:left;direction:ltr;"></div>')
 
-        if (lang === undefined || lang == 'en') {
+        var apage = page;
+
+        switch (section.toLowerCase()) {
+
+            case "system":
+                apage = '<a href="/System/SystemBoard">' + page + '</a>';
+                break;
+        }
+
+        var asection = section;
+
+        switch (section.toLowerCase()) {
+
+            case "system":
+                asection = '<a href="/System/SystemBoard">' + section + '</a>';
+                break;
+        }
+
+        //if (page[0] == '@') {
+        //    apage = '<a href="/' + section + '/' + page + '/' + section + 'Board">' + page + '</a>';
+        //}
+
+
+        if (lang === undefined || lang === 'en') {
             b.append($('<a href="/home/index">Home</a>'));
             b.append($('<span> >> </span>'));
             b.append($('<a href="/main/dashboard">Dashboard</a>'));
             b.append($('<span> >> </span>'));
-            if (section.substr(0, 1) == '/') {
-                b.append($('<a href="' + section + '">' + page + '</a>'));
+            if (section.substr(0, 1) === '/') {
+                b.append($('<a href="' + section + '">' + apage + '</a>'));
                 b.append($('<span> | </span>'));
             }
             else
-                b.append('' + section + ' >> ' + page + ' |  ');
+                b.append('' + section + ' >> ' + apage + ' |  ');
 
 
             b.append('<a href="javascript:parent.history.back()">Back</a>');
@@ -509,7 +816,7 @@ var app_menu = {
             b.append($('<span> >> </span>'));
             b.append($('<a href="/main/dashboard">ראשי</a>'));
             b.append($('<span> >> </span>'));
-            if (section.substr(0, 1) == '/') {
+            if (section.substr(0, 1) === '/') {
                 b.append($('<a href="' + section + '">' + page + '</a>'));
                 b.append($('<span> | </span>'));
             }
@@ -519,6 +826,85 @@ var app_menu = {
 
         }
         b.appendTo(breadcrumbs);
+    },
+    footer: function (type, tag) {
+        if (tag === undefined)
+            tag = 'footer';
+        var html = '';
+        if (type === 'task') {
+             html = (function () {/*
+        <div class="container">
+        <div class="thumbnail-footer">
+            <figure><img src="/images/site/page1_icon1.png" alt=""></figure>
+        </div>
+        <div class="col-lg-12">
+            <ul class="follow_icon rtl">
+                <li class="padding-r10">
+                    <a href="/System/Calendar" title="יומן">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> יומן
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="/System/TaskUser" title="משימות">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> משימות
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="/System/SystemBoard">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> דוחות
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="/System/AdUsersDef" title="משתמשים">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> משתמשים
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="/System/AdDef" title="קבוצות">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> קבוצות
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="/System/AdTeamDef" title="צוותים">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> צוותים
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <hr style="width:50%;">
+        <div class="col-lg-12">
+            <ul class="follow_icon rtl">
+                <li class="padding-r10">
+                    <a href="/System/TopicNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> סוגיה
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="/System/TaskNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> משימה חדשה
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="/System/TicketNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> כרטיס
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="/System/ReminderNew?pid=0">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> תזכורת
+                    </a>
+                </li>
+                <li class="padding-r10">
+                    <a href="/System/ReportTasks">
+                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> דוח משימות
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+        }
+
+        $(tag).html(html);
     }
 };
 
@@ -559,3 +945,99 @@ var app_jqx_list = {
     taskStatusComboAdapter: function (tag) { return app_jqxcombos.createDropDownAdapter("PropId", "PropName", tag === undefined ? "TaskStatus" : tag, '/System/GetTaskStatusList', 150, 120, false) }
 
 };
+
+
+
+//============================================================================================ app_jqx_combo_async
+
+var app_jqx_combo_async = {
+
+    docFolderInputAdapter: function (tag, value, callback) {
+        tag = (tag === undefined || tag == null) ? "#Folder" : tag;
+        return app_jqx_adapter.createArrayInputAutoAdapterAsync(tag, '/System/GetTaskFolderList', null, 200, 10, null, value, callback);
+    },
+    systemLookupInputAdapter: function (tag, type, value, callback) {
+        var adapter = app_jqx_adapter.createInputAutoAdapterAsync("Value", "Label", tag, '/System/Lookup_GetList', { 'type': type }, 0, 10, null, value, callback);
+        return adapter;
+    },
+    lookupInputAdapter: function (tag, type, value, callback) {
+        var adapter = app_jqx_adapter.createInputAutoAdapterAsync("Value", "Label", tag, '/Common/Lookup_GetList', { 'type': type }, 0, 10, null, value, callback);
+        return adapter;
+    },
+    branchComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "Branch" : tag, '/Common/GetBranchView',null, 0, 120, true, value, callback)
+    },
+
+    //placeComboAdapter: function (tag) { return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "PlaceOfBirth" : tag, '/Common/GetPlaceView', 0, 120, false) },
+
+    statusComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "Status" : tag, '/Common/GetStatusView', null, 0, 0, true, value, callback)
+    },
+    chargeComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "Charge" : tag, '/Common/GetChargeView', null, 0, 0, true, value, callback)
+    },
+
+    regionComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "Region" : tag, '/Common/GetRegionView', null, 0, 120, true, value, callback)
+    },
+
+    cityComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "City" : tag, '/Common/GetCityView', null, 150, 120, true, value, callback)
+    },
+
+    genderComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "Gender" : tag, '/Common/GetGenderView', null, 150, 0, true, value, callback)
+    },
+
+    categoryCheckListAdapter: function (tag, output) {
+            return app_jqx_adapter.createListAdapterAsync("PropId", "PropName", tag === undefined ? "listCategory" : tag, "/Common/GetCategoriesView",null, 240, 140, true, output === undefined ? "Categories" : output,value, callback)
+    },
+    categoryComboCheckAdapter: function (tag, output) {
+        return app_jqxcombos.createComboCheckAdapter("PropId", "PropName", tag === undefined ? "listCategory" : tag, "/Common/GetCategoriesView", null, 240, 140, false, output === undefined ? "Categories" : output)
+    },
+
+    categoryComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "Category" : tag, '/Common/GetCategoriesView', null, 0, 120, true, value, callback)
+    },
+
+    entityEnumComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createDropDownAdapterAsync("FieldName", "FieldValue", tag === undefined ? "EntityEnumType" : tag, '/Common/GetMembersEnumFields', null, 0, 120, null, value, callback)
+    },
+
+    enum1ComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "ExEnum1" : tag, '/Common/GetEnum1View', null, 0, 120, true, value, callback)
+    },
+    enum2ComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "ExEnum2" : tag, '/Common/GetEnum2View', null, 0, 120, true, value, callback)
+    },
+    enum3ComboAdapter: function (tag, value, callback) { return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "ExEnum3" : tag, '/Common/GetEnum3View', 0, 120, true, value, callback) },
+    userRoleComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createDropDownAdapterAsync("RoleId", "RoleName", tag === undefined ? "UserRole" : tag, '/Admin/GetUsersRoles', 0, 120, null, value, callback)
+    },
+    campaignComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createDropDownAdapterAsync("PropId", "PropName", tag === undefined ? "#Campaign" : tag, '/Common/GetCampaignView', null, 200, 0, 'נא לבחור קמפיין', value, callback)
+    },
+    taskTypeComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "Task_Type" : tag, '/System/GetTaskTypeList', null, 0, 120, true, value, callback)
+    },
+    taskStatusInputAdapter: function (tag, value, callback) {
+        var adapter = app_jqx_adapter.createInputAutoAdapterAsync("PropId", "PropName", tag === undefined ? "TaskStatus" : tag, '/System/GetTaskStatusList', null, 120, 10, null, value, callback);
+        return adapter;
+    },
+    taskStatusComboAdapter: function (tag, value, callback) {
+        return app_jqx_adapter.createDropDownAdapterAsync("PropId", "PropName", tag === undefined ? "TaskStatus" : tag, '/System/GetTaskStatusList', null, 150, 120, null, value, callback)
+    },
+    userInputAdapter: function (tag, value, callback) {
+        var adapter = app_jqx_adapter.createInputAutoAdapterAsync("UserId", "DisplayName", tag, '/System/GetUsersList', null, 0, 10, null, value, callback);
+        return adapter;
+    },
+    projectInputAdapter: function (tag, value, callback) {
+        var adapter = app_jqx_adapter.createInputAutoAdapterAsync("ProjectId", "ProjectName", tag, '/System/Lookup_DisplayList', {'type':'project_name'}, 0, 10, null, value, callback);
+        return adapter;
+    },
+    clientInputAdapter: function (tag, value, callback) {
+        var adapter = app_jqx_adapter.createInputAutoAdapterAsync("RecordId", "ProjectName", tag, '/System/Lookup_DisplayList', {'type':'members'}, 0, 10, null, value, callback);
+        return adapter;
+    },
+};
+

@@ -22,7 +22,7 @@ namespace ProSystem.Data.Entities
         }
         public IList<News> GetList(int NewsId)
         {
-            return base.GetList("NewsId", NewsId );
+            return base.ExecOrViewList("NewsId", NewsId );
         }
     }
     

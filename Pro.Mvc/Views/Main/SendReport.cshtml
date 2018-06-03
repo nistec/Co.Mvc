@@ -9,7 +9,7 @@
 
     @Scripts.Render("~/bundles/jqx")
     @Scripts.Render("~/bundles/jqxgrid")
-    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js?ver=20180001"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/Scripts/app/main/sendreport-grid.js"></script>
 
@@ -66,8 +66,9 @@
 
 <div class="global">
     <div class="container">
-        <h3 class="rtl">דוח שליחות מפורט לפי נמענים</h3>
-        <div class="grid-wrap rtl">
+
+        <div class="grid-wrap rtl panel-area">
+            <h3 class="rtl panel-area-title">דוח שליחות מפורט לפי נמענים</h3>
             <div id="grid-toolbar" class="grid-toolbar"></div>
             <div id="jqxWidget">
                 <div id="jqxgrid" style="position:relative;z-index:1;"></div>

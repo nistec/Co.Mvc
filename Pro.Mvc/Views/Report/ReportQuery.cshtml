@@ -92,12 +92,12 @@
 
 <div class="global-view">
 
-    <div class="container-rtl">
-        <div class="box-title">
-            <h3>מערכת - דוחות</h3>
-        </div>
+    <div class="container-box">
+       
 
-        <div id='jqxWidget'>
+        <div id='jqxWidget' class="panel-area rtl">
+            <h3 class="panel-area-title">מערכת - דוחות</h3>
+
             <h4 id="report_name" style="color:#0094ff"></h4>
             <div style='margin-top: 10px;' id='jqxRadioButton'>
                 התפלגות לפי פריט ומחיר
@@ -118,37 +118,39 @@
             <div>
 
             </div>
-        </div>
-
-        <form id="formGeneral" action="/Report/ReportStatistic" method="post">
-            <input type="hidden" id="query_type" name="query_type" value="" />
-
-
-            <div id="divCampaign">
-                <div>קמפיין</div>
-                <div>
-                    <div id="Campaign" name="Campaign"></div>
-                    @*<input type="checkbox" id="allCampaign" name="allCampaign" />&nbsp;<span>הצג הכל</span>*@
-                </div>
-            </div>
-            <div id="divDate">
-
-                <div>מועד רישום</div>
-                <div style="vertical-align:top">
-                    <span>מ:</span><br />
-                    <div id="SignupDateFrom" name="SignupDateFrom"></div>
-                    <span>עד:</span><br />
-                    <div id="SignupDateTo" name="SignupDateTo"></div>
-                </div>
-
-            </div>
-
-            <br />
             <div>
-                <input type="submit" value="הצג" class="btn-default btn2" />
-                <input id="reset" type="reset" value="נקה" class="btn-default btn2" />
+                <form id="formGeneral" action="/Report/ReportStatistic" method="post">
+                    <input type="hidden" id="query_type" name="query_type" value="" />
+
+
+                    <div id="divCampaign">
+                        <div>קמפיין</div>
+                        <div>
+                            <div id="Campaign" name="Campaign"></div>
+                            @*<input type="checkbox" id="allCampaign" name="allCampaign" />&nbsp;<span>הצג הכל</span>*@
+                        </div>
+                    </div>
+                    <div id="divDate">
+
+                        <div>מועד רישום</div>
+                        <div style="vertical-align:top">
+                            <span>מ:</span><br />
+                            <div id="SignupDateFrom" name="SignupDateFrom"></div>
+                            <span>עד:</span><br />
+                            <div id="SignupDateTo" name="SignupDateTo"></div>
+                        </div>
+
+                    </div>
+
+                    <br />
+                    <div>
+                        <input type="submit" value="הצג" class="btn-default btn2" />
+                        <input id="reset" type="reset" value="נקה" class="btn-default btn2" />
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
+       
 </div>
 </div>
 

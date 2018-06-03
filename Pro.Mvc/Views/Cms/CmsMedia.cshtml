@@ -3,7 +3,7 @@
 
     ViewBag.Title = "Media";
     Layout = "~/Views/Shared/_View.cshtml";
-
+    var dataModel = @Html.Raw(Json.Encode(Model));
 }
 
 
@@ -30,6 +30,8 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            @*@app_media.load(@dataModel);*@
 
             $('.group1').colorbox({ rel: 'group1' });
 

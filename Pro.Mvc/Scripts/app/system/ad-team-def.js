@@ -34,7 +34,7 @@ function app_ad_team_def(userInfo) {
     }
 
     this.setEditorInputData = function (dataRecord) {
-        if (dataRecord === undefined || dataRecord==null) {
+        if (dataRecord === undefined || dataRecord===null) {
             $("#TeamId").val('');
             $("#TeamName").val('');
             $("#trcode").hide();
@@ -55,8 +55,8 @@ function app_ad_team_def(userInfo) {
            //    return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="'+slf.showMemmbersUrl+'=' + value + '" title="הצג מנויים">' + value + '</a></div>'
            //}
            //},
-           { text: 'שם צוות', datafield: 'TeamName', cellsalign: 'right', align: 'center' },
-           { text: 'מנויים', datafield: 'MembersCount', width: 80, cellsalign: 'right', align: 'center' }
+            { text: 'שם צוות', datafield: 'TeamName', width: '75%',cellsalign: 'right', align: 'center' },
+           { text: 'מנויים', datafield: 'MembersCount', width: '20%', cellsalign: 'right', align: 'center' }
         ];
        return columns;
     }
@@ -74,7 +74,7 @@ function app_ad_team_def(userInfo) {
 
     this.getDataCommand = function (rowid, rowdata, command) {
 
-        if (command == 2)//delete
+        if (command === 2)//delete
         {
             if (rowid <= 0) {
                app_dialog.alert("Invalid row id to delete!");
@@ -84,7 +84,7 @@ function app_ad_team_def(userInfo) {
         }
         else
 
-            return { 'TeamId': command == 0 ? -1 : rowdata.TeamId, 'TeamName': rowdata.TeamName, 'command': command };
+            return { 'TeamId': command === 0 ? -1 : rowdata.TeamId, 'TeamName': rowdata.TeamName, 'command': command };
 
     }
 
@@ -106,7 +106,7 @@ function app_ad_team_def(userInfo) {
 
         var src = $('#jqxgrid2').jqxGrid('source');
 
-        if (all == false) {
+        if (all === false) {
             src._source.url = this.RelUrl;//'/System/AdDefRel';
             src._source.data = { 'id': id };
             $('#jqxgrid2').jqxGrid('source').dataBind();
@@ -318,7 +318,7 @@ app_ad_team_def.prototype.nastedGrid = function (id) {
     $("#jqxgrid2").on('rowselect', function (event) {
         event.stopPropagation();
 
-        if ($("#liUsers").text() == "משתמשים") {
+        if ($("#liUsers").text() === "משתמשים") {
             var uid = $('#jqxgrid2').jqxGrid('getrowdata', event.args.rowindex).UserId;
 
             if (!confirm("האם להסיר את המשתמש המסומן מהקבוצה")) {

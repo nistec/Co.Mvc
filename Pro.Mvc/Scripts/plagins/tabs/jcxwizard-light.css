@@ -1,0 +1,139 @@
+/* -------------------------------- 
+
+Primary style
+background-color:#15C8D8; myt-blue
+background-color:#4cddf3; myt-light blue 
+old-background-color:#1784c7; blue
+color: #ff6a00; orange
+color dark gray-blue=#24343F
+c-------------------------------- */
+
+.jcxwiz-panel {
+    padding: 0;
+    margin: 0;
+    /*background-color: #fff;*/
+    /*display: none;*/
+}
+/*.jcxwiz-panel .active {
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+    display: block;
+}*/
+
+.jcxwiz-entry{
+    margin:0 5px;
+}
+.jcxwiz-entry-rtl{
+    margin-top:0;
+    margin-right:5px;
+}
+
+.jcx-wiz .jcx-wiz-nav {
+    /*margin: 0;
+    padding: 0;
+    padding-bottom: 5px;*/
+    display: none;
+}
+
+/*.jcx-wiz .jcx-wiz-tab {
+    display: inline-block;
+    margin: 0;
+    list-style: none;
+}*/
+
+.jcx-wiz .jcx-wiz-panel {
+    display: none;
+}
+
+.jcx-wiz .jcx-wiz-accordion-title {
+    display: none;
+}
+
+.jcx-wiz .jcx-wiz-panel.jcx-wiz-state-active {
+    display: block;
+}
+
+/* Tabs container */
+.jcx-wiz {
+	position: relative;
+
+}
+
+/* Tab element */
+/*.jcx-wiz .jcx-wiz-nav .jcx-wiz-tab {
+	position: relative;
+}*/
+
+/* Tab anchor */
+/*.jcx-wiz .jcx-wiz-nav .jcx-wiz-anchor {
+	display: inline-block;
+	padding: 7px 12px;
+
+	text-decoration: none;
+	font-size: 12px;
+	font-weight: bold;
+	color: #5AB1D0;
+}*/
+
+/* Disabled tab */
+/*.jcx-wiz .jcx-wiz-nav .jcx-wiz-state-disabled {
+	opacity: 0.5;
+}*/
+
+/* Active state tab anchor */
+/*.jcx-wiz .jcx-wiz-nav .jcx-wiz-state-active .jcx-wiz-anchor {
+	color: #626271;
+	text-shadow: none;
+	background-color: white;
+
+	border-bottom: none;
+	border-top: 4px solid #5AB1D0 !important;
+	border-bottom: 0px #fff solid !important;
+}*/
+
+/* Tab panel */
+/*.jcx-wiz .jcx-wiz-panel {
+	background-color: #fff;
+  
+}*/
+
+/* Accordion anchor */
+/*.jcx-wiz .jcx-wiz-accordion-title .jcx-wiz-anchor {
+	display: block;
+	padding: 8px;
+    margin-bottom:2px;
+    color: #5AB1D0;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 12px;
+
+    background-color:#f3f6fb;
+}*/
+
+/* Active accordion anchor */
+/*.jcx-wiz .jcx-wiz-accordion-title.jcx-wiz-state-active .jcx-wiz-anchor {
+	background-color: #fff;
+    color: #626271;
+	text-shadow: none;
+
+    border-bottom: 1px solid #5AB1D0 !important;
+	border-top: 4px solid #5AB1D0 !important;
+}*/
+
+/* Disabled accordion button */
+/*.jcx-wiz .jcx-wiz-accordion-title.jcx-wiz-state-disabled {
+	opacity: 0.5;
+}*/
+
+
+/* Accordion responsive breakpoint */
+/*@media only screen and (max-width: 768px) {
+    .jcx-wiz .jcx-wiz-nav {
+        display: none;
+    }
+
+    .jcx-wiz .jcx-wiz-accordion-title {
+        display: block;
+    }
+}*/

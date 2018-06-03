@@ -10,12 +10,15 @@ namespace ProSystem.Data.Entities
     public enum ListsTypes
     {
 
-        Accounts=1,
-        Users=2,
-        Categories=3,
-        Branch=4,
-        Cities=5,
-        Design=6
+        Ad_Account = 1,
+        Ad_UserProfile = 2,
+        Ad_Team = 3,
+        Task_Types = 4,
+        Ticket_Types = 5,
+        Topic_Types = 6,
+        Doc_Types = 7,
+        Tags = 8,
+        Folders = 9
     }
 
     public class Lists<T> where T : IEntityItem
@@ -34,7 +37,7 @@ namespace ProSystem.Data.Entities
         public static IList<T> Get_List()
         {
             var context = new DbSystemContext<T>(EntityCacheGroups.Enums,0,0);
-            return context.GetList();
+            return context.ExecOrViewList();
 
             //string key = EntityProCache.CacheKey(EntityCacheGroups.Enums, 0, tableName);
             //return EntityProCache.CacheGetOrCreate(key, () => Get_List_Internal(tableName));
@@ -55,16 +58,16 @@ namespace ProSystem.Data.Entities
     public class Lists
     {
 
-        public static string GetList(ListsTypes type)
+        public static string GetList(ListsTypes type, int AccountId)
         {
             using (var db = DbContext.Create<DbSystem>())
-            return db.ExecuteJson("sp_GetLists", "ListType", (int)type);
+            return db.ExecuteJson("sp_GetLists", "ListType", (int)type, "AccountId", AccountId);
         }
 
-        public static IList<T> GetList<T>(ListsTypes type)
+        public static IList<T> GetList<T>(ListsTypes type, int AccountId)
         {
             using (var db = DbContext.Create<DbSystem>())
-                return db.ExecuteList<T>("sp_GetLists", "ListType", (int)type);
+                return db.ExecuteList<T>("sp_GetLists", "ListType", (int)type, "AccountId", AccountId);
         }
 
     }

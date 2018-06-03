@@ -34,16 +34,16 @@ namespace ProSystem.Data.Entities
         #endregion
 
 
-        public static IList<TaskTypeEntity> ViewList(int AccountId)
+        public static IList<TaskTypeEntity> ViewList(int AccountId, string TaskMode)
         {
-            string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, ViewName);
-            return WebCache.GetOrCreateList<TaskTypeEntity>(key, () => ViewDbList(AccountId), EntityProCache.DefaultCacheTtl);
+            string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId,0, ViewName, TaskMode);
+            return WebCache.GetOrCreateList<TaskTypeEntity>(key, () => ViewDbList(AccountId, TaskMode), EntityProCache.DefaultCacheTtl);
         }
 
-        public static IList<TaskTypeEntity> ViewDbList(int AccountId)
+        public static IList<TaskTypeEntity> ViewDbList(int AccountId, string TaskModel)
         {
             using (var db = DbContext.Create<DbSystem>())
-                return db.Query<TaskTypeEntity>("select * from vw_Task_Types where AccountId=@AccountId or AccountId=0", "AccountId", AccountId);
+                return db.Query<TaskTypeEntity>("select * from vw_Task_Types where (AccountId=@AccountId or AccountId=0) and (TaskModel=@TaskModel or TaskModel='A')", "AccountId", AccountId, "TaskModel", TaskModel);
 
         }
         //public static IEnumerable<TaskTypeEntity> ViewItemList(int AccountId)
@@ -63,8 +63,13 @@ namespace ProSystem.Data.Entities
         public const string TagPropName = "סוג משימה";
         public const string TagPropTitle = "סוג משימה";
 
+
+        public const string TagPropNameTopic = "סוג סוגיה";
+        public const string TagPropNameTicket = "סוג כרטיס";
+        public const string TagPropNameDoc = "סוג מסמך";
+
         #region properties
-      
+
 
         [EntityProperty(EntityPropertyType.Identity, Column = "TaskTypeId")]
         public int PropId { get; set; }
@@ -75,6 +80,12 @@ namespace ProSystem.Data.Entities
 
         [EntityProperty(EntityPropertyType.Key,Column = "AccountId")]
         public int AccountId { get; set; }
+
+        [EntityProperty(Column = "TaskModel")]
+        [Validator("מודל", true)]
+        public string TaskModel { get; set; }
+
+
         [EntityProperty(EntityPropertyType.Optional)]
         public int MembersCount { get; set; }
 
@@ -97,14 +108,15 @@ namespace ProSystem.Data.Entities
             }
         }
  
-        public static int DoSave(int PropId, string PropName, int AccountId, UpdateCommandType command)
+        public static int DoSave(int PropId, string PropName, int AccountId, string TaskModel, UpdateCommandType command)
         {
             int result = 0;
             TaskTypeEntity newItem = new TaskTypeEntity()
             {
                 PropId = PropId,
                 PropName = PropName,
-                AccountId = AccountId
+                AccountId = AccountId,
+                TaskModel=TaskModel
             };
             string TableName = newItem.MappingName();
 
@@ -122,10 +134,129 @@ namespace ProSystem.Data.Entities
                     break;
             }
             //EntityPro.CacheRemove(EntityPro.GetKey(TableName, AccountId));
-            WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, TableName));
+            WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId,0, TableName,TaskModel));
             return result;
         }
 
     }
- 
+
+    /*
+    [EntityMapping("Tags")]
+    public class TagsEntity : EntityItem<DbSystem>, IEntityPro
+    {
+        #region override
+
+        public override string MappingName()
+        {
+            return "Tags";
+        }
+
+        public override EntityValidator Validate(UpdateCommandType commandType = UpdateCommandType.Update)
+        {
+            EntityValidator validator = new EntityValidator("סוג", "he");
+            if (commandType != UpdateCommandType.Delete)
+                validator.Required(PropName, "תגית");
+            if (PropId == 0 && commandType != UpdateCommandType.Insert)
+            {
+                validator.Append("רשומה זו אינה ניתנת לעריכה");
+            }
+            return validator;
+        }
+        #endregion
+
+
+        public static IList<TagsEntity> ViewList(int AccountId, string TaskMode)
+        {
+            string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, 0, ViewName, TaskMode);
+            return WebCache.GetOrCreateList<TagsEntity>(key, () => ViewDbList(AccountId, TaskMode), EntityProCache.DefaultCacheTtl);
+        }
+
+        public static IList<TagsEntity> ViewDbList(int AccountId, string TaskModel)
+        {
+            using (var db = DbContext.Create<DbSystem>())
+                return db.Query<TagsEntity>("select * from Tags where AccountId=@AccountId", "AccountId", AccountId);
+
+        }
+       
+        public static TagsEntity View(string tag)
+        {
+            using (var db = DbContext.Create<DbSystem>())
+                return db.EntityItemGet<TagsEntity>(TableName, "Tag", tag);
+        }
+
+        public const string ViewName = "Tags";
+        public const string TableName = "Tags";
+        public const string TagPropId = "תגית";
+        public const string TagPropName = "תגית";
+        public const string TagPropTitle = "תגית";
+
+        #region properties
+
+
+        //[EntityProperty(EntityPropertyType.Identity, Column = "TaskTypeId")]
+        //public int PropId { get; set; }
+
+        [EntityProperty(Column = "Tag")]
+        [Validator("תגית", true)]
+        public string PropName { get; set; }
+
+        [EntityProperty(EntityPropertyType.Key, Column = "AccountId")]
+        public int AccountId { get; set; }
+
+        [EntityProperty(Column = "SourceType")]
+        [Validator("מודל", true)]
+        public string SourceType { get; set; }
+
+        #endregion
+
+        public T Get<T>(string PropName) where T : IEntityItem
+        {
+            using (var db = DbContext.Create<DbSystem>())
+                return db.EntityItemGet<T>(ViewName, "Tag", PropName);
+        }
+
+        public static int DoDelete(string PropName, int AccountId)
+        {
+            using (var db = DbContext.Create<DbSystem>())
+            {
+                int result = 0;
+                result = db.EntityItemDelete(TagsEntity.TableName, new object[] { "Tag", PropName });
+                WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, TableName));
+                return result;
+            }
+        }
+
+        public static int DoSave(string PropName, int AccountId, string SourceType, UpdateCommandType command)
+        {
+            int result = 0;
+            TagsEntity newItem = new TagsEntity()
+            {
+                //PropId = PropId,
+                PropName = PropName,
+                AccountId = AccountId,
+                SourceType = SourceType
+            };
+            string TableName = newItem.MappingName();
+
+            switch ((int)command)
+            {
+                case 0://insert
+                    result = newItem.DoInsert<TagsEntity>();
+                    break;
+                case 2://delete
+                    result = newItem.DoDelete<TagsEntity>();
+                    break;
+                default:
+                    TagsEntity current = newItem.Get<TagsEntity>(PropName);
+                    result = current.DoUpdate(newItem);
+                    break;
+            }
+            //EntityPro.CacheRemove(EntityPro.GetKey(TableName, AccountId));
+            WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, 0, TableName, SourceType));
+            return result;
+        }
+
+    }
+
+    */
 }

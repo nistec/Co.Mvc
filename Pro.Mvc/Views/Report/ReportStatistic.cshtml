@@ -3,176 +3,179 @@
     Layout = "~/Views/Shared/_View.cshtml";
     ViewBag.Title = "StatisticReport";
     string UserName = ViewBag.UserName;
-    
+
 }
 
 @section head {
-      @Scripts.Render("~/bundles/jqx")
-@Scripts.Render("~/bundles/jqxgrid")
-<link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">
-        <script type="text/javascript" src="~/jqwidgets/jqxdraw.js"></script>
-        <script type="text/javascript" src="~/jqwidgets/jqxchart.core.js"></script>
-        <script type="text/javascript" src="~/Scripts/app/model/reports.js"></script>
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="~/jqwidgets/jqxdraw.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxchart.core.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/model/reports.js"></script>
     <style type="text/css">
-         p {
-        font-family:Arial;
+        p {
+            font-family: Arial;
         }
+
         .title {
             font-family: Arial;
         }
-         span {
+
+        span {
             font-family: Arial;
         }
+
         .chart-inner-text {
             fill: #00BAFF;
             color: #00BAFF;
             font-size: 30px;
             font-family: Verdana;
-        }    
+        }
     </style>
 }
 @section featured {
-    
+
 }
- 
+
 @section scripts {
 
     <script type="text/javascript">
 
-    $(document).ready(function () {
-        
+        $(document).ready(function () {
 
-        var source =
-         {
-             datatype: "csv",
-             type: 'POST',
-             async: true,
-             datafields: [
-                 { name: 'PropName' },
-                 { name: 'TotalCount' },
-                 { name: 'SumPrice' },
-                 { name: 'Prc' }
-            ],
-             data: { 'report': '@Model.ReportType', 'campaign': '@Model.Campaign', 'dateFrom': '@Model.SignupDateFrom', 'dateTo': '@Model.SignupDateTo' },
-             url: '@Url.Action("GetStatisticReport","Report")'
-         };
-        var dataAdapter = new $.jqx.dataAdapter(source, { async: false, autoBind: true, loadError: function (xhr, status, error) {app_dialog.alert('Error loading "' + source.url + '" : ' + error); } });
 
-        // prepare jqxChart settings
-        var settings = {
-            title: "התפלגות כמותית",
-            description: "@Model.HDesc",
-            showLegend: true,
-            enableAnimations: true,
-            padding: { left: 5, top: 5, right: 5, bottom: 5 },
-            titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
-            source: dataAdapter,
-            xAxis:
-                {
-                    dataField: 'PropName',
-                    gridLines: { visible: true },
-                    valuesOnTicks: false,
-                    labels: {
-                        angle: -45,
-                        rotationPoint: 'topright',
-                        offset: { x: 0, y: -25 }
-                    }
-                },
-            colorScheme: 'scheme01',
-            columnSeriesOverlap: false,
-            seriesGroups:
-                [
+            var source =
+             {
+                 datatype: "csv",
+                 type: 'POST',
+                 async: true,
+                 datafields: [
+                     { name: 'PropName' },
+                     { name: 'TotalCount' },
+                     { name: 'SumPrice' },
+                     { name: 'Prc' }
+                 ],
+                 data: { 'report': '@Model.ReportType', 'campaign': '@Model.Campaign', 'dateFrom': '@Model.SignupDateFrom', 'dateTo': '@Model.SignupDateTo' },
+                 url: '@Url.Action("GetStatisticReport","Report")'
+             };
+            var dataAdapter = new $.jqx.dataAdapter(source, { async: false, autoBind: true, loadError: function (xhr, status, error) { app_dialog.alert('Error loading "' + source.url + '" : ' + error); } });
+
+            // prepare jqxChart settings
+            var settings = {
+                title: "התפלגות כמותית",
+                description: "@Model.HDesc",
+                showLegend: true,
+                enableAnimations: true,
+                padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                titlePadding: { left: 90, top: 0, right: 0, bottom: 10 },
+                source: dataAdapter,
+                xAxis:
                     {
-                        type: 'column',
-                        valueAxis:
-                        {
-                            visible: true,
-                            unitInterval: 500,
-                            title: { text: 'סה"כ כמות ומחיר<br>' }
-                        },
-                        series: [
-                                 { dataField: 'TotalCount', displayText: 'סה"כ כמות' }
-                                 //{ dataField: 'סהכ מחיר', displayText: 'סה"כ מחיר' }
-                                //{ dataField: 'פריט', displayText: 'סוג פריט' }
-                                //{ dataField: 'SumPrice', displayText: 'סה"כ מחיר' }
-                        ]
+                        dataField: 'PropName',
+                        gridLines: { visible: true },
+                        valuesOnTicks: false,
+                        labels: {
+                            angle: -45,
+                            rotationPoint: 'topright',
+                            offset: { x: 0, y: -25 }
+                        }
                     },
-                    {
-                        type: 'line',
-                        valueAxis:
+                colorScheme: 'scheme01',
+                columnSeriesOverlap: false,
+                seriesGroups:
+                    [
                         {
-                            visible: true,
-                            position: 'right',
-                            unitInterval: 10,
-                            title: { text: ' (% מהסך הכללי)' },
-                            gridLines: { visible: false },
-                            labels: { horizontalAlignment: 'left' }
-                        },
-                        series: [
-                                { dataField: 'Prc', displayText: 'חלק יחסי ב %' }
-                        ]
-                    }
-                ]
-        };
-        // setup the chart
-        $('#chart1Container').jqxChart(settings);
-
-
-        var pie_settings = {
-            title: "התפלגות כספית",
-            description: "",
-            enableAnimations: true,
-            showLegend: true,
-            showBorderLine: true,
-            legendLayout: { left: 10, top: 10, width: 200, height: 200, flow: 'vertical' },
-            padding: { left: 5, top: 5, right: 5, bottom: 5 },
-            titlePadding: { left: 0, top: 0, right: 0, bottom: 10 },
-            source: dataAdapter,
-            colorScheme: 'scheme03',
-            seriesGroups:
-                [
-                    {
-                        type: 'pie',
-                        showLabels: true,
-                        series:
-                            [
-                                {
-                                    dataField: 'SumPrice',
-                                    displayText: 'PropName',
-                                    labelRadius: 170,
-                                    initialAngle: 15,
-                                    radius: 120,
-                                    centerOffset: 0,
-                                    formatFunction: function (value) {
-                                        if (isNaN(value))
-                                            return value;
-                                        return parseFloat(value);
-                                    },
-                                }
+                            type: 'column',
+                            valueAxis:
+                            {
+                                visible: true,
+                                unitInterval: 500,
+                                title: { text: 'סה"כ כמות ומחיר<br>' }
+                            },
+                            series: [
+                                     { dataField: 'TotalCount', displayText: 'סה"כ כמות' }
+                                     //{ dataField: 'סהכ מחיר', displayText: 'סה"כ מחיר' }
+                                    //{ dataField: 'פריט', displayText: 'סוג פריט' }
+                                    //{ dataField: 'SumPrice', displayText: 'סה"כ מחיר' }
                             ]
-                    }
-                ]
-        };
-        // setup the chart
-        $('#chart2Container').jqxChart(pie_settings);
+                        },
+                        {
+                            type: 'line',
+                            valueAxis:
+                            {
+                                visible: true,
+                                position: 'right',
+                                unitInterval: 10,
+                                title: { text: ' (% מהסך הכללי)' },
+                                gridLines: { visible: false },
+                                labels: { horizontalAlignment: 'left' }
+                            },
+                            series: [
+                                    { dataField: 'Prc', displayText: 'חלק יחסי ב %' }
+                            ]
+                        }
+                    ]
+            };
+            // setup the chart
+            $('#chart1Container').jqxChart(settings);
 
-        $("#dataTable").jqxDataTable(
-        {
-            width: '100%',
-            rtl: true,
-            pageable: false,
-            source: dataAdapter,
-            columnsResize: true,
-            showAggregates: true,
-            aggregatesHeight: 30,
-            columns: [
-              {text:'תאור', dataField: 'PropName', cellsalign: 'right', align: 'center' },
-              { text: 'סהכ כמות', dataField: 'TotalCount', cellsalign: 'right', align: 'center', aggregates: ['sum'] },
-              {text:'אחוז', dataField: 'Prc', cellsformat: 'f2', cellsalign: 'right', align: 'center' ,aggregates: ['sum']},
-              { text: 'סהכ כספי', dataField: 'SumPrice', type: 'decimal', cellsformat: 'f2', cellsalign: 'right', align: 'center',aggregates: ['sum'] },
-            ]
+
+            var pie_settings = {
+                title: "התפלגות כספית",
+                description: "",
+                enableAnimations: true,
+                showLegend: true,
+                showBorderLine: true,
+                legendLayout: { left: 10, top: 10, width: 200, height: 200, flow: 'vertical' },
+                padding: { left: 5, top: 5, right: 5, bottom: 5 },
+                titlePadding: { left: 0, top: 0, right: 0, bottom: 10 },
+                source: dataAdapter,
+                colorScheme: 'scheme03',
+                seriesGroups:
+                    [
+                        {
+                            type: 'pie',
+                            showLabels: true,
+                            series:
+                                [
+                                    {
+                                        dataField: 'SumPrice',
+                                        displayText: 'PropName',
+                                        labelRadius: 170,
+                                        initialAngle: 15,
+                                        radius: 120,
+                                        centerOffset: 0,
+                                        formatFunction: function (value) {
+                                            if (isNaN(value))
+                                                return value;
+                                            return parseFloat(value);
+                                        },
+                                    }
+                                ]
+                        }
+                    ]
+            };
+            // setup the chart
+            $('#chart2Container').jqxChart(pie_settings);
+
+            $("#dataTable").jqxDataTable(
+            {
+                width: '100%',
+                rtl: true,
+                pageable: false,
+                source: dataAdapter,
+                columnsResize: true,
+                showAggregates: true,
+                aggregatesHeight: 30,
+                columns: [
+                  { text: 'תאור', dataField: 'PropName', cellsalign: 'right', align: 'center' },
+                  { text: 'סהכ כמות', dataField: 'TotalCount', cellsalign: 'right', align: 'center', aggregates: ['sum'] },
+                  { text: 'אחוז', dataField: 'Prc', cellsformat: 'f2', cellsalign: 'right', align: 'center', aggregates: ['sum'] },
+                  { text: 'סהכ כספי', dataField: 'SumPrice', type: 'decimal', cellsformat: 'f2', cellsalign: 'right', align: 'center', aggregates: ['sum'] },
+                ]
+            });
         });
-    });
     </script>
 }
 <div class="breadcrumbs">
@@ -184,26 +187,44 @@
 
     <!--content-->
     <div class="container-box center">
-        <h1>@Model.HTitle</h1>
-        <a href="ReportQuery">דוחות</a>
-            <div style="width:100%;display:block;">
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                    <div id="chart1Container" class="graph" style="min-width:350px; height:400px;">
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                    <div id="chart2Container" class="graph" style="min-width: 350px; height: 400px;">
-                    </div>
+        <div class="panel-area" style="width:100%;display:block;">
+            <h3 class="panel-area-title">@Model.HTitle</h3>
+
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <div id="chart1Container" class="graph" style="min-width:350px; height:400px;">
                 </div>
             </div>
-
-            <div id="dataCounters" style="width: 100%; min-width: 350px;">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <div id="chart2Container" class="graph" style="min-width: 350px; height: 400px;">
+                </div>
+            </div>
+            <div id="dataCounters" style="width: 100%; min-width: 350px;" class="panel-area-title">
                 <div style="margin:15px">
                     <div id="dataTable"></div>
                 </div>
             </div>
+        </div>
+
+    </div>
 </div>
-  </div>
+
+<!--footer-->
+<footer>
+    <div class="container">
+        <div class="thumbnail-footer">
+            <figure><img src="~/images/site/page1_icon1.png" alt=""></figure>
+        </div>
+        <div class="col-lg-12">
+                    <ul class="follow_icon rtl">
+                        <li class="padding-r10">
+                            <a href="~/Report/ReportQuery" title="יומן">
+                                <i class="fa fa-angle-double-left" style="font-size:20px"></i> דוחות
+                            </a>
+                        </li>
+                     </ul>
+                </div>
+    </div>
+</footer> 
 <script type="text/javascript">
     app_menu.activeLayoutMenu("liReport");
     app_menu.breadcrumbs("Report", "ReportStatistic", 'en');

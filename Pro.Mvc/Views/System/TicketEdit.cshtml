@@ -11,16 +11,17 @@
 
     @Scripts.Render("~/bundles/jqx")
     @Scripts.Render("~/bundles/jqxgrid")
+    <link rel="stylesheet" href="~/Scripts/plagins/tabs/jcxtabs-light.min.css" />
+    <script src="~/Scripts/plagins/tabs/jcxtabs.min.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
     <script src="~/jqwidgets/jqxpopover.js"></script>
-    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
-    <script type="text/javascript" src="~/Scripts/app/system/task-def.js"></script>
-    <script src="~/Scripts/app/system/task-items.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js?ver=20180001"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/task-base.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/task-def.js?ver=20180001"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
+    @*<link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />*@
 
-    <script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
-    <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
-    
     <script src="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.js"></script>
     <link href="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.css" rel="stylesheet" />
     <style type="text/css">
@@ -28,37 +29,36 @@
             direction: rtl;
             text-align: right;
         }
-
-        /*.jqx-grid-cell {
-            border: none;
+        /*.tab-panel {width:100%}*/
+        .expander-entry {
+            margin: 0 !important;
+            padding: 5px !important
         }
 
-        .wiz-tab {
-            display: none;
+        .padding-r10 {
+            padding-left: 10px;
         }
 
-            .wiz-tab.active {
-                display: block;
-            }*/
-        #accordion {
-        max-width:800px;
-        }
         #TaskBody {
-            text-align: right;
-            padding-right: 1px;
-            min-height: 60px;
-            max-height: 200px;
-            overflow-x: auto;
-            /*overflow-y: no-display;*/
-            height: 100%;
-            width: 100%;
-            border: solid 1px #dbd6d6;
-            direction: rtl;
-        }
-        #jqxExp-1 {
-            border: solid 1px #dbd6d6;
+            min-height: 100px;
+            border: solid 1px #c7c1c1;
+            background-color: #fff;
+            overflow-x: hidden;
         }
     </style>
+
+    <!--uploder==============================-->
+    <script src="~/jqwidgets/jqxsplitter.js"></script>
+    <script src="~/Scripts/plagins/colorbox/jquery.colorbox-min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/colorbox/colorbox.css" />
+    <script src="~/Scripts/app/app-media.js" type="text/javascript"></script>
+    <script src="~/Scripts/plagins/uploader/js/vendor/jquery.ui.widget.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.iframe-transport.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.fileupload.js"></script>
+
+    @*<link href="~/Scripts/bootstrap/css/bootstrap.css" rel="stylesheet" />*@
+    <link rel="stylesheet" href="~/Scripts/plagins/uploader/css/jquery.fileupload.css">
+
 
 }
 
@@ -67,49 +67,54 @@
 
     <script type="text/javascript">
 
-    var wizard;
-    var task_def;
-    
-    $(document).ready(function () {
-        JSON.useDateParser();
-        var theme = 'Arctic';
-        var uinfo = JSON.parse('@userInfo');
-        
+        var theme = 'nis_metro';
+        var task_def;
 
-        var taskid = @rcdid
-        wizard = new app_wiztabs();
-        wizard.displayStep(1);
-   
-        task_def = app_task.init(JSON.parse('@dataModel'), uinfo, 'E');
-      
-        //$('#ClientId-button').on('click', function (event) {
-        //    if (dlg == null) {
-        //        dlg = new app_ComboDlg('#ClientId');
-        //        dlg.init("בחירת לקוח\\מנוי", "RecordId", "DisplayName", '/Common/GetMemberDlg');
-        //    }
-        //    dlg.display();
-        //});
+        $(document).ready(function () {
+            JSON.useDateParser();
+            $("#fcEnd").hide();
 
-        $('#reset').on('click', function () {
-            location.reload();
-        });
-        
-        $('#fcClear').on('click', function (e) {
-            //app_messenger.Post("הודעה");
-            $('#fcForm')[0].reset();
-            $('#fcForm').jqxValidator('hide');
+            var uinfo = JSON.parse('@userInfo');
+
+            task_def = new app_ticket(JSON.parse('@dataModel'), uinfo, 'E');
+            task_def.init(false);
+
+            //$('#reset').on('click', function () {
+            //    location.reload();
+            //});
+
+            //$('#fcClear').on('click', function (e) {
+            //    //app_messenger.Post("הודעה");
+            //    $('#fcForm')[0].reset();
+            //    $('#fcForm').jqxValidator('hide');
+            //});
+            //$('#fcNew').on('click', function (e) {
+            //    app.refresh();
+            //});
+            //$('#fcCancel').on('click', function (e) {
+            //    task_def.doCancel();
+            //});
+            //$('#fcSubmit').on('click', function (e) {
+            //    task_def.doSubmit('update');
+            //});
+            //$('#fcEnd').on('click', function (e) {
+            //    task_def.doSubmit('end');
+            //});
+            ////$('#fcSubmit-plus').on('click', function (e) {
+            ////    task_def.doSubmit('plus');
+            ////});
+            //$('#task-item-update').click(function () {
+            //    var iframe = wizard.getIframe();
+            //    if (iframe && iframe.triggerSubmit) {
+            //        iframe.triggerSubmit();
+            //    }
+            //});
+            //$('#task-item-cancel').click(function () {
+            //    wizard.wizHome();
+            //});
         });
 
-        $('#fcCancel').on('click', function (e) {
-            task_def.doCancel();
-        });
-        $('#fcSubmit').on('click', function (e) {
-            task_def.doSubmit();
-        });
-              
-    });
-      
-</script>
+    </script>
 }
 
 <div class="breadcrumbs">
@@ -117,148 +122,141 @@
 
 
 <div class="global-view">
-    <div id="wiz-container" class="container">
-            <h3 id="hTitle" class="rtl">סוגיה</h3>
+    <div id="wiz-container" class="container rtl">
+
+        <div id="hTitle" class="panel-page-header rtl">
+            <span id="hTitle-text" style="margin:10px">כרטיס</span>
+        </div>
+        <div style="height:5px"></div>
+        <div id="wiz-1" class="wiz-tab active">
             <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
-                
-                <div id="fcBody">
 
-                    <div id="accordion" class="tab-content" dir="rtl">
-                        <div id="hxp-0">סוגיה</div>
-                        <div id="exp-0" style="padding:0;margin:0">
-                            <div class="expander-entry" style="margin:10px">
+                <div id="accordion" class="jcx-tabs rtl tab-content">
+                    <ul id="tab-query" class="nav nav-tabs1">
+                        <li class="active"><a id="hxp-0" href="#exp-0" data-toggle="tab">כרטיס</a></li>
+                        <li><a id="hxp-1" href="#exp-1" data-toggle="tab">הערות</a></li>
+                        <li><a id="hxp-2" href="#exp-2" data-toggle="tab">העברות</a></li>
+                        <li><a id="hxp-3" href="#exp-3" data-toggle="tab">מד-זמן</a></li>
+                        <li><a id="hxp-4" href="#exp-4" data-toggle="tab">פעולות</a></li>
+                        <li><a id="hxp-5" href="#exp-5" data-toggle="tab">קבצים</a></li>
+                    </ul>
+
+                    <div id="exp-0" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-title">משימה</div>
+                            <div class="expander-entry">
                                 <form class="fcForm" id="fcForm" method="post" action="/System/UpdateTask">
-                                        <input type="hidden" id="TaskId" name="TaskId" value="0" />
-                                        <input type="hidden" id="AccountId" name="AccountId" value="" />
-                                        <input type="hidden" id="TaskModel" name="TaskModel" value="E" />
-                                        <input type="hidden" id="UserId" name="UserId" value="" />
-                                        <input type="hidden" id="TeamId" name="TeamId" value="" />
-                                        <input type="hidden" id="Task_Parent" name="Task_Parent" value="" />
-                                        <input type="hidden" id="TaskSubject" name="TaskSubject" value="" />
-                                        <input type="hidden" id="Task_Type" name="Task_Type" value="" />
-                                        <input type="hidden" id="AssignByAccount" name="AssignByAccount" value="" />
+                                    <input type="hidden" id="TaskId" name="TaskId" value="0" />
+                                    <input type="hidden" id="AccountId" name="AccountId" value="" />
+                                    <input type="hidden" id="UserId" name="UserId" value="" />
+                                    <input type="hidden" id="TeamId" name="TeamId" value="" />
+                                    @*<input type="hidden" id="Task_Parent" name="Task_Parent" value="" />*@
+                                    @*<input type="hidden" id="Task_Type" name="Task_Type" value="" />*@
+                                    <input type="hidden" id="TaskSubject" name="TaskSubject" value="" />
+                                    <input type="hidden" id="TaskModel" name="TaskModel" value="E" />
 
-                                        <div id="tab-content" class="tab-content" dir="rtl">
-                                            <div class="form-group">
-                                                <div class="field">
-                                                    סטאטוס :
-                                                </div>
-                                                <div id="TaskStatus" name="TaskStatus"></div>
+                                    <div id="tab-content" class="tab-content" dir="rtl">
+                                        <div class="form-group">
+                                            <div class="field">
+                                                סוג משימה:
                                             </div>
-                                            <div class="form-group">
-                                                <div class="field">
-                                                    תיאור:
-                                                </div>
-                                                <div id="TaskBody" name="TaskBody" class="text-content" contenteditable="true" readonly="readonly"></div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="field">
-                                                    נוצר ב:
-                                                </div>
-                                                <div id="CreatedDate" name="CreatedDate"></div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="field">
-                                                    תאריך לתזכורת:
-                                                </div>
-                                                <div id="DueDate" name="DueDate"></div>
-                                            </div>
-                                            
-                                            <div class="form-group pasive">
-                                                <div class="field">
-                                                    צבע :
-                                                </div>
-                                                <select id="ColorFlag" name="ColorFlag" >
-                                                    <option value="#7bd148">Green</option>
-                                                    <option value="#5484ed">Bold blue</option>
-                                                    @*<option value="#a4bdfc">Blue</option>*@
-                                                    <option value="#46d6db">Turquoise</option>
-                                                    @*<option value="#7ae7bf">Light green</option>*@
-                                                    <option value="#51b749">Bold green</option>
-                                                    @*<option value="#fbd75b">Yellow</option>*@
-                                                    <option value="#ffb878">Orange</option>
-                                                    <option value="#ff887c">Red</option>
-                                                    <option value="#dc2127">Bold red</option>
-                                                    <option value="#dbadff">Purple</option>
-                                                </select>
-                                            </div>
-                                            
-
-                                    <div id="jqxExp-1">
-                                        <div>
-                                            פרטים נוספים
+                                            <div id="Task_Type" name="Task_Type"></div>
                                         </div>
-                                        <div class="rtl" style="border:none">
 
-                                            
-                                            <div class="form-group">
-                                                <div class="field">
-                                                    מועד התחלה:
-                                                </div>
-                                                <input id="StartedDate" name="StartedDate" type="text" readonly="readonly" class="text-mid" />
+                                        <div class="form-group">
+                                            <div class="field">
+                                                סטאטוס :
                                             </div>
-                                            <div class="form-group">
-                                                <div class="field">
-                                                    מועד סיום:
-                                                </div>
-                                                <input id="EndedDate" name="EndedDate" type="text" readonly="readonly" class="text-mid" />
+                                            <input type="hidden" id="TaskStatus" name="TaskStatus" />
+                                            <label class="text-normal border white"><label id="TaskStatus-display"></label>  -  <i id="TaskStatus-color" class="fa fa-circle" style="font-size:16px;"></i></label>
+                                        </div>
+                                        <div class="form-group" id="TaskBody-div">
+                                            <div class="field">
+                                                תיאור: <span><a id="TaskBody-btn-view" href="#"><i class="fa fa-search-plus" style="font-size:16px"></i></a></span>
                                             </div>
-                                            <div id="Project_Id-container" class="form-group" style="max-width:250px">
-                                                <div id="Project_Id-name" class="field">
-                                                    פרוייקט :
-                                                </div>
-                                                @*<div id="Project_Id" name="Project_Id"></div>*@
-                                                <input id="Project_Id" name="Project_Id" type="hidden" />
-                                                <input id="Project_Id-display" type="text" class="text-mid" readonly />
-                                                <a href="#" id="Project_Id-button" class="@(Model.Option == "g" ? "item-pasive" : null)" style="font-size:16px"><i class="fa fa-search"></i></a>
-                                                <script type="text/javascript">
-                                                    var project_dlg;
-                                                    $('#Project_Id-button').on('click', function (event) {
-                                                        if (project_dlg == null) {
-                                                            project_dlg = new app_ComboDlg('#Project_Id');
-                                                            project_dlg.init("ProjectId", "ProjectName", '/System/Lookup_DisplayList','project_name');
-                                                        }
-                                                        project_dlg.display();
-                                                    });
-                                                </script>
+                                            <textarea id="TaskBody" name="TaskBody" class="text-content"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                נוצר ב:
                                             </div>
-                                            <div id="ClientId-container" class="form-group" style="max-width:250px">
-                                                <div id="ClientId-name" class="field">
-                                                    לקוח\מנוי:
-                                                </div>
-                                                <input type="hidden" id="ClientId" name="ClientId" value="0" />
-                                                <input id="ClientDetails" type="text" class="text-mid" readonly />
-                                                <a href="#" id="ClientId-button" class="@(Model.Option == "g" ? "item-pasive" : null)" style="font-size:16px"><i class="fa fa-search"></i></a>
-                                                <script type="text/javascript">
-                                                    var client_dlg;
-                                                    $('#ClientId-button').on('click', function (event) {
-                                                        if (client_dlg == null) {
-                                                            client_dlg = new app_ComboDlg('#ClientId', "#ClientDetails");//function (item) {
-                                                            //    $("#ClientDetails").val(item.label);
-                                                            //});
-                                                            client_dlg.init("Value", "Label", '/Common/Lookup_DisplayList', 'member_display');
-                                                        }
-                                                        client_dlg.display();
-                                                    });
-                                                </script>
+                                            <input type="text" id="CreatedDate" name="CreatedDate" class="text-mid label" readonly="readonly" data-type="datetime" />
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                תאריך לביצוע:
                                             </div>
+                                            <div id="DueDate" name="DueDate"></div>
+                                        </div>
 
-                                            <div class="form-group">
-                                                <input type="checkbox" id="IsShare" name="IsShare" disabled="disabled" />&nbsp;<span>משותף</span>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                צבע :
+                                            </div>
+                                            <select id="ColorFlag" name="ColorFlag"></select>
+                                        </div>
+                                        <div id="jqxExp-1">
+                                            <div class="panel-area-title">
+                                                פרטים נוספים
+                                            </div>
+                                            <div class="panel-area rtl" style="border:none">
+
+
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        מועד התחלה:
+                                                    </div>
+                                                    <input id="StartedDate" name="StartedDate" type="text" readonly="readonly" class="text-mid label" data-type="datetime" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        מועד סיום:
+                                                    </div>
+                                                    <input id="EndedDate" name="EndedDate" type="text" readonly="readonly" class="text-mid label" data-type="datetime" />
+                                                </div>
+                                                <div id="Task_Parent-group" class="form-group">
+                                                    <div class="field">
+                                                        משימת אב:
+                                                    </div>
+                                                    <input type="text" id="Task_Parent" name="Task_Parent" readonly /><a id="Task_Parent-link" href="#" title="הצג משימת אב"><i class="fa fa-search-plus"></i></a>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        פרוייקט:
+                                                    </div>
+                                                    <input type="text" id="Project_Id" name="Project_Id" /><i class="fa fa-search"></i>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        לקוח\מנוי:
+                                                    </div>
+                                                    <input type="text" id="ClientId" name="ClientId" /><i class="fa fa-search"></i>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        תגיות:
+                                                    </div>
+                                                    <div id="Tags" name="Tags"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="field">
+                                                        שיתוף:
+                                                    </div>
+                                                    <div id="AssignTo"></div>
+                                                </div>
+                                                <div class="form-group pasive">
+                                                    <input type="checkbox" id="IsShare" name="IsShare" disabled="disabled" />&nbsp;<span>משותף</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                         <div style="height: 5px"></div>
-                                            <div class="@(Model.Option == "g" ? "item-pasive" : null)">
-                                                <input id="fcSubmit" class="btn-default btn7 w-80" type="button" value="עדכון" />
-                                                <input id="fcCancel" class="btn-default btn7 w-80" type="button" value="ביטול" />
-                                            </div>
-                                        </div>
                                 </form>
                             </div>
                         </div>
-                        <div id="hxp-1">הערות</div>
-                        <div id="exp-1" style="padding:0;margin:0">
+                    </div>
+                    <div id="exp-1" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-1">הערות</div>
                             <div class="expander-entry">
                                 <div class="grid-wrap rtl">
                                     <div class="@(Model.Option == "g" ? "item-pasive" : null)">
@@ -272,20 +270,25 @@
                                 </div>
                             </div>
                         </div>
-                        @*<div>מעקב העברות</div>*@
-                        <div id="exp-3" style="padding: 0; margin: 0; display: none">
+                    </div>
+                    <div id="exp-2" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-2">העברות</div>
                             <div class="expander-entry">
                                 <div class="grid-wrap rtl">
                                     <div class="@(Model.Option == "g" ? "item-pasive" : null)">
                                         <a id="jqxgrid2-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
                                         <a id="jqxgrid2-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
                                     </div>
+                                    <div id="jqxgrid2-window"></div>
                                     <div id="jqxgrid2" style="position:relative;z-index:1;"></div>
                                 </div>
                             </div>
                         </div>
-                        @*<div>מעקב זמנים</div>*@
-                        <div id="exp-4" style="padding:0;margin:0;display:none">
+                    </div>
+                    <div id="exp-3" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-3">מד-זמן</div>
                             <div class="expander-entry">
                                 <div class="grid-wrap rtl">
                                     <div class="@(Model.Option == "g" ? "item-pasive" : null)">
@@ -294,12 +297,15 @@
                                         <a id="jqxgrid3-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
                                         <a id="jqxgrid3-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
                                     </div>
+                                    <div id="jqxgrid3-window"></div>
                                     <div id="jqxgrid3" style="position:relative;z-index:1;"></div>
                                 </div>
                             </div>
                         </div>
-                        <div id="hxp-4">מעקב ביצוע</div>
-                        <div id="exp-4" style="padding:0;margin:0">
+                    </div>
+                    <div id="exp-4" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-4">פעולות</div>
                             <div class="expander-entry">
                                 <div class="grid-wrap rtl">
                                     <div class="@(Model.Option == "g" ? "item-pasive" : null)">
@@ -313,27 +319,71 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="hxp-5">קבצים</div>
-                        <div id="exp-5" style="padding:0;margin:0">
-                            <div class="expander-entry">
-                                <div id="task-files">
-                                    <iframe id="iframe-files" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen></iframe>
-                               </div>
+                    </div>
+                    <div id="exp-5" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-5">קבצים</div>
+                            <div class="expander-entry1">
+                                <div id="task-files"></div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-            </div>   
+                <div style="height: 5px"></div>
+                <div class="@(ViewBag.UserInfo.UserId) panel-area">
+                    <input id="fcSubmit" class="btn-default btn7 w-60" type="button" value="עדכון" />
+                    <input id="fcEnd" class="btn-default btn7 w-60" type="button" value="סיום" />
+                    <input id="fcCancel" class="btn-default btn7 w-60" type="button" value="x" />
+                    <a id="Task_Child-link" style="margin-right:10px" href="#" title="יצירת תת משימה"><i class="fa fa-share-alt"></i></a>
+                </div>
+
+            </div>
+        </div>
+        <div id="wiz-2" class="wiz-tab">
+            <h3 id="wiz-2-title" class="rtl">
+                עריכת משימה
+            </h3>
+            <div id="divPartial2" class="wiz-partial"></div>
+            <div class="rtl">
+                <a id="task-item-update" class="btn-default btn7 w-60" href="#">עדכון</a>
+                <a id="task-item-cancel" class="btn-default btn7 w-60" href="#">ביטול</a>
+            </div>
+        </div>
+        <div id="wiz-3" class="wiz-tab">
+            <div class="rtl">
+                <a class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">חזרה</a>
+            </div>
+            <div id="divPartial3"></div>
+        </div>
+        <div id="wiz-4" class="wiz-tab">
+            <h3 class="rtl">מעקב זמנים</h3>
+            <div id="divPartial4"></div>
+        </div>
+        <div id="wiz-5" class="wiz-tab">
+            <h3 class="rtl">הערות-עריכה</h3>
+            <div id="divPartial5"></div>
+        </div>
+        <div id="wiz-6" class="wiz-tab">
+            <h3 class="rtl">העברה</h3>
+            <div id="divPartial6"></div>
+        </div>
+        <div id="wiz-7" class="wiz-tab">
+            <h3 class="rtl">מעקב זמנים - עריכה</h3>
+            <div id="divPartial7"></div>
+        </div>
     </div>
 </div>
 <!--end of content-wrapper-->
-
-
+<!--footer-->
+<footer>
+ </footer>
 <script type="text/javascript">
     app_menu.activeLayoutMenu("liSystem");
     app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
+    app_menu.footer("task");
 </script>
+
+
 
 
 

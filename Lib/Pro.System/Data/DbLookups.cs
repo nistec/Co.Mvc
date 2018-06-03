@@ -22,9 +22,10 @@ namespace ProSystem.Data
 
         public static IList<EntityListItem<int>> DisplayListCache(int accountId, string type)
         {
-            string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Task, accountId, 0, "DisplayList_" + type);
+            string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Task.ToString(), accountId, 0, "DisplayList_" + type);
             return WebCache.GetOrCreateList(key, () => DisplayList(accountId, type),Settings.DefaultShortTTL);
         }
+
         public static IList<EntityListItem<int>> DisplayList(int accountId, string type)
         {
             switch (type)
@@ -34,9 +35,80 @@ namespace ProSystem.Data
                 case "project_name":
                     return EntityListContext<DbSystem, int>.GetList("ProjectId", "ProjectName", "Project", "AccountId", accountId);
                 default:
-                    return null;
+                    return EntityListContext<DbSystem, int>.GetList("Value", "Label", type, "AccountId", accountId);
             }
         }
+
+        public static IList<EntityListItem<int>> DisplayListCache(string cacheGroups, string valueField, string displayField, string mappingName, int accountId)
+        {
+            string key = WebCache.GetKey(Settings.ProjectName, cacheGroups, accountId, 0, "DisplayList_" + mappingName);
+            return WebCache.GetOrCreateList(key, () => DisplayList(valueField, displayField, mappingName, accountId), Settings.DefaultShortTTL);
+        }
+        public static IList<EntityListItem<int>> DisplayList(string valueField, string displayField, string mappingName, int accountId)
+        {
+            return EntityListContext<DbSystem, int>.GetList(valueField, displayField, mappingName, "AccountId", accountId);
+        }
+   
+        public static IEnumerable<EntityListItem<int>> ViewEntityList(string cacheGroups, string valueField, string displayField, string mappingName, int accountId)
+        {
+            string key = WebCache.GetKey(Settings.ProjectName, cacheGroups, accountId, mappingName);
+            IEnumerable<EntityListItem<int>> list = null;
+
+            if (EntityProCache.EnableCache)
+                list = (IEnumerable<EntityListItem<int>>)WebCache.Get<List<EntityListItem<int>>>(key);
+            if (list == null || list.Count() == 0)
+            {
+                list = EntityListContext<DbSystem, int>.GetList(valueField, displayField, mappingName, "AccountId", accountId);
+                if (EntityProCache.EnableCache && list != null)
+                {
+                    //CacheAdd(key,GetSession(AccountId), (List<T>)list);
+                    WebCache.Insert(key, (List<EntityListItem<int>>)list);
+                }
+            }
+
+            return list;
+        }
+
+        public static IEnumerable<EntityListItem<int>> ViewEnumList(string cacheGroups, string valueField, string displayField, string mappingName, int accountId, int enumType)
+        {
+            string key = WebCache.GetKey(Settings.ProjectName, cacheGroups, accountId, mappingName + "_" + enumType.ToString());
+            IEnumerable<EntityListItem<int>> list = null;
+
+            if (EntityProCache.EnableCache)
+                list = (IEnumerable<EntityListItem<int>>)WebCache.Get<List<EntityListItem<int>>>(key);
+            if (list == null || list.Count() == 0)
+            {
+                list = EntityListContext<DbSystem, int>.GetList(valueField, displayField, mappingName, "AccountId", accountId);
+                if (EntityProCache.EnableCache && list != null)
+                {
+                    //CacheAdd(key,GetSession(AccountId), (List<T>)list);
+                    WebCache.Insert(key, (List<EntityListItem<int>>)list);
+                }
+            }
+
+            return list;
+        }
+
+        public static IEnumerable<EntityListItem<int>> ViewEnumList(int accountId, int enumType)
+        {
+            string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, accountId, "Enum_" + enumType.ToString());
+            IEnumerable<EntityListItem<int>> list = null;
+
+            if (EntityProCache.EnableCache)
+                list = (IEnumerable<EntityListItem<int>>)WebCache.Get<List<EntityListItem<int>>>(key);
+            if (list == null || list.Count() == 0)
+            {
+                list = EntityListContext<DbSystem, int>.GetList("PropId", "PropName", "Enum", "AccountId", accountId, "EnumType", enumType);
+                if (EntityProCache.EnableCache && list != null)
+                {
+                    //CacheAdd(key,GetSession(AccountId), (List<T>)list);
+                    WebCache.Insert(key, (List<EntityListItem<int>>)list);
+                }
+            }
+
+            return list;
+        }
+
 
         public static string Project(string field, params object[] keyvalueParameters)
         {

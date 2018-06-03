@@ -156,7 +156,10 @@ namespace Pro.Mvc.Controllers
             ResultModel model = null;
             try
             {
-                int accountId = GetAccountId();
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+
                 var parm = Request.Params;
                 bool upddateExists = false;// (parm == null) ? false : Types.ToBool(parm["param1"], false);
 
@@ -210,7 +213,10 @@ namespace Pro.Mvc.Controllers
             ResultModel model= null;
             try
             {
-                int accountId = GetAccountId();
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+
                 var parm = Request.Params;
                 bool upddateExists = false;// (parm == null) ? false : Types.ToBool(parm["param1"], false);
                 int category = 0;// Types.ToInt(parm["param2"], 0);
@@ -265,8 +271,11 @@ namespace Pro.Mvc.Controllers
              ResultModel model = null;
              try
              {
-                 int accountId = GetAccountId();
-                 var parm = Request.Params;
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+
+                var parm = Request.Params;
                  bool upddateExists = false;// (parm == null) ? false : Types.ToBool(parm["param1"], false);
                  int caregory = 0;// Types.ToInt(parm["param2"], 0);
 
@@ -319,7 +328,9 @@ namespace Pro.Mvc.Controllers
              IEnumerable<UploadMembersView> model = null;
              try
              {
-                 int accountId = GetAccountId();
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                //int userId = su.UserId;
                  model = UploadMembersView.ViewUploaded(accountId, uploadKey);
              }
              catch (Exception ex)
@@ -358,7 +369,10 @@ namespace Pro.Mvc.Controllers
                 string uploadKey = Request["uploadKey"];
                 bool updateExists = Types.ToBool(Request["updateExists"], false);
 
-                int accountId = GetAccountId();
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                //int userId = su.UserId;
+
                 int op = updateExists ? 1 : 0;
                 UploadMembers.ExecUploadMemberAsync(accountId, category, uploadKey, op);
 
@@ -379,7 +393,9 @@ namespace Pro.Mvc.Controllers
             ResultModel model = null;
             try
             {
-                int accountId = GetAccountId();
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                //int userId = su.UserId;
                 //bool update_exists = Types.ToBool(updateExists, false);
                 int op = updateExists ? 1 : 0;
                 var res = UploadMembers.ExecUploadMemberCatProcedure(new DbPro(), accountId, category, uploadKey, op);
@@ -393,6 +409,70 @@ namespace Pro.Mvc.Controllers
             }
             return Json(model, JsonRequestBehavior.AllowGet);
         }
+
+
+        #endregion
+
+        #region upload task
+
+        public JsonResult TaskUpload()
+        {
+
+            string result = "";
+            ResultModel model = null;
+            try
+            {
+                int userId = GetUser();
+                var parm = Request.Params;
+                //bool upddateExists = false;// (parm == null) ? false : Types.ToBool(parm["param1"], false);
+                int taskId = Types.ToInt(parm["param1"], 0);
+                int assignBy = userId;// Types.ToInt(parm["param2"], 0);
+                int assignTo = Types.ToInt(parm["param3"], 0);
+
+                HttpFileCollectionBase uploadedFiles = Request.Files;
+
+                if (uploadedFiles.Count <= 0)
+                {
+                    throw new Exception("File not found");
+                }
+
+                HttpPostedFileBase userPostedFile = uploadedFiles[0];
+
+                string src = userPostedFile.FileName;
+                string extension = Path.GetExtension(src);
+                string mediaType = GetAllowedType(extension);
+                if (mediaType == "none")
+                {
+                    throw new Exception("File not allowed : " + extension);
+                }
+
+                string newfilename = UUID.NewId();
+                string serverpath = Server.MapPath("~/_files/" + mediaType);
+
+                if (!System.IO.Directory.Exists(serverpath))
+                {
+                    System.IO.Directory.CreateDirectory(serverpath);
+                }
+
+                string filename = newfilename + extension;
+                string fullname = serverpath + "\\" + filename;
+
+                userPostedFile.SaveAs(fullname);
+
+                int count= TaskImport.DoUpload(assignBy, assignTo, taskId, fullname);
+
+                int status = (count > 0) ? 1: 0;
+                result = "Imported : " + count.ToString() + " items";
+
+                model = new ResultModel() { Status = status, Message = result, Title = "import file", Args = taskId.ToString() };
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = -1, Message = ex.Message, Title = "file upload error" };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
         
 
         #endregion
@@ -402,7 +482,13 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult _MediaFiles(int refid, string reftype)
         {
-            int accountId = GetAccountId();
+            var su = GetSignedUser(false);
+            if(su==null)
+            {
+                return RedirectToLogin();
+            }
+            int accountId = su.AccountId;
+            int userId = su.UserId;
             string accountFolder = GetAccountFolder(accountId);
             bool readOnly = Request["op"] == "g";
             MediaSystem model = new MediaSystem()
@@ -415,6 +501,34 @@ namespace Pro.Mvc.Controllers
                 ReadOnly = readOnly
             };
             return PartialView(model);
+        }
+        [HttpPost]
+        public JsonResult GetMediaFilesModel(int refid, string reftype)
+        {
+            try
+            {
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+
+                string accountFolder = GetAccountFolder(accountId);
+                bool readOnly = Request["op"] == "g";
+                MediaSystem model = new MediaSystem()
+                {
+                    RefId = refid,
+                    RefType = reftype,//MediaContext.GetRefType(MediaRefTypes.Task),
+                    Folder = accountFolder,
+                    AccountId = accountId,
+                    UserId = GetUser(),
+                    ReadOnly = readOnly
+                };
+                return Json(model, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var model = new ResultModel() { Status = -1, Message = ex.Message, Title = "file upload error" };
+                return Json(model, JsonRequestBehavior.AllowGet);
+            }
         }
 
         private string GetAccountFolder(int accountId)
@@ -452,8 +566,11 @@ namespace Pro.Mvc.Controllers
         public virtual JsonResult GetMediaFiles(string RefType)
         {
 
-            int accountId = GetAccountId();
-            int userId = GetUser();
+            var su = GetSignedUser(false);
+            int accountId = su.AccountId;
+            int userId = su.UserId;
+            if (su == null)
+                return Json(null);
             string accfolder = GetServerPath(accountId);
 
             //if (dir == null)
@@ -499,8 +616,11 @@ namespace Pro.Mvc.Controllers
         public virtual JsonResult GetMediaRefFiles(string RefId, string RefType)
         {
 
-            int accountId = GetAccountId();
-            int userId = GetUser();
+            var su = GetSignedUser(false);
+            if(su==null)
+                return Json(null);
+            int accountId = su.AccountId;
+            int userId = su.UserId;
 
             //string accfolder = GetServerPath(accountId);
 
@@ -640,8 +760,6 @@ namespace Pro.Mvc.Controllers
             int refId = 0;
             string refType = null;
             int Pid = 0;
-            int accountId = 0;
-            int userId = 0;
             try
             {
 
@@ -655,8 +773,10 @@ namespace Pro.Mvc.Controllers
                 Pid = Types.ToInt(parm["param2"]);
                 refType = parm["param3"];
                 refType = refType.ToLower();
-                accountId = GetAccountId();
-                userId = GetUser();
+
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
 
                 HttpFileCollectionBase uploadedFiles = Request.Files;
 
@@ -703,7 +823,8 @@ namespace Pro.Mvc.Controllers
                                 MediaType = mediaType,
                                 FileName = filename,
                                 FilePath = virtualpath,
-                                UserId=userId
+                                UserId=userId,
+                                SrcName=src
                             };
                             //int res = MediaContext.Save();
                             MediaContext context = new MediaContext(userId);
@@ -739,9 +860,10 @@ namespace Pro.Mvc.Controllers
                 int fileId = Types.ToInt(Request["id"]);
                 string mediaType=Request["mediaType"];
                 string filename = Request["filename"];
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
 
-                int userId = GetUser();
-                int accountId = GetAccountId();
                 string filepath = GetServerPath(GetRelativePath(accountId,mediaType));// Server.MapPath("~/uploads/" + mediaType);
                 string fullname = Path.Combine(filepath, filename);
                 IoHelper.DeleteFile(fullname);
@@ -898,11 +1020,14 @@ namespace Pro.Mvc.Controllers
         {
 
             //int res = 0;
-            int accountId = GetAccountId();
+           
             string action = "הגדרת קובץ פעולה";
             try
             {
-                int userId = GetUser();
+
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
                 
                 //string FileName = Request.Form["FileName"];
                 //string FileSubject = Request.Form["FileSubject"];

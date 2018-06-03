@@ -228,12 +228,12 @@ function app_media_file(Model) {
         //dataType: 'json',
         done: function (e, data) {
             //var keys = Object.keys(data);
-            alert(data.textStatus);
+           app_dialog.alert(data.textStatus);
             resetPprogress();
             mediaAdapter.dataBind();
         },
         error: function (jqXHR, status, error) {
-            alert(error);
+           app_dialog.alert(error);
         },
         progressall: function (e, data) {
             doPprogress(data);
@@ -301,7 +301,7 @@ function app_media_file(Model) {
             data: "{'id':'" + fileId + "', 'mediaType' : '" + mediaType + "', 'filename':'" + filename + "'}",
             success: function (data) {
                 if (data) {
-                    alert(data.Message);
+                   app_dialog.alert(data.Message);
 
                 }
                 //alert('הקובץ הוסר');
@@ -309,7 +309,7 @@ function app_media_file(Model) {
                 mediaAdapter.dataBind();
             },
             error: function (jqXHR, status, error) {
-                alert(error);
+               app_dialog.alert(error);
             }
         });
     };

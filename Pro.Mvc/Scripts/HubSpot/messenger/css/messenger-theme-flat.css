@@ -377,5 +377,5 @@ ul.messenger-theme-flat .messenger-spinner {
   z-index: 999;
   height: 32px;
   width: 32px;
-  z-index: 10;
+  /*z-index: 10;*/
 }

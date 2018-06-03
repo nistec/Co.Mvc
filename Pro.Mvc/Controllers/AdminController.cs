@@ -74,14 +74,22 @@ namespace Pro.Mvc.Controllers
         [HttpPost]
         public JsonResult GetLogMonitor()
         {
+            try { 
+            var su = GetSignedUser(true);
+
             int PageSize = Types.ToInt(Request["pagesize"], 20);
             int PageNum = Types.ToInt(Request["pagenum"]);
 
             var list = DbLogs.ViewLog(PageNum);
             var row = list.FirstOrDefault<Dictionary<string,object>>();
             int totalRows = row == null ? 0 : row.Get<int>("TotalRows");
-            return QueryPagerServer<Dictionary<string, object>>(list, totalRows, PageSize, PageNum);
+                return QueryPagerServer<Dictionary<string, object>>(list, totalRows, su.UserId);// PageSize, PageNum);
+            }
+            catch (Exception)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
 
+            }
         }
 
 

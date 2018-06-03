@@ -23,16 +23,16 @@ namespace Pro.Data
             return new AppSettingsContext(accountId);
         }
         public AppSettingsContext(int accountId)
-            : base(EntityCacheGroups.Settings, accountId)
+            : base(EntityGroups.Settings, accountId)
         {
         }
         public IList<AppSettings> GetBySection(string section)
         {
-            return base.GetList("Section", section);
+            return base.ExecOrViewList("Section", section);
         }
         public IList<AppSettings> GetByAccount(int accountId)
         {
-            return base.GetList("AccountId", accountId);
+            return base.ExecOrViewList("AccountId", accountId);
         }
 
     }

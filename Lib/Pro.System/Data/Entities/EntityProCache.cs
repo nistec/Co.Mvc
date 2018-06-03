@@ -17,14 +17,29 @@ using System.Web.Caching;
 namespace ProSystem.Data.Entities
 {
 
-     public static class EntityCacheGroups
+    public static class EntityCacheGroups
     {
-         public const string Enums = "Enums";
-         public const string Task = "Task";
-         public const string System = "System";
-         public const string Reports = "Reports";
-         public const string Registry = "Registry";
+        public const string Enums = "Enums";
+        public const string Task = "Task";
+        public const string Reminder = "Reminder";
+        public const string Products = "Products";
+        public const string Deals = "Deals";
+        public const string Forms = "Forms";
+        public const string Docs = "Docs";
+        public const string Project = "Project";
+        public const string System = "System";
+        public const string Reports = "Reports";
+        public const string Registry = "Registry";
     }
+
+    //public enum EntityCacheGroups
+    //{
+    //    Enums,
+    //    Task,
+    //    System,
+    //    Reports,
+    //    Registry
+    //}
 
     public class EntityProCache
     {
@@ -277,7 +292,7 @@ namespace ProSystem.Data.Entities
             }
 
 
-            WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, TableName));// CacheRemove(GetKey(TableName, AccountId));
+            WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums.ToString(), AccountId, TableName));// CacheRemove(GetKey(TableName, AccountId));
 
             return result;
         }
@@ -307,7 +322,7 @@ namespace ProSystem.Data.Entities
                     break;
             }
 
-            WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, EntiryName));// CacheRemove(GetKey(TableName, AccountId));
+            WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums.ToString(), AccountId, EntiryName));// CacheRemove(GetKey(TableName, AccountId));
 
             return result;
         }
@@ -321,7 +336,7 @@ namespace ProSystem.Data.Entities
                 int result = Types.ToInt(parameters[4].Value);
                 if (result > 0)
                 {
-                    WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, TableName));
+                    WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums.ToString(), AccountId, TableName));
                 }
                 return result;
             }
@@ -338,7 +353,7 @@ namespace ProSystem.Data.Entities
                 int result = Types.ToInt(parameters[4].Value);
 
                 //CacheRemove(GetKey(GetTableName(PropType), AccountId));
-                WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, GetTableName(PropType)));
+                WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums.ToString(), AccountId, GetTableName(PropType)));
                 return result;
             }
         }

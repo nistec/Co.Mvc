@@ -32,7 +32,7 @@ function app_entity_def(userInfo, entityType, tagPropTitle) {
     }
 
     this.setInputData = function (dataRecord) {
-        if (dataRecord === undefined || dataRecord==null) {
+        if (dataRecord === undefined || dataRecord === null) {
             $("#PropId").val('');
             $("#PropName").val('');
         }
@@ -64,7 +64,7 @@ function app_entity_def(userInfo, entityType, tagPropTitle) {
 
         var slf = this;
 
-        if (command == 2)//delete
+        if (command === 2)//delete
         {
             if (rowid <= 0)
             {
@@ -73,9 +73,9 @@ function app_entity_def(userInfo, entityType, tagPropTitle) {
             }
             return { 'PropId': rowid, 'PropName': null, 'EntityType': slf.EntityType, 'command': command };
         }
-        else if (command == 1 && rowid > 0)//edit
+        else if (command === 1 && rowid > 0)//edit
             return { 'PropId': rowdata.PropId, 'PropName': rowdata.PropName, 'EntityType': slf.EntityType, 'command': command };
-        else if (command == 0)//add
+        else if (command === 0)//add
             return { 'PropId': -1, 'PropName': rowdata.PropName, 'EntityType': slf.EntityType, 'command': command };
     }
 
@@ -85,7 +85,7 @@ function app_entity_def(userInfo, entityType, tagPropTitle) {
 
         var data = slf.getDataCommand(rowid, rowdata, command);
 
-        var url = command == 2 ? slf.deleteUrl : slf.updateUrl;
+        var url = command === 2 ? slf.deleteUrl : slf.updateUrl;
 
         $.ajax({
             dataType: 'json',
@@ -168,7 +168,7 @@ function app_entity_def(userInfo, entityType, tagPropTitle) {
                 $("#updaterowbutton").jqxButton();
                 $("#refreshbutton").jqxButton();
 
-                if (slf.AllowEdit == 0) {
+                if (slf.AllowEdit === 0) {
                     $("#addrowbutton").hide();
                     $("#deleterowbutton").hide();
                     $("#updaterowbutton").hide();
@@ -201,7 +201,7 @@ function app_entity_def(userInfo, entityType, tagPropTitle) {
                     if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
                         var id = $("#jqxgrid").jqxGrid('getrowid', selectedrowindex);
                         var result = confirm("האם למחוק?");
-                        if (result == true) {
+                        if (result === true) {
                             //Logic to delete the item
                             var commit = $("#jqxgrid").jqxGrid('deleterow', id);
                         }
@@ -240,7 +240,7 @@ function app_entity_def(userInfo, entityType, tagPropTitle) {
 
     $('#jqxgrid').on('rowdoubleclick', function (event) {
 
-        if (slf.AllowEdit == 0) {
+        if (slf.AllowEdit === 0) {
             return;
         };
         var args = event.args;
@@ -260,7 +260,7 @@ function app_entity_def(userInfo, entityType, tagPropTitle) {
             if (isValid) {
                 var row = slf.createRowData();
 
-                if ($("#insertFlag").val() == '0') {
+                if ($("#insertFlag").val() === '0') {
                     $('#jqxgrid').jqxGrid('addrow', null, row);
                 }
                 else if (editrow >= 0) {
@@ -274,7 +274,7 @@ function app_entity_def(userInfo, entityType, tagPropTitle) {
 
     });
 
-    if (this.AllowEdit == 0) {
+    if (this.AllowEdit === 0) {
         $("#Cancel").hide();
         $("#Save").hide();
         $(".note-edit").hide();

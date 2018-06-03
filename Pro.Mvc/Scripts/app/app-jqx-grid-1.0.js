@@ -90,7 +90,7 @@ var app_jqxgrid = {
             var validationResult = function (isValid) {
                 if (isValid) {
                     var row = entity.createRowData();
-                    var editrow=entity.rowEdit;
+                    var editrow = entity.rowEdit;
                     if (editrow < 0) {//$("#insertFlag").val() == '0') {
                         $(tag_grid).jqxGrid('addrow', null, row);
                     }
@@ -98,7 +98,7 @@ var app_jqxgrid = {
                         var rowID = $(tag_grid).jqxGrid('getrowid', editrow);
                         $(tag_grid).jqxGrid('updaterow', rowID, row);
                     }
-                    
+
                     $("#popupWindow").jqxWindow('hide');
                 }
             }
@@ -159,19 +159,19 @@ var app_jqxgrid = {
         {
             rtl: true,
             width: '100%',//entity.gridWith,
-            autoheight: false,
+            autoheight: true,
             source: dataAdapter,
             localization: getLocalization('he'),
             pageable: pageable,
             sortable: true,
             showtoolbar: true,
             rendertoolbar: function (toolbar) {
-                app_jqxgrid.renderToolbar(toolbar,entity)
+                app_jqxgrid.renderToolbar(toolbar, entity)
             },
             columns: entity.createCoulmns()
         });
 
-  
+
         $(tag_grid).on('cellselect', function (event) {
             var column = $(tag_grid).jqxGrid('getcolumn', event.args.datafield);
             var value = $(tag_grid).jqxGrid('getcellvalue', event.args.rowindex, column.datafield);
@@ -201,7 +201,7 @@ var app_jqxgrid = {
                 if (isValid) {
                     var row = entity.createRowData();
                     var editrow = entity.rowEdit;
-                    if (editrow<0){//$("#insertFlag").val() == '0') {
+                    if (editrow < 0) {//$("#insertFlag").val() == '0') {
                         $(tag_grid).jqxGrid('addrow', null, row);
                     }
                     else if (editrow >= 0) {
@@ -229,7 +229,7 @@ var app_jqxgrid = {
             tag_grid = "#jqxgrid";
 
         app_jqxgrid.createToolbar(toolbar);
-        
+
         if (entity.AllowEdit == 0) {
             $("#addrowbutton").hide();
             $("#deleterowbutton").hide();
@@ -239,7 +239,7 @@ var app_jqxgrid = {
         $("#updaterowbutton").on('click', function () {
             var selectedrowindex = $(tag_grid).jqxGrid('getselectedrowindex');
             entity.rowEdit = selectedrowindex;
-            app_jqxgrid.doRowEdit(selectedrowindex, entity,tag_grid);
+            app_jqxgrid.doRowEdit(selectedrowindex, entity, tag_grid);
 
         });
         // create new row.
@@ -307,12 +307,12 @@ var app_jqxgrid = {
         var data = entity.getDataCommand(rowid, rowdata, command);
 
         var url;
-        if( command == 2)
-            url= entity.deleteUrl;
-        else if(command==0)
+        if (command == 2)
+            url = entity.deleteUrl;
+        else if (command == 0)
             url = (entity.insertUrl === undefined || entity.insertUrl == null) ? entity.updateUrl : entity.insertUrl;
         else
-            url= entity.updateUrl;
+            url = entity.updateUrl;
 
 
         $.ajax({
@@ -333,11 +333,11 @@ var app_jqxgrid = {
                 commit(true);
             },
             complete: function (data) {
-                if (data.status==200)//.Status > 0)
+                if (data.status == 200)//.Status > 0)
                     $(tag_grid).jqxGrid('source').dataBind();
             },
             error: function () {
-                app_messenger.Post('אירעה שגיאה, לא עודכנו נתונים','error');
+                app_messenger.Post('אירעה שגיאה, לא עודכנו נתונים', 'error');
                 //app_jqxnotify.Error('אירעה שגיאה, לא עודכנו נתונים'); //app_dialog.alert('אירעה שגיאה, לא עודכנו נתונים');
                 // cancel changes.
                 commit(false);
@@ -369,7 +369,7 @@ var app_jqxgrid = {
         }
         return editrow;
     },
-    sendCommand: function (rowdata, command, commit, url,onsuccess,slf) {
+    sendCommand: function (rowdata, command, commit, url, onsuccess, slf) {
 
 
         //var url;
@@ -396,7 +396,7 @@ var app_jqxgrid = {
                 //dataAdapter.dataBind();
             },
             error: function () {
-               app_dialog.alert('אירעה שגיאה, לא עודכנו נתונים');
+                app_dialog.alert('אירעה שגיאה, לא עודכנו נתונים');
                 commit(false);
             }
         });
@@ -437,7 +437,7 @@ var app_jqxgrid = {
         //    this.filtercondition = 'contains';
         if (tag_grid === undefined || tag_grid == null)
             tag_grid = "#jqxgrid";
-        if (filtertype === undefined || filtertype==null)
+        if (filtertype === undefined || filtertype == null)
             filtertype = 'stringfilter';
 
         var textInput = $("<input style='margin:5px;'/>");
@@ -447,7 +447,7 @@ var app_jqxgrid = {
         var filterclearbutton = $('<span tabindex="0" style="padding: 4px 12px; margin-left: 5px;">הסר סינון</span>');
         applyinput.append(filterclearbutton);
         //filterPanel.append(textInput);
-        
+
 
         if (filtertype == "stringfilter" || filtertype == "booelanfilter") {
             filterPanel.append(textInput);
@@ -481,8 +481,7 @@ var app_jqxgrid = {
                 $(tag_grid).jqxGrid('closemenu');
             });
         }
-        else 
-        {
+        else {
             filterbutton.click(function () {
                 var filtergroup = new $.jqx.filter();
                 var filter_or_operator = 0;
@@ -537,7 +536,7 @@ var app_jqxgrid = {
             $(tag_grid).jqxGrid('endupdate');
         });
     },
-    gridSearch: function (me, toolbar, columnsList,rtl, tag_grid) {
+    gridSearch: function (me, toolbar, columnsList, rtl, tag_grid) {
 
         if (tag_grid === undefined || tag_grid == null)
             tag_grid = "#jqxgrid";
@@ -564,7 +563,7 @@ var app_jqxgrid = {
             var list = $("<div id='tbgridFieldsOption' style='float:left; display:inline;'></div>").jqxDropDownList({ source: columnsList, width: 200, height: 25 });
             var input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='tbgridSearchField' type='text' style='height: 23px; float: left; width: 223px;' />");
         }
-        
+
         toolbar.append(container);
 
         container.append(span);
@@ -592,7 +591,7 @@ var app_jqxgrid = {
             }
         });
     },
-    gridFilterSearch: function (me, toolbar, columnsList, dateList,rtl, tag_grid) {
+    gridFilterSearch: function (me, toolbar, columnsList, dateList, rtl, tag_grid) {
 
         if (tag_grid === undefined || tag_grid == null)
             tag_grid = "#jqxgrid";
@@ -602,7 +601,7 @@ var app_jqxgrid = {
 
         //var me = this;
         var container = (rtl) ? $("<div style='margin: 5px;direction:rtl'></div>") : $("<div style='margin: 5px;'></div>");
- 
+
         if (columnsList) {
 
             var collist;
@@ -619,7 +618,7 @@ var app_jqxgrid = {
                 collist = $("<div id='tbgridFieldsOption' style='float:left; display:inline;' title='Please choose field for filter'></div>").jqxDropDownList({ source: columnsList, width: 120, height: 22, autoDropDownHeight: true, placeHolder: "Choose Field" });
                 input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='tbgridSearchField' type='text' style='height: 22px; float: left; width: 160px;' />");
             }
-            
+
 
             //var searchbutton = $("<div style='float: right; margin-left: 5px;' title='איתור' ><img src='../scripts/app/images/search.gif'></div>");
             //searchbutton.jqxButton({ width: 16, height: 16 });
@@ -743,7 +742,7 @@ var app_jqxgrid = {
             searchbutton.click(function (event) {
                 var field = $("#tbgridFieldsOption").val();
                 var value = $("#tbgridSearchField").val();
-                
+
                 if (field != null && value != null) {
                     var filtercondition = value.match(/^=/) ? 'EQUAL' : 'contains';
                     me.timer = setTimeout(function () {
@@ -824,7 +823,7 @@ var app_jqxgrid = {
             var date2 = new Date();
             date1.setDate(date2.getDate() - 30);
             var tbgridDatepicker;
-            if(rtl)
+            if (rtl)
                 tbgridDatepicker = $("<div id='tbgridDatepicker' style='float:right; display:inline;' title='נא לבחור מתאריך עד תאריך ולהמתין לביצוע הסינון'></div>").jqxDateTimeInput({ width: 160, height: 22, selectionMode: 'range', rtl: true });
             else
                 tbgridDatepicker = $("<div id='tbgridDatepicker' style='float:left; display:inline;' title='Choose date range and wait'></div>").jqxDateTimeInput({ width: 160, height: 22, selectionMode: 'range' });
@@ -959,14 +958,14 @@ var app_jqxgrid = {
                     $("#tbgridSearchField").attr("placeholder", "Type " + value + ' for filter');
                 $(input).val('');
             });
-            
+
             containerSearch.append(collist);
             containerSearch.append(input);
             containerSearch.append(searchbutton);
             containerSearch.append(cancelbutton);
             container.append(containerSearch);
         }
-       
+
         if (dateList) {
             //date filter=====================================================
             var containerDate = (rtl) ? $("<div style='margin: 5px;direction:rtl'></div>") : $("<div style='margin: 5px;'></div>");
@@ -978,7 +977,7 @@ var app_jqxgrid = {
             if (rtl) {
                 datecollist = $("<div id='tbgridDateOption' style='float:right; display:inline;' title='נא לבחור את השדה הרצוי לפיו יבוצע הסינון'></div>").jqxDropDownList({ source: dateList, width: 120, height: 22, rtl: true, autoDropDownHeight: true, placeHolder: "בחר\\י תאריך לסינון" });
                 tbgridDatepicker = $("<div id='tbgridDatepicker' style='float:right; display:inline;' title='נא לבחור מתאריך עד תאריך ולהמתין לביצוע הסינון'></div>").jqxDateTimeInput({ width: 160, height: 22, selectionMode: 'range', rtl: true });
-                if(dateRangeList===undefined || dateRangeList==null)
+                if (dateRangeList === undefined || dateRangeList == null)
                     dateRangeList = [
                      { label: 'יום', value: '1', checked: false },
                      { label: 'שבוע', value: '7', checked: false },
@@ -1012,8 +1011,8 @@ var app_jqxgrid = {
                 datecolumn = event.args.item.value;
             });
             datecollist.jqxDropDownList('selectIndex', 0);
-            
-           
+
+
             var date1 = new Date();
             var date2 = new Date();
             date1.setDate(date2.getDate() - 30);
@@ -1042,7 +1041,7 @@ var app_jqxgrid = {
                     d.setDate(d.getDate() - days);
                     date1 = d;
                     me.timer = setTimeout(function () {
-                        app_jqxgrid.rangeDateFilter(datecolumn, d.toISOString().split('T')[0], date2.toISOString().split('T')[0],tag_grid);
+                        app_jqxgrid.rangeDateFilter(datecolumn, d.toISOString().split('T')[0], date2.toISOString().split('T')[0], tag_grid);
                     }, 1000)
                 }
             });
@@ -1133,7 +1132,7 @@ var app_jqxgrid = {
         if (tag_grid === undefined || tag_grid == null)
             tag_grid = "#jqxgrid";
 
-        if (datafield === undefined || filtervalueFrom==null || filtervalueTo==null) {
+        if (datafield === undefined || filtervalueFrom == null || filtervalueTo == null) {
             return;
         }
         var filtertype = 'datefilter';
@@ -1145,9 +1144,51 @@ var app_jqxgrid = {
         var filter2 = filtergroup.createfilter(filtertype, filtervalueTo, "LESS_THAN_OR_EQUAL");
         filtergroup.addfilter(filter_or_operator, filter1);
         filtergroup.addfilter(filter_or_operator, filter2);
-        
+
         $(tag_grid).jqxGrid('addfilter', datafield, filtergroup);
         $(tag_grid).jqxGrid('applyfilters');
+    },
+    gridColumnsBar: function (columnList, tag_columns, tag_grid) {
+        if (tag_columns === undefined || tag_columns == null)
+            tag_columns = "#jqxGridColumns";
+        if (tag_grid === undefined || tag_grid == null)
+            tag_grid = "#jqxgrid";
+
+        $(tag_columns).jqxDropDownList({ source: columnList, width: 200, height: 25, checkboxes: true, rtl: true, autoDropDownHeight: true });
+        $(tag_columns).on('checkChange', function (event) {
+            $(tag_grid).jqxGrid('beginupdate');
+            if (event.args.checked) {
+                $(tag_grid).jqxGrid('showcolumn', event.args.value);
+            }
+            else {
+                $(tag_grid).jqxGrid('hidecolumn', event.args.value);
+            }
+            $(tag_grid).jqxGrid('endupdate');
+        });
+    },
+    gridColumnsInit: function (columnList, tag_grid) {
+        if (tag_grid === undefined || tag_grid == null)
+            tag_grid = "#jqxgrid";
+        $(columnList).each(function (index, item) {
+            $(tag_grid).jqxGrid('beginupdate');
+            if (item.checked) {
+                $(tag_grid).jqxGrid('showcolumn', item.value);
+            }
+            else {
+                $(tag_grid).jqxGrid('hidecolumn', item.value);
+            }
+            $("#jqxgrid").jqxGrid('endupdate');
+        });
+
+    },
+    gridExpandAll: function (columnList, tag_grid) {
+        if (tag_grid === undefined || tag_grid == null)
+            tag_grid = "#jqxgrid";
+        $(tag_grid).jqxGrid('expandallgroups');
+    },
+    griCollapseAll: function (columnList, tag_grid) {
+        if (tag_grid === undefined || tag_grid == null)
+            tag_grid = "#jqxgrid";
+        $(tag_grid).jqxGrid('collapseallgroups');
     }
-    
 };

@@ -7,7 +7,7 @@
     @Scripts.Render("~/bundles/jqx")
     @Scripts.Render("~/bundles/jqxgrid")
     <script type="text/javascript" src="~/Scripts/app/system/ad-def.js"></script>
-    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js?ver=20180001"></script>
 
     <style type="text/css">
         .input {
@@ -31,9 +31,17 @@
 </div>
 <div class="global-view">
     <div class="container-box">
-        <h3 class="rtl">הגדרות משתמשים-<span>קבוצות</span></h3>
-        <div class="grid-wrap rtl">
-            <div id="jqxWidget" style="max-width:700px">
+
+        @*<div id="hTitle" class="panel-page-header rtl"  style="max-width:700px">
+            <span id="hTitle-text" style="margin:10px">הגדרות משתמשים-<span>קבוצות</span></span>
+        </div>*@
+
+        
+        <div class="grid-wrap rtl panel-area">
+            <div id="hTitle" class="panel-area-title rtl">
+                <span id="hTitle-text" style="margin:10px">הגדרות משתמשים-<span>קבוצות</span></span>
+            </div>
+            <div id="jqxWidget">
                 @*<a href="CategoryQuery">מיזוג משתמשים לקבוצה</a>*@
                 <div id="jqxgrid" style="position:relative;z-index:1;"></div>
 

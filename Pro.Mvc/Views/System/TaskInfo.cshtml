@@ -1,0 +1,377 @@
+﻿@model Pro.Mvc.Models.EditTaskModel
+@{
+    //ViewBag.Title = "System";
+    Layout = "~/Views/Shared/_View.cshtml";
+    int rcdid = Nistec.Types.ToInt(Request["id"]);
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <link rel="stylesheet" href="~/Scripts/plagins/tabs/jcxtabs-light.min.css" />
+    <script src="~/Scripts/plagins/tabs/jcxtabs.min.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/task-base.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/task-def.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
+    <script src="~/Scripts/plagins/timer/stopwatch.js"></script>
+    <script src="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.js"></script>
+    <link href="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.css" rel="stylesheet" />
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+        /*.tab-panel {width:100%}*/
+        .expander-entry {
+            margin: 0 !important;
+            padding: 5px !important
+        }
+
+        .padding-r10 {
+            padding-left: 10px;
+        }
+
+        #TaskBody {
+            min-height: 100px;
+            border: solid 1px #c7c1c1;
+            background-color: #fff;
+            overflow-x: hidden;
+        }
+    </style>
+
+    <!--uploder==============================-->
+    <script src="~/jqwidgets/jqxsplitter.js"></script>
+    <script src="~/Scripts/plagins/colorbox/jquery.colorbox-min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/colorbox/colorbox.css" />
+    <script type="text/javascript" src="~/Scripts/app/app-media.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/vendor/jquery.ui.widget.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.iframe-transport.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.fileupload.js"></script>
+
+    <link rel="stylesheet" href="~/Scripts/plagins/uploader/css/jquery.fileupload.css">
+
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+        var theme = 'nis_metro';
+        var task_def;
+
+        $(document).ready(function () {
+
+            JSON.useDateParser();
+            $("#fcEnd").hide();
+            var uinfo = JSON.parse('@userInfo');
+
+            var dm=JSON.parse('@dataModel')
+
+            task_def = new app_task(dm, uinfo, 'T');
+            task_def.init(true);
+
+            //$('#a-exp-0').on('click', function (e) {
+            //    $('#entry-exp-0').toggle();
+            //    return false;
+            //});
+
+            $('#a-exp-1').on('click', function (e) {
+                task_def.sectionSettings(1);
+                $('#entry-exp-1').toggle();
+                return false;
+            });
+            $('#a-exp-2').on('click', function (e) {
+                task_def.sectionSettings(2);
+                $('#entry-exp-2').toggle();
+                return false;
+            });
+            $('#a-exp-3').on('click', function (e) {
+                task_def.sectionSettings(3);
+                $('#entry-exp-3').toggle();
+                return false;
+            });
+            $('#a-exp-4').on('click', function (e) {
+                task_def.sectionSettings(4);
+                $('#entry-exp-4').toggle();
+                return false;
+            });
+            $('#a-exp-5').on('click', function (e) {
+                task_def.sectionSettings(5);
+                $('#entry-exp-5').toggle();
+                return false;
+            });
+        });
+
+    </script>
+}
+
+<div class="breadcrumbs">
+</div>
+
+
+<div class="global-view">
+    <div id="wiz-container" class="container rtl">
+
+        <div id="hTitle" class="panel-page-header rtl">
+            <span id="hTitle-text" style="margin:10px">משימה</span>
+        </div>
+        <div style="height:5px"></div>
+        <div id="wiz-1" class="wiz-tab active">
+            <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+
+                <div id="exp-0" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-title">משימה</div>
+                        <div class="expander-entry" id="entry-exp-0">
+                            <form class="fcForm" id="fcForm" method="post" action="/System/UpdateTask">
+                                <input type="hidden" id="TaskId" name="TaskId" value="0" />
+                                <input type="hidden" id="AccountId" name="AccountId" value="" />
+                                <input type="hidden" id="TeamId" name="TeamId" value="" />
+                                <input type="hidden" id="TaskSubject" name="TaskSubject" value="" />
+                                <input type="hidden" id="TaskModel" name="TaskModel" value="T" />
+                                <input type="hidden" id="UserId" name="UserId" value="0" />
+
+                                <div id="tab-content" class="tab-content" dir="rtl">
+                                    <div class="form-group">
+                                        <div class="field">
+                                            סוג משימה:
+                                        </div>
+                                        <div id="Task_Type" name="Task_Type"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            סטאטוס :
+                                        </div>
+                                        <input type="hidden" id="TaskStatus" name="TaskStatus" />
+                                        <label class="text-normal border white"><label id="TaskStatus-display"></label>  -  <i id="TaskStatus-color" class="fa fa-circle" style="font-size:16px;"></i></label>
+                                    </div>
+                                    <div class="form-group" id="TaskBody-div">
+                                        <div class="field">
+                                            תיאור: <span><a id="TaskBody-btn-view" href="#"><i class="fa fa-search-plus" style="font-size:16px"></i></a></span>
+                                        </div>
+                                        <textarea id="TaskBody" name="TaskBody" class="text-content"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            נוצר ב:
+                                        </div>
+                                        <input type="text" id="CreatedDate" name="CreatedDate" class="text-mid label" readonly="readonly" data-type="datetime" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            תאריך לביצוע:
+                                        </div>
+                                        <div id="DueDate" name="DueDate"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            משימה עבור:
+                                        </div>
+                                        <input type="text" id="DisplayName" readonly="readonly" data-field="DisplayName" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            צבע :
+                                        </div>
+                                        <select id="ColorFlag" name="ColorFlag"></select>
+                                    </div>
+                                    <div id="jqxExp-1" class="panel-area rtl">
+
+                                        <div class="panel-area-title">
+                                            <a id="a-jqxExp-1" href="#">פרטים נוספים</a>
+                                        </div>
+                                        <div id="jqxExp-box" style="display:none">
+
+                                            <div class="form-group">
+                                                <div class="field">
+                                                    מועד התחלה:
+                                                </div>
+                                                <input id="StartedDate" name="StartedDate" type="text" readonly="readonly" class="text-mid label" data-type="datetime" />
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="field">
+                                                    מועד סיום:
+                                                </div>
+                                                <input id="EndedDate" name="EndedDate" type="text" readonly="readonly" class="text-mid label" data-type="datetime" />
+                                            </div>
+                                            <div id="Task_Parent-group" class="form-group">
+                                                <div class="field">
+                                                    משימת אב:
+                                                </div>
+                                                <input type="text" id="Task_Parent" name="Task_Parent" readonly /><a id="Task_Parent-link" href="#" title="הצג משימת אב"><i class="fa fa-search-plus"></i></a>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="field">
+                                                    פרוייקט:
+                                                </div>
+                                                <input type="text" id="Project_Id" name="Project_Id" /><i class="fa fa-search"></i>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="field">
+                                                    לקוח\מנוי:
+                                                </div>
+                                                <input type="text" id="ClientId" name="ClientId" /><i class="fa fa-search"></i>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="field">
+                                                    שיתוף:
+                                                </div>
+                                                <select id="ShareType" name="ShareType"></select>
+                                                <div style="height:5px"></div>
+                                                <div id="AssignTo" name="AssignTo"></div>
+                                            </div>
+                                            <div class="form-group rtl">
+                                                <div class="field">
+                                                    תגיות:
+                                                </div>
+                                                <div id="Tags" name="Tags"></div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div id="exp-1" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-1"><a id="a-exp-1" href="#">הערות</a></div>
+                        <div class="expander-entry pasive" id="entry-exp-1">
+                            <div class="grid-wrap rtl">
+                                <div id="jqxgrid1-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                    <a id="jqxgrid1-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                    <a id="jqxgrid1-edit" href="#" class="btn-default btnIcon"><i class="fa fa-edit"></i>עריכה</a>
+                                    <a id="jqxgrid1-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
+                                    <a id="jqxgrid1-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                </div>
+                                <div id="jqxgrid1-window"></div>
+                                <div id="jqxgrid1" style="position:relative;z-index:1;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="exp-2" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-2"><a id="a-exp-2" href="#">העברות</a></div>
+                        <div class="expander-entry pasive" id="entry-exp-2">
+                            <div class="grid-wrap rtl">
+                                <div id="jqxgrid2-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                    <a id="jqxgrid2-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                    <a id="jqxgrid2-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                </div>
+                                <div id="jqxgrid2-window"></div>
+                                <div id="jqxgrid2" style="position:relative;z-index:1;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="exp-3" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-3"><a id="a-exp-3" href="#">מד-זמן</a></div>
+                        <div class="expander-entry pasive" id="entry-exp-3">
+                            <div class="grid-wrap rtl">
+                                <div id="jqxgrid3-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                    <a id="jqxgrid3-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                    <a id="jqxgrid3-edit" href="#" class="btn-default btnIcon"><i class="fa fa-edit"></i>עריכה</a>
+                                    <a id="jqxgrid3-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
+                                    <a id="jqxgrid3-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                </div>
+                                <div id="jqxgrid3-window"></div>
+                                <div id="jqxgrid3" style="position:relative;z-index:1;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="exp-4" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-4"><a id="a-exp-4" href="#">פעולות</a></div>
+                        <div class="expander-entry pasive" id="entry-exp-4">
+                            <div class="grid-wrap rtl">
+                                <div id="jqxgrid4-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                    <a id="jqxgrid4-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                    <a id="jqxgrid4-edit" href="#" class="btn-default btnIcon"><i class="fa fa-edit"></i>עריכה</a>
+                                    <a id="jqxgrid4-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
+                                    <a id="jqxgrid4-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                </div>
+                                <div id="jqxgrid4-window"></div>
+                                <div id="jqxgrid4" style="position:relative;z-index:1;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="exp-5" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-5"><a id="a-exp-5" href="#">קבצים</a></div>
+                        <div class="expander-entry1 pasive" id="entry-exp-5">
+                            <div id="task-files"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 5px"></div>
+                <div class="panel-area">
+                    <input id="fcSubmit" class="btn-default btn7 w-60" type="button" value="עדכון" />
+                    <input id="fcEnd" class="btn-default btn7 w-60" type="button" value="סיום" />
+                    <input id="fcCancel" class="btn-default btn7 w-60" type="button" value="x" />
+                    <a id="Task_Child-link" style="margin-right:10px" href="#" title="יצירת תת משימה"><i class="fa fa-share-alt"></i></a>
+                </div>
+
+            </div>
+        </div>
+        <div id="wiz-2" class="wiz-tab">
+            <h3 id="wiz-2-title" class="rtl">
+                עריכת משימה
+            </h3>
+            <div id="divPartial2" class="wiz-partial"></div>
+            <div class="rtl">
+                <a id="task-item-update" class="btn-default btn7 w-60" href="#">עדכון</a>
+                <a id="task-item-cancel" class="btn-default btn7 w-60" href="#">ביטול</a>
+            </div>
+        </div>
+        <div id="wiz-3" class="wiz-tab">
+            <div class="rtl">
+                <a class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">חזרה</a>
+            </div>
+            <div id="divPartial3"></div>
+        </div>
+        <div id="wiz-4" class="wiz-tab">
+            <h3 class="rtl">מעקב זמנים</h3>
+            <div id="divPartial4"></div>
+        </div>
+        <div id="wiz-5" class="wiz-tab">
+            <h3 class="rtl">הערות-עריכה</h3>
+            <div id="divPartial5"></div>
+        </div>
+        <div id="wiz-6" class="wiz-tab">
+            <h3 class="rtl">העברה</h3>
+            <div id="divPartial6"></div>
+        </div>
+        <div id="wiz-7" class="wiz-tab">
+            <h3 class="rtl">מעקב זמנים - עריכה</h3>
+            <div id="divPartial7"></div>
+        </div>
+    </div>
+</div>
+<!--end of content-wrapper-->
+<!--footer-->
+<footer>
+</footer>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liSystem");
+    app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
+    app_menu.footer("task");
+</script>
+
+
+
+
+

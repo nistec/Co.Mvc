@@ -19,6 +19,7 @@ using Nistec.Data;
 using Nistec.Runtime;
 using Pro.Data;
 using System.Threading.Tasks;
+using Nistec.Data.Entities;
 
 namespace Pro.Mvc.Controllers
 {
@@ -362,7 +363,9 @@ namespace Pro.Mvc.Controllers
             return null;
         }
          */
-        protected SignedUser GetSignedUser()
+
+       
+        protected SignedUser GetSignedUser(bool enableException)
         {
             //var signedUser = (SignedUser)ViewBag.UserInfo;
             //if (signedUser != null)
@@ -371,9 +374,10 @@ namespace Pro.Mvc.Controllers
             var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
             if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsBlocked == false)
             {
-               return signedUser;
+                return signedUser;
             }
-            //throw new SecurityException(AuthState.UnAuthorized);
+            if (enableException)
+                throw new SecurityException(AuthState.UnAuthorized);
             return null;
         }
         protected SignedUser GetAdminSignedUser()
@@ -489,10 +493,11 @@ namespace Pro.Mvc.Controllers
 //#endif
 //        }
 
+            
    
         protected int GetUser()
         {
-            var signedUser = GetSignedUser();
+            var signedUser = GetSignedUser(false);
             if (signedUser != null)
             {
                 //ViewBag.UserName = signedUser.UserName;
@@ -503,7 +508,7 @@ namespace Pro.Mvc.Controllers
         }
         protected int GetUserRole()
         {
-            var signedUser = GetSignedUser();
+            var signedUser = GetSignedUser(false);
             if (signedUser != null)
             {
                 return signedUser.UserRole;
@@ -512,7 +517,7 @@ namespace Pro.Mvc.Controllers
         }
         protected int GetAccountId()
         {
-             var signedUser = GetSignedUser();
+             var signedUser = GetSignedUser(false);
              if (signedUser != null)
              {
                  //ViewBag.IsVirtual = signedUser.IsVirtual;
@@ -523,13 +528,15 @@ namespace Pro.Mvc.Controllers
         }
         protected int GetParentId()
         {
-             var signedUser = GetSignedUser();
+             var signedUser = GetSignedUser(false);
              if (signedUser != null)
              {
                  return signedUser.ParentId;
              }
              return -1;
         }
+
+        
         #endregion
 
         #region user auth properties
@@ -594,17 +601,19 @@ namespace Pro.Mvc.Controllers
 
 
         #endregion
-        
+
         #region errors
+        [AllowAnonymous]
         public ViewResult ErrorNotFound()
         {
-            ViewBag.Message = string.Format("{0} : {1}", "שגיאה אירעה ב", Request["aspxerrorpath"]);
+            ViewBag.Message = string.Format("{0} : {1}", " אירעה שגיאה : ", Request["message"]);//["aspxerrorpath"]
             Response.StatusCode = 200;// 404;  //you may want to set this to 200
             return View();
         }
+        [AllowAnonymous]
         public ViewResult ErrorUnauthorized()
         {
-            ViewBag.Message = string.Format("{0} : {1}", "שגיאה אירעה ב", Request["aspxerrorpath"]);
+            ViewBag.Message = string.Format("{0} : {1}", "שגיאה אירעה ב", Request["message"]);//["aspxerrorpath"]
             Response.StatusCode = 200;// 404;  //you may want to set this to 200
             return View();
         }
@@ -616,9 +625,11 @@ namespace Pro.Mvc.Controllers
                                               .Select(x => x.ErrorMessage));
             return messages;
         }
+        [AllowAnonymous]
         public ViewResult Error()
         {
-            ViewBag.Message = string.Format("{0} : {1}", "שגיאה אירעה ב", Request["aspxerrorpath"]);
+            ViewBag.Message = string.Format("{0} : {1}", " אירעה שגיאה : ", Request["message"]);//["aspxerrorpath"]
+            //ViewBag.Message = string.Format("{0} : {1}", "שגיאה אירעה ב", Request["aspxerrorpath"]);
             Response.StatusCode = 200;// 500;  //you may want to set this to 200
             return View();
         }
@@ -859,6 +870,17 @@ namespace Pro.Mvc.Controllers
 
         #endregion
 
+        protected string GetResultMessage(int result, string action)
+        {
+            string supix= (result > 0) ? "בוצע בהצלחה" : "לא בוצע";
+            return action + " " + supix;
+        }
+        protected string GetResultMessage(bool result, string action)
+        {
+            string supix = (result) ? "בוצע בהצלחה" : "לא בוצע";
+            return action + " " + supix;
+        }
+
         protected ResultModel GetFormResult(int res, string action, string reason, int outputIdentity)
         {
             string title = "";
@@ -967,9 +989,9 @@ namespace Pro.Mvc.Controllers
             }
             return collection;
         }
-         protected JsonResult QueryPagerServer<T>(IEnumerable<T> list, int totalRows,int pagesize, int pagenum)
+         protected JsonResult QueryPagerServer<T>(IEnumerable<T> list, int totalRows, int userId)//,int pagesize, int pagenum)
          {
-             int agentId = GetUser();
+             //int agentId = GetUser();
 
              //if (list == null)
              //{
@@ -977,33 +999,55 @@ namespace Pro.Mvc.Controllers
              //}
              var result = new
              {
-                 AgentId = agentId,
+                 AgentId = userId,
                  TotalRows = totalRows,
                  Rows = list
              };
              return Json(result, JsonRequestBehavior.AllowGet);
          }
+        protected JsonResult QueryPagerServer<T>(IEnumerable<T> list, int userId) where T: IEntityListItem
+        {
+            //int agentId = GetUser();
 
-         //public ActionResult Export(string _entity, string _sidx, string _sord, string filters)
-         //{
-         //    string where = "";
-         //    if (!string.IsNullOrEmpty(filters))
-         //    {
-         //        var serializer = new JavaScriptSerializer();
-         //        Filters filtersList = serializer.Deserialize<Filters>(filters);
-         //        where = filtersList.FilterObjectSet(entity);
-         //    }
-         //    if (string.IsNullOrEmpty(where))
-         //        where = " TRUE ";
-         //    Response.ClearContent();
-         //    Response.AddHeader("content-disposition", "attachment; filename=MyExcelFile.xls");
-         //    Response.ContentType = "application/excel";
-         //    Response.Write(GetAllData(_entity, _sidx, _sord, where));
-         //    Response.End();
-         //    return View("Index");
-         //}
+            if (list == null)
+            {
+                return null;
+            }
 
-         protected string BuildQuery(System.Collections.Specialized.NameValueCollection query, string prefix)
+            var row = list.FirstOrDefault<T>();
+            int totalRows = row == null ? 0 : row.TotalRows;
+
+            var result = new
+            {
+                AgentId = userId,
+                TotalRows = totalRows,
+                Rows = list
+            };
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        
+
+        //public ActionResult Export(string _entity, string _sidx, string _sord, string filters)
+        //{
+        //    string where = "";
+        //    if (!string.IsNullOrEmpty(filters))
+        //    {
+        //        var serializer = new JavaScriptSerializer();
+        //        Filters filtersList = serializer.Deserialize<Filters>(filters);
+        //        where = filtersList.FilterObjectSet(entity);
+        //    }
+        //    if (string.IsNullOrEmpty(where))
+        //        where = " TRUE ";
+        //    Response.ClearContent();
+        //    Response.AddHeader("content-disposition", "attachment; filename=MyExcelFile.xls");
+        //    Response.ContentType = "application/excel";
+        //    Response.Write(GetAllData(_entity, _sidx, _sord, where));
+        //    Response.End();
+        //    return View("Index");
+        //}
+
+        protected string BuildQuery(System.Collections.Specialized.NameValueCollection query, string prefix)
          {
              string queryString = ""
              + "  SELECT *, ROW_NUMBER() OVER (ORDER BY " + query.GetValues("sortdatafield")[0] + " "

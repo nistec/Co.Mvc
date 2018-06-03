@@ -33,9 +33,9 @@
 
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
-    @*<script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
-    <script type="text/javascript" src="~/Scripts/app/system/task-def.js"></script>*@
-    <script type="text/javascript" src="~/Scripts/app/app-wizard.js"></script>
+    @*<script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js?ver=20180001"></script>
+    <script type="text/javascript" src="~/Scripts/app/system/task-def.js?ver=20180001"></script>*@
+    <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
     <link rel="stylesheet" href="~/Scripts/app/app-form.css" type="text/css" />
     
 
@@ -75,11 +75,12 @@
 
 <div class="global-view">
     <div id="wiz-container" class="container">
-            <h3 id="hTitle" class="rtl">יומן</h3>
-            <div class="rtl">
-                <span>משתמש פעיל:</span> <div id="ActiveUser"></div>
-            </div>
-            <div id="jqxWidget">
+           
+            <div id="jqxWidget" class="panel-area">
+                <div id="hTitle" class="rtl panel-area-title">
+                    יומן : <div id="ActiveUser"></div>
+                </div>
+
                 <div id="scheduler"></div>
              </div>   
      </div>

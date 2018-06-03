@@ -206,12 +206,23 @@ namespace ProSystem.Data.Entities
         public static IList<MediaFile> GetMediaList(string RefId, MediaRefTypes refType, int pid, int userId)
         {
             int ttl = 3;
-            string key = DbContextCache.GetKey<MediaFile>(Settings.ProjectName, EntityCacheGroups.Task, 0, userId);
+
+            string key = null;
 
             switch (refType)
             {
                 case MediaRefTypes.Task:
+                    key = DbContextCache.GetKey<MediaFile>(Settings.ProjectName, EntityCacheGroups.Task, 0, userId);
                     return DbContextCache.EntityList<DbSystem, MediaFile>(key, ttl, new object[]{ "RefId", RefId});
+                case MediaRefTypes.Leads:
+                    key = DbContextCache.GetKey<MediaFile>(Settings.ProjectName, EntityCacheGroups.Deals, 0, userId);
+                    return DbContextCache.EntityList<DbSystem, MediaFile>(key, ttl, new object[] { "RefId", RefId });
+                case MediaRefTypes.Project:
+                    key = DbContextCache.GetKey<MediaFile>(Settings.ProjectName, EntityCacheGroups.Project, 0, userId);
+                    return DbContextCache.EntityList<DbSystem, MediaFile>(key, ttl, new object[] { "RefId", RefId });
+                case MediaRefTypes.Docs:
+                    key = DbContextCache.GetKey<MediaFile>(Settings.ProjectName, EntityCacheGroups.Docs, 0, userId);
+                    return DbContextCache.EntityList<DbSystem, MediaFile>(key, ttl, new object[] { "RefId", RefId });
                 default:
                     return null;
             }
@@ -224,7 +235,7 @@ namespace ProSystem.Data.Entities
         //    return DbContextCache.EntityList<DbSystem, MediaFile>(key, ttl, "RefId", taskId.ToString());
         //}
 
-        protected override void OnChanged(UpdateCommandType commandType)
+        protected override void OnChanged(ProcedureType commandType)
         {
             DbContextCache.Remove(CacheKey);
         }
@@ -239,6 +250,8 @@ namespace ProSystem.Data.Entities
                     return "p";
                 case MediaRefTypes.Leads:
                     return "l";
+                case MediaRefTypes.Docs:
+                    return "d";
             }
             return "t";
         }
@@ -252,6 +265,8 @@ namespace ProSystem.Data.Entities
                     return MediaRefTypes.Project;
                 case "l":
                     return MediaRefTypes.Leads;
+                case "d":
+                    return MediaRefTypes.Docs;
             }
             return  MediaRefTypes.Task;
         }
@@ -302,7 +317,7 @@ namespace ProSystem.Data.Entities
         [EntityProperty(EntityPropertyType.NA)]
         public string FileInfo
         {
-            get { return FilePath + "|" + FileId + "|" + FileSubject + "|" + FileAction; }
+            get { return FilePath + "|" + FileId + "|" + FileSubject + "|" + FileAction + "|" + SrcName; }
 
         }
 
@@ -318,6 +333,7 @@ namespace ProSystem.Data.Entities
         public string FilePath { get; set; }
         public string RefType { get; set; }
         public int RefId { get; set; }
+        public string SrcName { get; set; }
 
         [EntityProperty(EntityPropertyType.View)]
         public DateTime Creation { get; set; }
@@ -355,7 +371,8 @@ namespace ProSystem.Data.Entities
     {
         Task = (byte)'t',
         Project = (byte)'p',
-        Leads = (byte)'l'
+        Leads = (byte)'l',
+        Docs = (byte)'d'
     }
 
 }
