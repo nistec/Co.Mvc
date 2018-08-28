@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewMain.cshtml";
     ViewBag.Title = "Members";
     var userModel = ViewBag.UserInfo;
     var userInfo = @Html.Raw(Json.Encode(userModel));
@@ -9,7 +9,7 @@
     @Scripts.Render("~/bundles/jqx")
     <script type="text/javascript" src="~/jqwidgets/jqxloader.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxtooltip.js"></script>
-    <script type="text/javascript" src="~/Scripts/app/main/members-grid.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/main/members.js"></script>
     @*<script type="text/javascript" src="~/Scripts/app/formBuilder.js"></script>*@
     <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
     <style type="text/css">
@@ -21,6 +21,7 @@
         .jqx-grid-cell {
             border: none;
         }
+ 
     </style>
 }
 

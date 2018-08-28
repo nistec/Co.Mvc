@@ -41,8 +41,8 @@ namespace Pro.Mvc.Controllers
         {
             return View();
         }
-
-         [HttpGet]
+        
+        [HttpGet]
         public ActionResult About()
         {
             return View();

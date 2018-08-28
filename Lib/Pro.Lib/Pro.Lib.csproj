@@ -50,9 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\ApiException.cs" />
-    <Compile Include="Api\ApiSettings.cs" />
-    <Compile Include="Api\CLI.cs" />
     <Compile Include="Api\ApiService.cs" />
+    <Compile Include="Api\ApiSettings.cs" />
+    <Compile Include="Api\ApiStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Api\CLI.cs" />
     <Compile Include="Api\Common.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -60,9 +63,6 @@
     <Compile Include="Api\DbCo.cs" />
     <Compile Include="Api\MemberMessageRequest.cs" />
     <Compile Include="Api\RequestContract.cs" />
-    <Compile Include="Api\ApiStatus.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Payments\Server\AgentsConfig.cs" />
     <Compile Include="Payments\Server\PaymentAgent.cs" />
     <Compile Include="Payments\PaymentBroker.cs" />
@@ -112,6 +112,7 @@
     <Compile Include="Sender\HttpSender.cs" />
     <Compile Include="Sender\Auth.cs" />
     <Compile Include="Sender\MailSender.cs" />
+    <Compile Include="Sender\ProcSender.cs" />
     <Compile Include="Sender\SmsSender.cs" />
     <Compile Include="Query\SignupQuery.cs" />
     <Compile Include="Registry\CmsContext.cs" />
@@ -163,6 +164,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Api\_Ex\" />
     <Folder Include="Common\" />
     <Folder Include="Media\" />
     <Folder Include="obj\" />

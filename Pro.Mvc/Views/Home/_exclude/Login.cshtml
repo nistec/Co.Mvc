@@ -39,24 +39,12 @@
     
     <div class="center-box">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                    <h2 style="text-align:center">ברוכים הבאים למערכת ניהול</h2>
-                    <div class="thumb-pad1">
-                        <div class="thumbnail">
-                            <figure><img src="~/images/site/banner.png" style="width:550px" alt="myt"></figure>
-                            <div class="caption">
-                            </div>
-                        </div>
-                     </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6 choose-box">
-                    <div dir="rtl" class="row">
+             <div dir="rtl" class="row">
                         <div class="col-lg-11 col-md-12 col-sm-12 col-lg-offset-1">
                             <h2>כניסה למערכת</h2>
 
                             <section id="loginForm">
-                            @using (Html.BeginForm("DoLogin", "Home", FormMethod.Post))
+                            @using (Html.BeginForm("Login", "Home", FormMethod.Post))
                             {
                                 @Html.AntiForgeryToken()
                                 @Html.ValidationSummary(true)
@@ -84,13 +72,11 @@
                                 <input class="btn-default btn2" type="submit" value="כניסה" />
                             </fieldset>
                             }
-                                <p>@Message</p>
+                                <p>@ViewBag.Message</p>
                             </section>
                             <div id="cms_login_footer"></div>
                        </div>
                     </div>
-                </div>
-            </div>
         </div>
     </div>
   

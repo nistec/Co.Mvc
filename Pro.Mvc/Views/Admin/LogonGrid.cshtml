@@ -1,65 +1,183 @@
 ﻿@{
     Layout = "~/Views/Shared/_ViewAdmin.cshtml";
     Page.Title = "Admin";
-    var DB = Database.Open("cnn_pro");
-    var Grid = new WebGrid(DB.Query("SELECT * FROM webvw_UserEvaluation"));
+    //var DB = Database.Open("cnn_pro");
+    //var Grid = new WebGrid(DB.Query("SELECT * FROM webvw_UserEvaluation"));
 }
 @section head {
-    <link rel="stylesheet" href="~/Content/css/grid.css" type="text/css" />
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
     <style type="text/css">
-        .gridTable {
-            margin: 4px;
-            border-collapse: collapse;
-            width: 800px;
-        }
-
-        .columnHead { 
-            font: bold 13px Arial, Helvetica, sans-serif !important;
-            background-color: #E8E8E8;
-            font-weight: bold;
-            color: #FFF;
-            text-align: center;
-        }
-
-        .gridTable th, .gridTable td {
-            border: 1px solid #C0C0C0;
-            padding: 5px;
-            text-align: center;
-        }
-
-        .altRow {
-            background-color: #E8E8E8;
-            color: #000;
+        input {
+            direction: rtl;
+            text-align: right;
         }
     </style>
+
 }
 
 
-<hgroup class="title">
-    <h3 class="rightPan">מעקב כניסות.</h3>
-</hgroup>
+@section scripts {
 
-<div class="clear"></div>
-<div class="global-view">
-    <div class="container">
-        <ul class="toolbar">
-        @*<li>
-            <input type="search" placeholder="חיפוש" /></li>*@
-        <li><a href="#">רענון</a></li>
-    </ul>
-        <div dir="rtl" style="clear: both">
-            @Grid.GetHtml(
-        tableStyle: "gridTable",
-        headerStyle: "columnHead",
-        alternatingRowStyle: "altRow",
-        columns: Grid.Columns(
-        Grid.Column("UserId", "משתמש"),
-                    Grid.Column("DisplayName", "פרטים"),
-                    Grid.Column("UserName", "שם משתמש"),
-                    Grid.Column("LastLoggedIn", "מועד כניסה אחרון")
-        )
-    )
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    var members_grid;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var search_field;
+        var slf = this;
+
+        var source =
+            {
+
+               datatype: "json",
+               type: 'POST',
+               datafields: [
+                   { name: 'RowId' },
+                   { name: 'App' },
+                   { name: 'UserId' },
+                   { name: 'Auth' },
+                   { name: 'InOut' },
+                   { name: 'AuthState' },
+                   { name: 'IsRefused' },
+                   { name: 'IsMobile' },
+                   { name: 'AccountId' },
+                   { name: 'HostClient' },
+                   { name: 'HostReferrer' },
+                   { name: 'Creation', type: 'date' }
+               ],
+               async: true,
+               url: '@Url.Action("GetLogMonitor", "Admin")',
+                data: { 'type': 'auth'},
+               //pagenum: 0,
+               pagesize: 20,
+               root: 'Rows',
+               pager: function (pagenum, pagesize, oldpagenum) {
+                   console.log(pagenum);
+                   // callback called when a page or page size is changed.
+               },
+               //filter: function () {
+               //    // update the grid and send a request to the server.
+               //    $("#jqxgrid").jqxGrid('updatebounddata');
+               //},
+               //sort: function () {
+               //    // update the grid and send a request to the server.
+               //    $("#jqxgrid").jqxGrid('updatebounddata');
+               //},
+               beforeprocessing: function (data) {
+                   this.totalrecords = data.TotalRows;
+               }
+           };
+
+        var getTotalRows = function (data) {
+            if (data) {
+                return dataTotalRows(data);
+            }
+            return 0;
+        }
+
+        var dataAdapter = new $.jqx.dataAdapter(source);
+
+        $("#jqxgrid").jqxGrid(
+        {
+            width: '99%',
+            height: 600,
+            rtl:true,
+            //autoheight: true,
+            source: dataAdapter,
+            virtualmode: true,
+            rendergridrows: function (obj) {
+                return dataAdapter.records;
+            },
+            pageable: true,
+            pagermode: 'simple',
+            sortable: true,
+            columns: [
+                { text: 'RowId', datafield: 'RowId', width: 100 },
+                { text: 'App', datafield: 'App', width: 100 },
+                { text: 'UserId', datafield: 'UserId', width: 100 },
+                { text: 'Auth', datafield: 'Auth'},
+                { text: 'InOut', datafield: 'InOut', width: 100 },
+                { text: 'AuthState', datafield: 'AuthState', width: 100 },
+                { text: 'IsRefused', datafield: 'IsRefused', width: 100 },
+                { text: 'IsMobile', datafield: 'IsMobile', width: 100 },
+                { text: 'AccountId', datafield: 'AccountId', width: 100 },
+                { text: 'HostClient', datafield: 'Client' },
+                { text: 'HostReferrer', datafield: 'Referrer'},
+                { text: 'Creation', datafield: 'LogTime', cellsformat: 'dd/MM/yyyy hh:mm:ss', width: 170 }
+            ],
+            showtoolbar: true,
+            autoheight: false,
+            scrollmode: 'logical',
+            //filterable: true,
+            columnsresize: true,
+            enablebrowserselection: true,
+            //rowdetails: true,
+            //rowdetailstemplate: { rowdetails: "<div style='margin: 10px;'><ul style='margin-left: 10px;'><li>Log Text</li></ul><div class='notes'></div></div>", rowdetailsheight: 200 },
+            /*
+                initrowdetails: initrowdetails = function (index, parentElement, gridElement, datarecord) {
+
+                var tabsdiv = $($(parentElement).children()[0]);
+                if (tabsdiv != null) {
+                    var notes = tabsdiv.find('.notes');
+                    //var container = $("<div style='overflow: hidden; position: relative; margin: 5px;float:right;'></div>");
+                    var notescontainer = $('<div style="white-space: normal; margin: 5px;"><span>' + datarecord.LogText + '</span></div>');
+                    $(notes).append(notescontainer);
+                    $(tabsdiv).jqxTabs({ width: '95%', height: 170 });
+                }
+            },
+            */
+            rendertoolbar: function (toolbar) {
+
+                app_jqxgrid.gridSearchLtr(this, toolbar, listSource);
+
+            }
+        });
+
+      //field list
+      var listSource = [
+          { label: 'RowId', value: 'RowId', checked: false },
+          { label: 'App', value: 'App', checked: true },
+          { label: 'UserId', value: 'UserId', checked: true },
+          { label: 'Auth', value: 'Auth', checked: true },
+          { label: 'InOut', value: 'InOut', checked: true },
+          { label: 'AuthState', value: 'AuthState', checked: true },
+          { label: 'IsRefused', value: 'IsRefused', checked: true },
+          { label: 'IsMobile', value: 'IsMobile', checked: true },
+          { label: 'AccountId', value: 'AccountId', checked: true },
+          { label: 'HostClient', value: 'HostClient', checked: false },
+          { label: 'HostReferrer', value: 'HostReferrer', checked: false },
+          { label: 'Creation', value: 'LogTime', checked: true }
+      ];
+
+        app_jqxgrid.gridFieldsFilter(listSource);
+
+    });
+
+    </script>
+}
+
+
+    <div class="breadcrumbs">
+    </div>
+
+<div class="global">
+    <div class="container rtl" style="margin-left:10%">
+        <h3>מעקב כניסות</h3>
+        <div class="grid-wrap">
+            <div id="gridFields"></div>
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+            </div>
         </div>
-
     </div>
 </div>
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liAdmin");
+    //app_menu.breadcrumbs("/Admin/Main", "Tasks", 'en');
+    app_menu.footer("admin");
+</script>

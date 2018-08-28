@@ -48,7 +48,7 @@
                 id: 'TaskId',
                 type: 'POST',
                 url: '/System/GetTasksGrid',
-                data: { 'AccountId': 0, 'UserId': 0, 'assignMe': false, 'state': 0 },
+                data: { 'AccountId': 0, 'UserId': 0, 'assignMe': false, 'state': 0, 'UserMode':false },
                 //pagenum: 0,
                 pagesize: 20
                 //root: 'Rows',
@@ -94,6 +94,7 @@
             }
             return 0;
         },
+
         /*
         buildFilterPanel: function (filterPanel, datafield) {
             var textInput = $("<input style='margin:5px;'/>");
@@ -149,6 +150,17 @@
         grid: function () {
             var slf = this;
             var subjectWidth = slf.IsMobile ? 250 : 400;
+            var setTabCounter = function (tab, title, count) {
+                if (tab) {
+                    var tabul = tab.parent().find('ul');
+                    //var tabHtml = tab.parent().html();
+                    if (tabul.length>0) {
+                        var tabHtml = tabul.html().replace('<li>' + title + '</li>', '<li>' + title + ': ' + count + '</li>');
+                        tabul.html(tabHtml);
+                        //tab.parent().html(tabHtml);
+                    }
+                }
+            };
             var initTaskFormGrid = function (tab, index, id) {
 
                 var nastedcontainer = $('<div style="float:right;margin:5px"></div>');
@@ -166,6 +178,7 @@
                           { name: 'DoneComment', type: 'string' },
                           { name: 'DoneStatus', type: 'bool' }
                     ],
+                    async:false,
                     datatype: "json",
                     id: 'ItemId',
                     type: 'POST',
@@ -175,6 +188,7 @@
                 slf.NScustomers.nastedCategoriesGrids[index] = nastedcontainer;
 
                 var nastedAdapter = new $.jqx.dataAdapter(nastedsource);
+                
                 nastedcontainer.jqxGrid({
                     localization: getLocalization('he'),
                     source: nastedAdapter, width: '99%', height: 130,
@@ -198,12 +212,21 @@
                     ]
                 });
 
+                $(tab).append(nastedcontainer);
+
+                return nastedAdapter.records.length;
+
+                //setTabCounter(tab, 'פעולות', nastedAdapter.records.length);
+
                 //var refreshitem = $('<div style="margin:10px"><input type="button" value="רענן" title="רענון סיווגים" /></div>')
                 //.click(function () {
                 //    nastedAdapter.dataBind();
                 //});
 
-                $(tab).append(nastedcontainer);
+               
+
+                
+
                 //$(tab).append(additem);
                 //$(tab).append(refreshitem);
 
@@ -260,6 +283,9 @@
                 //});
 
                 $(tab).append(nastedcontainer);
+
+                return nastedAdapter.records.length;
+
                 //$(tab).append(additem);
                 //$(tab).append(refreshitem);
 
@@ -326,6 +352,8 @@
                 //$(tab).append(refreshitem);
                 $(tab).append(nastedcontainer);
 
+                return nastedAdapter.records.length;
+
                 //$(tab).append(additem);
                 //$(tab).append(refreshitem);
 
@@ -387,6 +415,8 @@
                 //$(tab).append(additem);
                 //$(tab).append(refreshitem);
                 $(tab).append(nastedcontainer);
+
+                return nastedAdapter.records.length;
 
             };
 
@@ -463,12 +493,17 @@
                     //actioncontainer.append(deleteitem);
 
 
-                    initTaskCommentsGrid(tabcomments, index, rcdid);
-                    initTaskTimersGrid(tabatimers, index, rcdid);
-                    initTaskAssignmentsGrid(tabhistory, index, rcdid);
-                    initTaskFormGrid(tabform, index, rcdid);
+                    var icomment=initTaskCommentsGrid(tabcomments, index, rcdid);
+                    var itimer =initTaskTimersGrid(tabatimers, index, rcdid);
+                    var iassign =initTaskAssignmentsGrid(tabhistory, index, rcdid);
+                    var iform =initTaskFormGrid(tabform, index, rcdid);
 
                     $(tabsdiv).jqxTabs({ width: '95%', height: 170, rtl: true });
+
+                    $(tabsdiv).jqxTabs('setTitleAt', 2, 'הערות: ' + icomment);
+                    $(tabsdiv).jqxTabs('setTitleAt', 3, 'העברות: ' + iassign);
+                    $(tabsdiv).jqxTabs('setTitleAt', 4, 'מד-זמן: ' + itimer);
+                    $(tabsdiv).jqxTabs('setTitleAt', 5, 'פעולות: ' + iform);
                 }
             };
 
@@ -717,7 +752,11 @@
 
         },
         taskEdit: function (id) {
-            app.redirectTo('/System/TaskEdit?id=' + id);
+            //app.redirectTo('/System/TaskEdit?id=' + id);
+            app_open.taskEdit(id);
+            
+
+
             //wizard.displayStep(2);
             //$.ajax({
             //    type: 'GET',
@@ -729,7 +768,9 @@
             //});
         },
         taskInfo: function (id) {
-            app.redirectTo('/System/TaskInfo?id=' + id);
+            //app.redirectTo('/System/TaskInfo?id=' + id);
+            app_open.taskInfo("#jqxWidget", id);
+
             //wizard.displayStep(2);
             //$.ajax({
             //    type: 'GET',
@@ -815,6 +856,37 @@
             //};
             this.source.data['AccountId']=Model.AccountId;
             this.source.data['UserId'] = Model.UserId;
+
+            this.dataAdapter = new $.jqx.dataAdapter(this.source, {
+                loadComplete: function (data) {
+                    //source.totalrecords = getTotalRows(data);
+                },
+                loadError: function (xhr, status, error) {
+                    app_dialog.alert(' status: ' + status + '\n error ' + error)
+                }
+            });
+
+            this.grid();
+
+            return this;
+        },
+        loadUser: function (userInfo) {
+            this.IsMobile = app.IsMobile();
+            this.NScustomers.nastedCategoriesGrids = new Array();
+            this.UserId = userInfo.UserId;
+            this.AllowEdit = userInfo.UserRole > 4 ? 1 : 0;
+            //this.source.data = {
+            //    //'QueryType': Model.QueryType,
+            //    'AccountId': Model.AccountId,
+            //    'UserId': Model.UserId
+            //};
+            //this.source.data['AccountId'] = Model.AccountId;
+            this.source.data['UserId'] = this.UserId;
+            this.source.data['assignMe'] = false;
+            this.source.data['UserMode'] = true;
+            this.source.url = '/System/GetTasksGrid';
+
+            //{ 'AccountId': 0, 'UserId': 0, 'assignMe': false, 'state': 0 }
 
             this.dataAdapter = new $.jqx.dataAdapter(this.source, {
                 loadComplete: function (data) {

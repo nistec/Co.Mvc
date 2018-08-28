@@ -150,6 +150,18 @@ namespace Pro.Mvc.Controllers
             }
             return base.View(viewName, model);
         }
+        protected ActionResult View(bool loadInfo, string viewName, string masterName, object model)
+        {
+            if (loadInfo)
+            {
+                var signedUser = LoadUserInfo();
+                if (signedUser == null)
+                {
+                    return RedirectToLogin();
+                }
+            }
+            return base.View(viewName, masterName, model);
+        }
         protected ActionResult PartialView(bool loadInfo)
         {
             if (loadInfo)
@@ -380,65 +392,94 @@ namespace Pro.Mvc.Controllers
                 throw new SecurityException(AuthState.UnAuthorized);
             return null;
         }
-        protected SignedUser GetAdminSignedUser()
+
+        protected SignedUser GetSignedUser(UserRole role,bool enableException)
         {
-            var signedUser = SignedUser.GetAdmin(Request.RequestContext.HttpContext);
-            if (signedUser == null)
+            //var signedUser = (SignedUser)ViewBag.UserInfo;
+            //if (signedUser != null)
+            //    return signedUser;
+
+            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
+            if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsBlocked == false)
             {
-                return null;
+                return signedUser;
             }
-            if (signedUser.IsBlocked || signedUser.IsAuthenticated == false)
-            {
-                return null;
-            }
-            return signedUser;
+            if (enableException)
+                throw new SecurityException(AuthState.UnAuthorized);
+            return null;
         }
 
-        protected bool IsLessThenManager()
+        protected bool IsSignedUser(UserRole role, bool enableException)
         {
-            var signedUser = GetAdminSignedUser();
-            if (signedUser == null)
+            var signedUser = GetSignedUser(role, enableException);
+
+            if (signedUser != null)
             {
-                return false;
+                return true;
             }
-            return signedUser.IsLessThenManager;
+            return false;
         }
-        protected bool IsManager()
-        {
-            var signedUser = GetAdminSignedUser();
-            if (signedUser == null)
-            {
-                return false;
-            }
-            return signedUser.IsManager;
-        }
-        protected bool IsAdmin()
-        {
-            var signedUser = GetAdminSignedUser();
-            if (signedUser == null)
-            {
-                return false;
-            }
-            return signedUser.IsAdmin;
-        }
-        protected bool IsAdminOrManager()
-        {
-            var signedUser = GetAdminSignedUser();
-            if (signedUser == null)
-            {
-                return false;
-            }
-            return signedUser.IsAdmin || signedUser.IsManager;
-        }
-        protected bool IsAdminOrMaster()
-        {
-            var signedUser = GetAdminSignedUser();
-            if (signedUser == null)
-            {
-                return false;
-            }
-            return signedUser.IsAdmin || signedUser.IsMaster;
-        }
+
+        //protected SignedUser GetAdminSignedUser()
+        //{
+        //    var signedUser = SignedUser.GetAdmin(Request.RequestContext.HttpContext);
+        //    if (signedUser == null)
+        //    {
+        //        return null;
+        //    }
+        //    if (signedUser.IsBlocked || signedUser.IsAuthenticated == false)
+        //    {
+        //        return null;
+        //    }
+        //    return signedUser;
+        //}
+
+        //protected bool IsLessThenManager()
+        //{
+        //    var signedUser = GetAdminSignedUser();
+        //    if (signedUser == null)
+        //    {
+        //        return false;
+        //    }
+        //    return signedUser.IsLessThenManager;
+        //}
+        //protected bool IsManager()
+        //{
+        //    var signedUser = GetSignedUser(UserRole.Manager,false);
+        //    if (signedUser == null)
+        //    {
+        //        return false;
+        //    }
+        //    return signedUser.IsManager;
+        //}
+        //protected bool IsAdmin()
+        //{
+        //    var signedUser = GetSignedUser(UserRole.SubAdmin, false);
+        //    if (signedUser == null)
+        //    {
+        //        return false;
+        //    }
+        //    return signedUser.IsAdmin;
+        //}
+
+        //protected bool IsAdminOrManager()
+        //{
+        //    var signedUser = GetAdminSignedUser();
+        //    if (signedUser == null)
+        //    {
+        //        return false;
+        //    }
+        //    return signedUser.IsAdmin || signedUser.IsManager;
+        //}
+        //protected bool IsAdminOrMaster()
+        //{
+        //    var signedUser = GetAdminSignedUser();
+        //    if (signedUser == null)
+        //    {
+        //        return false;
+        //    }
+        //    return signedUser.IsAdmin || signedUser.IsMaster;
+        //}
 
 
 
@@ -720,7 +761,7 @@ namespace Pro.Mvc.Controllers
 
         protected ActionResult AuthenticateAdmin(object value)
         {
-            var signedUser = SignedUser.GetAdmin(Request.RequestContext.HttpContext);
+            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext, UserRole.Admin);
             if (signedUser == null || !signedUser.IsAdmin)
             {
                 return RedirectToAction("Manager", "Admin");
@@ -870,6 +911,12 @@ namespace Pro.Mvc.Controllers
 
         #endregion
 
+        protected ResultModel GetSupportErrMessage(string title)
+        {
+            var model = new ResultModel() { Status = -1, Title = title, Message = "אירעה שגיאה, אנא פנה לתמיכה" };
+            return model;
+
+        }
         protected string GetResultMessage(int result, string action)
         {
             string supix= (result > 0) ? "בוצע בהצלחה" : "לא בוצע";

@@ -18,7 +18,9 @@ namespace ProSystem.Data.Entities
         All=0,
         Today=1,
         Forword=2,
-        Backword=3
+        Backword=3,
+        ByParent=4,
+        ById=5
     }
 
     public class ReminderContext : EntityModelContext<ReminderItem>//EntityContext<DbSystem, ReminderItem>
@@ -81,18 +83,16 @@ namespace ProSystem.Data.Entities
         //    //    return db.ExecuteList<DocListView>("sp_Task_Docs_Report", "PageSize", PageSize, "PageNum", PageNum, "AccountId", AccountId, "UserId", UserId, "AssignBy", AssignBy, "DocStatus", DocStatus);
         //}
 
-        public static IEnumerable<ReminderListView> View(ReminderMode Mode, int AccountId, int UserId, int AssignBy, int RemindStatus)
+        public static IEnumerable<ReminderItem> View(ReminderMode Mode, int AccountId, int UserId, bool Readed,int RemindId)
         {
-            int PageSize = 0;
-            int PageNum = 0;
-
-            int ttl = Settings.DefaultShortTTL;
-            var parameters = new object[] { "PageSize", PageSize, "PageNum", PageNum, "Mode", (int)Mode, "AccountId", AccountId, "UserId", UserId, "AssignBy", AssignBy, "RemindStatus", RemindStatus };
-            string key = DbContextCache.GetKey<ReminderListView>(Settings.ProjectName, EntityCacheGroups.Reminder, AccountId, 0);
-            return DbContextCache.ExecuteList<DbSystem, ReminderListView>(key, ttl, parameters);
-
-            //using (var db = DbContext.Create<DbSystem>())
-            //    return db.ExecuteList<DocListView>("sp_Task_Docs_Report", "PageSize", PageSize, "PageNum", PageNum, "AccountId", AccountId, "UserId", UserId, "AssignBy", AssignBy, "DocStatus", DocStatus);
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteList<ReminderItem>("sp_Reminder_View", "Mode", (int)Mode, "AccountId", AccountId, "UserId", UserId, "Readed", Readed, "RemindId", RemindId);
+        }
+        public static ReminderItem View(int AccountId, int UserId, int RemindId)
+        {
+            ReminderMode Mode = ReminderMode.ById;
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteSingle<ReminderItem>("sp_Reminder_View", "Mode", (int)Mode, "AccountId", AccountId, "UserId", UserId, "RemindId", RemindId);
         }
 
         //public static IEnumerable<ReminderListView> ViewDocs(int Mode,int AccountId, int UserId, int AssignBy, int RemindStatus)
@@ -116,34 +116,51 @@ namespace ProSystem.Data.Entities
 
             object[] values = new object[]
                 {
-            "RemindId",item.RemindId
-            ,"Remind_Type", item.Remind_Type
+            //"RemindId",item.RemindId
+            "Remind_Type", item.Remind_Type
             ,"DueDate", item.DueDate
-            ,"RemindStatus", item.RemindStatus
+            //,"RemindStatus", item.RemindStatus
             ,"AccountId", item.AccountId
-            ,"UserId", item.UserId
+            //,"UserId", item.UserId
             ,"AssignBy", item.AssignBy
             ,"RemindBody", item.RemindBody
             ,"Remind_Parent", item.Remind_Parent
-            ,"ParentType", item.ParentType
             //,"CreatedDate", item.CreatedDate
             ,"RemindBefor", item.RemindBefor
-            ,"LastReminded", item.LastReminded
+            //,"LastReminded", item.LastReminded
             ,"AssignTo", item.AssignTo
             ,"ShareType", item.ShareType
-            //,"ShareId", item.ShareId
-            ,"IsExpired", item.IsExpired
+            //,"IsExpired", item.IsExpired
+            ,"RelatedId", item.RelatedId
+            ,"RelatedType", item.RelatedType
             ,"ColorFlag", item.ColorFlag
             ,"ClientId", item.ClientId
             ,"Project_Id", item.Project_Id
                 };
 
-            return base.ExecuteReturnValue(ProcedureType.Upsert, "sp_Reminder_AddOrUpdate", 0, values);//.UpsertReturnValue(values);
+
+            return base.ExecuteReturnValue(ProcedureType.Upsert, "sp_Reminder_Add", 0, values);//.UpsertReturnValue(values);
 
             //using (var db = DbContext.Create<DbSystem>())
             //    return db.ExecuteReturnValue("sp_Reminder_AddOrUpdate", 0, values);
         }
+        
+        public static int Reminder_Notify(int RemindId, int RecipientId)
+        {
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteNonQuery("sp_Reminder_Notify", "RemindId", RemindId, "RecipientId", RecipientId, "IsNotify",true);
+        }
 
+        public static int Reminder_Readed(int RemindId, int RecipientId)
+        {
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteNonQuery("sp_Reminder_Notify", "RemindId", RemindId, "RecipientId", RecipientId, "IsReaded", true);
+        }
+        public static int Reminder_Expired(int RemindId, int RecipientId)
+        {
+            using (var db = DbContext.Create<DbSystem>())
+                return db.ExecuteNonQuery("sp_Reminder_Notify", "RemindId", RemindId, "RecipientId", RecipientId, "IsExpired", true);
+        }
         #endregion
     }
 
@@ -203,7 +220,7 @@ namespace ProSystem.Data.Entities
 //    #endregion
 //}
 
-    [EntityMapping("Reminder", "תזכורת")]
+    [EntityMapping("Reminder", EntityName = "תזכורת", ProcListView = "sp_Reminder_View")]
     public class ReminderItem : IEntityItem
     {
 
@@ -213,18 +230,18 @@ namespace ProSystem.Data.Entities
         public DateTime? DueDate { get; set; }
         public int RemindStatus { get; set; }
         public int AccountId { get; set; }
-        public int UserId { get; set; }
+        //public int UserId { get; set; }
         public int AssignBy { get; set; }
         public string RemindBody { get; set; }
         public int Remind_Parent { get; set; }
-        public int ParentType { get; set; }
+        public int RelatedId { get; set; }
+        public int RelatedType { get; set; }
         [EntityProperty(EntityPropertyType.View)]
         public DateTime CreatedDate { get; set; }
         public DateTime? LastReminded { get; set; }
         public string AssignTo { get; set; }
         public int ShareType { get; set; }
         //public int ShareId { get; set; }
-        public bool IsExpired { get; set; }
         public int RemindBefor { get; set; }
 
         public string ColorFlag { get; set; }
@@ -237,31 +254,35 @@ namespace ProSystem.Data.Entities
         [EntityProperty(EntityPropertyType.View)]
         public int Broadcast_Id { get; set; }
 
+        [EntityProperty(EntityPropertyType.Optional)]
+        public bool IsExpired { get; set; }
+        [EntityProperty(EntityPropertyType.Optional)]
+        public bool IsNotify { get; set; }
+        [EntityProperty(EntityPropertyType.Optional)]
+        public bool IsReaded { get; set; }
 
-        
+
+        [EntityProperty(EntityPropertyType.View)]
+        public int RecipientId { get; set; }
+        [EntityProperty(EntityPropertyType.View)]
+        public string AssignByName { get; set; }
+        [EntityProperty(EntityPropertyType.View)]
+        public string DisplayName { get; set; }
+        [EntityProperty(EntityPropertyType.View)]
+        public string Items { get; set; }
+
         public string ToHtml()
         {
             return EntityProperties.ToHtmlTable<ReminderItem>(this, null, null, true);
         }
     }
 
-    [EntityMapping("vw_Reminder", ProcListView = "sp_Reminder_Report")]
-    public class ReminderListView : ReminderItem, IEntityListItem
-    {
-        //public static IList<TaskListView> GetList(int UserId, int userId, int ttl)
-        //{
-        //    string key = DbContextCache.GetKey<TaskListView>(Settings.ProjectName, EntityCacheGroups.Enums, 0, userId);
-        //    return DbContextCache.EntityList<DbSystem, TaskListView>(key, ttl, new object[] { "UserId", UserId });
-        //}
+    //[EntityMapping("Reminder",ProcListView = "sp_Reminder_Report")]
+    //public class ReminderListView : ReminderItem, IEntityListItem
+    //{
 
-        public string ProjectName { get; set; }
-        public string StatusName { get; set; }
-        //public string DisplayName { get; set; }
-        public string TypeName { get; set; }
-        public string AssignByName { get; set; }
-        public string DisplayName { get; set; }
-        public int TotalRows { get; set; }
+    //    public int TotalRows { get; set; }
 
-    }
+    //}
 }
     

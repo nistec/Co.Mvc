@@ -1102,7 +1102,7 @@ namespace Pro.Mvc.Controllers
             {
                 int uid = GetUser();
                 int campaign = Types.ToInt(Request["campaign"]);
-                if (IsLessThenManager())
+                if (!IsSignedUser(UserRole.Manager, false)) //(IsLessThenManager())
                 {
                     return Json(new ResultModel(401) { Title = "הסרת נרשמים שלא שילמו" }, JsonRequestBehavior.AllowGet);
                 }

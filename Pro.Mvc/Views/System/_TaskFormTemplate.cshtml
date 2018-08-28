@@ -1,6 +1,6 @@
 ﻿@model Pro.Mvc.Models.EntityModel
 @{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewMain.cshtml";
     Page.Title = "Main";
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
     var dataModel = @Html.Raw(Json.Encode(Model));

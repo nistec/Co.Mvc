@@ -1,6 +1,6 @@
 ﻿@model Pro.Mvc.Models.UploadFileModel
 @{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewMain.cshtml";
     Page.Title = "MembersUpload";
 }
 @section head {
@@ -411,7 +411,7 @@
             <a href="#" class="btn-tab prev-tab ">הקודם</a>
             <a href="#" class="btn-tab  next-tab">הבא</a>
             <a id="submit" href="javascript:location.reload();" class="btn-tab  end-tab">סיום</a>
-            <input type="text" id="wizard-validation" readonly />
+            <input type="text" id="wizard-validation" class="label" readonly />
         </div>
     </div>
 </div>

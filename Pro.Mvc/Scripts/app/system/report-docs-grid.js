@@ -553,7 +553,13 @@
             //});
         },
         docInfo: function (id) {
-            app.redirectTo('/System/DocInfo?id=' + id);
+
+            //app.redirectTo('/System/DocInfo?id=' + id);
+
+            var window = new window_doc_info("#grid-wrap",id);//("#window_doc_info", id);
+
+
+
             //wizard.displayStep(2);
             //$.ajax({
             //    type: 'GET',

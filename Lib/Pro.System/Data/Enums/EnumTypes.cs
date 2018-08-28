@@ -45,8 +45,9 @@ namespace ProSystem.Data.Enums
         {
             using (var db = DbContext.Create<DbSystem>())
                 return db.Query<EnumTypes>("select * from Enums_Types where (AccountId=@AccountId or AccountId=0) and (TypeModel=@TypeModel or TypeModel='A')", "AccountId", AccountId, "TypeModel", TypeModel);
-
         }
+
+
         //public static IEnumerable<EnumTypes> ViewItemList(int AccountId)
         //{
         //    return EntityProCache.ViewEntityList<EnumTypes>(EntityCacheGroups.Enums, ViewName, AccountId);
@@ -63,7 +64,9 @@ namespace ProSystem.Data.Enums
         public const string TagPropId = "קוד סוג";
         public const string TagPropName = "סוג";
         public const string TagPropTitle = "סוג";
-
+        public const string TagPropNameTopic = "סוג סוגיה";
+        public const string TagPropNameTicket = "סוג כרטיס";
+        public const string TagPropNameDoc = "סוג מסמך";
         #region properties
 
         [EntityProperty(EntityPropertyType.Identity, Column = "TypeId")]

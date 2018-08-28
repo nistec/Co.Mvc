@@ -24,6 +24,49 @@ namespace Pro.Mvc.Controllers
     public class AccountController : Controller
     {
 
+        #region protected methods
+        protected string GetReferrer()
+        {
+            string referer = Request.ServerVariables["HTTP_REFERER"];
+            if (string.IsNullOrEmpty(referer))
+                return Request.ServerVariables["HTTP_HOST"]; ;
+            return referer;
+        }
+        //protected bool ValidateReferrer(string baseUrl = null)
+        //{
+        //    if (baseUrl == null)
+        //        baseUrl = NetConfig.Get<string>("baseUrl");
+        //    string referer = Request.ServerVariables["HTTP_REFERER"];
+        //    if (string.IsNullOrEmpty(referer) || string.IsNullOrEmpty(baseUrl))
+        //        return false;
+        //    return Nistec.Regx.RegexValidateIgnoreCase(baseUrl, referer);
+        //}
+
+        protected string GetCurrentPath()
+        {
+            return Request.Url.AbsolutePath;
+        }
+        protected string GetClientIp()
+        {
+            return GetClientIp(Request);
+        }
+
+        protected string GetClientIp(HttpRequest request)
+        {
+            if (request.IsLocal)
+                return "127.0.0.1";
+            else
+                return request.UserHostAddress;
+        }
+        protected string GetClientIp(HttpRequestBase request)
+        {
+            if (request.IsLocal)
+                return "127.0.0.1";
+            else
+                return request.UserHostAddress;
+        }
+        #endregion
+
         #region Log in/out
         //
         // GET: /Account/Login
@@ -41,11 +84,14 @@ namespace Pro.Mvc.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model, string returnUrl)
         {
+            var RegHostAddress = Request.UserHostAddress;
+            var RegReferrer = TraceHelper.GetReferrer(Request);
+            var IsMobile = DeviceHelper.IsMobile(Request);
 
-            var status = FormsAuth.DoSignIn(model.UserName, model.Password, model.RememberMe);
+            var status = FormsAuth.DoSignIn(model.UserName, model.Password, model.RememberMe, RegHostAddress, RegReferrer, Settings.AppName, IsMobile);
             if (status== AuthState.Succeeded)
             {
-                return RedirectToAction("Dashboard", "Main");
+                return RedirectToAction("Main", "Main");// ("Dashboard", "Main");
             }
             
             string msg = "שם משתמש ו או סיסמה אינם מוכרים במערכת";

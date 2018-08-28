@@ -1,6 +1,6 @@
 ﻿@model ProSystem.Data.Entities.TaskQuery
 @{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     ViewBag.Title = "Tasks";
     var dataModel = @Html.Raw(Json.Encode(Model));
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));

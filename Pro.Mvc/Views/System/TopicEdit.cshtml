@@ -1,7 +1,7 @@
 ﻿@model Pro.Mvc.Models.EditTaskModel
 @{
     //ViewBag.Title = "System";
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     int rcdid = Nistec.Types.ToInt(Request["id"]);
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
     var dataModel = @Html.Raw(Json.Encode(Model));
@@ -136,7 +136,7 @@
         </div>
         <div style="height:5px"></div>
         <div id="wiz-1" class="wiz-tab active">
-            <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+            <div id="jqxWidget" class="box-hide">
 
                 <div id="accordion" class="jcx-tabs rtl tab-content">
                     <ul id="tab-query" class="nav nav-tabs1">
@@ -165,7 +165,7 @@
                                             <div class="field">
                                                 סוג משימה:
                                             </div>
-                                            <div id="Task_Type" name="Task_Type"></div>
+                                            <select id="Task_Type" name="Task_Type" data-type="select-loader" data-args="6"></select>
                                         </div>
 
                                         <div class="form-group">
@@ -179,7 +179,7 @@
                                             <div class="field">
                                                 תיאור: <span><a id="TaskBody-btn-view" href="#"><i class="fa fa-search-plus" style="font-size:16px"></i></a></span>
                                             </div>
-                                            <textarea id="TaskBody" name="TaskBody" class="text-content"></textarea>
+                                            <textarea id="TaskBody" name="TaskBody" class="text-content" data-type="jqx-editor"></textarea>
                                         </div>
                                         <div class="form-group">
                                             <div class="field">
@@ -200,12 +200,13 @@
                                             </div>
                                             <select id="ColorFlag" name="ColorFlag"></select>
                                         </div>
-                                        <div id="jqxExp-1">
-                                            <div class="panel-area-title">
-                                                פרטים נוספים
-                                            </div>
-                                            <div class="panel-area rtl" style="border:none">
+                                        <div id="jqxExp-1" class="panel-area rtl">
 
+                                            <div class="panel-area-title">
+                                                <a id="a-jqxExp-1" href="#">פרטים נוספים</a>
+                                            </div>
+
+                                            <div id="jqxExp-box" style="display:none">
 
                                                 <div class="form-group">
                                                     <div class="field">
@@ -351,7 +352,7 @@
 <footer>
 </footer>
 <script type="text/javascript">
-    app_menu.activeLayoutMenu("liSystem");
+    app_menu.activeLayoutMenu("liMain");
     app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
     app_menu.footer("task");
 </script>

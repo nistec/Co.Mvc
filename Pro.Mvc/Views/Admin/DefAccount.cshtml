@@ -123,14 +123,16 @@
     </script>
 }
 
-<div class="top-space"></div>
+<div class="breadcrumbs">
+</div>
+
 <div class="global-view">
 
     <div class="container">
         <h3 class="rtl">הגדרות כלליות-<span>לקוחות</span></h3>
 
         <div class="grid-wrap rtl">
-            
+
             <input type="button" id="virtualSetbutton" value="כניסת מנהל" />
             <input type="button" id="virtualCancelbutton" value="יציאת מנהל" />
             <span>לקוח נוכחי</span> : <span>@accountId</span>
@@ -236,48 +238,48 @@
                                                 האם לחסום שינויים במערכת התוכן:
                                             </label>
                                             <input type="checkbox" name="BlockCms" id="BlockCms">
-                                        </div>    
+                                        </div>
                                         @*<div class="form-group">
-                                            <fieldset>
-                                                <label for="SignupOption" class="column-large">
-                                                    אפשרויות רישום מנויים:
+                                                <fieldset>
+                                                    <label for="SignupOption" class="column-large">
+                                                        אפשרויות רישום מנויים:
+                                                    </label>
+                                                    <select name="SignupOption" id="SignupOption">
+                                                        <option value="0" selected>רישום בלבד</option>
+                                                        <option value="1">רישום עם תשלום אופציונאלי</option>
+                                                        <option value="2">רישום מחייב תשלום</option>
+                                                    </select>
+                                                </fieldset>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="EnableSignupCredit">
+                                                    האם לחייב באשראי:
                                                 </label>
-                                                <select name="SignupOption" id="SignupOption">
-                                                    <option value="0" selected>רישום בלבד</option>
-                                                    <option value="1">רישום עם תשלום אופציונאלי</option>
-                                                    <option value="2">רישום מחייב תשלום</option>
-                                                </select>
-                                            </fieldset>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="EnableSignupCredit">
-                                                האם לחייב באשראי:
-                                            </label>
-                                            <input type="checkbox" name="EnableSignupCredit" id="EnableSignupCredit">
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="column-large">
-                                                מסוף אשראי:
-                                            </label>
-                                            <input type="text" id="CreditTerminal" class="input" />
-                                        </div>
-                                        <div class="form-group">
-                                            <fieldset>
-                                                <label for="RecieptEvent" class="column-large">
-                                                    בעת אירוע תשלום:
+                                                <input type="checkbox" name="EnableSignupCredit" id="EnableSignupCredit">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="column-large">
+                                                    מסוף אשראי:
                                                 </label>
-                                                <select name="RecieptEvent" id="RecieptEvent">
-                                                    <option value="" selected>none</option>
-                                                    <option value="email">email</option>
-                                                </select>
-                                            </fieldset>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="column-large">
-                                                כתובת להעברה:
-                                            </label>
-                                            <input type="text" id="RecieptAddress" class="input" />
-                                        </div>*@
+                                                <input type="text" id="CreditTerminal" class="input" />
+                                            </div>
+                                            <div class="form-group">
+                                                <fieldset>
+                                                    <label for="RecieptEvent" class="column-large">
+                                                        בעת אירוע תשלום:
+                                                    </label>
+                                                    <select name="RecieptEvent" id="RecieptEvent">
+                                                        <option value="" selected>none</option>
+                                                        <option value="email">email</option>
+                                                    </select>
+                                                </fieldset>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="column-large">
+                                                    כתובת להעברה:
+                                                </label>
+                                                <input type="text" id="RecieptAddress" class="input" />
+                                            </div>*@
                                         <div>
                                             <input style="margin-right: 5px;" type="button" id="Save" value="עדכון" />
                                             <input id="Cancel" type="button" value="ביטול" />
@@ -295,67 +297,67 @@
                             <input type="hidden" id="insertFlag" value="0" />
                             <div id="creditTitle" style="text-align:right">עריכת סליקה באשראי</div>
                             <form id="form2" action="./">
-                                    <div style="direction: rtl; text-align: right; float: right">
-                                        <div class="form-group">
-                                            <label class="column-large">
-                                                קוד לקוח :
-                                            </label><br />
-                                            <input id="PropIdCredit" readonly="readonly" class="input" />
-                                        </div>
-                                        @*<div class="form-group">
+                                <div style="direction: rtl; text-align: right; float: right">
+                                    <div class="form-group">
+                                        <label class="column-large">
+                                            קוד לקוח :
+                                        </label><br />
+                                        <input id="PropIdCredit" readonly="readonly" class="input" />
+                                    </div>
+                                    @*<div class="form-group">
                                             <label class="column-large">
                                                 שם הלקוח:
                                             </label>
                                             <input id="PropNameCredit" class="input" readonly="readonly" />
                                         </div>*@
 
-                                        <div class="form-group">
-                                            <fieldset>
-                                                <label for="SignupOption" class="column-large">
-                                                    אפשרויות רישום מנויים:
-                                                </label><br />
-                                                <select name="SignupOption" id="SignupOption">
-                                                    <option value="0" selected>רישום בלבד</option>
-                                                    <option value="1">רישום עם תשלום אופציונאלי</option>
-                                                    <option value="2">רישום מחייב תשלום</option>
-                                                </select>
-                                            </fieldset>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="EnableSignupCredit">
-                                                האם לחייב באשראי:
+                                    <div class="form-group">
+                                        <fieldset>
+                                            <label for="SignupOption" class="column-large">
+                                                אפשרויות רישום מנויים:
                                             </label><br />
-                                            <input type="checkbox" name="EnableSignupCredit" id="EnableSignupCredit">
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="column-large">
-                                                מסוף אשראי:
-                                            </label><br />
-                                            <input type="text" id="CreditTerminal" class="input" />
-                                        </div>
-                                        <div class="form-group">
-                                            <fieldset>
-                                                <label for="RecieptEvent" class="column-large">
-                                                    בעת אירוע תשלום:
-                                                </label><br />
-                                                <select name="RecieptEvent" id="RecieptEvent">
-                                                    <option value="" selected>none</option>
-                                                    <option value="email">email</option>
-                                                </select>
-                                            </fieldset>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="column-large">
-                                                כתובת להעברה:
-                                            </label><br />
-                                            <input type="text" id="RecieptAddress" class="input" />
-                                        </div>
-                                        <div style="height:10px;"></div>
-                                        <div>
-                                            <input style="margin-right: 5px;" type="button" id="SaveCredit" value="עדכון" />
-                                            <input id="CancelCredit" type="button" value="ביטול" />
-                                        </div>
+                                            <select name="SignupOption" id="SignupOption">
+                                                <option value="0" selected>רישום בלבד</option>
+                                                <option value="1">רישום עם תשלום אופציונאלי</option>
+                                                <option value="2">רישום מחייב תשלום</option>
+                                            </select>
+                                        </fieldset>
                                     </div>
+                                    <div class="form-group">
+                                        <label for="EnableSignupCredit">
+                                            האם לחייב באשראי:
+                                        </label><br />
+                                        <input type="checkbox" name="EnableSignupCredit" id="EnableSignupCredit">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="column-large">
+                                            מסוף אשראי:
+                                        </label><br />
+                                        <input type="text" id="CreditTerminal" class="input" />
+                                    </div>
+                                    <div class="form-group">
+                                        <fieldset>
+                                            <label for="RecieptEvent" class="column-large">
+                                                בעת אירוע תשלום:
+                                            </label><br />
+                                            <select name="RecieptEvent" id="RecieptEvent">
+                                                <option value="" selected>none</option>
+                                                <option value="email">email</option>
+                                            </select>
+                                        </fieldset>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="column-large">
+                                            כתובת להעברה:
+                                        </label><br />
+                                        <input type="text" id="RecieptAddress" class="input" />
+                                    </div>
+                                    <div style="height:10px;"></div>
+                                    <div>
+                                        <input style="margin-right: 5px;" type="button" id="SaveCredit" value="עדכון" />
+                                        <input id="CancelCredit" type="button" value="ביטול" />
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -364,3 +366,9 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liEntity");
+    //app_menu.breadcrumbs("/Admin/Main", "Tasks", 'en');
+    app_menu.footer("admin");
+</script>

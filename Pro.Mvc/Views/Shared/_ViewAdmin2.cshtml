@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Your description">
+    <meta name="keywords" content="Your keywords">
+    <meta name="author" content="Your name">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="cms" content="Nistec v-4.0.2" data-virtual="" data-site="0">
+    <!--<base href="www.my-t.co.il/pro" data-virtual="/pro"/>-->
+    <title>@ViewBag.Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <!--CSS-->
+    @*<link rel="stylesheet" href="~/Content/css/reset.css">*@
+    <link rel="stylesheet" href="~/Content/css/style-rtl.css">
+    <link rel="stylesheet" href="~/Content/css/view-form.css" type="text/css" />
+    <link href="~/Content/fonts/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.base.css" type="text/css" />
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.nis_metro.css" type="text/css" />
+    <link href="~/Scripts/jq/jquery-ui-1.12.0/jquery-ui.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="~/Scripts/globalization/globalize.js"></script>
+    <script type="text/javascript" src="~/Scripts/globalization/Localization.js"></script>
+    <script type="text/javascript" src="~/Scripts/JsonDateExtensions.js"></script>
+
+
+    <!--JS-->
+    <script src="~/Scripts/jq/jquery-2.1.4.js"></script>
+    <script src="~/Scripts/jq/jquery-ui-1.12.0/jquery-ui.min.js"></script>
+
+    <script src="~/Scripts/plagins/cssmenu/cssmenu.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/cssmenu/cssmenu-rtl.css">
+
+    <script src="~/Scripts/app/app-model-1.0.js"></script>
+    <script src="~/Scripts/app/app-jqx-1.0.js"></script>
+    <script src="~/Scripts/app/app-control-1.0.js"></script>
+    <script src="~/Scripts/app/app-global.js"></script>
+    <script src="~/Scripts/app/dateFormat.js"></script>
+    <script src="~/Scripts/app/app-system-model.js"></script>
+
+    <script src="~/Scripts/HubSpot/messenger/js/messenger.min.js"></script>
+    <script src="~/Scripts/HubSpot/messenger/js/messenger-theme-future.js"></script>
+    <link href="~/Scripts/HubSpot/messenger/css/messenger-rtl.css" rel="stylesheet" />
+    <link href="~/Scripts/HubSpot/messenger/css/messenger-theme-flat.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/Scripts/plagins/tabs/jcxtabs-light.min.css" />
+    <script src="~/Scripts/plagins/tabs/jcxtabs.min.js"></script>
+    <link href="~/Scripts/plagins/select/css/select2.css" rel="stylesheet" />
+    <script src="~/Scripts/plagins/select/select2.js"></script>
+
+    @*<link href="~/Scripts/plagins/select/chosen.css" rel="stylesheet" />
+    <script src="~/Scripts/plagins/select/chosen.jquery.js"></script>*@
+
+    @Scripts.Render("~/bundles/jqxmaster")
+
+    @RenderSection("head", required: false)
+
+
+</head>
+<body>
+
+    <!--header-->
+    <header>
+        <div id="stuck_container">
+            <div class="menuBox">
+                <div id="cssmenu_wrapper" class="container">
+                    <h1 class="navbar-brand navbar-brand_"><a href="~/Home/index">
+                        <img src="~/images/logo.png" alt=""></a></h1>
+                    <div id="cssmenu">
+                        <ul>
+                            <li class="active"><a href="~/Admin/Main" title="ראשי">ראשי</a></li>
+                            <li class="has-sub"><a href="#" title="מנהל מערכת">
+                                <span>מנהל מערכת</span></a>
+                                <ul>
+                                    <li><a href="~/Admin/UsersDef" title="משתמשים">
+                                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> משתמשים</a></li>
+                                    <li><a href="~/Admin/LogonGrid" title="דוח כניסות">
+                                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> דוח כניסות</a></li>
+                                    <li id="adminAccount">
+                                        <a href="~/Admin/Accounts" title="ניהול לקוחות">
+                                            <i class="fa fa-angle-double-left" style="font-size:20px"></i> ניהול לקוחות
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="has-sub">
+                                <a href="#" title="בקרה">
+                                    <span>בקרה</span>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a href="~/Admin/LogMonitor" title="מוניטור">
+                                            <i class="fa fa-angle-double-left" style="font-size:20px"></i> מוניטור
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="has-sub"><a href="#" title="מערכת תוכן">
+                                <span>מערכת תוכן</span></a>
+                                <ul>
+                                    <li>
+                                        <a href="~/Admin/CmsContentGrid" title="עריכת תוכן">
+                                            <i class="fa fa-angle-double-left" style="font-size:20px"></i> עריכת תוכן
+                                        </a>
+                                    </li>
+                                    @*<li><a href="~/Cms/CmsSite" title="עריכת תוכן">
+                                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> עריכת תוכן</a></li>
+                                    <li><a href="~/Cms/CmsPage?pid=4" title="עריכת עמוד ראשי">
+                                        <i class="fa fa-angle-double-left" style="font-size:20px"></i> עריכת עמוד ראשי
+                                        </a></li>*@
+                                </ul>
+                            </li>
+                            <li class="last"><a href="~/Main/Dashboard" title="ראשי">יציאה</a></li>
+                            <li><a href="#"><span>@ViewBag.MngData</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="body">
+        <!--Notifications-->
+        <div id="jqxNotification">
+        </div>
+        @RenderSection("featured", required: false)
+        <section class="content-wrapper main-content clear-fix" style="margin:20px">
+            @RenderBody()
+        </section>
+    </div>
+
+    <!--footer-->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="follow_icon">
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon1.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon2.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon3.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon4.png" alt=""></a></li>
+                        <li><a href="#">
+                            <img src="~/images/site/follow_icon5.png" alt=""></a></li>
+                    </ul>
+                    <p>&copy; <em id="copyright-year"></em><a href="#">Privacy policy</a></p>
+                </div>
+            </div>
+            <div class="top-box"></div>
+        </div>
+        <!-- {%FOOTER_LINK} -->
+    </footer>
+    <script type="text/javascript">
+        app_messenger.Init('bottom-right', 'flat');
+    </script>
+    @*@Scripts.Render("~/bundles/jqwidgets")*@
+    @RenderSection("scripts", required: false)
+</body>
+</html>

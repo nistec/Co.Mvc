@@ -1,0 +1,53 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    Page.Title = "Crm";
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/Scripts/app/model/generic/_baseEntity-def.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/model/generic/account-def.js"></script>
+
+    <style type="text/css">
+        .input {
+            direction: rtl;
+            text-align: right;
+            height: 20px;
+        }
+    </style>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            JSON.useDateParser();
+
+            var def = new app_account_def(JSON.parse('@userInfo'));
+
+        });
+    </script>
+}
+<hgroup class="title">
+    <h3 class="rightPan">הגדרות כלליות-<span>לקוחות</span></h3>
+
+</hgroup>
+<div class="clear"></div>
+
+<div class="global-view">
+
+    <div class="container-rtl">
+        <div class="grid-wrap">
+            <div id="jqxWidget">
+                <!--<input style="margin-right: 5px;" type="button" id="addrowbutton" value="הוספה" />-->
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+
+                <div style="font-size: 12px; font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif; margin-top: 30px;">
+                    <div class="note-edit">לעריכת שורה: לחיצה כפולה על השורה הרצויה</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

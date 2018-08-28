@@ -5673,6 +5673,23 @@ S2.define('select2/core',[
     return data;
   };
 
+  Select2.prototype.val = function (value) {
+
+        if (value == null || value.length === 0) {
+            return this.$element.val();
+        }
+
+        if ($.isArray(value)) {
+            value = $.map(value, function (obj) {
+                return obj.toString();
+            });
+        }
+
+        //this.$element.val(value).trigger('change');
+
+        this.$element.val(value).trigger('change.select2');
+    };
+    /*
   Select2.prototype.val = function (args) {
     if (this.options.get('debug') && window.console && console.warn) {
       console.warn(
@@ -5695,7 +5712,7 @@ S2.define('select2/core',[
 
     this.$element.val(newVal).trigger('change');
   };
-
+  */
   Select2.prototype.destroy = function () {
     this.$container.remove();
 

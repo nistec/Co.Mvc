@@ -10,34 +10,29 @@ class app_topic extends app_task_base {
         this.EnableFormType = false;
     }
 
-    init(isInfo) {
+    init() {
 
-        if (isInfo) {
-            $("#hTitle-text").text(this.Title + ': ' + $("#TaskSubject").val());
-            $("#hxp-title").text(this.Title + ': ' + this.TaskId);
-        }
-        else {
+        if (!this.IsInfo) {
+       
             this.tabSettings();
         }
+
+        $("#hTitle-text").text(this.Title + ': ' + $("#TaskSubject").val());
+        $("#hxp-title").text(this.Title + ': ' + this.TaskId);
 
         this.preLoad();
 
         if (this.TaskId > 0) {
-            this._loadData(isInfo);
-            //this.loadControls(this.Model.Data);
+            this._loadData();
         }
         else {
             this.loadControls();
         }
         this.loadEvents();
-
-        //return this;
     };
    
     tabSettings() {
         var _slf = this;
-        $("#hTitle-text").text(this.Title + ': ' + $("#TaskSubject").val());
-        $("#hxp-title").text(this.Title + ': ' + this.TaskId);
 
         if (this.TaskId > 0) {
             $("#hxp-1").show();
@@ -87,31 +82,8 @@ class app_topic extends app_task_base {
         });
     };
  
-    //initInfo() {
-
-    //    $("#hTitle-text").text(this.Title + ': ' + $("#TaskSubject").val());
-    //    $("#hxp-title").text(this.Title + ': ' + this.TaskId);
-
-    //    var model = this.Model.Data
-    //    if (model.Comments == 0)
-    //        $("#exp-1").hide();
-    //    if (model.Assigns == 0)
-    //        $("#exp-2").hide();
-    //    if (model.Timers == 0)
-    //        $("#exp-3").hide();
-    //    if (model.Items == 0)
-    //        $("#exp-4").hide();
-    //    if (model.Files == 0)
-    //        $("#exp-5").hide();
-
-    //    this.preLoad();
-    //    this.loadControls(model);
-    //    this.loadEvents();
-    //};
-
     doCancel() {
         app.redirectTo(app_task_base.getReferrer());
-        //return this;
     };
 
     doSubmit(act) {
@@ -140,7 +112,8 @@ class app_topic extends app_task_base {
         }
 
         var RunSubmit = function (slf, status, actionurl) {
-            
+
+            slf.postLoad(true);
 
             //app_jqx.setInputAutoValue("#TaskStatus", status);
             app_tasks.setTaskStatus("#TaskStatus", status);
@@ -191,34 +164,40 @@ class app_topic extends app_task_base {
 
         var slf = this;
 
-
         $("#Task_Parent").val(slf.TaskParentId);
         if (slf.TaskParentId > 0) {
             $("#Task_Parent-group").show();
             $("#Task_Parent-link").click(function () {
-                app.redirectTo('/System/TaskInfo?id=' + slf.TaskParentId);
+                app.redirectTo('/System/TopicInfo?id=' + slf.TaskParentId);
             });
         }
         else {
             $("#Task_Parent-group").hide();
         }
 
-
         $("#AccountId").val(slf.AccountId);
-        if (theme === undefined)
-            theme = 'nis_metro';
 
-        app_tasks.setColorFlag();
+        //app_tasks.setColorFlag();
 
-        $("#jqxExp-1").jqxExpander({ rtl: true, width: '80%', expanded: false });
-        $('#jqxExp-1').on('expanding', function () {
-
-            if (!slf.exp1_Inited) {
-                slf.lazyLoad();
+        $('#a-jqxExp-1').on('click', function (e) {
+            if (!slf.PostLoaded) {
+                slf.postLoad();
             }
+            $('#jqxExp-box').slideToggle();
+            return false;
         });
 
+        app_features.editorTag("#TaskBody", slf.IsEditable);
 
+
+        if (this.IsEditable) {
+            app_features.colorFlag("#ColorFlag", "#hTitle");
+        }
+
+        //$("#jqxWidget").slideDown('slow');
+        $("#jqxWidget").toggleClass('box-slide');
+
+        /*
         $("#ColorFlag").simplecolorpicker();
         $("#ColorFlag").on('change', function () {
             //$('select').simplecolorpicker('destroy');
@@ -232,10 +211,11 @@ class app_topic extends app_task_base {
             //width: '100%',
             editable: slf.IsEditable,
             rtl: true,
-            tools: 'bold italic underline | color background | left center right'
+            tools: slf.IsEditable ? 'bold italic underline | color background | left center right' : ''
             //theme: 'arctic'
             //stylesheets: ['editor.css']
         });
+
         $('#TaskBody-btn-view').on('click', function () {
 
             if ($('#TaskBody-div').hasClass("editor-view")) {
@@ -249,45 +229,48 @@ class app_topic extends app_task_base {
                 $('#TaskBody').jqxEditor('height', '800px');
             }
         });
+        */
     }
 
-    loadControls(record) {
+    loadControls() {
 
         console.log('controls');
 
         $('#DueDate').jqxDateTimeInput({ showCalendarButton: this.IsEditable, readonly: !this.IsEditable, width: '150px', rtl: true });
 
+        var record = this.Record;
         if (record) {
 
-            app_form.loadDataForm("fcForm", record, ["TaskStatus", "Project_Id", "ClientId", "Tags", "AssignTo"]);
+            app_form.loadDataForm("fcForm", record, ["TaskStatus"], this.IsInfo);//, "Project_Id", "ClientId", "Tags", "AssignTo","TaskBody"]);
 
-            $("#TaskBody").jqxEditor('val', app.htmlUnescape(record.TaskBody));
+            if (this.IsInfo) {
+                //$("#Task_Type").prop("disabled", true);
 
-            $("#TaskSubject").val(record.TaskSubject);
+            }
+
             $("#hTitle-text").text(this.Title + ": " + record.TaskSubject);
             $("#hTitle").css("background-color", (record.ColorFlag || config.defaultColor));
 
-            // $('#DueDate').jqxDateTimeInput({ disabled: !this.IsEditable, showCalendarButton: this.IsEditable });
-
             if (this.Option !== 'g' && record.TaskStatus > 1 && record.TaskStatus < 8)
-                $("#fcEnd").show();//$("#fcSubmit").val("סיום");
+                $("#fcEnd").show();
             else
-                $("#fcEnd").hide();//$("#fcSubmit").val("עדכון");
+                $("#fcEnd").hide();
 
+            $('#TaskBody').css('text-align', app_style.langAlign(record.Lang))
 
-            var align = app_style.langAlign(record.Lang);
-            $('#TaskBody').css('text-align', align)
+            //app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", "#Task_Type", '/System/GetTaskTypeList', { 'model': this.TaskModel }, 0, 120, true, null, function (status, records) {
+            //    if (record.Task_Type >= 0)
+            //        $("#Task_Type").val(record.Task_Type);
+            //});
+            //$("#Task_Type").jqxComboBox({ enableSelection: this.IsEditable });
 
-            app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", "#Task_Type", '/System/GetTaskTypeList', { 'model': this.TaskModel }, 0, 120, true, null, function (status, records) {
-                if (record.Task_Type >= 0)
-                    $("#Task_Type").val(record.Task_Type);
-            });
-            $("#Task_Type").jqxComboBox({ enableSelection: this.IsEditable });
             //app_jqx_combo_async.taskStatusInputAdapter("#TaskStatus", record.TaskStatus);
+
             app_tasks.setTaskStatus("#TaskStatus", record.TaskStatus);
         }
         else {
-            app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", "#Task_Type", '/System/GetTaskTypeList', { 'model': this.TaskModel }, 0, 120, true, "0");
+            app_select_loader.loadTag("Task_Type", "Task_Type", 6);
+            //app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", "#Task_Type", '/System/GetTaskTypeList', { 'model': this.TaskModel }, 0, 120, true, "0");
             //app_jqxcombos.createComboAdapter("UserTeamId", "DisplayName", "IntendedTo", '/System/GetUserTeamList', 0, 120, false);
             app_form.setDateTimeNow('#CreatedDate');//
 

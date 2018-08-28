@@ -268,7 +268,7 @@ namespace ProSystem.Data.Entities
         {
             if (TaskId == 0)
                 return new TaskItemInfo();
-            using (var db = DbContext.Create<DbSystem>())
+            using (var db = DbContext.Get<DbSystem>())
             {
                 return db.EntityProcGet<TaskItemInfo>("TaskId", TaskId);
             }
@@ -376,7 +376,7 @@ namespace ProSystem.Data.Entities
         {
 
             using (var db = DbContext.Create<DbSystem>())
-                return db.ExecuteList<TaskListView>("sp_Task_Report", "PageSize", q.PageSize, "PageNum", q.PageNum, "AccountId", q.AccountId, "UserId", q.UserId, "AssignBy", q.AssignBy, "TaskStatus", q.TaskStatus);
+                return db.ExecuteList<TaskListView>("sp_Task_Report", "PageSize", q.PageSize, "PageNum", q.PageNum, "AccountId", q.AccountId, "UserId", q.UserId, "AssignBy", q.AssignBy, "TaskStatus", q.TaskStatus, "UserMode",q.UserMode);
         }
         public static IList<string> ViewTagsList(int AccountId)
         {
@@ -618,6 +618,8 @@ namespace ProSystem.Data.Entities
         public string TaskState { get; set; }
         public string TaskModel { get; set; }
         public string Tags { get; set; }
+        [EntityProperty(EntityPropertyType.View)]
+        public string AssignByName { get; set; }
     }
 
     [EntityMapping(ProcGet = "sp_Task_Get_Info")]
@@ -1001,10 +1003,27 @@ namespace ProSystem.Data.Entities
          public bool Required { get; set; }
      }
 
-    
+    [EntityMapping("Task_Status")]
+    public class TaskStatus : IEntityItem
+    {
+        public const string TableName = "Task_Status";
+
+        #region properties
+
+
+        [EntityProperty(EntityPropertyType.Key, Column = "StatusId")]
+        public int PropId { get; set; }
+
+        [EntityProperty(Column = "StatusNameLocal")]
+        public string PropName { get; set; }
+
+
+        #endregion
+
+    }
 
     [Flags]
-    public enum TaskStatus
+    public enum Task_Status
     {
         Open = 1,
         Started = 2,

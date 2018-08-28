@@ -4,11 +4,11 @@
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
 }
 @section head {
-     @Scripts.Render("~/bundles/jqx")
-     @Scripts.Render("~/bundles/jqxgrid")
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
 }
 @section scripts {
- <script type="text/javascript">
+    <script type="text/javascript">
      $(document).ready(function () {
          var theme = 'Arctic';
          JSON.useDateParser();
@@ -27,7 +27,7 @@
          //app_jqxcombos.createDropDownAdapter("AccountId", "AccountName", "regAccountId", '/Admin/GetAccountsList', 240, 0, false);
 
          var loadAccount = function (accountId) {
-             
+
              $("#curAccountId").val(accountId);
              $("#regAccountId").val(accountId);
              // prepare the data
@@ -77,7 +77,7 @@
                        valueMember: 'RoleId'
                    });
              var sendCommand = function (rowdata, command, commit) {
-             
+
                  var url;
                  if (command == 0 )
                      url = '@Url.Action("UserDefRegister", "Admin")'
@@ -268,7 +268,7 @@
                          }
 
                      });
- 
+
 
                  },
                  columns: [
@@ -357,7 +357,7 @@
                     { input: '#UserName', message: 'נדרש שם משתמש!', action: 'keyup, blur', rule: 'required' },
                     { input: '#UserName', message: 'שם משתמש בין 3 ל 12 תוים לפחות!', action: 'keyup, blur', rule: 'length=3,12' },
                     {
-                        input: '#UserName', message: 'נדרש אותיות באנגלית בלבד!', action: 'valuechanged, blur', rule: 
+                        input: '#UserName', message: 'נדרש אותיות באנגלית בלבד!', action: 'valuechanged, blur', rule:
                                 function (input, commit) {
                                     var re = /^[A-Za-z][A-Za-z0-9]*$/
                                     return re.test(input.val());
@@ -377,7 +377,7 @@
                     },
                     { input: '#Phone', message: 'נדרש טלפון נייד!', action: 'keyup, blur', rule: 'required' },
                     {
-                        input: '#Phone', message: 'טלפון נייד אינו תקין!', action: 'valuechanged, blur', rule: 
+                        input: '#Phone', message: 'טלפון נייד אינו תקין!', action: 'valuechanged, blur', rule:
                                 function (input, commit) {
                                     var re = /^(|\()(0|972)(\d{1}|\d{2})(|[\)\/\.-])([0-9]{7})$/
                                     return re.test(input.val());
@@ -407,9 +407,9 @@
          // update the edited row when the user clicks the 'Save' button.
          $("#Save").click(function () {
              $('#popupWindow').jqxValidator('validate');
-             
+
          });
-         
+
          //================= popup Register ================.
          $("#regUserRole").jqxDropDownList({ theme: theme }).width(150);
          $("#regIsBlocked").jqxCheckBox({ theme: theme });
@@ -464,7 +464,7 @@
                    { input: '#regPassConfirm', message: 'נדרש אישור סיסמה!', action: 'keyup, blur', rule: 'required' },
                    {
                        input: '#regPassConfirm', message: 'אישור סיסמה אינו תואם לסיסמה!', action: 'keyup, focus', rule: function (input, commit) {
-                           // call commit with false, when you are doing server validation and you want to display a validation error on this field. 
+                           // call commit with false, when you are doing server validation and you want to display a validation error on this field.
                            if (input.val() === $('#regPass').val()) {
                                return true;
                            }
@@ -482,9 +482,9 @@
                  Evaluation: 0, IsBlocked: $("#regIsBlocked").val(),
                  DisplayName: $("#regDisplayName").val(),Password: $("#regPass").val()
              };
-             
+
              $('#jqxgrid').jqxGrid('addrow', null, row);
-             
+
              $("#popupRegister").jqxWindow('hide');
          });
          $("#regCancel").jqxButton({ theme: theme });
@@ -524,7 +524,7 @@
                    { input: '#UpsConfirm', message: 'נדרש אישור סיסמה!', action: 'keyup, blur', rule: 'required' },
                    {
                        input: '#UpsConfirm', message: 'אישור סיסמה אינו תואם לסיסמה!', action: 'keyup, focus', rule: function (input, commit) {
-                           // call commit with false, when you are doing server validation and you want to display a validation error on this field. 
+                           // call commit with false, when you are doing server validation and you want to display a validation error on this field.
                            if (input.val() === $('#Ups').val()) {
                                return true;
                            }
@@ -561,202 +561,212 @@
                  }
              });
          };
-         
+
      });
     </script>
 }
 
-<div class="top-space"></div>
+    <div class="breadcrumbs">
+    </div>
 <div class="global-view">
-    
+
     <div class="container-rtl">
-        <div class="grid-wrap">
+        <div class="grid-wrap rtl">
             <h3 class="rtl">הגדרות כלליות-<span>משתמשים</span></h3>
             <div id="AccountList" name="AccountList"></div>
             <input type="hidden" id="curAccountId" value="" />
-             <div id="jqxWidget">
-                 <!--<input style="margin-right: 5px;" type="button" id="addrowbutton" value="הוספה" />-->
+            <div id="jqxWidget">
+                <!--<input style="margin-right: 5px;" type="button" id="addrowbutton" value="הוספה" />-->
                 <div id="jqxgrid" style="position:relative;z-index:1;"></div>
-                 <div style="font-size: 12px; font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif; margin-top: 30px;">
-                <div>לעריכת שורה: לחיצה כפולה על השורה הרצויה</div>
-            <div id="cellbegineditevent"></div>
-            <div style="margin-top: 10px;" id="cellendeditevent"></div>
-            <div id="popupRegister">
-            <div>עריכה</div>
-            <div style="overflow: hidden;direction:rtl">
-                <input type="hidden" id="regLang" value="" />
-                <input type="hidden" id="regEvaluation" value="0" />
-                <input type="hidden" id="regCreation" value="" />
-                <input type="hidden" id="regAccountId" name="regAccountId" />
-                 <table style="border-spacing: 10px;border-collapse: separate;direction:rtl">
-                     @*<tr>
-                         <td>לקוח:</td>
-                         <td><div id="regAccountId" name="regAccountId"></div></td>
-                     </tr>*@
-                    <tr>
-                        <td>שם משתמש:</td>
-                        <td><input id="regUserName" type="text" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
-                     <tr>
-                        <td>פרטים:</td>
-                        <td><input id="regDisplayName" type="text" style="direction:rtl;text-align:right;" /></td>
-                    </tr>
-                   <tr>
-                        <td>אימייל:</td>
-                        <td><input id="regEmail" type="text" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
-                    <tr>
-                        <td>טלפון:</td>
-                        <td><input id="regPhone" type="text" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
-                    <tr>
-                        <td>תפקיד:</td>
-                        <td><div id="regUserRole"></div></td>
-                    </tr>
-                    <tr>
-                        <td>חסום:</td>
-                        <td><div id="regIsBlocked" style="direction:rtl;text-align:right;"></div></td>
-                    </tr>
-                      <tr>
-                        <td colspan="2"></td>
-                    </tr>
-                    <tr>
-                        <td>סיסמה:</td>
-                        <td><input id="regPass" type="text" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
-                     <tr>
-                        <td>אישור סיסמה:</td>
-                        <td><input id="regPassConfirm" type="password" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                    </tr>
+                <div style="font-size: 12px; font-family: Verdana, Geneva, 'DejaVu Sans', sans-serif; margin-top: 30px;">
+                    <div>לעריכת שורה: לחיצה כפולה על השורה הרצויה</div>
+                    <div id="cellbegineditevent"></div>
+                    <div style="margin-top: 10px;" id="cellendeditevent"></div>
+                    <div id="popupRegister">
+                        <div>עריכה</div>
+                        <div style="overflow: hidden;direction:rtl">
+                            <input type="hidden" id="regLang" value="" />
+                            <input type="hidden" id="regEvaluation" value="0" />
+                            <input type="hidden" id="regCreation" value="" />
+                            <input type="hidden" id="regAccountId" name="regAccountId" />
+                            <table style="border-spacing: 10px;border-collapse: separate;direction:rtl">
+                                @*<tr>
+                                        <td>לקוח:</td>
+                                        <td><div id="regAccountId" name="regAccountId"></div></td>
+                                    </tr>*@
+                                <tr>
+                                    <td>שם משתמש:</td>
+                                    <td><input id="regUserName" type="text" style="direction:ltr;text-align:left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>פרטים:</td>
+                                    <td><input id="regDisplayName" type="text" style="direction:rtl;text-align:right;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>אימייל:</td>
+                                    <td><input id="regEmail" type="text" style="direction:ltr;text-align:left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>טלפון:</td>
+                                    <td><input id="regPhone" type="text" style="direction:ltr;text-align:left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>תפקיד:</td>
+                                    <td><div id="regUserRole"></div></td>
+                                </tr>
+                                <tr>
+                                    <td>חסום:</td>
+                                    <td><div id="regIsBlocked" style="direction:rtl;text-align:right;"></div></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td>סיסמה:</td>
+                                    <td><input id="regPass" type="text" style="direction:ltr;text-align:left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>אישור סיסמה:</td>
+                                    <td><input id="regPassConfirm" type="password" style="direction:ltr;text-align:left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                </tr>
 
-                    <tr>
-                        <td></td>
-                        <td style="padding-top: 10px;">
-                            <input id="regSave" type="button" style="margin-right: 5px;" value="עדכון" />
-                            <input id="regCancel" type="button" value="ביטול" /></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><div id="regResult"></div></td>
-                    </tr>
-                </table>
-            </div>
-       </div>
-            <div id="popupWindow">
-            <div>עריכה</div>
-            <div style="overflow: hidden;direction:rtl">
-                <input type="hidden" id="insertFlag" value="0" />
-                <!--<input type="hidden" id="ApplicationId" value="0" />-->
-                <input type="hidden" id="AccountId" value="1" />
-                <input type="hidden" id="Lang" value="" />
-                <!--<input type="hidden" id="Perms" value="" />
-    <input type="hidden" id="OwnerId" value="0" />-->
-                <input type="hidden" id="Evaluation" value="0" />
-                <input type="hidden" id="Creation" value="" />
-                 <table style="border-spacing: 10px;border-collapse: separate;direction:rtl">
-                    <tr>
-                        <td>קוד משתמש:</td>
-                        <td><input id="UserId" type="text" disabled="disabled"  style="direction:rtl;text-align:right;"/></td>
-                    </tr>
-                    <tr>
-                        <td>שם משתמש:</td>
-                        <td><input id="UserName" type="text" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
-                     <tr>
-                        <td>פרטים:</td>
-                        <td><input id="DisplayName" type="text" style="direction:rtl;text-align:right;" /></td>
-                    </tr>
-                   <tr>
-                        <td>אימייל:</td>
-                        <td><input id="Email" type="text" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
-                    <tr>
-                        <td>טלפון:</td>
-                        <td><input id="Phone" type="text" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
-                    <tr>
-                        <td>תפקיד:</td>
-                        <td><div id="UserRole"></div></td>
-                    </tr>
-                    <tr>
-                        <td>חסום:</td>
-                        <td><div id="IsBlocked" style="direction:rtl;text-align:right;"></div></td>
-                    </tr>
-<!--
-                      <tr>
-                        <td colspan="2"></td>
-                    </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="padding-top: 10px;">
+                                        <input id="regSave" type="button" style="margin-right: 5px;" value="עדכון" />
+                                        <input id="regCancel" type="button" value="ביטול" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><div id="regResult"></div></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="popupWindow">
+                        <div>עריכה</div>
+                        <div style="overflow: hidden;direction:rtl">
+                            <input type="hidden" id="insertFlag" value="0" />
+                            <!--<input type="hidden" id="ApplicationId" value="0" />-->
+                            <input type="hidden" id="AccountId" value="1" />
+                            <input type="hidden" id="Lang" value="" />
+                            <!--<input type="hidden" id="Perms" value="" />
+                            <input type="hidden" id="OwnerId" value="0" />-->
+                            <input type="hidden" id="Evaluation" value="0" />
+                            <input type="hidden" id="Creation" value="" />
+                            <table style="border-spacing: 10px;border-collapse: separate;direction:rtl">
+                                <tr>
+                                    <td>קוד משתמש:</td>
+                                    <td><input id="UserId" type="text" disabled="disabled" style="direction:rtl;text-align:right;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>שם משתמש:</td>
+                                    <td><input id="UserName" type="text" style="direction:ltr;text-align:left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>פרטים:</td>
+                                    <td><input id="DisplayName" type="text" style="direction:rtl;text-align:right;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>אימייל:</td>
+                                    <td><input id="Email" type="text" style="direction:ltr;text-align:left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>טלפון:</td>
+                                    <td><input id="Phone" type="text" style="direction:ltr;text-align:left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>תפקיד:</td>
+                                    <td><div id="UserRole"></div></td>
+                                </tr>
+                                <tr>
+                                    <td>חסום:</td>
+                                    <td><div id="IsBlocked" style="direction:rtl;text-align:right;"></div></td>
+                                </tr>
+                                <!--
+                                                      <tr>
+                                                        <td colspan="2"></td>
+                                                    </tr>
 
-                    <tr id="trpass">
-                        <td>סיסמה:</td>
-                        <td><input id="Pass" type="text" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
-                     <tr id="trconfirm">
-                        <td>אישור סיסמה:</td>
-                        <td><input id="PassConfirm" type="password" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
--->
-                    <tr>
-                        <td colspan="2"></td>
-                    </tr>
+                                                    <tr id="trpass">
+                                                        <td>סיסמה:</td>
+                                                        <td><input id="Pass" type="text" style="direction:ltr;text-align:left;" /></td>
+                                                    </tr>
+                                                     <tr id="trconfirm">
+                                                        <td>אישור סיסמה:</td>
+                                                        <td><input id="PassConfirm" type="password" style="direction:ltr;text-align:left;" /></td>
+                                                    </tr>
+                                -->
+                                <tr>
+                                    <td colspan="2"></td>
+                                </tr>
 
-                    <tr>
-                        <td></td>
-                        <td style="padding-top: 10px;">
-                            <input id="Save" type="button" style="margin-right: 5px;" value="עדכון" />
-                            <input id="Cancel" type="button" value="ביטול" /></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><div id="signResult"></div></td>
-                    </tr>
-                </table>
+                                <tr>
+                                    <td></td>
+                                    <td style="padding-top: 10px;">
+                                        <input id="Save" type="button" style="margin-right: 5px;" value="עדכון" />
+                                        <input id="Cancel" type="button" value="ביטול" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><div id="signResult"></div></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="popupPass">
+                        <div>עריכת סיסמה</div>
+                        <div style="overflow: hidden;direction:rtl">
+                            <input type="hidden" id="insertUps" value="0" />
+                            <table style="border-spacing: 10px;border-collapse: separate;direction:rtl">
+                                <tr>
+                                    <td>קוד משתמש:</td>
+                                    <td><input id="MemberId" type="text" disabled="disabled" style="direction:rtl;text-align:right;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>פרטים:</td>
+                                    <td><input id="MemberName" type="text" disabled="disabled" style="direction:rtl;text-align:right;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>סיסמה:</td>
+                                    <td><input id="Ups" type="text" style="direction:ltr;text-align:left;" /></td>
+                                </tr>
+                                <tr>
+                                    <td>אישור סיסמה:</td>
+                                    <td><input id="UpsConfirm" type="password" style="direction:ltr;text-align:left;" /></td>
+                                </tr>
+
+                                <tr>
+                                    <td>שחזור:</td>
+                                    <td><div id="IsReset" style="direction:rtl;text-align:right;"></div></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="padding-top: 10px;">
+                                        <input id="SaveUps" type="button" style="margin-right: 5px;" value="עדכון" />
+                                        <input id="CancelUps" type="button" value="ביטול" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-       </div>
-            <div id="popupPass">
-            <div>עריכת סיסמה</div>
-            <div style="overflow: hidden;direction:rtl">
-                <input type="hidden" id="insertUps" value="0" />
-                 <table style="border-spacing: 10px;border-collapse: separate;direction:rtl">
-                    <tr>
-                        <td>קוד משתמש:</td>
-                        <td><input id="MemberId" type="text"  disabled="disabled"  style="direction:rtl;text-align:right;"/></td>
-                    </tr>
-                    <tr>
-                        <td>פרטים:</td>
-                        <td><input id="MemberName" type="text" disabled="disabled"  style="direction:rtl;text-align:right;" /></td>
-                    </tr>
-                   <tr>
-                        <td>סיסמה:</td>
-                        <td><input id="Ups" type="text" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
-                     <tr>
-                        <td>אישור סיסמה:</td>
-                        <td><input id="UpsConfirm" type="password" style="direction:ltr;text-align:left;" /></td>
-                    </tr>
-                     
-                    <tr>
-                        <td>שחזור:</td>
-                        <td><div id="IsReset" style="direction:rtl;text-align:right;"></div></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td style="padding-top: 10px;">
-                            <input id="SaveUps" type="button" style="margin-right: 5px;" value="עדכון" />
-                            <input id="CancelUps" type="button" value="ביטול" /></td>
-                    </tr>
-                </table>
-            </div>
-       </div>
-       </div>
-             </div>
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liMain");
+    //app_menu.breadcrumbs("/Admin/Main", "Tasks", 'en');
+    app_menu.footer("admin");
+</script>

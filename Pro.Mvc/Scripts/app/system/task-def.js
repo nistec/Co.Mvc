@@ -19,23 +19,19 @@ class app_task extends app_task_base {
        
     }
 
-    init(isInfo) {
+    init() {
 
-        if (isInfo) {
-            $("#hTitle-text").text(this.Title + ': ' + $("#TaskSubject").val());
-            $("#hxp-title").text(this.Title + ': ' + this.TaskId);
-        }
-        else {
-
+        if (!this.IsInfo) {
             this.tabSettings();
         }
+
+        $("#hTitle-text").text(this.Title + ': ' + $("#TaskSubject").val());
+        $("#hxp-title").text(this.Title + ': ' + this.TaskId);
 
         this.preLoad();
 
         if (this.TaskId > 0) {
-            //this.syncData(dataModel.Data);
-            //this.loadControls(this.Model.Data);
-            this._loadData(isInfo);
+            this._loadData();
         }
         else {
             this.loadControls();
@@ -45,9 +41,7 @@ class app_task extends app_task_base {
 
     tabSettings() {
         var _slf = this;
-        $("#hTitle-text").text(this.Title + ': ' + $("#TaskSubject").val());
-        $("#hxp-title").text(this.Title + ': ' + this.TaskId);
-
+               
         if (this.TaskId > 0) {
             $("#hxp-1").show();
             $("#hxp-2").show();
@@ -86,34 +80,7 @@ class app_task extends app_task_base {
             }
         });
     }
-
-    //initInfo() {
-        
-    //    $("#hTitle-text").text(this.Title + ': ' + $("#TaskSubject").val());
-    //    $("#hxp-title").text(this.Title + ': ' + this.TaskId);
-
-    //    //var model = this.Model.Data
-    //    //if (model.Comments == 0)
-    //    //    $("#exp-1").hide();
-    //    //if (model.Assigns == 0)
-    //    //    $("#exp-2").hide();
-    //    //if (model.Timers == 0)
-    //    //    $("#exp-3").hide();
-    //    //if (model.Items == 0)
-    //    //    $("#exp-4").hide();
-    //    //if (model.Files == 0)
-    //    //    $("#exp-5").hide();
-
-    //    //if (this.SrcUserId > 0)
-    //    //    app_jqx_combo_async.userInputAdapter("#UserId", this.SrcUserId);
-
-    //    this.preLoad();
-    //    this._loadData();
-    //    //this.loadControls(model);
-    //    this.loadEvents();
-
-    //}
-
+    /*
     parentSettings(parentId) {
         $("#Task_Parent").val(parentId);
         if (parentId > 0) {
@@ -126,7 +93,7 @@ class app_task extends app_task_base {
             $("#Task_Parent-group").hide();
         }
     }
-
+    */
     doSubmit(act) {
         //e.preventDefault();
         var actionurl = $('#fcForm').attr('action');
@@ -203,6 +170,7 @@ class app_task extends app_task_base {
         //return this;
     }
 
+    /*
     preLoad() {
 
         var slf = this;
@@ -222,62 +190,65 @@ class app_task extends app_task_base {
 
 
         $("#AccountId").val(slf.AccountId);
-         if (theme === undefined)
-            theme = 'nis_metro';
 
-        app_tasks.setColorFlag();
+        //app_tasks.setColorFlag();
         app_tasks.setShareType();
 
-        //$("#jqxExp-1").jqxExpander({ rtl: true, width: '80%', expanded: false });
-        //$('#jqxExp-1').on('expanding', function () {
-
-        //    if (!slf.exp1_Inited) {
-        //        slf.lazyLoad();
-        //    }
-        //});
-
         $('#a-jqxExp-1').on('click', function (e) {
-            if (!slf.exp1_Inited) {
-                slf.lazyLoad();
+            if (!slf.PostLoaded) {
+                slf.postLoad();
             }
             $('#jqxExp-box').slideToggle();
             return false;
         });
 
+        app_features.editorTag("#TaskBody", slf.IsEditable);
 
-        $("#ColorFlag").simplecolorpicker();
-        $("#ColorFlag").on('change', function () {
-            //$('select').simplecolorpicker('destroy');
-            var color = $("#ColorFlag").val();
-            $("#hTitle").css("background-color", color)
-        });
+        if (this.IsEditable) {
+            app_features.colorFlag("#ColorFlag", "#hTitle");
+        }
 
-        $('#TaskBody').jqxEditor({
-            height: '300px',
-            //width: '100%',
-            editable: slf.IsEditable,
-            rtl: true,
-            tools: 'bold italic underline | color background | left center right'
-            //theme: 'arctic'
-            //stylesheets: ['editor.css']
-        });
-        $('#TaskBody-btn-view').on('click', function () {
+        //$("#jqxWidget").slideDown('slow');
+        $("#jqxWidget").toggleClass('box-slide');
 
-            if ($('#TaskBody-div').hasClass("editor-view")) {
-                $('#TaskBody-div').removeClass("editor-view");
-                $('#TaskBody').jqxEditor('height', '300px');
-                $('#TaskBody').css('height', '305px');
-            }
-            else {
-                $('#TaskBody-div').addClass("editor-view");
-                $('#TaskBody').css('height', '805px');
-                $('#TaskBody').jqxEditor('height', '800px');
-            }
-        });
+        
+
+        //$("#ColorFlag").simplecolorpicker();
+        //$("#ColorFlag").on('change', function () {
+        //    //$('select').simplecolorpicker('destroy');
+        //    var color = $("#ColorFlag").val();
+        //    $("#hTitle").css("background-color", color)
+        //});
+
+        //$('#TaskBody').jqxEditor({
+        //    height: '300px',
+        //    //width: '100%',
+        //    editable: slf.IsEditable,
+        //    rtl: true,
+        //    tools: 'bold italic underline | color background | left center right'
+        //    //theme: 'arctic'
+        //    //stylesheets: ['editor.css']
+        //});
+        //$('#TaskBody-btn-view').on('click', function () {
+
+        //    if ($('#TaskBody-div').hasClass("editor-view")) {
+        //        $('#TaskBody-div').removeClass("editor-view");
+        //        $('#TaskBody').jqxEditor('height', '300px');
+        //        $('#TaskBody').css('height', '305px');
+        //    }
+        //    else {
+        //        $('#TaskBody-div').addClass("editor-view");
+        //        $('#TaskBody').css('height', '805px');
+        //        $('#TaskBody').jqxEditor('height', '800px');
+        //    }
+        //});
+        
     }
+    */
+    /*
+    loadControls() {
 
-    loadControls(record) {
-
+        var record = this.Record;
 
         $('#DueDate').jqxDateTimeInput({ showCalendarButton: this.IsEditable, readonly: !this.IsEditable, width: '150px', rtl: true });
 
@@ -314,15 +285,15 @@ class app_task extends app_task_base {
         });
 
         if (record) {
-           
+
 
             //this.doSettings(record);
-            app_form.loadDataForm("fcForm", record, ["Project_Id", "ClientId", "Tags", "AssignTo"]);
-            
+            app_form.loadDataForm("fcForm", record, ["TaskStatus"], this.IsInfo);// ["Project_Id", "ClientId", "Tags", "AssignTo"]);//,"Task_Type"]);
+
             $("#AssignTo").jqxComboBox({ disabled: record.ShareType !== 3 });
-            $("#TaskBody").jqxEditor('val', app.htmlUnescape(record.TaskBody));
-            
-            $("#TaskSubject").val(record.TaskSubject);
+            //$("#TaskBody").jqxEditor('val', app.htmlUnescape(record.TaskBody));
+
+            //$("#TaskSubject").val(record.TaskSubject);
             $("#hTitle-text").text(this.Title + ": " + record.TaskSubject);
             $("#hTitle").css("background-color", (record.ColorFlag || config.defaultColor));
 
@@ -330,32 +301,58 @@ class app_task extends app_task_base {
             this.parentSettings(record.Task_Parent);
 
             if (this.Option !== 'g' && record.TaskStatus > 1 && record.TaskStatus < 8)
-                $("#fcEnd").show();//$("#fcSubmit").val("סיום");
+                $("#fcEnd").show();
             else
-                $("#fcEnd").hide();//$("#fcSubmit").val("עדכון");
+                $("#fcEnd").hide();
 
 
-            var align = app_style.langAlign(record.Lang);
-            $('#TaskBody').css('text-align', align)
+            $('#TaskBody').css('text-align', app_style.langAlign(record.Lang))
 
-            app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", "#Task_Type", '/System/GetTaskTypeList', { 'model': this.TaskModel }, 0, 120, true, null, function (status, records) {
-                if (record.Task_Type >= 0)
-                    $("#Task_Type").val(record.Task_Type);
-            });
-            $("#Task_Type").jqxComboBox({ enableSelection: this.IsEditable });
+            //app_control.select2Ajax("#Task_Type", 240, null, '/System/GetListsSelect', { 'model': 4 }, record.Task_Type.toString(), function () {
+
+            //    $('#Task_Type').select2('val', 100);
+            //    //$('#Task_Type').val(100).trigger('change.select2');
+
+            //});
+
+            //app_control.select2Ajax("#Task_Type", 240, null, '/System/GetListsSelect', { 'model': 4 } , record.Task_Type.toString(), function () {
+                //if (record.Task_Type >= 0)
+                //    $("#Task_Type").val("0").trigger('change');;
+                //$("#Task_Type").select2({ "readonly": !this.IsEditable });
+            //});
+
+            //app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", "#Task_Type", '/System/GetTaskTypeList', { 'model': this.TaskModel }, 0, 120, true, null, function (status, records) {
+            //    if (record.Task_Type >= 0)
+            //        $("#Task_Type").val(record.Task_Type);
+            //});
+            //$("#Task_Type").jqxComboBox({ enableSelection: this.IsEditable });
+
+
             //app_jqx_combo_async.taskStatusInputAdapter("#TaskStatus", record.TaskStatus);
 
             app_tasks.setTaskStatus("#TaskStatus", record.TaskStatus);
-            
+
         }
         else {
-            app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", "#Task_Type", '/System/GetTaskTypeList', { 'model': this.TaskModel }, 0, 120, true, "0");
+            app_select_loader.loadTag("Task_Type", "Task_Type",4);
+
+            //app_control.select2Ajax("#Task_Type", 240, null, '/System/GetListsSelect', { 'model': 4 });
+            //app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", "#Task_Type", '/System/GetTaskTypeList', { 'model': this.TaskModel }, 0, 120, true, "0");
             app_jqxcombos.createComboAdapter("UserTeamId", "DisplayName", "IntendedTo", '/System/GetUserTeamList', 0, 120, false);
             app_form.setDateTimeNow('#CreatedDate');
 
         }
+
+       
+
+        //var $select = $('#Task_Type').select2();
+        //$select.select2();
+        //$select.val('100').trigger('change.select2');
+        //$('#select2-Task_Type').val(100);//.select2('val', '100');//.trigger("change.select2");
+
         //return this;
     }
+    */
 
     loadEvents() {
 
@@ -617,26 +614,6 @@ class app_ticket extends app_task_base {
         });
     };
 
-    //initInfo() {
-    //    $("#hTitle-text").text(this.Title + ': ' + $("#TaskSubject").val());
-    //    $("#hxp-title").text(this.Title + ': ' + this.TaskId);
-
-    //    var model = this.Model.Data
-    //    if (model.Comments == 0)
-    //        $("#exp-1").hide();
-    //    if (model.Assigns == 0)
-    //        $("#exp-2").hide();
-    //    //if (model.Timers == 0)
-    //    //    $("#exp-3").hide();
-    //    if (model.Items == 0)
-    //        $("#exp-4").hide();
-    //    if (model.Files == 0)
-    //        $("#exp-5").hide();
-
-    //    this.preLoad();
-    //    this.loadControls(model);
-    //    this.loadEvents();
-    //};
 
     doCancel() {
         app.redirectTo(app_task_base.getReferrer());
@@ -716,7 +693,7 @@ class app_ticket extends app_task_base {
         }
         return this;
     };
-
+    /*
     preLoad() {
 
         var slf = this;
@@ -735,9 +712,7 @@ class app_ticket extends app_task_base {
 
 
         $("#AccountId").val(slf.AccountId);
-        if (theme === undefined)
-            theme = 'nis_metro';
-
+        
         app_tasks.setColorFlag();
 
         $("#accordion").jcxTabs({
@@ -767,48 +742,67 @@ class app_ticket extends app_task_base {
             }
         });
 
-
-        $("#jqxExp-1").jqxExpander({ rtl: true, width: '80%', expanded: false });
-        $('#jqxExp-1').on('expanding', function () {
-
-            if (!slf.exp1_Inited) {
-                slf.lazyLoad();
+        $('#a-jqxExp-1').on('click', function (e) {
+            if (!slf.PostLoaded) {
+                slf.postLoad();
             }
+            $('#jqxExp-box').slideToggle();
+            return false;
         });
 
+        app_features.editorTag("#TaskBody", slf.IsEditable);
 
-        $("#ColorFlag").simplecolorpicker();
-        $("#ColorFlag").on('change', function () {
-            //$('select').simplecolorpicker('destroy');
-            var color = $("#ColorFlag").val();
-            $("#hTitle").css("background-color", color)
-        });
+        if (this.IsEditable) {
+            app_features.colorFlag("#ColorFlag", "#hTitle");
+        }
+
+        //$("#jqxWidget").slideDown('slow');
+        $("#jqxWidget").toggleClass('box-slide');
+
+
         
-        $('#TaskBody').jqxEditor({
-            height: '300px',
-            //width: '100%',
-            editable: slf.IsEditable,
-            rtl: true,
-            tools: 'bold italic underline | color background | left center right'
-            //theme: 'arctic'
-            //stylesheets: ['editor.css']
-        });
-        $('#TaskBody-btn-view').on('click', function () {
+        //$("#jqxExp-1").jqxExpander({ rtl: true, width: '80%', expanded: false });
+        //$('#jqxExp-1').on('expanding', function () {
 
-            if ($('#TaskBody-div').hasClass("editor-view")) {
-                $('#TaskBody-div').removeClass("editor-view");
-                $('#TaskBody').jqxEditor('height', '300px');
-                $('#TaskBody').css('height', '305px');
-            }
-            else {
-                $('#TaskBody-div').addClass("editor-view");
-                $('#TaskBody').css('height', '805px');
-                $('#TaskBody').jqxEditor('height', '800px');
-            }
-        });
-       
+        //    if (!slf.exp1_Inited) {
+        //        slf.lazyLoad();
+        //    }
+        //});
+
+
+        //$("#ColorFlag").simplecolorpicker();
+        //$("#ColorFlag").on('change', function () {
+        //    //$('select').simplecolorpicker('destroy');
+        //    var color = $("#ColorFlag").val();
+        //    $("#hTitle").css("background-color", color)
+        //});
+        
+        //$('#TaskBody').jqxEditor({
+        //    height: '300px',
+        //    //width: '100%',
+        //    editable: slf.IsEditable,
+        //    rtl: true,
+        //    tools: 'bold italic underline | color background | left center right'
+        //    //theme: 'arctic'
+        //    //stylesheets: ['editor.css']
+        //});
+        //$('#TaskBody-btn-view').on('click', function () {
+
+        //    if ($('#TaskBody-div').hasClass("editor-view")) {
+        //        $('#TaskBody-div').removeClass("editor-view");
+        //        $('#TaskBody').jqxEditor('height', '300px');
+        //        $('#TaskBody').css('height', '305px');
+        //    }
+        //    else {
+        //        $('#TaskBody-div').addClass("editor-view");
+        //        $('#TaskBody').css('height', '805px');
+        //        $('#TaskBody').jqxEditor('height', '800px');
+        //    }
+        //});
+      
     }
-
+    */
+    /*
     loadControls(record) {
 
         console.log('controls');
@@ -820,38 +814,38 @@ class app_ticket extends app_task_base {
             app_form.loadDataForm("fcForm", record, ["Project_Id", "ClientId", "Tags", "AssignTo"]);
 
             $("#TaskBody").jqxEditor('val', app.htmlUnescape(record.TaskBody));
-            $("#TaskSubject").val(record.TaskSubject);
+            //$("#TaskSubject").val(record.TaskSubject);
             $("#hTitle-text").text(this.Title + ": " + record.TaskSubject);
             $("#hTitle").css("background-color", (record.ColorFlag || config.defaultColor));
 
             // $('#DueDate').jqxDateTimeInput({ disabled: !this.IsEditable, showCalendarButton: this.IsEditable });
 
             if (this.Option !== 'g' && record.TaskStatus > 1 && record.TaskStatus < 8)
-                $("#fcEnd").show();//$("#fcSubmit").val("סיום");
+                $("#fcEnd").show();
             else
-                $("#fcEnd").hide();//$("#fcSubmit").val("עדכון");
+                $("#fcEnd").hide();
 
 
-            var align = app_style.langAlign(record.Lang);
-            $('#TaskBody').css('text-align', align)
+            $('#TaskBody').css('text-align', app_style.langAlign(record.Lang))
 
-            app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", "#Task_Type", '/System/GetTaskTypeList', null, 0, 120, true, null, function (status, records) {
-                if (record.Task_Type >= 0)
-                    $("#Task_Type").val(record.Task_Type);
-            });
-            $("#Task_Type").jqxComboBox({ enableSelection: this.IsEditable });
+            //app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", "#Task_Type", '/System/GetTaskTypeList', null, 0, 120, true, null, function (status, records) {
+            //    if (record.Task_Type >= 0)
+            //        $("#Task_Type").val(record.Task_Type);
+            //});
+            //$("#Task_Type").jqxComboBox({ enableSelection: this.IsEditable });
             //app_jqx_combo_async.taskStatusInputAdapter("#TaskStatus", record.TaskStatus);
             app_tasks.setTaskStatus("#TaskStatus", record.TaskStatus);
         }
         else {
-            app_jqxcombos.createComboAdapter("PropId", "PropName", "Task_Type", '/System/GetTaskTypeList', 0, 120, false);
+            app_select_loader.loadTag("Task_Type", "Task_Type", 5);
+            //app_jqxcombos.createComboAdapter("PropId", "PropName", "Task_Type", '/System/GetTaskTypeList', 0, 120, false);
             app_jqxcombos.createComboAdapter("UserTeamId", "DisplayName", "IntendedTo", '/System/GetUserTeamList', 0, 120, false);
             app_form.setDateTimeNow('#CreatedDate');//
 
         }
         //return this;
     }
-
+    */
     loadEvents() {
 
         var slf = this;
@@ -1070,6 +1064,7 @@ class app_task_assign_grid {
         $("#jqxgrid2").jqxGrid({
             width: '100%',
             autoheight: true,
+            autorowheight: true,
             localization: getLocalization('he'),
             source: nastedAdapter, width: '99%', height: 130,
             columnsresize: true,
@@ -1448,6 +1443,7 @@ class app_task_timer_grid {
         $("#jqxgrid3").jqxGrid({
             width: '100%',
             autoheight: true,
+            autorowheight: true,
             //showstatusbar: true,
             //statusbarheight: 50,
             //showaggregates: true,

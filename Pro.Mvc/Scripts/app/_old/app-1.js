@@ -431,3 +431,358 @@ function generateUUID(v) {
         return Math.uuid(8, 16) // 8 digits, base 16
     //"19D954C3"
 };
+
+
+
+//=========================================================  bckup
+
+/*
+ var initLabelsGrid = function (tab, index, id) {
+
+     var nastedcontainer = $('<div style="float:right;margin:5px"></div>');
+     nastedcontainer.rtl = true;
+     var nastedsource = {
+         datafields: [
+             { name: 'Label', type: 'string' },
+             { name: 'Val', type: 'string' },
+             { name: 'AccountId', type: 'number' },
+             { name: 'Modified', type: 'date' }
+         ],
+         datatype: "json",
+         //id: 'UserId',
+         type: 'POST',
+         url: '/Admin/GetAccountsLabel',
+         data: { 'id': id }
+     }
+     _slf.NContainer.LabelsGrid[index] = nastedcontainer;
+
+     var nastedAdapter = new $.jqx.dataAdapter(nastedsource);
+     nastedcontainer.jqxGrid({
+         source: nastedAdapter, width: '80%', height: 130, //showheader: true,
+         localization: getLocalization('he'),
+         rtl: true,
+         columns: [
+             //{
+             //    text: 'קוד', dataField: 'LabelId', width: 100, cellsalign: 'right', align: 'center',
+             //    cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+             //        return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="#" onclick="members_grid.usersEdit(' + value + ',' + index + ',' + row + ');" >הצג</a></div>'
+             //    }
+             //},
+             { text: 'שדה', datafield: 'Label', width: 120, cellsalign: 'right', align: 'center' },
+             {
+                 text: 'פרטים', datafield: 'Val', width: 400, cellsalign: 'right', align: 'center',
+                 cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                     if (value) {
+                         if (value.match(/^http/i))
+                             return '<div style = "margin:5px;" ><a href="' + value + '" target="_blank"> ' + value + '</a></div>';
+                     }
+                     return '<div style = "direction:rtl;text-align:right;margin:5px;" >' + value + '</div>';;
+                 }
+             },
+             { text: 'מועד עדכון', datafield: 'Modified', width: 120, cellsformat: 'd', cellsalign: 'right', align: 'center' }
+         ]
+     }).on('rowdoubleclick', function (event) {
+         //var args = event.args;
+         //var boundIndex = args.rowindex;
+         //var visibleIndex = args.visibleindex;
+         //var id = $("#jqxgrid").jqxGrid('getrowid', boundIndex);
+         //app_popup.memberEdit(id);
+         doEditLabel();
+     });
+     
+     var ctlContainer = $('<div style="margin:10px auto;padding-left:10px;padding-right:10px;float:right;"></div>')
+     var dialogContainer = $('<div id="label-dialog"></div>')
+
+     var doEditLabel = function () {
+         var rowindex = nastedcontainer.jqxGrid('getselectedrowindex');
+         var data = nastedcontainer.jqxGrid('getrowdata', rowindex);
+
+         var label_item = new app_account_label_item("#label-dialog");
+         label_item.init(data, nastedAdapter, false);
+         var dialog = _slf.NContainer.labelDialog = app_dialog.dialogDiv("#label-dialog", "פרטים נוספים");
+         label_item.display(dialog);
+
+     };
+
+     var labelsCount = function () {
+
+         var rows = nastedcontainer.jqxGrid('getrows');
+         return rows == null ? 0 : rows.length;
+     }
+
+
+     var additem = $('<a class="btn-small w60" title="הוספת פרטים" href="#" >הוספה</a>')
+         .click(function () {
+             var dm = {'AccountId':id}
+             var label_item = new app_account_label_item("#label-dialog");
+             label_item.init(dm, nastedAdapter, false);
+             var dialog = _slf.NContainer.labelDialog = app_dialog.dialogDiv("#label-dialog", "פרטים נוספים");
+             label_item.display(dialog);
+         });
+     var updateitem = $('<a class="btn-small w60" title="עדכון פרטים" href="#" >עריכה</a>')
+         .click(function () {
+             doEditLabel();
+         });
+     var deleteitem = $('<a class="btn-small w60" title="מחיקת פרטים" href="#" >מחיקה</a>')
+         .click(function () {
+
+             var rowindex = nastedcontainer.jqxGrid('getselectedrowindex');
+             var record = nastedcontainer.jqxGrid('getrowdata', rowindex);
+             if (!record)
+                 return;
+
+             app_dialog.confirm("האם למחוק ? " + record.Label, function () {
+
+                 app_query.doDataPost("/Admin/DeleteAccountsLabels", { 'AccountId': record.AccountId, 'Label': record.Label}, function (data) {
+                     if (data.Status > 0) {
+                             nastedAdapter.dataBind();
+                     }
+                     else
+                         app_messenger.Post(data, 'error');
+                 });
+
+             });
+
+         });
+     var refreshitem = $('<a class="btn-small w60" title="רענון פרטים"  href="#" >רענון</a>')
+         .click(function () {
+             nastedAdapter.dataBind();
+         });
+
+     $(ctlContainer).append(dialogContainer);
+     $(ctlContainer).append(additem);
+     $(ctlContainer).append('<div style="height:5px"></div>');
+     
+         $(ctlContainer).append(updateitem);
+         $(ctlContainer).append('<div style="height:5px"></div>');
+         $(ctlContainer).append(deleteitem);
+         $(ctlContainer).append('<div style="height:5px"></div>');
+     
+     $(ctlContainer).append(refreshitem);
+     $(tab).append(ctlContainer);
+     $(tab).append(nastedcontainer);
+
+     //if (labelsCount() == 0) {
+     //    updateitem.hide();
+     //    deleteitem.hide();
+     //}
+ };
+ */
+
+var initCreditGrid2 = function (tab, index, id) {
+
+    var nastedcontainer = $('<div style="float:right;margin:5px"></div>');
+    nastedcontainer.rtl = true;
+    /*
+    var nastedsource = {
+        datafields: [
+            { name: 'DisplayName', type: 'string' },
+            { name: 'UserId', type: 'number' },
+            { name: 'UserRole', type: 'number' },
+            { name: 'RoleName', type: 'string' },
+            { name: 'UserName', type: 'string' },
+            { name: 'Email', type: 'string' },
+            { name: 'Phone', type: 'string' },
+            { name: 'AccountId', type: 'number' },
+            { name: 'Lang', type: 'string' },
+            { name: 'Evaluation', type: 'number' },
+            { name: 'IsBlocked', type: 'bool' },
+            { name: 'Creation', type: 'date' }
+        ],
+        datatype: "json",
+        id: 'UserId',
+        type: 'POST',
+        url: '/Admin/GetAdminUsersProfile',
+        data: { 'accountId': id }
+    }
+    _slf.NContainer.PricesGrid[index] = nastedcontainer;
+
+    var nastedAdapter = new $.jqx.dataAdapter(nastedsource);
+    nastedcontainer.jqxGrid({
+        source: nastedAdapter, width: '80%', height: 130, //showheader: true,
+        localization: getLocalization('he'),
+        rtl: true,
+        columns: [
+            {
+                text: 'קוד מחיר', dataField: 'UserId', width: 100, cellsalign: 'right', align: 'center',
+                cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                    return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="#" onclick="members_grid.usersEdit(' + value + ',' + index + ',' + row + ');" >הצג</a></div>'
+                }
+            },
+            //{ text: 'חשבון', datafield: 'AccountId', cellsalign: 'right', align: 'center' },
+            //{ text: 'קוד תפקיד', datafield: 'UserRole',width: 60, cellsalign: 'right', align: 'center' },
+            //{ text: 'תפקיד', datafield: 'RoleName', width: 90, cellsalign: 'right', align: 'center' },
+            //{ text: 'שם משתמש', datafield: 'UserName', width: 120, cellsalign: 'right', align: 'center' },
+            //{ text: 'פרטים', datafield: 'DisplayName', cellsalign: 'right', align: 'center' },
+            //{ text: 'אימייל', datafield: 'Email', cellsalign: 'right', align: 'center' },
+            //{ text: 'טלפון', datafield: 'Phone', width: 120, cellsalign: 'right', align: 'center' },
+            ////{ text: 'נסיון', datafield: 'Evaluation', width: 60,cellsalign: 'right', align: 'center' },
+            //{ text: 'חסום', datafield: 'IsBlocked', columntype: 'checkbox', width: 60, cellsalign: 'right', align: 'center' },
+            { text: 'נוצר ב', datafield: 'Creation', width: 120, cellsformat: 'd', cellsalign: 'right', align: 'center' }
+        ]
+    });
+    */
+    var ctlContainer = $('<div style="margin:10px auto;padding-left:10px;padding-right:10px;float:right;"></div>')
+
+    var additem = $('<a class="btn-tab" title="הוספת אשראי" href="#" >הוסף</a>')
+        .click(function () {
+            _slf.NContainer.creditDialog = app_dialog.dialogIframe(app.appPath() + "/Admin/_UserAdd?id=" + id, "580", "400", "אשראי");
+        });
+    var refreshitem = $('<a class="btn-tab" title="רענון אשראי"  href="#" >רענן</a>')
+        .click(function () {
+            nastedAdapter.dataBind();
+        });
+
+    $(ctlContainer).append(additem);
+    $(ctlContainer).append('<div style="height:5px"></div>');
+    $(ctlContainer).append(refreshitem);
+    $(tab).append(ctlContainer);
+    $(tab).append(nastedcontainer);
+
+};
+
+var initPricesGrid2 = function (tab, index, id) {
+
+    var nastedcontainer = $('<div style="float:right;margin:5px"></div>');
+    nastedcontainer.rtl = true;
+    /*
+    var nastedsource = {
+        datafields: [
+            { name: 'DisplayName', type: 'string' },
+            { name: 'UserId', type: 'number' },
+            { name: 'UserRole', type: 'number' },
+            { name: 'RoleName', type: 'string' },
+            { name: 'UserName', type: 'string' },
+            { name: 'Email', type: 'string' },
+            { name: 'Phone', type: 'string' },
+            { name: 'AccountId', type: 'number' },
+            { name: 'Lang', type: 'string' },
+            { name: 'Evaluation', type: 'number' },
+            { name: 'IsBlocked', type: 'bool' },
+            { name: 'Creation', type: 'date' }
+        ],
+        datatype: "json",
+        id: 'UserId',
+        type: 'POST',
+        url: '/Admin/GetAdminUsersProfile',
+        data: { 'accountId': id }
+    }
+    _slf.NContainer.PricesGrid[index] = nastedcontainer;
+
+    var nastedAdapter = new $.jqx.dataAdapter(nastedsource);
+    nastedcontainer.jqxGrid({
+        source: nastedAdapter, width: '80%', height: 130, //showheader: true,
+        localization: getLocalization('he'),
+        rtl: true,
+        columns: [
+            {
+                text: 'קוד מחיר', dataField: 'UserId', width: 100, cellsalign: 'right', align: 'center',
+                cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                    return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="#" onclick="members_grid.usersEdit(' + value + ',' + index + ',' + row + ');" >הצג</a></div>'
+                }
+            },
+            //{ text: 'חשבון', datafield: 'AccountId', cellsalign: 'right', align: 'center' },
+            //{ text: 'קוד תפקיד', datafield: 'UserRole',width: 60, cellsalign: 'right', align: 'center' },
+            //{ text: 'תפקיד', datafield: 'RoleName', width: 90, cellsalign: 'right', align: 'center' },
+            //{ text: 'שם משתמש', datafield: 'UserName', width: 120, cellsalign: 'right', align: 'center' },
+            //{ text: 'פרטים', datafield: 'DisplayName', cellsalign: 'right', align: 'center' },
+            //{ text: 'אימייל', datafield: 'Email', cellsalign: 'right', align: 'center' },
+            //{ text: 'טלפון', datafield: 'Phone', width: 120, cellsalign: 'right', align: 'center' },
+            ////{ text: 'נסיון', datafield: 'Evaluation', width: 60,cellsalign: 'right', align: 'center' },
+            //{ text: 'חסום', datafield: 'IsBlocked', columntype: 'checkbox', width: 60, cellsalign: 'right', align: 'center' },
+            { text: 'נוצר ב', datafield: 'Creation', width: 120, cellsformat: 'd', cellsalign: 'right', align: 'center' }
+        ]
+    });
+    */
+    var ctlContainer = $('<div style="margin:10px auto;padding-left:10px;padding-right:10px;float:right;"></div>')
+
+    var additem = $('<a class="btn-tab" title="הוספת פריט" href="#" >הוסף</a>')
+        .click(function () {
+            _slf.NContainer.pricesDialog = app_dialog.dialogIframe(app.appPath() + "/Admin/_UserAdd?id=" + id, "580", "400", "מחירון");
+        });
+    var refreshitem = $('<a class="btn-tab" title="רענון מחירים"  href="#" >רענן</a>')
+        .click(function () {
+            nastedAdapter.dataBind();
+        });
+
+    $(ctlContainer).append(additem);
+    $(ctlContainer).append('<div style="height:5px"></div>');
+    $(ctlContainer).append(refreshitem);
+    $(tab).append(ctlContainer);
+    $(tab).append(nastedcontainer);
+
+};
+
+var initUsersGrid2 = function (tab, index, id) {
+
+    var nastedcontainer = $('<div style="float:right;margin:5px"></div>');
+    nastedcontainer.rtl = true;
+    var nastedsource = {
+        datafields: [
+            { name: 'DisplayName', type: 'string' },
+            { name: 'UserId', type: 'number' },
+            { name: 'UserRole', type: 'number' },
+            { name: 'RoleName', type: 'string' },
+            { name: 'UserName', type: 'string' },
+            { name: 'Email', type: 'string' },
+            { name: 'Phone', type: 'string' },
+            { name: 'AccountId', type: 'number' },
+            { name: 'Lang', type: 'string' },
+            { name: 'Evaluation', type: 'number' },
+            { name: 'IsBlocked', type: 'bool' },
+            { name: 'Creation', type: 'date' }
+        ],
+        datatype: "json",
+        id: 'UserId',
+        type: 'POST',
+        url: '/Admin/GetAdminUsersProfile',
+        data: { 'accountId': id }
+    }
+    _slf.NContainer.UsersGrid[index] = nastedcontainer;
+
+    var nastedAdapter = new $.jqx.dataAdapter(nastedsource);
+    nastedcontainer.jqxGrid({
+        source: nastedAdapter, width: '80%', height: 130, //showheader: true,
+        localization: getLocalization('he'),
+        rtl: true,
+        columns: [
+            {
+                text: 'קוד משתמש', dataField: 'UserId', width: 100, cellsalign: 'right', align: 'center',
+                cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
+                    return '<div style="text-align:center;direction:rtl;margin:5px;"><a href="#" onclick="members_grid.usersEdit(' + value + ',' + index + ',' + row + ');" >הצג</a></div>'
+                }
+            },
+            //{ text: 'חשבון', datafield: 'AccountId', cellsalign: 'right', align: 'center' },
+            //{ text: 'קוד תפקיד', datafield: 'UserRole',width: 60, cellsalign: 'right', align: 'center' },
+            { text: 'תפקיד', datafield: 'RoleName', width: 90, cellsalign: 'right', align: 'center' },
+            { text: 'שם משתמש', datafield: 'UserName', width: 120, cellsalign: 'right', align: 'center' },
+            { text: 'פרטים', datafield: 'DisplayName', cellsalign: 'right', align: 'center' },
+            { text: 'אימייל', datafield: 'Email', cellsalign: 'right', align: 'center' },
+            { text: 'טלפון', datafield: 'Phone', width: 120, cellsalign: 'right', align: 'center' },
+            //{ text: 'נסיון', datafield: 'Evaluation', width: 60,cellsalign: 'right', align: 'center' },
+            { text: 'חסום', datafield: 'IsBlocked', columntype: 'checkbox', width: 60, cellsalign: 'right', align: 'center' },
+            { text: 'נוצר ב', datafield: 'Creation', width: 120, cellsformat: 'd', cellsalign: 'right', align: 'center' }
+        ]
+    });
+
+    //var ctlContainer = $('<div style="margin:10px auto;padding-left:10px;padding-right:10px;float:right;"></div>')
+    //var ctlContainer = $('<div style="margin:10px auto;padding-left:10px;padding-right:10px;text-align:right"></div>');
+    var ctlContainer = $('<div style="margin:2px;direction:rtl;text-align:right"></div>');
+
+    var additem = $('<a class="btn-small w60" style="margin:0 2px" title="הוספת משתמש" href="#" >הוסף</a>')
+        .click(function () {
+            _slf.NContainer.usersDialog = app_dialog.dialogIframe(app.appPath() + "/Admin/_UserAdd?id=" + id, "580", "400", "משתמשים");
+        });
+    var refreshitem = $('<a class="btn-small w60" style="margin:0 2px" title="רענון משתמשים"  href="#" >רענן</a>')
+        .click(function () {
+            nastedAdapter.dataBind();
+        });
+
+    $(ctlContainer).append(additem);
+    //$(ctlContainer).append('<div style="height:5px"></div>');
+    $(ctlContainer).append(refreshitem);
+    $(ctlContainer).append('<br/>');
+    $(tab).append(ctlContainer);
+    $(tab).append(nastedcontainer);
+
+};

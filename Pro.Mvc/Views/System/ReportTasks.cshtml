@@ -1,6 +1,6 @@
 ﻿@model ProSystem.Query.TaskQuery
 @{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     ViewBag.Title = "Tasks";
     var dataModel = @Html.Raw(Json.Encode(Model));
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
@@ -145,7 +145,7 @@
 <div class="global-view">
     <div class="container">
         <h3 class="rtl"><label>ניהול משימות</label> <label title="משימה חדשה"><a href="~/System/TaskNew?pid=0"><i class="fa fa-newspaper-o"></i></a></label></h3>
-        <div class="grid-wrap rtl">
+        <div id="jqxWidget" class="grid-wrap rtl">
             <div id="grid-toolbar-options" class="grid-toolbar" style="font-size: 80%;">
                 <form id="tb_form">
                     <input type="hidden" id="TaskState" value="0" />
@@ -166,10 +166,7 @@
                 </form>
             </div>
             <div id="grid-toolbar" class="grid-toolbar"></div>
-
-            <div id="jqxWidget">
-                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
-            </div>
+            <div id="jqxgrid" style="position:relative;z-index:1;"></div>
         </div>
     </div>
 </div>
@@ -178,7 +175,7 @@
 <footer>
 </footer> 
 <script type="text/javascript">
-    app_menu.activeLayoutMenu("liSystem");
+    app_menu.activeLayoutMenu("liReport");
     app_menu.breadcrumbs("System", "Tasks", 'en');
     app_menu.footer("task");
 </script>

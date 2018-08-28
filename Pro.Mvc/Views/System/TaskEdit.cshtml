@@ -1,7 +1,9 @@
 ﻿@model Pro.Mvc.Models.EditTaskModel
 @{
     //ViewBag.Title = "System";
-    Layout = "~/Views/Shared/_View.cshtml";
+
+    Layout = Model.GetLayoutView("~/Views/Shared/_ViewSystem.cshtml");
+    int isIframe = Model.IsIframe?1:0;
     int rcdid = Nistec.Types.ToInt(Request["id"]);
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
     var dataModel = @Html.Raw(Json.Encode(Model));
@@ -43,6 +45,7 @@
             background-color: #fff;
             overflow-x: hidden;
         }
+        
     </style>
 
     <!--uploder==============================-->
@@ -75,53 +78,14 @@
 
             task_def = new app_task(JSON.parse('@dataModel'), uinfo, 'T');
             task_def.init(false);
-            //$('.input').on('input', function (e) {
-            //    if ($(this).data("lastval") != $(this).val()) {
-            //        $(this).data("lastval", $(this).val());
-            //        //change action
-            //        $("#fcSubmit").show();
-            //    };
-            //});
 
+            //app_menu.activeLayoutMenu("liSystem");
 
-
-            //$('#reset').on('click', function () {
-            //    location.reload();
-            //});
-
-            //$('#fcClear').on('click', function (e) {
-            //    //app_messenger.Post("הודעה");
-            //    $('#fcForm')[0].reset();
-            //    $('#fcForm').jqxValidator('hide');
-            //});
-            //$('#fcNew').on('click', function (e) {
-            //    app.refresh();
-            //});
-            //$('#fcCancel').on('click', function (e) {
-            //    task_def.doCancel();
-            //});
-            //$('#fcSubmit').on('click', function (e) {
-            //    task_def.doSubmit('update');
-            //});
-            //$('#fcEnd').on('click', function (e) {
-            //    task_def.doSubmit('end');
-            //});
-            ////$('#fcSubmit-plus').on('click', function (e) {
-            ////    task_def.doSubmit('plus');
-            ////});
-            //$('#task-item-update').click(function () {
-            //    var iframe = wizard.getIframe();
-            //    if (iframe && iframe.triggerSubmit) {
-            //        iframe.triggerSubmit();
-            //    }
-            //});
-            //$('#task-item-cancel').click(function () {
-            //    wizard.wizHome();
-            //});
         });
 
     </script>
 }
+
 
 <div class="breadcrumbs">
 </div>
@@ -135,7 +99,7 @@
         </div>
         <div style="height:5px"></div>
         <div id="wiz-1" class="wiz-tab active">
-            <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+            <div id="jqxWidget" class="box-hide">
 
                 <div id="accordion" class="jcx-tabs rtl tab-content">
                     <ul id="tab-query" class="nav nav-tabs1">
@@ -164,7 +128,7 @@
                                             <div class="field">
                                                 סוג משימה:
                                             </div>
-                                            <div id="Task_Type" name="Task_Type"></div>
+                                            <select id="Task_Type" name="Task_Type" data-type="select-loader" data-args="4"></select>
                                         </div>
 
                                         <div class="form-group">
@@ -178,7 +142,7 @@
                                             <div class="field">
                                                 תיאור: <span><a id="TaskBody-btn-view" href="#"><i class="fa fa-search-plus" style="font-size:16px"></i></a></span>
                                             </div>
-                                            <textarea id="TaskBody" name="TaskBody" class="text-content"></textarea>
+                                            <textarea id="TaskBody" name="TaskBody" class="text-content" data-type="jqx-editor"></textarea>
                                         </div>
                                         <div class="form-group">
                                             <div class="field">
@@ -333,11 +297,12 @@
                     </div>
                 </div>
                 <div style="height: 5px"></div>
-                <div class="@(ViewBag.UserInfo.UserId) panel-area">
+                <div id="panel-commands" class="@(ViewBag.UserInfo.UserId) panel-area">
                     <input id="fcSubmit" class="btn-default btn7 w-60" type="button" value="עדכון" />
                     <input id="fcEnd" class="btn-default btn7 w-60" type="button" value="סיום" />
                     <input id="fcCancel" class="btn-default btn7 w-60" type="button" value="x" />
                     <a id="Task_Child-link" style="margin-right:10px" href="#" title="יצירת תת משימה"><i class="fa fa-share-alt"></i></a>
+                    <a href="javascript:app_system_model.pinItem('TaskEdit');" id="cmdPinSet" title="קבע"><i class="fa fa-thumb-tack" style="font-size:20px;color:#60636b"></i></a>
                 </div>
 
             </div>
@@ -380,9 +345,14 @@
 <!--footer-->
 <footer></footer>
 <script type="text/javascript">
-    app_menu.activeLayoutMenu("liSystem");
-    app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
-    app_menu.footer("task");
+    var isiframe = '@isIframe'==1?true:false;
+    if (isiframe) {
+        $("#panel-commands").hide();
+    } else {
+        app_menu.activeLayoutMenu("liMain");
+        app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
+        app_menu.footer("task");
+    }
 </script>
 
 

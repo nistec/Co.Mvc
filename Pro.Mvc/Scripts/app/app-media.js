@@ -362,7 +362,7 @@ app_media = {
                 '<br/><b>סוג פעולה:</b><br/><input type="text" name="FileAction" value="' + action + '"/>' +
                 '<input type="Hidden" name="FileName" value="' + filename + '"/>' +
                 '<input type="Hidden" name="FileId" value="' + fileId + '"/>' +
-                '<br/><input type="submit" value="עדכון"/>' +
+                '<div style="height:5px"></div><input type="submit" class="btn-default btn7" value="עדכון"/>' +
                 '</form>' +
                 '</div></div>');
         }
@@ -416,8 +416,18 @@ app_media = {
             return false;
         }
         //e.preventDefault();
+
+        if (!$('form#' + form.id + ' [name=FileSubject]').val() ||
+            !$('form#' + form.id + ' [name=FileAction]').val()) {
+
+            app_messenger.Error("לא נמצאו נתונים לעדכון");
+            return false;
+        }
+       
+
         var action = form.action;// $("#formFile").attr('action');
         var postData = $(form).serialize();// app.serializeForm(form);//getFormInputs(["#formFile"]);
+
         $.ajax({
             url: '/Media/UpdateFileInfo',
             type: "POST",
@@ -489,6 +499,102 @@ var app_media_uploader = function (tagWindow) {
     this.Model;
     this.appMedia;
     this.init = function (refId, refType, readonly) {
+
+        var slf = this;
+
+        if (this.Model == null) {
+
+            var html = (function () {/*
+                <div style="margin:5px;max-width:600px">
+               <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+                <div id="splitter">
+                    <div style="overflow: auto;" id="ContentPanel">
+                    </div>
+                    <div style="overflow:hidden;" id="MediaPanel">
+                        <div style="border: none;" id="MediaList">
+                        </div>
+                    </div>
+                </div>
+                <div id="uploader" style="width:100%;display:block;">
+                    <div style="width: 90%">
+                        <div class="form-group active" style="padding: 10px">
+                            <span class="btn-sm btn-success fileinput-button">
+                                <i class="glyphicon glyphicon-plus"><span>הוספת קובץ</span></i>
+                                <input id="fileupload" type="file" name="files[]" multiple>
+                            </span><span>&nbsp;</span>
+                            <span id="spnRemove" class="btn-sm btn-success fileinput-button">
+                                <i class="glyphicon glyphicon-minus"><span>הסרת קובץ</span></i>
+                                <input id="fileremove" type="button" value="הסרת קובץ" />
+                            </span><span>&nbsp;</span>
+                            <span id="spnRefresh" class="btn-sm btn-success fileinput-button">
+                                <i class="glyphicon glyphicon-minus"><span>רענון</span></i>
+                                <input id="filerefresh" type="button" value="רענון" />
+                            </span>
+                            <br>
+                            <div id="progress" class="progress">
+                                <div class="progress-bar progress-bar-success"></div>
+                            </div>
+                            </div>
+                        <div id="files" class="files"></div>
+                     <div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+
+            //if (option && option === "a") {
+            //    html = html.replace('form-group active', 'form-group pasive')
+            //}
+
+            var container = $(html);
+            $(this.tagDiv).empty();
+            $(this.tagDiv).append(container);
+
+            if (readonly) {
+                $("#uploader").hide();
+            }
+
+            $('.group1').colorbox({ rel: 'group1' });
+            
+
+            $("#spnRemove").hide();
+            //$("#splitter").jqxSplitter({//orientation: 'horizontal',
+            //    width: '100%', height: '250px',
+            //    panels: [
+            //       { size: "50%", min: "10%", collapsible: false },
+            //       { size: '50%', min: "5%" }]
+            //});
+            $("#splitter").jqxSplitter({//orientation: 'horizontal',
+                width: '100%', height: '300px',
+                panels: [
+                    { size: '85%', min: "5%" },
+                    { size: "15%", min: "10%", collapsible: false }
+                ]
+            });
+            $('#MediaList').on('select', function (event) {
+                slf.updatePanel(event.args.item);
+                //$("#fileremove").prop('disabled', false);
+                $("#spnRemove").show();
+            });
+
+            $('#fileremove').click(function (e) {
+                //e.preventDefault();
+                slf.doRemove();//fileId, mediaType, filename);
+            });
+            $('#filerefresh').click(function (e) {
+                slf.doRefresh();
+            });
+
+            app_model.postModel('/Media/GetMediaFilesModel', { 'refid': refId, 'reftype': refType }, function (data) {
+                slf.Model = data;
+                slf.appMedia = app_media.load(data);
+            });
+        }
+
+        return this;
+    };
+    this.init_old = function (refId, refType, readonly) {
 
         var slf = this;
 

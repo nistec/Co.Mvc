@@ -25,7 +25,7 @@
             $('#tagPropId').html(tagPropId);
             $('#tagPropName').html(tagPropName);
             $('#tagPropTitle').html(tagPropTitle);
-            
+
 
             // prepare the data
             var source =
@@ -213,13 +213,14 @@
      });
     </script>
 }
-<hgroup class="title">
-    <h3 class="rightPan">הגדרות כלליות-<span id="tagPropTitle">סניף</span></h3>
 
-</hgroup>
-<div class="clear"></div>
+
+<div class="breadcrumbs">
+</div>
 
 <div class="global-view">
+    <h3 class="rightPan">הגדרות כלליות-<span id="tagPropTitle">סניף</span></h3>
+
     <div class="container-rtl">
         <div class="grid-wrap">
             <div id="jqxWidget">
@@ -236,20 +237,23 @@
                         <div style="overflow: hidden; direction: rtl">
                             <table style="border-spacing: 10px; border-collapse: separate; direction: rtl">
                                 <tr id="trcode">
-                                    <td  id="tagPropId">קוד סניף:</td>
+                                    <td id="tagPropId">קוד סניף:</td>
                                     <td>
-                                        <input id="PropId" style="direction: rtl; text-align: right;" /></td>
+                                        <input id="PropId" style="direction: rtl; text-align: right;" />
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td id="tagPropName">שם סניף:</td>
                                     <td>
-                                        <input id="PropName" style="direction: rtl; text-align: right;" /></td>
+                                        <input id="PropName" style="direction: rtl; text-align: right;" />
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <td style="padding-top: 10px;">
                                         <input style="margin-right: 5px;" type="button" id="Save" value="עדכון" />
-                                        <input id="Cancel" type="button" value="ביטול" /></td>
+                                        <input id="Cancel" type="button" value="ביטול" />
+                                    </td>
                                 </tr>
                             </table>
                         </div>
@@ -259,3 +263,9 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liEntity");
+    //app_menu.breadcrumbs("/Admin/Main", "Tasks", 'en');
+    app_menu.footer("admin");
+</script>

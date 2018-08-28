@@ -317,7 +317,7 @@ namespace Pro.Data.Entities
         {
             using (var db = DbContext.Create<DbPro>())
             {
-                return db.ExecuteList<MemberListView>("sp_Members_Query_v1", "QueryType", QueryType, "@PageSize", PageSize, "PageNum", PageNum, "AccountId", AccountId,
+                return db.ExecuteList<MemberListView>("sp_Members_Query_v1", "QueryType", QueryType, "PageSize", PageSize, "PageNum", PageNum, "AccountId", AccountId,
                     "MemberId", MemberId,
                     "ExId", ExId,
                     "CellPhone", CellPhone,

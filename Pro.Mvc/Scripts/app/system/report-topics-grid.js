@@ -141,15 +141,19 @@
                             
 
                             //var model = $("#jqxgrid").jqxTreeGrid('getCellValue', 0, 'TaskModel');
+                            //if (model=='P')
+                            //    return '<a href="#" onclick="app_tasks_grid.taskInfo(' + value + ')" ><label> ' + value + ' </label><i class="fa fa-info-circle"></i></a>';
+
 
                             //var model = "";//$('#jqxgrid').jqxTreeGrid('getrowdata', row).TaskModel;
+                            var editlink = '';
                             //var asb = $('#jqxgrid').jqxTreeGrid('getrowdata', row).AssignBy;
                             //if (slf.UserId == asb)
                             //    editlink = '<label> </label><a href="#" onclick="app_tasks_grid.taskEdit(' + value + ')" ><label> </label><i class="fa fa-plus-square-o"></i></a>';
 
                             //return '<div style="text-align:center">' + value + '<a href="#" onclick="app_tasks_grid.taskInfo(' + value + ')" ><label> </label><i class="fa fa-info-circle"></i></a>' + editlink + '</div>';
                             
-                            return '<a href="#" onclick="app_tasks_grid.taskInfo(' + value + ')" ><label> ' + value + ' </label><i class="fa fa-info-circle"></i></a>';
+                            return editlink + ' <a href="#" onclick="app_tasks_grid.taskInfo(' + value + ')" ><label> ' + value + ' </label><i class="fa fa-info-circle"></i></a>';
                         }
                   },
                   {

@@ -9,6 +9,7 @@ namespace ProSystem
 {
     public class Settings
     {
+        public const string AppName = "co";
         public const string ProjectName = "Co";
         //public const int AccountId = 3;
         public const string ChoosAll = "===בחר הכל===";

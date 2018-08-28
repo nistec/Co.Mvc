@@ -1,6 +1,6 @@
 ﻿@model Pro.Lib.Query.MemberQuery
 @{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewMain.cshtml";
     ViewBag.Title = "Members";
     //int acctype = Nistec.Types.ToInt(Request.QueryString["acctype"]);
     var dataModel = @Html.Raw(Json.Encode(Model));
@@ -15,16 +15,16 @@
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxloader.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxtooltip.js"></script>
-    <script type="text/javascript" src="~/Scripts/app/main/members.js?ver=20180001"></script>
-    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js?ver=20180001"></script>
+    <script type="text/javascript" src="~/Scripts/app/main/members.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
     <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
     <style type="text/css">
         input {
             direction:rtl;text-align:right;
         }
-        .jqx-grid-cell {
+        /*.jqx-grid-cell {
             border: none;
-        }
+        }*/
         
     </style>
 }

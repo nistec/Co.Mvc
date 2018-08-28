@@ -1,6 +1,6 @@
 ﻿@model ProSystem.Query.TaskQuery
 @{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     ViewBag.Title = "Tasks";
     var dataModel = @Html.Raw(Json.Encode(Model));
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
@@ -178,7 +178,7 @@
 <footer>
 </footer> 
 <script type="text/javascript">
-    app_menu.activeLayoutMenu("liSystem");
+    app_menu.activeLayoutMenu("liReport");
     app_menu.breadcrumbs("System", "Tasks", 'en');
     app_menu.footer("task");
 </script>

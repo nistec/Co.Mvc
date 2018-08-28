@@ -14,9 +14,7 @@ using System.Data;
 namespace ProSystem.Data
 {
 
-   
-
-    
+       
     [DbContext("cnn_proxy")]
     [Serializable]
     public partial class DbProxy : DbContext

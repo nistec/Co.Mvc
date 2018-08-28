@@ -23,7 +23,7 @@ class app_doc_base {
         this.AccountId = userInfo.AccountId;
         this.UserRole = userInfo.UserRole;
         this.AllowEdit = (this.UserRole > 4) ? 1 : 0;
-
+        this.IsInfo = dataModel.IsInfo;
         this.Title = app_tasks.taskTitle(this.DocModel);
         this.uploader;
         this.IsNew = (this.DocId === 0);
@@ -31,18 +31,18 @@ class app_doc_base {
         this.Option = (dataModel.Option) ? dataModel.Option : 'e';
         this.AssignBy = (dataModel.AssignBy) ? dataModel.AssignBy : 0;
         this.DocStatus = (dataModel.DocStatus) ? dataModel.DocStatus : 0;
-        this.IsEditable = (this.DocId === 0) || ((this.DocStatus < 8) && (this.AssignBy === this.UserInfo.UserId || this.Option === 'e'));
+        this.IsEditable = (!this.IsInfo) && ((this.DocId === 0) || ((this.DocStatus < 8) && (this.AssignBy === this.UserInfo.UserId || this.Option === 'e')));
         this.EnableFormType = this.IsNew;
-        this.ClientId = 0;
-        this.ProjectId = 0;
-        this.Tags;
-        this.AssignTo;
-        this.SrcUserId = 0;
-        this.exp1_Inited = false;
+        this.PostLoaded = false;
+        //this.ClientId = 0;
+        //this.ProjectId = 0;
+        //this.Tags = null;
+        //this.AssignTo = null;
         this.Comment = null;
         this.Assign = null;
         this.Timer = null;
         this.Actions = null;
+        this.Record = null;
         this.FormTemplate = null;
         if (this.Option === 'g') {
             $("#fcSubmit").hide();
@@ -50,25 +50,26 @@ class app_doc_base {
         }
     }
 
-    doSettings(record, isInfo) {
+    doSettings() {
+        var record = this.Record;
 
         if (record.DocStatus <= 0)
             record.DocStatus = 1;
 
         this.AssignBy = record.AssignBy;
         this.DocStatus = record.DocStatus;
-        this.IsEditable = (this.DocId === 0) || ((this.DocStatus < 8) && (this.AssignBy === this.UserInfo.UserId || this.Option === 'e'));
+        this.IsEditable = (!this.IsInfo) && ((this.DocId === 0) || ((this.DocStatus < 8) && (this.AssignBy === this.UserInfo.UserId || this.Option === 'e')));
 
-        this.ProjectId = record.Project_Id;
-        this.ClientId = record.ClientId;
-        this.Tags = record.Tags;
-        this.AssignTo = record.AssignTo;
-        this.SrcUserId = record.UserId;
+        //this.ProjectId = record.Project_Id;
+        //this.ClientId = record.ClientId;
+        //this.Tags = record.Tags;
+        //this.AssignTo = record.AssignTo;
+        //this.SrcUserId = record.UserId;
 
 
-        if (this.SrcUserId > 0)
-            app_jqx_combo_async.userInputAdapter("#UserId", this.SrcUserId);
-        if (isInfo) {
+        if (record.UserId > 0)
+            app_jqx_combo_async.userInputAdapter("#UserId", record.UserId);
+        if (this.IsInfo) {
             //var model = this.Model.Data
             if (record.Comments === 0)
                 $("#exp-1").hide();
@@ -79,10 +80,10 @@ class app_doc_base {
         }
     }
 
-    _loadData(isInfo) {
+    _loadData() {
 
         var _slf = this;
-        var url = isInfo ? "/System/GetDocInfo" : "/System/GetDocEdit";
+        var url = _slf.IsInfo ? "/System/GetDocInfo" : "/System/GetDocEdit";
         var view_source =
             {
                 datatype: "json",
@@ -94,9 +95,9 @@ class app_doc_base {
 
         var viewAdapter = new $.jqx.dataAdapter(view_source, {
             loadComplete: function (record) {
-
-                _slf.doSettings(record, isInfo);
-                _slf.loadControls(record);
+                _slf.Record = record;
+                _slf.doSettings();
+                _slf.loadControls();
                 //slf.loadEvents();
             },
             loadError: function (jqXHR, status, error) {
@@ -121,9 +122,14 @@ class app_doc_base {
                     app_dialog.alert("יש לשמור את המסמך הנוכחי לפני הוספת הערות");
                     return false;
                 }
-                if (this.Comment === null) {//($("#jqxgrid1")[0].childElementCount == 0) {
-                    this.Comment = new app_doc_comment_grid(this.DocId, this.UserInfo, this.Option);
-                    //this.Comment.load(this.DocId, this.UserInfo, this.Option);
+                if (this.IsInfo) {
+                    if ($("#jqxgrid1").is(':empty'))
+                        app_repeater.doc_comments_adapter("#jqxgrid1", this.DocId);
+                }
+                else {
+                    if (this.Comment == null) {
+                        this.Comment = new app_doc_comment_grid(this.DocId, this.UserInfo, this.Option);
+                    }
                 }
                 break;
             case 4:
@@ -133,19 +139,14 @@ class app_doc_base {
                     return false;
                 }
 
-                if (this.DocModel === 'D') {
-                    if (this.Actions === null)//($("#jqxgrid4")[0].childElementCount == 0)
-                        this.Actions = new app_doc_form_grid(this.DocId, this.UserInfo, this.Option);
-                }
-                else if (this.DocModel === 'P') {
-                    if (this.Actions === null)//($("#jqxgrid4")[0].childElementCount == 0)
-                        this.Actions = new app_topic_form_grid(this.DocId, this.UserInfo, this.Option);
+                if (this.IsInfo) {
+                    if ($("#jqxgrid4").is(':empty'))
+                        app_repeater.doc_form_adapter("#jqxgrid4", this.DocId);
                 }
                 else {
                     if (this.Actions === null)//($("#jqxgrid4")[0].childElementCount == 0)
                         this.Actions = new app_doc_form_grid(this.DocId, this.UserInfo, this.Option);
-
-
+                
                     if (this.EnableFormType) {
                         var source = $('#Form_Type').jqxComboBox('source');
                         if (source === null)
@@ -179,7 +180,94 @@ class app_doc_base {
         }
     }
 
-    lazyLoad() {
+    postLoad(waitAll) {
+
+        //waitAll = true;
+
+        if (this.PostLoaded)
+            return;
+
+        var _slf = this;
+        var clientId, projectId, tags, assignTo;
+        if (this.Record) {
+            clientId = this.Record.ClientId;
+            projectId = this.Record.ProjectId;
+            tags = this.Record.Tags;
+            assignTo = this.Record.AssignTo;
+        }
+        var promise1 = [0, 0, 0, 0];
+
+        app_jqx_combo_async.lookupInputAdapter('#ClientId', 'lu_Members', clientId, function () {
+            promise1[0] = 1;
+        });
+        app_jqx_combo_async.systemLookupInputAdapter('#Project_Id', 'lu_Project', projectId, function () {
+            promise1[1] = 1;
+        });
+        app_jqx_adapter.createComboDisplayAsync("Tag", "#Tags", '/System/GetTagsList', null, 225, 0, true, tags, function () {
+            promise1[2] = 1;
+        });
+        app_jqx_adapter.createComboCheckAdapterAsync("UserId", "DisplayName", "#AssignTo", '/System/GetUsersList', null, 225, 0, null, assignTo, function () {
+            $("#AssignTo").jqxComboBox({ disabled: true });
+            promise1[3] = 1;
+        });
+
+        function afterPostLoaded() {
+
+            _slf.PostLoaded = true;
+
+            if (!_slf.IsEditable) {
+                //$("#ClientId").prop("readonly", true);
+                //$("#Project_Id").prop("readonly", true);
+                $("#Tags").jqxComboBox({ disabled: true });
+                $("#AssignTo").jqxComboBox({ disabled: true });
+                //$("#ShareType").jqxDropDownList({ enableSelection: false });
+                app.disableSelect("#ShareType");
+            }
+
+        }
+
+        if (waitAll) {
+
+            function waitUntil() {
+
+                async function promiseCompleted() {
+                    var promiseMax = 4;
+                    var sum = promise1.reduce(function (acc, val) { return acc + val; }, 0);
+                    if (sum == promiseMax) {
+                        afterPostLoaded();
+                    }
+                    return sum == promiseMax;
+                }
+
+                async function delay() {
+                    return new Promise(resolve => setTimeout(resolve, 300));
+                }
+
+                async function processArray(array) {
+                    var maxloop = 10;
+                    var counter = 0;
+                    while (! await promiseCompleted()) {
+                        await delay();
+                        counter++;
+                        if (counter >= maxloop) {
+                            break;
+                        }
+                    }
+                    console.log('Done');
+                }
+
+                processArray(promise1);
+            }
+
+            waitUntil();
+        }
+        else {
+
+            afterPostLoaded();
+        }
+    }
+/*
+    postLoad() {
 
         app_jqx_combo_async.lookupInputAdapter('#ClientId', 'lu_Members', this.ClientId, function () {
 
@@ -215,7 +303,7 @@ class app_doc_base {
             app.disableSelect("#ShareType");
         }
     }
-
+*/
     doCancel() {
 
         app.redirectTo(app_doc_base.getReferrer());
@@ -227,17 +315,17 @@ class app_doc_base {
         var referrer = document.referrer;
         if (referrer) {
 
-            if (referrer.match(/System\/TaskUser/gi))
-                return "/System/DocUser";
-            else if (referrer.match(/System\/ReportTasks/gi))
+            //if (referrer.match(/System\/DocUser/gi))
+            //    return "/System/DocUser";
+            //else if (referrer.match(/System\/ReportTasks/gi))
+            //    return "/System/ReportDocs";
+            //else if (referrer.match(/System\/ReportSubTask/gi))
+            //    return "/System/ReportSubDoc";
+            //else if (referrer.match(/System\/ReportTopics/gi))
+            //    return "/System/ReportTopics";
+            //else {
                 return "/System/ReportDocs";
-            else if (referrer.match(/System\/ReportSubTask/gi))
-                return "/System/ReportSubDoc";
-            else if (referrer.match(/System\/ReportTopics/gi))
-                return "/System/ReportTopics";
-            else {
-                return "/System/ReportDocs";
-            }
+            //}
         }
         else {
             return "/System/ReportDocs";
@@ -325,20 +413,21 @@ class app_doc extends app_doc_base {
         this.EnableFormType = false;
     }
 
-    init(isInfo) {
+    init() {
 
-        if (isInfo) {
-            $("#hTitle-text").text(this.Title + ': ' + $("#DocSubject").val());
-            $("#hxp-title").text(this.Title + ': ' + this.DocId);
-        }
-        else {
+        if (!this.IsInfo) {
+
             this.tabSettings();
         }
+
+        $("#hTitle-text").text(this.Title + ': ' + $("#DocSubject").val());
+        $("#hxp-title").text(this.Title + ': ' + this.DocId);
+
 
         this.preLoad();
 
         if (this.DocId > 0) {
-            this._loadData(isInfo);
+            this._loadData();
             //this.loadControls(this.Model.Data);
         }
         else {
@@ -351,8 +440,6 @@ class app_doc extends app_doc_base {
 
     tabSettings() {
         var _slf = this;
-        $("#hTitle-text").text(this.Title + ': ' + $("#DocSubject").val());
-        $("#hxp-title").text(this.Title + ': ' + this.DocId);
 
         if (this.DocId > 0) {
             $("#hxp-1").show();
@@ -398,28 +485,6 @@ class app_doc extends app_doc_base {
         });
     };
 
-    //initInfo() {
-
-    //    $("#hTitle-text").text(this.Title + ': ' + $("#DocSubject").val());
-    //    $("#hxp-title").text(this.Title + ': ' + this.DocId);
-
-    //    var model = this.Model.Data
-    //    if (model.Comments == 0)
-    //        $("#exp-1").hide();
-    //    if (model.Assigns == 0)
-    //        $("#exp-2").hide();
-    //    if (model.Timers == 0)
-    //        $("#exp-3").hide();
-    //    if (model.Items == 0)
-    //        $("#exp-4").hide();
-    //    if (model.Files == 0)
-    //        $("#exp-5").hide();
-
-    //    this.preLoad();
-    //    this.loadControls(model);
-    //    this.loadEvents();
-    //};
-
     doCancel() {
         app.redirectTo(app_doc_base.getReferrer());
         //return this;
@@ -452,6 +517,7 @@ class app_doc extends app_doc_base {
 
         var RunSubmit = function (slf, status, actionurl) {
 
+            slf.postLoad(true);
 
             //app_jqx.setInputAutoValue("#DocStatus", status);
             app_tasks.setTaskStatus("#DocStatus", status);
@@ -475,12 +541,12 @@ class app_doc extends app_doc_base {
         };
 
         if (this.IsNew) {
-            status = 1;
+            this.DocStatus = 1;
             actionurl = '/System/UpdateNewDoc';
-            RunSubmit(this, status, actionurl)
+            RunSubmit(this, this.DocStatus, actionurl)
         }
         else {
-            status = 2;
+            status = this.DocStatus;
             actionurl = '/System/UpdateDoc';
             if (status > 1 && status < 8 && act === 'end') {
                 app_dialog.confirmYesNoCancel("האם לסיים משימה?", function (res) {
@@ -516,30 +582,32 @@ class app_doc extends app_doc_base {
 
 
         $("#AccountId").val(slf.AccountId);
-        if (theme === undefined)
-            theme = 'nis_metro';
+  
+        //app_tasks.setColorFlag();
 
-        app_tasks.setColorFlag();
         app_tasks.setPermsType();
-
-        //$("#jqxExp-1").jqxExpander({ rtl: true, width: '80%', expanded: false });
-        //$('#jqxExp-1').on('expanding', function () {
-
-        //    if (!slf.exp1_Inited) {
-        //        slf.lazyLoad();
-        //    }
-        //});
+       
 
         $('#a-jqxExp-1').on('click', function (e) {
-            if (!slf.exp1_Inited) {
-                slf.lazyLoad();
+            if (!slf.PostLoaded) {
+                slf.postLoad();
             }
             $('#jqxExp-box').slideToggle();
             return false;
         });
 
-        app_control.selectTag("#Doc_Type");
+        //app_control.selectTag("#Doc_Type");
 
+        app_features.editorTag("#DocBody", slf.IsEditable);
+
+        if (!this.IsInfo) {
+            app_features.colorFlag("#ColorFlag", "#hTitle");
+        }
+
+        //$("#jqxWidget").slideDown('slow');
+        $("#jqxWidget").toggleClass('box-slide');
+
+        /*
         $("#ColorFlag").simplecolorpicker();
         $("#ColorFlag").on('change', function () {
             //$('select').simplecolorpicker('destroy');
@@ -571,35 +639,36 @@ class app_doc extends app_doc_base {
                 $('#DocBody').jqxEditor('height', '800px');
             }
         });
+        */
     }
 
-    loadControls(record) {
+    loadControls() {
 
         console.log('controls');
 
+
         $('#DueDate').jqxDateTimeInput({ showCalendarButton: this.IsEditable, readonly: !this.IsEditable, width: '150px', rtl: true });
-                
+
+        var record = this.Record;
 
         if (record) {
 
-            app_form.loadDataForm("fcForm", record, ["DocStatus", "Project_Id", "ClientId", "Tags", "AssignTo","Folder"]);
+            app_form.loadDataForm("fcForm", record, ["DocStatus", "Folder"], this.IsInfo);//, "Project_Id", "ClientId", "Tags", "AssignTo"
 
-            $("#DocBody").jqxEditor('val', app.htmlUnescape(record.DocBody));
+            //$("#DocBody").jqxEditor('val', app.htmlUnescape(record.DocBody));
 
-            $("#DocSubject").val(record.DocSubject);
+            //$("#DocSubject").val(record.DocSubject);
             $("#hTitle-text").text(this.Title + ": " + record.DocSubject);
             $("#hTitle").css("background-color", (record.ColorFlag || config.defaultColor));
 
             // $('#DueDate').jqxDateTimeInput({ disabled: !this.IsEditable, showCalendarButton: this.IsEditable });
 
             if (this.Option !== 'g' && record.DocStatus > 1 && record.DocStatus < 8)
-                $("#fcEnd").show();//$("#fcSubmit").val("סיום");
+                $("#fcEnd").show();
             else
-                $("#fcEnd").hide();//$("#fcSubmit").val("עדכון");
+                $("#fcEnd").hide();
 
-
-            var align = app_style.langAlign(record.Lang);
-            $('#DocBody').css('text-align', align)
+            $('#DocBody').css('text-align', app_style.langAlign(record.Lang))
 
             //app_tasks.enumTypes_load("#Doc_Type", "D", "Doc_Type");
             app_tasks.enumTypes_load("#Doc_Type", "D", record.Doc_Type);
@@ -1180,19 +1249,31 @@ class app_doc_form_grid {
             datafields: [
                 { name: 'ItemId', type: 'number' },
                 { name: 'ItemDate', type: 'date' },
-                { name: 'ItemText', type: 'string' },
+                { name: 'ItemValue', type: 'string' },
                 { name: 'DoneDate', type: 'date' },
-                { name: 'StartDate', type: 'date' },
                 { name: 'DoneStatus', type: 'bool' },
                 { name: 'DisplayName', type: 'string' },
                 { name: 'Doc_Id', type: 'number' },
-                { name: 'AssignBy', type: 'number' },
-                { name: 'ItemDueDate', type: 'date' },
-                { name: 'ItemAssignTo', type: 'number' },
-                { name: 'ItemDoc', type: 'number' },
-                { name: 'ItemSubject', type: 'string' },
+                { name: 'ItemLabel', type: 'string' },
                 { name: 'UserId', type: 'number' }
             ],
+            updaterow: function (rowid, rowdata, commit) {
+                // that function is called after each edit.
+                var rowindex = $("#jqxgrid4").jqxGrid('getrowboundindexbyid', rowid);
+                //editedRows.push({ index: rowindex, data: rowdata });
+                app_query.doDataPost('/System/DocFormUpdate', rowdata, function (data) {
+
+                    if (data.Status > 0) {
+                        commit(true);
+                        //app_doc_base.triggerSubDocCompleted('form', data);
+                    }
+                    else {
+                        app_messenger.Post(data, 'error');
+                        commit(false);
+                    }
+                });
+                commit(true);
+            },
             datatype: "json",
             id: 'ItemId',
             type: 'POST',
@@ -1201,9 +1282,32 @@ class app_doc_form_grid {
         };
 
         var docAdapter = new $.jqx.dataAdapter(docsource);
+        // validation function
+        var validateFunc = function (datafield, value) {
+            switch (datafield) {
+                case "ItemLabel":
+                    if (value.length ==0) {
+                        return { message: "נדרש נושא", result: false };
+                    }
+                    return true;
+                case "ItemValue":
+                    if (value.length == 0) {
+                        return { message: "נדרש תאור", result: false };
+                    }
+                    return true;
+                //case "DoneDate":
+                //    if (new Date(value) == "Invalid Date") {
+                //        return { message: "נדרש תאריך ביצוע", result: false };
+                //    }
+                //    return true;
+                //    break;
+            }
+            return true;
+        }
 
         $("#jqxgrid4").jqxGrid({
             editable: slf.Option === "e",
+            //editmode: 'click',
             autoheight: true,
             autorowheight: true,
             enabletooltips: true,
@@ -1227,9 +1331,16 @@ class app_doc_form_grid {
                 //    }
                 //},
                 //{ text: 'מועד לביצוע', datafield: 'ItemDueDate', width: 150, cellsalign: 'right', type: 'date', cellsformat: 'dd/MM/yyyy hh:mm', align: 'center', editable: false, hidden: slf.isMobile },
-                { text: 'נושא', datafield: 'ItemSubject', width: 200, cellsalign: 'right', align: 'center', editable: false },
-                { text: 'תאור', datafield: 'ItemText', cellsalign: 'right', align: 'center', editable: false },
-                //{ text: 'מועד התחלה', datafield: 'StartDate', width: 150, cellsalign: 'right', type: 'date', cellsformat: 'dd/MM/yyyy hh:mm', align: 'center', editable: false, hidden: slf.isMobile },
+                {
+                    text: 'נושא', datafield: 'ItemLabel', width: 200, cellsalign: 'right', align: 'center', editable: false,
+                    validateEverPresentRowWidgetValue: validateFunc,
+                    validation: validateFunc
+                 },
+                {
+                    text: 'תאור', datafield: 'ItemValue', cellsalign: 'right', align: 'center', editable: false,
+                    validateEverPresentRowWidgetValue: validateFunc,
+                    validation: validateFunc
+                },
                 { text: 'מועד סיום', datafield: 'DoneDate', width: 150, cellsalign: 'right', type: 'date', cellsformat: 'dd/MM/yyyy hh:mm', align: 'center', editable: false, hidden: slf.isMobile },
                 { text: 'בוצע', datafield: 'DoneStatus', columntype: 'checkbox', width: 120, cellsalign: 'right', align: 'center' },
                 { text: 'שם', datafield: 'DisplayName', width: 120, cellsalign: 'right', align: 'center', editable: false, hidden: slf.isMobile }
@@ -1241,20 +1352,23 @@ class app_doc_form_grid {
                 //}
             ]
         });
+
         $("#jqxgrid4").on('cellvaluechanged', function (event) {
             // event arguments.
             var args = event.args;
             // column data field.
             var datafield = event.args.datafield;
-            // row's bound index.
-            var rowBoundIndex = args.rowindex;
-            // new cell value.
-            var value = args.newvalue;
-            // old cell value.
-            var oldvalue = args.oldvalue;
+            if (datafield == "DoneStatus") {
+                // row's bound index.
+                var rowBoundIndex = args.rowindex;
+                // new cell value.
+                var value = args.newvalue;
+                // old cell value.
+                var oldvalue = args.oldvalue;
 
-            var id = args.owner.rows.records[args.rowindex].bounddata.ItemId;
-            slf.update(id, value);
+                var id = args.owner.rows.records[args.rowindex].bounddata.ItemId;
+                slf.update(id, value);
+            }
 
         });
         $('#jqxgrid4').on('rowselect', function (event) {
@@ -1266,7 +1380,7 @@ class app_doc_form_grid {
             var rowData = args.row;
 
             if (rowData) {
-                var editable = (rowData.AssignBy === slf.UserId);
+                var editable = (rowData.UserId === slf.UserId);
                 app.showIf("#jqxgrid4-remove", editable);
                 //app.showIf("#jqxgrid4-edit",editable);
             }
@@ -1328,7 +1442,7 @@ class app_doc_form_grid {
             return;
         var rowData = this.getRowData();
         if (rowData) {
-            var opt = (rowData.AssignBy == this.UserId) ? 'e' : 'r';
+            var opt = (rowData.UserId == this.UserId) ? 'e' : 'r';
 
             var act = 'edit';
             if (rowData.StartDate == null)
@@ -1367,8 +1481,8 @@ class app_doc_form_grid {
         var data = this.getRowData();
         if (data == null)
             return;
-        if (this.UserId != data.AssignBy) {
-            app_dialog.Alert("לא ניתן למחוק רשומה שהוקצתה על ידי משתמש אחר");
+        if (this.UserId != data.UserId) {
+            app_dialog.alert("לא ניתן למחוק רשומה שהוקצתה על ידי משתמש אחר");
             return;
         }
         var id = data.ItemId;// this.getrowId();
@@ -1404,6 +1518,17 @@ class app_doc_form_grid {
             }
         });
     }
+    update_row(id, rowData) {
+
+        app_query.doDataPost('/System/DocFormUpdate', rowData, function (data) {
+
+            if (data.Status > 0) {
+                app_doc_base.triggerSubDocCompleted('form', data);
+            }
+            else
+                app_messenger.Post(data, 'error');
+        });
+    }
     refresh() {
         $('#jqxgrid4').jqxGrid('source').dataBind();
     }
@@ -1419,7 +1544,6 @@ class app_doc_form_grid {
         }
     }
 }
-
 
 class app_doc_form_item {
 
@@ -1441,8 +1565,6 @@ class app_doc_form_item {
             '<input type="hidden" id="ItemId" name="ItemId" value="0" />' +
             '<input type="hidden" id="Doc_Id" name="Doc_Id" value="0" />' +
             '<input type="hidden" id="form-UserId" name="UserId" value="" />' +
-            '<input type="hidden" id="AssignBy" name="AssignBy" value="" />' +
-            '<input type="hidden" id="Duration" name="Duration" value="" />' +
             '<div style="height:5px"></div>' +
             '<div id="tab-content" class="tab-content" dir="rtl">' +
             '<div id="fcTitle" class="panel-header pasive" style="font-weight: bold;">לביצוע</div>' +
@@ -1463,16 +1585,10 @@ class app_doc_form_item {
             '<div class="field">נוצר בתאריך:</div>' +
             '<input id="ItemDate" name="ItemDate" type="text" readonly="readonly" class="text-mid" data-type="date" />' +
             '</div>-->' +
-            '<div class="form-group pasive">' +
-            '<div class="field">מועד התחלה:</div>' +
-            '<input id="StartDate" name="StartDate" type="text" readonly="readonly" class="text-mid" />' +
-            '<a id="form-Start" href="#" class="btn-bar"><i class="fa fa-chevron-left"></i>צור משימה</a> ' +
-            '</div>' +
-            '</div>' +
             '<div id="form-Done-group" class="form-group pasive">' +
             '<div id="fcTitle" class="panel-header pasive" style="font-weight: bold;">סיום ביצוע</div>' +
             '<div id="divDoneDate" class="form-group">' +
-            '<div class="field">מועד סיום:</div>' +
+            '<div class="field">מועד ביצוע:</div>' +
             '<input id="DoneDate" name="DoneDate" type="text" readonly="readonly" class="text-mid" data-type="datetime" />' +
             '</div>' +
             '<div id="form-Done" class="form-group pasive">' +
@@ -1518,10 +1634,11 @@ class app_doc_form_item {
         //$("#timer-Form input[name=AccountId]").val(this.AccountId);
 
         var input_rules = [
-            { input: '#ItemText', message: 'חובה לציין תאור!', action: 'none', rule: 'required' }
+            { input: '#ItemValue', message: 'חובה לציין תאור!', action: 'none', rule: 'required' },
+            { input: '#ItemLabel', message: 'חובה לציין נושא!', action: 'none', rule: 'required' }
         ];
 
-        $('#ItemDueDate').jqxDateTimeInput({ showCalendarButton: true, readonly: false, width: '150px', rtl: true });
+        $('#DoneDate').jqxDateTimeInput({ showCalendarButton: true, readonly: false, width: '150px', rtl: true });
         //app_jqxcombos.createComboAdapter("UserTeamId", "DisplayName", "ItemAssignTo", '/System/GetUserTeamList', 0, 120, false);
 
         $('#form-Form').jqxValidator({
@@ -1574,15 +1691,16 @@ class app_doc_form_item {
                     //$("#form-Comment").hide();
                     $("#form-Title").text("פעולה: " + slf.ItemId);
 
-                    if (record.StartDate || record.ItemDoc > 0) {
-                        $("#form-Start").hide();
-                        //$("#form-Done-group").show();
-                    }
-                    else {
-                        $("#form-Start").show();
-                        //$("#form-Done-group").hide();
+                    //if (record.StartDate || record.ItemDoc > 0) {
+                    //    $("#form-Start").hide();
+                    //    //$("#form-Done-group").show();
+                    //}
+                    //else {
+                    //    $("#form-Start").show();
+                    //    //$("#form-Done-group").hide();
 
-                    }
+                    //}
+
                     //if (record.DoneStatus == false) {
                     //    $("#divDoneDate").hide();
                     //    $("#divDisplayName").hide();
@@ -1624,7 +1742,7 @@ class app_doc_form_item {
 
     doCancel() {
         $("#jqxgrid4-bar").show();
-        app_task_base.triggerSubTaskCompleted('form');
+        app_doc_base.triggerSubDocCompleted('form');
     };
     doSubmit() {
         //e.preventDefault();
@@ -1633,7 +1751,7 @@ class app_doc_form_item {
         app_query.doFormSubmit("#form-Form", actionurl, null, function (data) {
 
             if (data.Status > 0) {
-                app_task_base.triggerSubTaskCompleted('form', data);
+                app_doc_base.triggerSubDocCompleted('form', data);
             }
             else
                 app_messenger.Post(data, 'error');

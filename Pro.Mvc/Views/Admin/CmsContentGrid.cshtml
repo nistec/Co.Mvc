@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_ViewAdmin.cshtml";
     Page.Title = "Cms";
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
- 
+
 }
 
 @section head {
@@ -10,9 +10,9 @@
 @section scripts {
     @Scripts.Render("~/bundles/jqx")
     @Scripts.Render("~/bundles/jqxgrid")
-<script type="text/javascript" src="~/Scripts/app/cms/cms_content-grid.js"></script>
-<script type="text/javascript" src="~/Scripts/app/app-cms.js"></script>
-<script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js?ver=20180001"></script>
+    <script type="text/javascript" src="~/Scripts/app/cms/cms_content-grid.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-cms.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js?ver=20180001"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             JSON.useDateParser();
@@ -27,7 +27,7 @@
                     def = app_cms_content_grid.load(JSON.parse('@userInfo'), value);
                 }
             });
-            
+
 
             //$("#btnClearCache").on('click', function () {
             //    app_query.doPost('/Cms/CmsClearCache', {});
@@ -51,16 +51,22 @@
 <div class="global-view">
 
     <div class="container-rtl">
-        <div class="grid-wrap">
+        <div class="grid-wrap rtl">
             <h3 class="rtl">מערכת תוכן לניהול האתר</h3>
             <div id="AccountList" name="AccountList"></div>
             <div id="jqxWidget">
                 <div id="jqxgrid" style="position: relative; z-index: 1;"></div>
-             </div>
+            </div>
             @*<div class="@optionsClass">
-                <input type="button" id="btnClearCache" value="ניקוי כללי" />
-            </div>*@
+                    <input type="button" id="btnClearCache" value="ניקוי כללי" />
+                </div>*@
             <p>במערכת תוכן זו ניתן לערוך את התכנים הרלוונטים לעמודי האינטרנט:</p>
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liCms");
+    app_menu.breadcrumbs("/Admin/Main", "Accounts", 'en');
+    app_menu.footer("admin");
+</script>

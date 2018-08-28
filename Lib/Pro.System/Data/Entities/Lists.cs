@@ -18,7 +18,17 @@ namespace ProSystem.Data.Entities
         Topic_Types = 6,
         Doc_Types = 7,
         Tags = 8,
-        Folders = 9
+        Folders = 9,
+        Admin_Ad_Team=10,
+        Labels=11
+    }
+
+    [EntityMapping(ProcListView = "sp_GetListsSelect")]
+    public class SelectItem : IEntityItem
+    {
+        [EntityProperty(EntityPropertyType.Key)]
+        public int id { get; set; }
+        public string text { get; set; }
     }
 
     public class Lists<T> where T : IEntityItem
@@ -68,6 +78,42 @@ namespace ProSystem.Data.Entities
         {
             using (var db = DbContext.Create<DbSystem>())
                 return db.ExecuteList<T>("sp_GetLists", "ListType", (int)type, "AccountId", AccountId);
+        }
+
+        public static IList<SelectItem> ExecListSelect(int AccountId, ListsTypes type, bool enableCache = true)
+        {
+            if (enableCache)
+            {
+                string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, 0, type.ToString());
+                return WebCache.GetOrCreateList<SelectItem>(key, () =>
+                {
+                    var context = new DbSystemContext<SelectItem>(EntityCacheGroups.Enums, AccountId, 0);
+                    return context.ExecList("AccountId", AccountId, "ListType", (int)type);
+                }, EntityProCache.DefaultCacheTtl);
+            }
+            else
+            {
+                var context = new DbSystemContext<SelectItem>(EntityCacheGroups.Enums, AccountId, 0);
+                return context.ExecList("AccountId", AccountId, "ListType", (int)type);
+            }
+        }
+
+        public static string ExecListTags(int AccountId, ListsTypes type, bool enableCache = true)
+        {
+            if (enableCache)
+            {
+                string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, 0, type.ToString());
+                return WebCache.GetOrCreateJson(key, () =>
+                {
+                    var context = DbContext.Get<DbSystem>();
+                    return context.ExecuteJsonArray("sp_GetListsTags", "AccountId", AccountId, "ListType", (int)type);
+                }, EntityProCache.DefaultCacheTtl);
+            }
+            else
+            {
+                var context = DbContext.Get<DbSystem>();
+                return context.ExecuteJsonArray("sp_GetListsTags", "AccountId", AccountId, "ListType", (int)type);
+            }
         }
 
     }

@@ -1192,3 +1192,51 @@ var app_jqxgrid = {
         $(tag_grid).jqxGrid('collapseallgroups');
     }
 };
+
+
+//============================================================================================ app_jqxgrid_menu
+var app_jqxgrid_menu = {
+
+    rowIndex: 0,
+    rowValue: 0,
+    originalEvent: undefined,
+    contextMenu: undefined,
+    rowMenu: function (row, value) {
+        this.rowIndex = row;
+        this.rowValue = value;
+        //$("#jqxgrid").jqxGrid('selectrow', row);
+        var scrollTop = $(window).scrollTop();
+        var scrollLeft = $(window).scrollLeft();
+        this.contextMenu.jqxMenu('open', parseInt(this.originalEvent.clientX) - 100 + scrollLeft, parseInt(this.originalEvent.clientY) + 5 + scrollTop);
+        return false;
+    },
+    init: function (tag_grid, width) {
+
+        var _slf = this;
+        if (tag_grid === undefined || tag_grid == null)
+            tag_grid = "#jqxgrid";
+        if (width === undefined || width == 0)
+            width = 120;
+
+
+        this.contextMenu = $(tag_grid + "-rowMenu").jqxMenu({ width: width, autoOpenPopup: false, mode: 'popup', rtl: true });
+
+        $(tag_grid).on('rowclick', function (event) {
+            var args = event.args;
+            _slf.originalEvent = args.originalEvent;
+
+            // row's bound index.
+            var boundIndex = args.rowindex;
+            // row's visible index.
+            var visibleIndex = args.visibleindex;
+            // right click.
+            var rightclick = args.rightclick;
+            // original event.
+            var ev = args.originalEvent;
+        });
+
+        return this;
+    }
+}
+
+

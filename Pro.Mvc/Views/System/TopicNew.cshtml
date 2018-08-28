@@ -1,7 +1,7 @@
 ﻿@model Pro.Mvc.Models.EditTaskModel
 @{
     //ViewBag.Title = "System";
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
     var dataModel = @Html.Raw(Json.Encode(Model));
 }
@@ -14,7 +14,7 @@
     <script src="~/Scripts/plagins/tabs/jcxtabs.min.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
-    <script src="~/jqwidgets/jqxpopover.js"></script>
+    @*<script src="~/jqwidgets/jqxpopover.js"></script>*@
     <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
     <script type="text/javascript" src="~/Scripts/app/system/task-base.js"></script>
     <script type="text/javascript" src="~/Scripts/app/system/topic-def.js"></script>
@@ -72,7 +72,7 @@
         </div>
         <div style="height:5px"></div>
 
-        <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+        <div id="jqxWidget" class="box-hide">
 
 
             <div id="accordion" class="jcx-tabs rtl tab-content" dir="rtl">
@@ -98,23 +98,29 @@
                                 <input type="hidden" id="TaskStatus" name="TaskStatus" value="1" />
                                 <input type="hidden" id="TaskModel" name="TaskModel" value="P" />
 
-                                <input type="hidden" id="Task_Type" name="Task_Type" value="0" />
+                                @*<input type="hidden" id="Task_Type" name="Task_Type" value="0" />*@
 
                                 <div id="tab-content" class="tab-content" dir="rtl">
 
                                     @*<div class="form-group">
-                                            <div class="field">
-                                                סוגיה עבור:
-                                            </div>
-                                            <div id="IntendedTo"></div>
-                                        </div>
+            <div class="field">
+                סוגיה עבור:
+            </div>
+            <div id="IntendedTo"></div>
+        </div>
 
-                                        <div class="form-group">
-                                            <div class="field">
-                                                סוג משימה:
-                                            </div>
-                                            <div id="Task_Type" name="Task_Type"></div>
-                                        </div>*@
+        <div class="form-group">
+            <div class="field">
+                סוג משימה:
+            </div>
+            <div id="Task_Type" name="Task_Type"></div>
+        </div>*@
+                                    <div class="form-group">
+                                        <div class="field">
+                                            סוג משימה:
+                                        </div>
+                                        <select id="Task_Type" name="Task_Type" data-type="select-loader" data-args="6"></select>
+                                    </div>
                                     <div class="form-group">
                                         <div class="field">
                                             נושא:
@@ -125,7 +131,7 @@
                                         <div class="field">
                                             תיאור: <span><a id="TaskBody-btn-view" href="#"><i class="fa fa-search-plus" style="font-size:16px"></i></a></span>
                                         </div>
-                                        <textarea id="TaskBody" name="TaskBody" class="text-content"></textarea>
+                                        <textarea id="TaskBody" name="TaskBody" class="text-content" data-type="jqx-editor"></textarea>
                                     </div>
                                     <div class="form-group">
                                         <div class="field">
@@ -146,11 +152,12 @@
                                         </div>
                                         <select id="ColorFlag" name="ColorFlag"></select>
                                     </div>
-                                    <div id="jqxExp-1">
+                                    <div id="jqxExp-1" class="panel-area rtl">
                                         <div class="panel-area-title">
-                                            פרטים נוספים
+                                            <a id="a-jqxExp-1" href="#">פרטים נוספים</a>
                                         </div>
-                                        <div class="panel-area rtl" style="border:none">
+
+                                        <div id="jqxExp-box" style="display:none">
 
                                             <div class="form-group">
                                                 <div class="field">
@@ -252,7 +259,7 @@
                                 <div id="jqxgrid4-import_window" style="display:none">
 
                                     <div style="overflow: hidden;direction:rtl;text-align:right;max-width:380px;">
-                                        <input id="uploadFile" type="hidden" />
+                                        <input id="uploadFile-import" type="hidden" />
                                         <div style="height: 5px"></div>
                                         <div class="panel-area">
                                             <h3>ייבוא</h3>
@@ -261,16 +268,16 @@
                                                     <div id="divInputUpload">
                                                         <span class="btn-sm btn-success fileinput-button">
                                                             <i class="glyphicon glyphicon-plus"><span>בחירת קובץ</span></i>
-                                                            <input id="fileupload" type="file" name="files[]" multiple>
+                                                            <input id="fileupload-import" type="file" name="files[]" multiple>
                                                         </span><span>&nbsp;</span>
                                                     </div>
                                                     <div id="hint-0" class="hint"></div>
                                                     <!-- The global progress bar -->
-                                                    <div id="progress" class="progress">
+                                                    <div id="progress-import" class="progress">
                                                         <div class="progress-bar progress-bar-success"></div>
                                                     </div>
                                                     <!-- The container for the uploaded files -->
-                                                    <div id="files" class="files"></div>
+                                                    <div id="files-import" class="files"></div>
                                                     <div id="loader" style="display:none">
                                                         <img src="~/Content/css/images/loading.gif" />
                                                     </div>
@@ -336,7 +343,7 @@
 </footer>
 
 <script type="text/javascript">
-    app_menu.activeLayoutMenu("liSystem");
+    app_menu.activeLayoutMenu("liMain");
     app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
     app_menu.footer("task");
 </script>

@@ -6468,7 +6468,7 @@ ol li .jqx-listmenu-item-label:before
     position: relative;
     box-shadow: #ddd 2px 2px 3px;
     cursor: pointer;
-  touch-action: none;
+    touch-action: none;
     -ms-touch-action: none;
 }
 

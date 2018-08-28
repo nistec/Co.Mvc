@@ -1,7 +1,7 @@
 ﻿@model Pro.Mvc.Models.EditTaskModel
 @{
     //ViewBag.Title = "System";
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     int rcdid = Nistec.Types.ToInt(Request["id"]);
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
     var dataModel = @Html.Raw(Json.Encode(Model));
@@ -71,7 +71,7 @@
             var uinfo = JSON.parse('@userInfo');
 
             task_def = new app_doc(JSON.parse('@dataModel'), uinfo, 'D');
-            task_def.init(false);
+            task_def.init();
 
         });
 
@@ -90,7 +90,7 @@
         </div>
         <div style="height:5px"></div>
         <div id="wiz-1" class="wiz-tab active">
-            <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+            <div id="jqxWidget" class="box-hide">
 
                 <div id="accordion" class="jcx-tabs rtl tab-content">
                     <ul id="tab-query" class="nav nav-tabs1">
@@ -116,13 +116,13 @@
                                             <div class="field">
                                                 סוג מסמך:
                                             </div>
-                                            <select id="Doc_Type" name="Doc_Type"></select>
+                                            <select id="Doc_Type" name="Doc_Type" data-type="select-loader" data-args="7"></select>
                                         </div>
                                         <div class="form-group">
                                             <div class="field">
                                                 תיקייה:
                                             </div>
-                                            <input type="text" id="Folder" name="Folder" class="text-mid"/>
+                                            <input type="text" id="Folder" name="Folder" autocomplete="off" class="text-mid"/>
                                         </div>
                                         <div class="form-group">
                                             <div class="field">
@@ -135,7 +135,7 @@
                                             <div class="field">
                                                 תיאור: <span><a id="DocBody-btn-view" href="#"><i class="fa fa-search-plus" style="font-size:16px"></i></a></span>
                                             </div>
-                                            <textarea id="DocBody" name="DocBody" class="text-content"></textarea>
+                                            <textarea id="DocBody" name="DocBody" class="text-content" data-type="jqx-editor"></textarea>
                                         </div>
                                         <div class="form-group">
                                             <div class="field">
@@ -309,7 +309,7 @@
 <footer>
 </footer>
 <script type="text/javascript">
-    app_menu.activeLayoutMenu("liSystem");
+    app_menu.activeLayoutMenu("liDoc");
     app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
     app_menu.footer("task");
 </script>

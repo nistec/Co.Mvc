@@ -9,6 +9,7 @@ namespace Pro.Lib
 {
     public class Settings
     {
+        public const string AppName = "co";
         public const string ProjectName = "Party";
         //public const int AccountId = 3;
         public const string ChoosAll = "===בחר הכל===";

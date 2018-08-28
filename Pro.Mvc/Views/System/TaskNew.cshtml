@@ -1,7 +1,7 @@
 ﻿@model Pro.Mvc.Models.EditTaskModel
 @{
     //ViewBag.Title = "System";
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     //int rcdid = Nistec.Types.ToInt(Request["id"]);
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
     var dataModel = @Html.Raw(Json.Encode(Model));
@@ -11,11 +11,14 @@
 
     @Scripts.Render("~/bundles/jqx")
     @Scripts.Render("~/bundles/jqxgrid")
+<link href="~/Scripts/plagins/select/css/select2.css" rel="stylesheet" />
+<script src="~/Scripts/plagins/select/select2.full.js"></script>
+
     <link rel="stylesheet" href="~/Scripts/plagins/tabs/jcxtabs-light.min.css" />
     <script src="~/Scripts/plagins/tabs/jcxtabs.min.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxeditor.js"></script>
-    <script src="~/jqwidgets/jqxpopover.js"></script>
+    @*<script src="~/jqwidgets/jqxpopover.js"></script>*@
     <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
     <script type="text/javascript" src="~/Scripts/app/system/task-base.js"></script>
     <script type="text/javascript" src="~/Scripts/app/system/task-def.js"></script>
@@ -28,9 +31,15 @@
             direction: rtl;
             text-align: right;
         }
+        .no-search .select2-search {
+            display: none
+        }
+
         /*#accordion {
             max-width: 800px;
         }*/
+
+      
     </style>
 
     <!--uploder==============================-->
@@ -62,26 +71,10 @@
         task_def = new app_task(JSON.parse('@dataModel'), uinfo, 'T');
         task_def.init(false);
 
-        //$('#reset').on('click', function () {
-        //    location.reload();
-        //});
-
-        //$('#fcClear').on('click', function (e) {
-        //    //app_messenger.Post("הודעה");
-        //    $('#fcForm')[0].reset();
-        //    $('#fcForm').jqxValidator('hide');
-        //});
-        //$('#fcNew').on('click', function (e) {
-        //    app.refresh();
-        //});
-        //$('#fcCancel').on('click', function (e) {
-        //    task_def.doCancel();
-        //});
-        //$('#fcSubmit').on('click', function (e) {
-        //    task_def.doSubmit('one');
-        //});
-        //$('#fcSubmit-plus').on('click', function (e) {
-        //    task_def.doSubmit('plus');
+        //$('#mySelect2').select2({
+        //    width: 200,
+        //    minimumResultsForSearch: Infinity
+        //    //selectOnClose: true
         //});
 
     });
@@ -101,8 +94,7 @@
         </div>
         <div style="height:5px"></div>
 
-        <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
-
+        <div id="jqxWidget" class="box-hide">
 
             <div id="accordion" class="jcx-tabs rtl tab-content" dir="rtl">
                 <ul id="tab-query" class="nav nav-tabs1">
@@ -135,13 +127,13 @@
                                             משימה עבור:
                                         </div>
                                         <div id="IntendedTo"></div>
-                                    </div>
+                                     </div>
 
                                     <div class="form-group">
                                         <div class="field">
                                             סוג משימה:
                                         </div>
-                                        <div id="Task_Type" name="Task_Type"></div>
+                                        <select id="Task_Type" name="Task_Type" data-type="select-loader" data-args="4"></select>
                                     </div>
                                     <div class="form-group">
                                         <div class="field">
@@ -153,7 +145,7 @@
                                         <div class="field">
                                             תיאור: <span><a id="TaskBody-btn-view" href="#"><i class="fa fa-search-plus" style="font-size:16px"></i></a></span>
                                         </div>
-                                        <textarea id="TaskBody" name="TaskBody" class="text-content"></textarea>
+                                        <textarea id="TaskBody" name="TaskBody" class="text-content" data-type="jqx-editor"></textarea>
                                     </div>
                                     <div class="form-group">
                                         <div class="field">
@@ -298,9 +290,8 @@
 
                                     </div>*@
                                 <div id="jqxgrid4-import_window" style="display:none">
-
                                     <div style="overflow: hidden;direction:rtl;text-align:right;max-width:380px;">
-                                        <input id="uploadFile" type="hidden" />
+                                        <input id="uploadFile-import" type="hidden" />
                                         <div style="height: 5px"></div>
                                         <div class="panel-area">
                                             <h3>ייבוא</h3>
@@ -309,16 +300,16 @@
                                                     <div id="divInputUpload">
                                                         <span class="btn-sm btn-success fileinput-button">
                                                             <i class="glyphicon glyphicon-plus"><span>בחירת קובץ</span></i>
-                                                            <input id="fileupload" type="file" name="files[]" multiple>
+                                                            <input id="fileupload-import" type="file" name="files[]" multiple>
                                                         </span><span>&nbsp;</span>
                                                     </div>
                                                     <div id="hint-0" class="hint"></div>
                                                     <!-- The global progress bar -->
-                                                    <div id="progress" class="progress">
+                                                    <div id="progress-import" class="progress">
                                                         <div class="progress-bar progress-bar-success"></div>
                                                     </div>
                                                     <!-- The container for the uploaded files -->
-                                                    <div id="files" class="files"></div>
+                                                    <div id="files-import" class="files"></div>
                                                     <div id="loader" style="display:none">
                                                         <img src="~/Content/css/images/loading.gif" />
                                                     </div>
@@ -361,7 +352,7 @@
                 <div id="exp-5" class="jcxtab-panel">
                     <div class="panel-area">
                         <div class="panel-area-title" id="hxp-5">קבצים</div>
-                        <div class="expander-entry">
+                        <div class="expander-entry1">
                             <div id="task-files"></div>
                         </div>
                     </div>
@@ -383,7 +374,7 @@
 </footer>
 
 <script type="text/javascript">
-    app_menu.activeLayoutMenu("liSystem");
+    app_menu.activeLayoutMenu("liMain");
     app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
     app_menu.footer("task");
 </script>

@@ -363,7 +363,7 @@ namespace Pro.Mvc.Controllers
             try
             {
 
-                if (IsAdmin() == false)
+                if (!IsSignedUser(UserRole.System, false)) //(IsAdmin() == false)
                     return Json(GetFormResult(-1, action, "User not allowed!", 0), JsonRequestBehavior.AllowGet);
 
                 CmsPageSettings cs = new Data.Registry.CmsPageSettings(Request);
@@ -399,7 +399,7 @@ namespace Pro.Mvc.Controllers
             try
             {
                 
-                if(IsAdmin()==false)
+                if (!IsSignedUser(UserRole.System, false)) //(IsAdmin()==false)
                     return Json(GetFormResult(-1, action, "User not allowed!", 0), JsonRequestBehavior.AllowGet);
 
                 Content = HttpUtility.UrlDecode(Content);

@@ -1,11 +1,11 @@
 ﻿@{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     ViewBag.Title = "Tasks";
 }
 @section head { 
 
     @Scripts.Render("~/bundles/jqx")
-    <script src="~/Scripts/app/system/system-models.js"></script>
+    <script src="~/Scripts/app/app-system-model.js"></script>
 }
 
 
@@ -30,10 +30,10 @@
 <div class="global-view">
     <div class="container-box">
 
-        <div id="hTitle" class="panel-page-header rtl">
-            <span id="hTitle-text" style="margin:10px">ניהול</span>
+        <div id="hTitle" class="panel-page-header rtl pasive">
+            <span id="hTitle-text" style="margin:10px;">ניהול</span>
         </div>
-        <div style="height:5px"></div>
+        <div style="height:20px"></div>
 
         <div id="task-Board" class="rtl">
          

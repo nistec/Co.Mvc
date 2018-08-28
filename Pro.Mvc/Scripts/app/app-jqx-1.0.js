@@ -54,8 +54,6 @@ var app_jqxform = {
 
         if (isjqx === undefined)
             isjqx = true;
-        "jqx-widget jqx-dropdownlist-state-normal jqx-rc-all jqx-fill-state-normal jqx-default"
-        "$("#MediaType")[0].children.MediaType.parentElement.className"
         $('#' + form + ' input, #' + form + ' select, #' + form + ' textarea').each(function (index) {
             var input = $(this);
             var tag = input.attr('name');
@@ -1132,18 +1130,18 @@ var app_jqx = {
         //}
         //);
     },
-    findRecordByField: function (dataAdapter, id, field) {
-        var records = dataAdapter.records;
-        var rec = $.grep(records, function (item) { return item[field] == id; });
-        if (rec && rec.length > 0) {
-            return rec[0];
-        }
-        return null;
-    },
+    //findRecordByField: function (dataAdapter, id, field) {
+    //    var records = dataAdapter.records;
+    //    var rec = $.grep(records, function (item) { return item[field] == id; });
+    //    if (rec && rec.length > 0) {
+    //        return rec[0];
+    //    }
+    //    return null;
+    //},
     findRecordValueByField: function (dataAdapter, id, field, fieldValue) {
-        var record = app_jqx.findRecordByField(dataAdapter, id, field);
-        if (record) {
-            return record[fieldValue];
+        var record = app_jqx.findRecordByField(dataAdapter.records, field,id);
+        if (record && record.length>0) {
+            return record[0][fieldValue];
         }
         return null;
     }
@@ -1191,6 +1189,21 @@ var app_jqx_validation = {
 //============================================================================================ app_jqx_adapter
 
 var app_jqx_adapter = {
+    create: function (source, loadCompleted) {
+        var dataAdapter = new $.jqx.dataAdapter(source, {
+            loadComplete: function (record) {
+                if (loadCompleted)
+                    loadCompleted(record);
+            },
+            loadError: function (jqXHR, status, error) {
+                app_dialog.alert("error loading data");
+            },
+            beforeLoadComplete: function (records) {
+            }
+        });
+
+        return dataAdapter;
+    },
     createComboArrayAsync: function (displayMember, tag, url, data, width, dropDownHeight, autoComplete, value, callback) {
         tag = "#" + tag.replace("#", "");
         var autoDropDownHeight = true;

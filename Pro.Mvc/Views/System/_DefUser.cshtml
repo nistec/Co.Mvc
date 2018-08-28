@@ -1,0 +1,233 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewIframe.cshtml";
+    Page.Title = "UserInfo";
+    //var userInfo = @Html.Raw(Json.Encode(Model));
+}
+
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+    @*<script type="text/javascript" src="~/Scripts/app/system/ad-users-def.js"></script>*@
+    <style type="text/css">
+        .headline {
+            color: #0094ff;
+            font-weight: bold;
+        }
+    </style>
+
+    <script type="text/javascript">
+     $(document).ready(function () {
+         var theme = 'Arctic';
+         JSON.useDateParser();
+
+         @*var def = new app_ad_user_def(JSON.parse('@userInfo'));*@
+
+         //app_debug.def_user(this);
+
+
+         var loadControls = function () {
+
+             var slf = this;
+
+             // initialize the input fields.
+             $("#UserRole").jqxDropDownList().width(150);
+             //$("#IsBlocked").jqxCheckBox();
+             //$("#IsResetPass").jqxCheckBox();
+             if (this.AllowEdit == 0) {
+                 $("#UserRole").jqxDropDownList("disabled", true);
+                 $("#IsBlocked").attr("disabled", true);
+                 //$("#IsBlocked").jqxCheckBox("disabled", true);
+             }
+
+             // initialize the popup window and buttons.
+             $("#Cancel").jqxButton();
+
+             $("#Save").jqxButton();
+
+             $("#Save").click(function (e) {
+
+                 app_form.doFormPost("#form", function (data) {
+                     app_messenger.Post(data.Message);
+                 });
+             });
+
+
+             var input_rules = [
+                 { input: '#UserName', message: 'נדרש שם משתמש!', action: 'keyup, blur', rule: 'required' },
+                 { input: '#UserName', message: 'שם משתמש בין 3 ל 12 תוים לפחות!', action: 'keyup, blur', rule: 'length=3,12' },
+                 {
+                     input: '#UserName', message: 'נדרש אותיות באנגלית בלבד!', action: 'valuechanged, blur', rule:
+                         function (input, commit) {
+                             var re = /^[A-Za-z][A-Za-z0-9]*$/
+                             return re.test(input.val());
+                         }
+                 },
+                 { input: '#DisplayName', message: 'נדרש פרטי משתמש!', action: 'keyup, blur', rule: 'required' },
+                 { input: '#DisplayName', message: 'פרטי משתמש אותיות בלבד!', action: 'keyup', rule: 'notNumber' },
+                 { input: '#DisplayName', message: 'פרטי משתמש בין 3 ל 12 תוים לפחות!', action: 'keyup', rule: 'length=3,12' },
+                 { input: '#Email', message: 'נדרש כתובת אימייל!', action: 'keyup, blur', rule: 'required' },
+                 { input: '#Email', message: 'אימייל לא תקין!', action: 'keyup', rule: 'email' },
+                 //{ input: '#UserRole', message: 'נדרש תפקיד!', action: 'valuechanged, blur', rule: 'required' },
+                 {
+                     input: '#UserRole', message: 'נדרש תפקיד!', action: 'keyup, select', rule: function (input) {
+                         var index = $("#UserRole").jqxDropDownList('getSelectedIndex');
+                         if (index >= 0) { return true; } return false;
+                     }
+                 },
+                 { input: '#Phone', message: 'נדרש טלפון נייד!', action: 'keyup, blur', rule: 'required' },
+                 {
+                     input: '#Phone', message: 'טלפון נייד אינו תקין!', action: 'valuechanged, blur', rule:
+                         function (input, commit) {
+                             var re = /^(|\()(0|972)(\d{1}|\d{2})(|[\)\/\.-])([0-9]{7})$/
+                             return re.test(input.val());
+                         }
+                 }
+             ];
+
+             $('#form').jqxValidator({
+                 rtl: true,
+                 //hintType: 'label',
+                 animationDuration: 0,
+                 rules: input_rules
+             });
+
+             // prepare the data
+             var roleSource =
+                 {
+                     //async:false,
+                     dataType: "json",
+                     dataFields: [
+                         { name: 'RoleId' },
+                         { name: 'RoleName' }
+                     ],
+                     data: {},
+                     type: 'POST',
+                     url: '/System/GetUsersRoles'
+                 };
+             var roleAdapter = new $.jqx.dataAdapter(roleSource, {
+                 contentType: "application/json; charset=utf-8",
+                 loadError: function (jqXHR, status, error) {
+                     //alert("roleAdapter failed: " + error);
+                 },
+                 loadComplete: function (data) {
+                     //alert("roleAdapter is Loaded");
+                 }
+             });
+             $("#UserRole").jqxDropDownList(
+                 {
+                     rtl: true,
+                     source: roleAdapter,
+                     width: 120,
+                     autoDropDownHeight: true,
+                     dropDownHorizontalAlignment: 'right',
+                     promptText: "בחירת תפקיד",
+                     displayMember: 'RoleName',
+                     valueMember: 'RoleId'
+                 });
+         };
+
+         var loadData = function () {
+
+             var source =
+                 {
+                     //async: false,
+                     dataType: "json",
+                     datafields:
+                         [
+                             { name: 'DisplayName', type: 'string' },
+                             { name: 'UserId', type: 'number' },
+                             { name: 'UserRole', type: 'number' },
+                             { name: 'RoleName', type: 'string' },
+                             { name: 'UserName', type: 'string' },
+                             { name: 'Email', type: 'string' },
+                             { name: 'Phone', type: 'string' },
+                             { name: 'AccountId', type: 'number' },
+                             { name: 'Lang', type: 'string' },
+                             { name: 'Evaluation', type: 'number' },
+                             { name: 'IsBlocked', type: 'bool' },
+                             { name: 'Creation', type: 'date' }
+
+                         ],
+                     data: {},
+                     id: 'UserId',
+                     type: 'POST',
+                     url: '/System/GetUserInfo'
+                 };
+             var dataAdapter = new $.jqx.dataAdapter(source, {
+                 //contentType: "application/json; charset=utf-8",
+                 loadError: function (jqXHR, status, error) {
+
+                     app_dialod.alert(error);
+
+                 },
+                 loadComplete: function (data) {
+
+                     app_form.loadDataForm("form", data);
+                 }
+             });
+             dataAdapter.dataBind();
+
+         };
+         loadControls();
+         loadData();
+
+     });
+    </script>
+}
+
+
+    <div class="container-box">
+
+        <h3 class="rtl">פרטים אישיים</h3>
+
+        <form id="form" action="DefUserUpdate" method="post">
+                    <input type="hidden" id="AccountId" value="1" />
+                    <input type="hidden" id="Lang" value="" />
+                    <input type="hidden" id="Evaluation" value="0" />
+                    <input type="hidden" id="Creation" value="" />
+                    <div class="section-table">
+
+                            <div class="form-group">
+                                <div>קוד משתמש:</div>
+                                <input id="UserId" name="UserId" type="text" disabled />
+                            </div>
+                            <div class="form-group">
+                                <div>שם משתמש:</div>
+                                <input id="UserName" name="UserName" type="text" style="direction:ltr;text-align:left;" />
+                            </div>
+                            <div class="form-group">
+                                <div>פרטים:</div>
+                                <input id="DisplayName" name="DisplayName" type="text" />
+                            </div>
+                            <div class="form-group">
+                                <div>תפקיד:</div>
+                                <div id="UserRole" name="UserRole"></div>
+                            </div>
+                        
+                            <div class="form-group">
+                                <div>אימייל:</div>
+                                <input id="Email" name="Email" type="text" style="direction:ltr;text-align:left;" />
+                            </div>
+                            <div class="form-group">
+                                <div>טלפון:</div>
+                                <input id="Phone" name="Phone" type="text" style="direction:ltr;text-align:left;" />
+                            </div>
+                            <div class="form-group">
+                                <span>חסום: </span><input type="checkbox" id="IsBlocked" disabled />
+                            </div>
+                            <div id="isReset" class="form-group">
+                                <span>איפוס סיסמה: </span><input type="checkbox" id="IsResetPass" />
+                            </div>
+                        
+                    </div>
+                    <div>
+                        <div></div>
+                        <div style="padding-top: 10px;">
+                            <input id="Save" type="button" style="margin-right: 5px;" value="עדכון" disabled />
+                            @*<input id="Cancel" type="button" value="ביטול" disabled />*@
+                        </div>
+                    </div>
+        </form>
+    </div>
+
+
+

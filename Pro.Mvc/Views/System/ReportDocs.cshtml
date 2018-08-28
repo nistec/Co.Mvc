@@ -1,6 +1,6 @@
 ﻿@model ProSystem.Query.QueryModel
 @{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     ViewBag.Title = "Docs";
     var dataModel = @Html.Raw(Json.Encode(Model));
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
@@ -152,24 +152,21 @@
 <div class="global-view">
     <div class="container">
         <h3 class="rtl"><label>תיעוד מסמכים</label> <label title="מסמך חדש"><a href="~/System/DocNew?pid=0"><i class="fa fa-newspaper-o"></i></a></label></h3>
-        <div class="grid-wrap rtl">
+        <div id="grid-wrap" class="grid-wrap rtl">
             <div id="grid-toolbar-options" class="grid-toolbar" style="font-size: 80%;">
                 <form id="tb_form">
                     <input type="hidden" id="DocState" value="0" />
                     <div style="height:5px"></div>
                     <div style="display:inline;float:right">
-                        <input type="checkbox" id="chkAssignBy" /><span>הצג מסמכים שנוצרו על ידי בלבד</span>
-                        <span> | </span>
                         <span>הצג מסמכים</span>
-                        <input type="radio" name="DocState" value="1" /><span>ממתינים בלבד</span>
-                        <input type="radio" name="DocState" value="2" /><span>פעילים בלבד</span>
-                        <input type="radio" name="DocState" value="16" /><span>סגורים בלבד</span>
+                        <input type="checkbox" id="chkAssignBy" />
+                        <span>שנוצרו על ידי בלבד</span><span> | </span>
+                        <input type="radio" name="DocState" value="1" /><span>ממתינים</span>
+                        <input type="radio" name="DocState" value="2" /><span>פעילים</span>
+                        <input type="radio" name="DocState" value="16" /><span>סגורים</span>
                         <input type="radio" name="DocState" value="0" id="rdStateAll" checked="checked" /><span>הכל</span>
                         <span> . </span>
                     </div>
-
-                    <div id="tbFilter" style="margin-left: 5px; float: right; " title='סינון'><img src='../scripts/app/images/filter.gif'></div>
-                    <div id="tbFilterRemove" style="margin-left: 5px; float: right;" title='ביטול סינון'><img src='../scripts/app/images/filterRemove.gif'></div>
                 </form>
             </div>
             <div id="grid-toolbar" class="grid-toolbar"></div>
@@ -178,6 +175,7 @@
                 <div id="jqxgrid" style="position:relative;z-index:1;"></div>
             </div>
         </div>
+        <div id="window_doc_info"></div>
     </div>
 </div>
 

@@ -224,6 +224,16 @@
     <Content Include="Images\logo-myt.png" />
     <Content Include="Images\logo.png" />
     <Content Include="Images\Logo-party.png" />
+    <Content Include="Images\main\reports.jpg" />
+    <Content Include="Images\main\admin.jpg" />
+    <Content Include="Images\main\sales-force.jpg" />
+    <Content Include="Images\main\seo-search.jpg" />
+    <Content Include="Images\main\tasks-mng.jpg" />
+    <Content Include="Images\main\tasks.jpg" />
+    <Content Include="Images\main\automation.jpg" />
+    <Content Include="Images\main\advertising.jpg" />
+    <Content Include="Images\main\members.jpg" />
+    <Content Include="Images\main\web-design.jpg" />
     <Content Include="Images\slider\poster.jpg" />
     <Content Include="Images\slider\poster1.jpg" />
     <Content Include="jqwidgets\ex\mc-cmsWeb.css" />
@@ -392,6 +402,9 @@
     <Content Include="jqwidgets\jqxdata.js" />
     <Content Include="jqwidgets\jqxdatatable.js" />
     <Content Include="jqwidgets\jqxdate.js" />
+    <Content Include="jqwidgets\styles\jqx.nis_base.css" />
+    <Content Include="jqwidgets\styles\jqx.nis_material.css" />
+    <Content Include="jqwidgets\styles\jqx.nis_material-0.css" />
     <Content Include="jqwidgets\__jqxdatetimeinput.js" />
     <Content Include="jqwidgets\jqxdatetimeinput.js" />
     <Content Include="jqwidgets\jqxdocking.js" />
@@ -787,6 +800,10 @@
     <Content Include="jqwidgets\styles\jqx.ui-sunny.css" />
     <Content Include="jqwidgets\styles\jqx.web.css" />
     <Content Include="jqwidgets\styles\jqx.windowsphone.css" />
+    <Content Include="Scripts\app\ad\account-edit.js" />
+    <Content Include="Scripts\app\ad\account-def.js" />
+    <Content Include="Scripts\app\ad\accounts.js" />
+    <Content Include="Scripts\app\ad\payments-grid.js" />
     <Content Include="Scripts\app\app-jqx-tree-grid-1.0.js" />
     <Content Include="Scripts\app\app-jqx-grid-1.0.js" />
     <Content Include="Scripts\app\app-wizard-1.0.js" />
@@ -824,13 +841,14 @@
     <Content Include="Scripts\app\model\generic\price-def.js" />
     <Content Include="Scripts\app\model\media-files.js" />
     <Content Include="Scripts\app\main\sendreport-grid.js" />
+    <Content Include="Scripts\app\netcell\contacts.js" />
     <Content Include="Scripts\app\registry\member-info.js" />
+    <Content Include="Scripts\app\app-system-model.js" />
     <Content Include="Scripts\app\system\calendar.js" />
     <Content Include="Scripts\app\system\report-sub-tasks.js" />
     <Content Include="Scripts\app\system\report-docs-grid.js" />
     <Content Include="Scripts\app\system\report-topics-grid.js" />
     <Content Include="Scripts\app\system\task-base.js" />
-    <Content Include="Scripts\app\system\system-models.js" />
     <Content Include="Scripts\app\system\topic-def.js" />
     <Content Include="Scripts\app\system\doc-def.js" />
     <Content Include="Scripts\app\system\task-form-temp.js" />
@@ -1786,8 +1804,17 @@
     <Content Include="Scripts\jq\ui\1.9.2\jquery-ui.min.js" />
     <Content Include="Scripts\mc\mc-all.js" />
     <Content Include="Scripts\plagins\popbox\images\wait.gif" />
+    <Content Include="Scripts\plagins\select\chosen-sprite%402x.png" />
+    <Content Include="Scripts\plagins\select\chosen-sprite.png" />
+    <Content Include="Scripts\plagins\select\chosen.css" />
+    <Content Include="Scripts\plagins\select\chosen.jquery.js" />
+    <Content Include="Scripts\plagins\select\chosen.jquery.min.js" />
+    <Content Include="Scripts\plagins\select\chosen.min.css" />
+    <Content Include="Scripts\plagins\select\chosen.proto.js" />
+    <Content Include="Scripts\plagins\select\chosen.proto.min.js" />
     <Content Include="Scripts\plagins\select\css\select2.css" />
     <Content Include="Scripts\plagins\select\css\select2.min.css" />
+    <Content Include="Scripts\plagins\select\options.html" />
     <Content Include="Scripts\plagins\select\select2.full.js" />
     <Content Include="Scripts\plagins\select\select2.full.min.js" />
     <Content Include="Scripts\plagins\select\select2.js" />
@@ -1894,14 +1921,26 @@
     <Content Include="Scripts\plagins\vex\css\vex-theme-top.css" />
     <Content Include="Scripts\plagins\vex\css\vex-theme-wireframe.css" />
     <Content Include="Scripts\plagins\vex\css\vex.css" />
-    <Content Include="Scripts\plagins\vex\docs\vex.gif" />
-    <Content Include="Scripts\plagins\vex\docs\welcome\index.html" />
-    <Content Include="Scripts\plagins\vex\build-test.html" />
-    <Content Include="Scripts\plagins\vex\vex.combined.min.js" />
-    <Content Include="Scripts\plagins\vex\vex.dialog.js" />
-    <Content Include="Scripts\plagins\vex\vex.dialog.min.js" />
-    <Content Include="Scripts\plagins\vex\vex.js" />
-    <Content Include="Scripts\plagins\vex\vex.min.js" />
+    <Content Include="Scripts\plagins\vex\js\vex.combined.js" />
+    <Content Include="Scripts\plagins\vex\js\vex.combined.min.js" />
+    <Content Include="Scripts\plagins\vex\js\vex.js" />
+    <Content Include="Scripts\plagins\vex\js\vex.min.js" />
+    <Content Include="Scripts\plagins\vex\_back\css\vex-theme-bottom-right-corner.css" />
+    <Content Include="Scripts\plagins\vex\_back\css\vex-theme-default.css" />
+    <Content Include="Scripts\plagins\vex\_back\css\vex-theme-flat-attack.css" />
+    <Content Include="Scripts\plagins\vex\_back\css\vex-theme-os.css" />
+    <Content Include="Scripts\plagins\vex\_back\css\vex-theme-plain.css" />
+    <Content Include="Scripts\plagins\vex\_back\css\vex-theme-top.css" />
+    <Content Include="Scripts\plagins\vex\_back\css\vex-theme-wireframe.css" />
+    <Content Include="Scripts\plagins\vex\_back\css\vex.css" />
+    <Content Include="Scripts\plagins\vex\_back\docs\vex.gif" />
+    <Content Include="Scripts\plagins\vex\_back\docs\welcome\index.html" />
+    <Content Include="Scripts\plagins\vex\_back\build-test.html" />
+    <Content Include="Scripts\plagins\vex\_back\vex.combined.min.js" />
+    <Content Include="Scripts\plagins\vex\_back\vex.dialog.js" />
+    <Content Include="Scripts\plagins\vex\_back\vex.dialog.min.js" />
+    <Content Include="Scripts\plagins\vex\_back\vex.js" />
+    <Content Include="Scripts\plagins\vex\_back\vex.min.js" />
     <Content Include="Templates\5street\html5reset-1.6.1.css" />
     <Content Include="Templates\5street\images\share.png" />
     <Content Include="Templates\5street\registry.css" />
@@ -1912,8 +1951,6 @@
     <Content Include="Uploads\mifkad\share.png" />
     <Content Include="Uploads\mifkad\style.css" />
     <Content Include="Views\Main\MembersQuery.cshtml" />
-    <Content Include="Views\Home\_exclude\demoupload.cshtml" />
-    <Content Include="Views\Home\_exclude\demouploadform.cshtml" />
     <Content Include="Views\Common\_MemberCategories.cshtml" />
     <Content Include="Views\Cms\CmsItems.cshtml" />
     <Content Include="Views\Common\DefEntity.cshtml" />
@@ -1942,7 +1979,7 @@
     <Content Include="Views\Main\SignupExport.cshtml" />
     <Content Include="Views\Main\SignupReport.cshtml" />
     <Content Include="Views\Admin\DefAccount.cshtml" />
-    <Content Include="Views\Admin\AccountDef.cshtml" />
+    <Content Include="Views\Admin\AccountDef-0.cshtml" />
     <Content Include="Views\Main\SmsBroadcast.cshtml" />
     <Content Include="Views\Main\EmailBroadcast.cshtml" />
     <Content Include="Content\mifkad\images\matza.pdf" />
@@ -1950,22 +1987,22 @@
     <Content Include="Uploads\mifkad\tofes.pdf" />
     <Content Include="Views\Cms\CmsTextEdit.cshtml" />
     <Content Include="Uploads\mifkad\matza.pdf" />
-    <Content Include="Scripts\plagins\vex\coffee\vex.coffee" />
-    <Content Include="Scripts\plagins\vex\coffee\vex.dialog.coffee" />
-    <Content Include="Scripts\plagins\vex\docs\api\1-Basic.md" />
-    <Content Include="Scripts\plagins\vex\docs\api\2-Themes.md" />
-    <Content Include="Scripts\plagins\vex\docs\api\3-Advanced.md" />
-    <Content Include="Scripts\plagins\vex\docs\intro.md" />
-    <Content Include="Scripts\plagins\vex\sass\vex-theme-bottom-right-corner.sass" />
-    <Content Include="Scripts\plagins\vex\sass\vex-theme-default.sass" />
-    <Content Include="Scripts\plagins\vex\sass\vex-theme-flat-attack.sass" />
-    <Content Include="Scripts\plagins\vex\sass\vex-theme-os.sass" />
-    <Content Include="Scripts\plagins\vex\sass\vex-theme-plain.sass" />
-    <Content Include="Scripts\plagins\vex\sass\vex-theme-top.sass" />
-    <Content Include="Scripts\plagins\vex\sass\vex-theme-wireframe.sass" />
-    <Content Include="Scripts\plagins\vex\sass\vex.sass" />
-    <Content Include="Scripts\plagins\vex\sass\_keyframes.sass" />
-    <Content Include="Scripts\plagins\vex\sass\_mixins.sass" />
+    <Content Include="Scripts\plagins\vex\_back\coffee\vex.coffee" />
+    <Content Include="Scripts\plagins\vex\_back\coffee\vex.dialog.coffee" />
+    <Content Include="Scripts\plagins\vex\_back\docs\api\1-Basic.md" />
+    <Content Include="Scripts\plagins\vex\_back\docs\api\2-Themes.md" />
+    <Content Include="Scripts\plagins\vex\_back\docs\api\3-Advanced.md" />
+    <Content Include="Scripts\plagins\vex\_back\docs\intro.md" />
+    <Content Include="Scripts\plagins\vex\_back\sass\vex-theme-bottom-right-corner.sass" />
+    <Content Include="Scripts\plagins\vex\_back\sass\vex-theme-default.sass" />
+    <Content Include="Scripts\plagins\vex\_back\sass\vex-theme-flat-attack.sass" />
+    <Content Include="Scripts\plagins\vex\_back\sass\vex-theme-os.sass" />
+    <Content Include="Scripts\plagins\vex\_back\sass\vex-theme-plain.sass" />
+    <Content Include="Scripts\plagins\vex\_back\sass\vex-theme-top.sass" />
+    <Content Include="Scripts\plagins\vex\_back\sass\vex-theme-wireframe.sass" />
+    <Content Include="Scripts\plagins\vex\_back\sass\vex.sass" />
+    <Content Include="Scripts\plagins\vex\_back\sass\_keyframes.sass" />
+    <Content Include="Scripts\plagins\vex\_back\sass\_mixins.sass" />
     <Content Include="Views\Main\Members.cshtml" />
     <Content Include="Scripts\plagins\sidebar\.DS_Store" />
     <Content Include="Scripts\plagins\sidebar\js\.DS_Store" />
@@ -2048,9 +2085,12 @@
     <Content Include="Scripts\plagins\autocomplete\maps\easy-autocomplete.themes.css.map" />
     <Content Include="Scripts\plagins\autocomplete\maps\easy-autocomplete.themes.min.css.map" />
     <Content Include="Scripts\plagins\autocomplete\resources\countries.json" />
-    <None Include="Views\Home\_exclude\demoform.cshtml" />
+    <Content Include="Views\Admin\Accounts.cshtml" />
+    <Content Include="Views\Admin\AccountEdit.cshtml" />
     <Content Include="Scripts\plagins\popbox\api.html" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\PinController.cs" />
+    <Compile Include="Controllers\NetcellController.cs" />
     <Compile Include="Controllers\SyncController.cs" />
     <Compile Include="Controllers\SenderController.cs" />
     <Compile Include="Controllers\SystemController.cs" />
@@ -2291,13 +2331,10 @@
     <Content Include="Views\Shared\_View-Menu.cshtml">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="Views\Shared\_ViewAdmin.cshtml" />
+    <Content Include="Views\Shared\_ViewAdmin2.cshtml" />
     <Content Include="Views\Admin\Manager.cshtml" />
     <Content Include="Views\Admin\Main.cshtml" />
     <Content Include="Views\Admin\UsersDef.cshtml" />
-    <Content Include="Views\Home\_exclude\demogrid3.cshtml" />
-    <Content Include="Views\Home\_exclude\demogrid2.cshtml" />
-    <Content Include="Views\Home\_exclude\demogrid1.cshtml" />
     <Content Include="Views\Common\Final.cshtml" />
     <Content Include="Views\Common\Warn.cshtml" />
     <Content Include="Views\Shared\_ViewIframe.cshtml" />
@@ -2341,7 +2378,6 @@
     <Content Include="Views\Preview\Subscribe.cshtml" />
     <Content Include="Views\Preview\Web.config" />
     <Content Include="Views\Media\MembersUpload.cshtml" />
-    <Content Include="Views\Home\_exclude\Login.cshtml" />
     <Content Include="Views\System\Tasks.cshtml" />
     <Content Include="Views\System\_TaskComment.cshtml" />
     <Content Include="Views\Media\_MediaFiles.cshtml" />
@@ -2374,6 +2410,21 @@
     <Content Include="Views\System\DocNew.cshtml" />
     <Content Include="Views\System\DocEdit.cshtml" />
     <Content Include="Views\System\DefEntity.cshtml" />
+    <Content Include="Views\Shared\_View2.cshtml" />
+    <Content Include="Views\System\TaskNew2.cshtml" />
+    <Content Include="Views\System\_DefUser.cshtml" />
+    <Content Include="Views\System\DocInfo.cshtml" />
+    <Content Include="Views\System\TopicInfo.cshtml" />
+    <Content Include="Views\System\TicketInfo.cshtml" />
+    <Content Include="Views\Shared\_ViewMng.cshtml" />
+    <Content Include="Views\Main\Main.cshtml" />
+    <Content Include="Views\Shared\_ViewSystem.cshtml" />
+    <Content Include="Views\Shared\_ViewAdmin.cshtml" />
+    <Content Include="Views\Shared\_ViewMain.cshtml" />
+    <Content Include="Views\Admin\Payments.cshtml" />
+    <Content Include="Views\Netcell\Contacts.cshtml" />
+    <Content Include="Views\Shared\_ViewNetcell.cshtml" />
+    <Content Include="Views\Netcell\NetcellBoard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\camera.css" />
@@ -2479,12 +2530,12 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Images\_obsolete\" />
-    <Folder Include="Scripts\app\admin\" />
     <Folder Include="Scripts\app\system\_ex\_v-0\" />
     <Folder Include="Scripts\app\system\_v-1\" />
     <Folder Include="Scripts\app\_old\" />
     <Folder Include="Scripts\_exclude\" />
     <Folder Include="Views\Account\_ex\" />
+    <Folder Include="Views\Admin\_Admin\" />
     <Folder Include="Views\Cms\_ex\" />
     <Folder Include="Views\Common\_defEntity\" />
     <Folder Include="Views\Common\_exclude\" />
@@ -2526,6 +2577,10 @@
     <ProjectReference Include="..\Lib\Pro.Lib\Pro.Lib.csproj">
       <Project>{b84526d5-435e-4d56-b323-dbffafe54940}</Project>
       <Name>Pro.Lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lib\Pro.Netcell\Pro.Netcell.csproj">
+      <Project>{d47586c0-2543-4de0-b1b2-129d61ecb006}</Project>
+      <Name>Pro.Netcell</Name>
     </ProjectReference>
     <ProjectReference Include="..\Lib\Pro.System\Pro.System.csproj">
       <Project>{08ee976c-6767-40d0-9c07-b6c5afb9dba1}</Project>

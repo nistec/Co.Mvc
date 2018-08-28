@@ -179,7 +179,7 @@ function wiz_control(controlName,tagWindow) {
     //this.control_sync,
     this.control_name = controlName,
     this.tagWindow = tagWindow;
-    this.init = function (html,data, syncCallback) {
+    this.init = function (html, data, syncCallback) {
         //var pasive = dataModel.Option == "a" ? " pasive" : "";
         //this.html = html;
         $(this.tagWindow).html(html).hide();
@@ -200,14 +200,14 @@ function wiz_control(controlName,tagWindow) {
             form = "fcForm";
         app_jqxform.clearDataForm(form);
     },
-    this.load = function (form,source, loadCallback) {
+    this.load = function (form, source, loadCallback) {
 
-        if (form === undefined || form===null)
+        if (form === undefined || form === null)
             form = "fcForm";
 
         //if (this.RecordId > 0) {
 
-        if (this.viewAdapter === undefined || this.viewAdapter===null) {
+        if (this.viewAdapter === undefined || this.viewAdapter === null) {
 
             this.viewAdapter = new $.jqx.dataAdapter(source, {
                 loadComplete: function (record) {
@@ -216,7 +216,7 @@ function wiz_control(controlName,tagWindow) {
                             loadCallback(record);
                         }
                         else {
-                            app_jqxform.loadDataForm(form, record);
+                            app_form.loadDataForm(form, record);
                         }
                     }
                 },
@@ -236,6 +236,23 @@ function wiz_control(controlName,tagWindow) {
         //    $('#UserId').val(this.UserInfo.UserId);
         //    $('#AccountId').val(this.UserInfo.AccountId);
         //}
+    },
+    this.loadData = function (form, record, loadCallback) {
+
+        if (form === undefined || form === null)
+            form = "fcForm";
+
+        if (record) {
+            if (loadCallback) {
+                loadCallback(record);
+            }
+            else {
+                app_form.loadDataForm(form, record);
+            }
+        }
+        else {
+            console.log('load new');
+        }
     },
     this.display = function () {
         $(this.tagWindow).show();

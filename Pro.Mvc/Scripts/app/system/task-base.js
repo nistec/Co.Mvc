@@ -18,6 +18,7 @@ class app_task_base {
         this.TaskId = dataModel.Id;
         this.TaskParentId = dataModel.PId;
         this.Model = dataModel;
+        this.IsInfo = dataModel.IsInfo;
         this.TaskModel = taskModel;
         this.UserInfo = userInfo;
         this.AccountId = userInfo.AccountId;
@@ -25,20 +26,22 @@ class app_task_base {
         this.AllowEdit = (this.UserRole > 4) ? 1 : 0;
 
         this.Title = app_tasks.taskTitle(this.TaskModel);
-        this.uploader;
+        this.uploader = undefined;
         this.IsNew = (this.TaskId == 0);
         this.IsOwner = (this.Model.UserId == this.UserInfo.UserId);
         this.Option = (dataModel.Option) ? dataModel.Option : 'e';
         this.AssignBy = (dataModel.AssignBy) ? dataModel.AssignBy : 0;
         this.TaskStatus = (dataModel.TaskStatus) ? dataModel.TaskStatus : 0;
-        this.IsEditable = (this.TaskId == 0) || ((this.TaskStatus < 8) && (this.AssignBy == this.UserInfo.UserId || this.Option == 'e'));
+        
+        this.IsEditable = (!this.IsInfo) &&((this.TaskId == 0) || ((this.TaskStatus < 8) && (this.AssignBy == this.UserInfo.UserId || this.Option == 'e')));
         this.EnableFormType = this.IsNew;
-        this.ClientId = 0;
-        this.ProjectId = 0;
-        this.Tags;
-        this.AssignTo;
-        this.SrcUserId = 0;
-        this.exp1_Inited = false;
+        this.Record = null;
+        //this.ClientId = 0;
+        //this.ProjectId = 0;
+        //this.Tags = undefined;
+        //this.AssignTo = undefined;
+        //this.SrcUserId = 0;
+        this.PostLoaded = false;
         this.Comment = null;
         this.Assign = null;
         this.Timer = null;
@@ -50,25 +53,27 @@ class app_task_base {
         }
     }
 
-    doSettings(record,isInfo) {
+    doSettings() {
+
+        var record = this.Record;
 
         if (record.TaskStatus <= 0)
             record.TaskStatus = 1;
 
         this.AssignBy = record.AssignBy;
         this.TaskStatus = record.TaskStatus;
-        this.IsEditable = (this.TaskId == 0) || ((this.TaskStatus < 8) && (this.AssignBy == this.UserInfo.UserId || this.Option == 'e'));
+        this.IsEditable = (!this.IsInfo) && ((this.TaskId == 0) || ((this.TaskStatus < 8) && (this.AssignBy == this.UserInfo.UserId || this.Option == 'e')));
 
-        this.ProjectId = record.Project_Id;
-        this.ClientId = record.ClientId;
-        this.Tags = record.Tags;
-        this.AssignTo = record.AssignTo;
-        this.SrcUserId = record.UserId;
+        //this.ProjectId = record.Project_Id;
+        //this.ClientId = record.ClientId;
+        //this.Tags = record.Tags;
+        //this.AssignTo = record.AssignTo;
+        //this.SrcUserId = record.UserId;
 
 
-        if (this.SrcUserId > 0)
-            app_jqx_combo_async.userInputAdapter("#UserId", this.SrcUserId);
-        if (isInfo) {
+        if (record.UserId > 0)
+            app_jqx_combo_async.userInputAdapter("#UserId", record.UserId);
+        if (this.IsInfo) {
             //var model = this.Model.Data
             if (record.Comments == 0)
                 $("#exp-1").hide();
@@ -83,10 +88,10 @@ class app_task_base {
         }
     }
 
-    _loadData(isInfo) {
+    _loadData() {
 
         var _slf = this;
-        var url = isInfo ? "/System/GetTaskInfo" : "/System/GetTaskEdit";
+        var url = _slf.IsInfo ? "/System/GetTaskInfo" : "/System/GetTaskEdit";
         var view_source =
             {
                 datatype: "json",
@@ -98,9 +103,9 @@ class app_task_base {
 
         var viewAdapter = new $.jqx.dataAdapter(view_source, {
             loadComplete: function (record) {
-
-                _slf.doSettings(record, isInfo);
-                _slf.loadControls(record);
+                _slf.Record = record;
+                _slf.doSettings();
+                _slf.loadControls();
                 //slf.loadEvents();
             },
             loadError: function (jqXHR, status, error) {
@@ -125,19 +130,38 @@ class app_task_base {
                     app_dialog.alert("יש לשמור את המשימה הנוכחית לפני הוספת הערות");
                     return false;
                 }
-                if (this.Comment == null) {//($("#jqxgrid1")[0].childElementCount == 0) {
-                    this.Comment = new app_task_comment_grid(this.TaskId, this.UserInfo, this.Option);
-                    //this.Comment.load(this.TaskId, this.UserInfo, this.Option);
+                if (this.IsInfo) {
+                    if ($("#jqxgrid1").is(':empty'))
+                        app_repeater.task_comments_adapter("#jqxgrid1", this.TaskId);
                 }
+                else {
+                    if (this.Comment == null) {//($("#jqxgrid1")[0].childElementCount == 0) {
+                        this.Comment = new app_task_comment_grid(this.TaskId, this.UserInfo, this.Option);
+                        //this.Comment.load(this.TaskId, this.UserInfo, this.Option);
+                    }
+                }
+
                 break;
             case 2:
-                if (this.Assign == null) {//($("#jqxgrid2")[0].childElementCount == 0)
-                    this.Assign = new app_task_assign_grid(this.TaskId, this.UserInfo, this.Option);
+                if (this.IsInfo) {
+                    if ($("#jqxgrid2").is(':empty'))
+                        app_repeater.task_assign_adapter("#jqxgrid2", this.TaskId);
+                }
+                else {
+                    if (this.Assign == null) {//($("#jqxgrid2")[0].childElementCount == 0)
+                        this.Assign = new app_task_assign_grid(this.TaskId, this.UserInfo, this.Option);
+                    }
                 }
                 break;
             case 3:
-                if (this.Timer == null)//($("#jqxgrid3")[0].childElementCount == 0)
-                    this.Timer = new app_task_timer_grid(this.TaskId, this.UserInfo, this.Option);
+                if (this.IsInfo) {
+                    if ($("#jqxgrid3").is(':empty'))
+                        app_repeater.task_timer_adapter("#jqxgrid3", this.TaskId);
+                }
+                else {
+                    if (this.Timer == null)//($("#jqxgrid3")[0].childElementCount == 0)
+                        this.Timer = new app_task_timer_grid(this.TaskId, this.UserInfo, this.Option);
+                }
                 break;
             case 4:
                 if (this.TaskId == 0) {
@@ -146,28 +170,47 @@ class app_task_base {
                     return false;
                 }
 
-                if (this.TaskModel == 'D') {
-                    if (this.Actions == null)//($("#jqxgrid4")[0].childElementCount == 0)
-                        this.Actions = new app_doc_form_grid(this.TaskId, this.UserInfo, this.Option);
-                }
-                else if (this.TaskModel == 'P') {
-                    if (this.Actions == null)//($("#jqxgrid4")[0].childElementCount == 0)
-                        this.Actions = new app_topic_form_grid(this.TaskId, this.UserInfo, this.Option);
+                if (this.IsInfo) {
+
+                    if (this.TaskModel == 'D') {
+                        if (this.Actions == null)//($("#jqxgrid4")[0].childElementCount == 0)
+                            this.Actions = new app_doc_form_grid(this.TaskId, this.UserInfo, this.Option);
+                    }
+                    else if (this.TaskModel == 'P') {
+
+                        if ($("#jqxgrid4").is(':empty'))
+                            app_repeater.topic_form_adapter("#jqxgrid4", this.TaskId);
+                    }
+                    else {
+                        if ($("#jqxgrid4").is(':empty'))
+                            app_repeater.task_form_adapter("#jqxgrid4", this.TaskId);
+                    }
                 }
                 else {
-                    if (this.Actions == null)//($("#jqxgrid4")[0].childElementCount == 0)
-                        this.Actions = new app_task_form_grid(this.TaskId, this.UserInfo, this.Option);
+                    if (this.TaskModel == 'D') {
+                        if (this.Actions == null)//($("#jqxgrid4")[0].childElementCount == 0)
+                            this.Actions = new app_doc_form_grid(this.TaskId, this.UserInfo, this.Option);
+                    }
+                    else if (this.TaskModel == 'P') {
+
+                        if (this.Actions == null)//($("#jqxgrid4")[0].childElementCount == 0)
+                            this.Actions = new app_topic_form_grid(this.TaskId, this.UserInfo, this.Option);
+                    }
+                    else {
+                        if (this.Actions == null)//($("#jqxgrid4")[0].childElementCount == 0)
+                            this.Actions = new app_task_form_grid(this.TaskId, this.UserInfo, this.Option);
 
 
-                    if (this.EnableFormType) {
-                        var source = $('#Form_Type').jqxComboBox('source');
-                        if (source == null)
-                            app_jqxcombos.createComboAdapter("FormTypeId", "FormName", "Form_Type", '/System/GetTaskFormTypeList', 0, 120, false);
+                        if (this.EnableFormType) {
+                            var source = $('#Form_Type').jqxComboBox('source');
+                            if (source == null)
+                                app_jqxcombos.createComboAdapter("FormTypeId", "FormName", "Form_Type", '/System/GetTaskFormTypeList', 0, 120, false);
 
-                        //if (this.FormTemplate == null) {//($("#jqxgrid4")[0].childElementCount == 0)
-                        //    this.FormTemplate = new app_task_form_template(); //app_task_base.form_template.load(this.TaskId, this.UserInfo);
-                        //    this.FormTemplate.load(this.TaskId, this.UserInfo);
-                        //}
+                            //if (this.FormTemplate == null) {//($("#jqxgrid4")[0].childElementCount == 0)
+                            //    this.FormTemplate = new app_task_form_template(); //app_task_base.form_template.load(this.TaskId, this.UserInfo);
+                            //    this.FormTemplate.load(this.TaskId, this.UserInfo);
+                            //}
+                        }
                     }
                 }
                 break;
@@ -192,20 +235,121 @@ class app_task_base {
         }
     }
 
-    lazyLoad() {
+    preLoad() {
 
-        app_jqx_combo_async.lookupInputAdapter('#ClientId', 'lu_Members', this.ClientId, function () {
+        var slf = this;
 
+        this.parentSettings(slf.TaskParentId);
+  
+        $("#AccountId").val(slf.AccountId);
+
+        //app_tasks.setColorFlag();
+        app_tasks.setShareType();
+
+        $('#a-jqxExp-1').on('click', function (e) {
+            if (!slf.PostLoaded) {
+                slf.postLoad();
+            }
+            $('#jqxExp-box').slideToggle();
+            return false;
         });
-        app_jqx_combo_async.systemLookupInputAdapter('#Project_Id', 'lu_Project', this.ProjectId, function () {
 
-        });
-        app_jqx_adapter.createComboDisplayAsync("Tag", "#Tags", '/System/GetTagsList', null, 225, 0, true, this.Tags, function () {
+        app_features.editorTag("#TaskBody", slf.IsEditable);
 
+        if (this.IsEditable) {
+            app_features.colorFlag("#ColorFlag", "#hTitle");
+        }
+
+        //$("#jqxWidget").slideDown('slow');
+        $("#jqxWidget").toggleClass('box-slide');
+
+    }
+
+    postLoad(waitAll) {
+
+        //waitAll = true;
+
+        if (this.PostLoaded)
+            return;
+
+        var _slf = this;
+        var clientId, projectId, tags, assignTo;
+        if (this.Record) {
+            clientId = this.Record.ClientId;
+            projectId = this.Record.ProjectId;
+            tags = this.Record.Tags;
+            assignTo = this.Record.AssignTo;
+        }
+        var promise1 = [0, 0, 0, 0];
+
+        app_jqx_combo_async.lookupInputAdapter('#ClientId', 'lu_Members', clientId, function () {
+            promise1[0] = 1;
         });
-        app_jqx_adapter.createComboCheckAdapterAsync("UserId", "DisplayName", "#AssignTo", '/System/GetUsersList', null, 225, 0, null, this.AssignTo, function () {
+        app_jqx_combo_async.systemLookupInputAdapter('#Project_Id', 'lu_Project', projectId, function () {
+            promise1[1] = 1;
+        });
+        app_jqx_adapter.createComboDisplayAsync("Tag", "#Tags", '/System/GetTagsList', null, 225, 0, true, tags, function () {
+            promise1[2] = 1;
+        });
+        app_jqx_adapter.createComboCheckAdapterAsync("UserId", "DisplayName", "#AssignTo", '/System/GetUsersList', null, 225, 0, null, assignTo, function () {
+            promise1[3] = 1;
             $("#AssignTo").jqxComboBox({ disabled: true });
         });
+
+        function afterPostLoaded() {
+
+            _slf.PostLoaded = true;
+
+            if (!_slf.IsEditable) {
+                //$("#ClientId").prop("readonly", true);
+                //$("#Project_Id").prop("readonly", true);
+                $("#Tags").jqxComboBox({ disabled: true });
+                $("#AssignTo").jqxComboBox({ disabled: true });
+                //$("#ShareType").jqxDropDownList({ enableSelection: false });
+                app.disableSelect("#ShareType");
+            }
+
+        }
+
+        if (waitAll) {
+            
+            function waitUntil() {
+
+                async function promiseCompleted() {
+                    var promiseMax = 4;
+                    var sum = promise1.reduce(function (acc, val) { return acc + val; }, 0);
+                    if (sum == promiseMax) {
+                        afterPostLoaded();
+                    }
+                    return sum == promiseMax;
+                }
+
+                async function delay() {
+                    return new Promise(resolve => setTimeout(resolve, 300));
+                }
+
+                async function processArray(array) {
+                    var maxloop = 10;
+                    var counter = 0;
+                    while (! await promiseCompleted()) {
+                        await delay();
+                        counter++;
+                        if (counter >= maxloop) {
+                            break;
+                        }
+                    }
+                    console.log('Done');
+                }
+
+                processArray(promise1);
+            }
+
+            waitUntil();
+        }
+        else {
+
+            afterPostLoaded();
+        }
 
 
         //$("#AssignTo").keydown(function (event) {
@@ -217,16 +361,7 @@ class app_task_base {
         //app_lookups.member_name($('#ClientId').val(), '#ClientId-display');
         //app_lookups.project_name($('#Project_Id').val(), '#Project_Id-display');
 
-        this.exp1_Inited = true;
-
-        if (!this.IsEditable) {
-            $("#ClientId").prop("readonly", true);
-            $("#Project_Id").prop("readonly", true);
-            $("#Tags").jqxComboBox({ enableSelection: false });
-            $("#AssignTo").jqxComboBox({ enableSelection: false });
-            //$("#ShareType").jqxDropDownList({ enableSelection: false });
-            app.disableSelect("#ShareType");
-        }
+        
     }
 
     doCancel() {
@@ -258,8 +393,66 @@ class app_task_base {
         //return this;
     }
 
-    loadControls(record) {
+    parentSettings(parentId) {
+        $("#Task_Parent").val(parentId);
+        if (parentId > 0) {
+            $("#Task_Parent-group").show();
+            $("#Task_Parent-link").click(function () {
+                app_open.modelEdit(parentId, this.TaskModel);
+                //app.redirectTo('/System/TaskInfo?id=' + parentId);
+            });
+        }
+        else {
+            $("#Task_Parent-group").hide();
+        }
+    }
 
+    loadControls() {
+
+        var record = this.Record;
+
+        $('#DueDate').jqxDateTimeInput({ showCalendarButton: this.IsEditable, readonly: !this.IsEditable, width: '150px', rtl: true });
+
+        $("#ShareType").change(function () {
+            var index = $('option:selected', this).val();
+
+            if (index === "3") {
+                $("#AssignTo").jqxComboBox({ disabled: false });
+                //$("#AssignTo").jqxComboBox('open');
+            }
+            else {
+                $("#AssignTo").jqxComboBox('uncheckAll');
+                $("#AssignTo").jqxComboBox({ disabled: true });
+            }
+        });
+
+        if (record) {
+
+            //this.doSettings(record);
+            app_form.loadDataForm("fcForm", record, ["TaskStatus"], this.IsInfo);// ["Project_Id", "ClientId", "Tags", "AssignTo"]);//,"Task_Type"]);
+
+            $("#AssignTo").jqxComboBox({ disabled: record.ShareType !== 3 });
+            //$("#TaskBody").jqxEditor('val', app.htmlUnescape(record.TaskBody));
+            $('#TaskBody').css('text-align', app_style.langAlign(record.Lang))
+
+            $("#hTitle-text").text(this.Title + ": " + record.TaskSubject);
+            $("#hTitle").css("background-color", (record.ColorFlag || config.defaultColor));
+
+            this.parentSettings(record.Task_Parent);
+
+            if (this.Option !== 'g' && record.TaskStatus > 1 && record.TaskStatus < 8)
+                $("#fcEnd").show();
+            else
+                $("#fcEnd").hide();
+            
+            app_tasks.setTaskStatus("#TaskStatus", record.TaskStatus);
+
+        }
+        else {
+            app_select_loader.loadTag("Task_Type", "Task_Type", 4);
+            app_jqxcombos.createComboAdapter("UserTeamId", "DisplayName", "IntendedTo", '/System/GetUserTeamList', 0, 120, false);
+            app_form.setDateTimeNow('#CreatedDate');
+        }
     }
 
     //============================================================ app_tasks global
@@ -732,6 +925,7 @@ class app_task_form_grid {
             height: 130,
             editable: slf.Option == "e",
             autoheight: true,
+            autorowheight: true,
             enabletooltips: true,
             localization: getLocalization('he'),
             source: actiondAdapter,
@@ -949,7 +1143,7 @@ class app_task_form_grid {
         if (data == null)
             return;
         if (this.UserId != data.AssignBy) {
-            app_dialog.Alert("לא ניתן למחוק פעולה שהוקצתה על ידי משתמש אחר");
+            app_dialog.alert("לא ניתן למחוק פעולה שהוקצתה על ידי משתמש אחר");
             return;
         }
         var id = data.ItemId;// this.getrowId();
@@ -1159,30 +1353,32 @@ class app_task_form_item {
                     if (record.StartDate) {
                         //$("#form-Start").hide();
                         app_perms.readonlyInput("#ItemText");
-                        slf.Mode == 'started';
+                        slf.Mode = 'started';
                         $("#form-Submit").text('עדכון');
                         $("#form-Done-group").show();
+
+                        if (record.DoneStatus == false) {
+                            //slf.Mode = 'started';
+                            $("#divDoneDate").hide();
+                            $("#divDisplayName").hide();
+                        }
+                        else {
+                            //$("#DoneStatus").prop('disabled', true)
+                            slf.Mode = 'done';
+                            app_perms.readonlyInput("#ItemText");
+                            $("#DoneComment").prop('readonly', true)
+                            $("#form-Submit").hide();
+                            //$("#form-Start").hide();
+                        }
                     }
                     else {
                         //$("#form-Start").show();
-                        slf.Mode == 'start';
+                        slf.Mode = 'start';
                         $("#form-Submit").text('התחל');
                         $("#form-Done-group").hide();
 
                     }
-                    if (record.DoneStatus == false) {
-                        slf.Mode == 'started';
-                        $("#divDoneDate").hide();
-                        $("#divDisplayName").hide();
-                    }
-                    else {
-                        //$("#DoneStatus").prop('disabled', true)
-                        slf.Mode == 'done';
-                        app_perms.readonlyInput("#ItemText");
-                        $("#DoneComment").prop('readonly', true)
-                        $("#form-Submit").hide();
-                        //$("#form-Start").hide();
-                    }
+                    
                 },
                 loadError: function (jqXHR, status, error) {
                 },
@@ -1315,7 +1511,7 @@ class app_task_form_template {
         var nastedAdapter = new $.jqx.dataAdapter(nastedsource);
 
         $("#jqxgrid4").jqxGrid({
-            width: '100%',
+            //width: '100%',
             //editable: true,
             //selectionmode: 'singlerow',
             //editmode: 'selectedrow',
@@ -1484,7 +1680,7 @@ class app_task_form_template {
             return;
         //if (this.UserId != data.AssignBy)
         //{
-        //    app_dialog.Alert("לא ניתן למחוק פעולה שהוקצתה על ידי משתמש אחר");
+        //    app_dialog.alert("לא ניתן למחוק פעולה שהוקצתה על ידי משתמש אחר");
         //    return;
         //}
         var id = this.getrowId();
@@ -1553,7 +1749,7 @@ class app_task_form_import {
         //    app_task_base.triggerSubTaskCompleted('form');
         //});
 
-        $('#fileupload').fileupload({
+        $('#fileupload-import').fileupload({
             maxFileSize: 10000000,
             url: '/Media/TaskUpload',
             formData: {
@@ -1610,14 +1806,14 @@ class app_task_form_import {
 
     doPprogress(data) {
         var progress = parseInt(data.loaded / data.total * 100, 10);
-        $('#progress .progress-bar').css(
+        $('#progress-import .progress-bar').css(
             'width',
             progress + '%'
         );
     };
 
     resetPprogress() {
-        $('#progress .progress-bar').css(
+        $('#progress-import .progress-bar').css(
             'width', '0%'
         );
     };
@@ -1658,3 +1854,5 @@ class app_task_form_import {
     //}
 
 }
+
+

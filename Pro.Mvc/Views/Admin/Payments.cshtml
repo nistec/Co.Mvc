@@ -1,0 +1,81 @@
+﻿@model ProSystem.Data.Entities.PaymentQuery
+@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    ViewBag.Title = "Payments";
+    //int acctype = Nistec.Types.ToInt(Request.QueryString["acctype"]);
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/ad/payments-grid.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+    </style>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    var members_grid;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+
+        app_payments_grid.load(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
+        app_jqxgrid.gridFilterEx(this, $("#grid-toolbar"), columnList, dateList);
+
+    });
+        
+        //function triggerMemberComplete(memid) {
+        //    $("#jqxgrid").jqxGrid('source').dataBind();
+        //    app_dialog.dialogIframClose();
+        //};
+
+        var columnList = [
+       { label: 'מספר לקוח', value: 'AccountId', checked: false },
+       { label: 'שם הלקוח', value: 'AccountName', checked: false },
+       { label: 'סכום ששולם', value: 'Payed', checked: false },
+       //{ label: 'קוד אישור תשלום', value: 'ConfirmationCode', checked: false },
+       { label: 'מספר קבלה', value: 'PayId', checked: true }
+        ];
+        var dateList = [
+          { label: 'תאריך תשלום', value: 'Creation', checked: false }
+        ];
+       
+    </script>
+}
+
+<div class="breadcrumbs">
+</div>
+
+
+@*<div class="top-space"></div>*@
+
+<div class="global-view">
+    <div class="container">
+        <h3 class="rtl">@Model.HTitle</h3>
+        <div class="grid-wrap rtl">
+            <div id="grid-toolbar" class="grid-toolbar"></div>
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liMain");
+    app_menu.breadcrumbs("Admin", "Payments", 'en');
+</script>
+

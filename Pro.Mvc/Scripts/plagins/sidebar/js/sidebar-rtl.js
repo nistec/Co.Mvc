@@ -77,12 +77,12 @@
 	    //console.log('mainnav');
 	    if ($(event.target).is('.nbr-has-children a')) {
 	        if (activeRow) {
-	            $(activeRow).removeClass("active")
+                $(activeRow).removeClass("active");
 	        }
 	        else {
 	            sidebar.find('.nbr-has-children.active').removeClass('active');
 	        }
-	        $(this).addClass("active")
+	        $(this).addClass("active");
 	        activeRow = this;
 	    }
 	    else {

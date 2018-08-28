@@ -1,11 +1,10 @@
 ﻿@model Pro.Mvc.Models.EditTaskModel
 @{
     //ViewBag.Title = "System";
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     int rcdid = Nistec.Types.ToInt(Request["id"]);
     var dataModel = @Html.Raw(Json.Encode(Model));
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
-
 }
 
 @section head {
@@ -144,7 +143,7 @@
                                         <div class="field">
                                             סוג משימה:
                                         </div>
-                                        <div id="Task_Type" name="Task_Type"></div>
+                                        <select id="Task_Type" name="Task_Type" data-type="select-loader" data-args="4"></select>
                                     </div>
                                     <div class="form-group">
                                         <div class="field">
@@ -157,7 +156,7 @@
                                         <div class="field">
                                             תיאור: <span><a id="TaskBody-btn-view" href="#"><i class="fa fa-search-plus" style="font-size:16px"></i></a></span>
                                         </div>
-                                        <textarea id="TaskBody" name="TaskBody" class="text-content"></textarea>
+                                        <textarea id="TaskBody" name="TaskBody" class="text-content" data-type="jqx-editor"></textarea>
                                     </div>
                                     <div class="form-group">
                                         <div class="field">
@@ -177,7 +176,7 @@
                                         </div>
                                         <input type="text" id="DisplayName" readonly="readonly" data-field="DisplayName" />
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group pasive">
                                         <div class="field">
                                             צבע :
                                         </div>
@@ -366,7 +365,7 @@
 <footer>
 </footer>
 <script type="text/javascript">
-    app_menu.activeLayoutMenu("liSystem");
+    app_menu.activeLayoutMenu("liMain");
     app_menu.breadcrumbs("/System/TaskUser", "Tasks", 'en');
     app_menu.footer("task");
 </script>

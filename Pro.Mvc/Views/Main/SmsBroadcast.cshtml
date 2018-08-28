@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewMain.cshtml";
     Page.Title = "Sms";
 }
 @section head {
@@ -360,7 +360,7 @@
                                     </div>
                                     <div class="form-group">
                                         סה"כ נמענים:<input type="text" id="TotalCount" readonly class="text-short" style="border:none" />
-                                        <a id="btnShow" href="#" class="btn-tab">הצג נמענים</a>
+                                        <input type="button" id="btnShow" class="btn-default btn7 w-80" value="הצג נמענים"/>
                                         <br />
                                     </div>
                                 </div>
@@ -408,15 +408,17 @@
                                         תזמון:
                                     </div>
                                 </div>
-                               
+                                <input type="hidden" id="DaysInWeek" name="DaysInWeek" />
+                                <input type="hidden" id="TimeToSend" name="TimeToSend" />
+                                
                                 <div class="tab-radio-panel">
                                     <div style="display:block!important">
                                         <div>
-                                                <input type="radio" value="1"  checked="checked" name="ScheduleType"/><span>מיידי</span>
-                                       
-                                                <input type="radio" value="2" name="ScheduleType"/><span>מתוזמן</span>
-                                       
-                                                <input type="radio" value="3" name="ScheduleType"/><span>חלוקה למנות</span>
+                                            <input type="radio" value="1" checked="checked" name="ScheduleType" /><span>מיידי</span>
+
+                                            <input type="radio" value="2" name="ScheduleType" /><span>מתוזמן</span>
+
+                                            <input type="radio" value="3" name="ScheduleType" /><span>חלוקה למנות</span>
                                         </div>
                                     </div>
                                 </div>
@@ -446,73 +448,71 @@
                                             <div class="tab-content-panel">
                                                 <div>
                                                     <label for="txtTime">
-                                                       התחלה תאריך
+                                                        התחלה תאריך
                                                     </label>
                                                     <div id="dateStartBatch" class="date-pick"></div>
                                                 </div>
-                                                    <div>
-                                                        <label id="lblBatchValue">מספר נמענים בכל מנה</label>
+                                                <div>
+                                                    <label id="lblBatchValue">מספר נמענים בכל מנה</label>
+                                                </div>
+                                                <div>
+                                                    <input type="text" id="PartCount" name="PartCount" style="width:80px" />
+                                                </div>
+                                                <div>
+                                                    <label id="lblBatchSaprate">מרווח בין מנה למנה</label>
+                                                </div>
+                                                <div>
+                                                    <input type="text" id="Interval" name="Interval" style="width:80px" />
+                                                    <select id="IntervalType" name="IntervalType">
+                                                        <option value="M">דקות</option>
+                                                        <option value="H">שעות</option>
+                                                        <option value="D">ימים</option>
+                                                    </select>
+                                                    @*<div id="ddlBatchDelayMode" style="width:80px">
+                                                    </div>*@
+                                                </div>
+                                                <div>
+                                                    <label id="lblBatchDayes">ימים</label>
+
+                                                    <div id="chkBatchDays">
+                                                        <input type="checkbox" id="day-1" /><label>א</label>
+                                                        <input type="checkbox" id="day-2" /><label>ב</label>
+                                                        <input type="checkbox" id="day-3" /><label>ג</label>
+                                                        <input type="checkbox" id="day-4" /><label>ד</label>
+                                                        <input type="checkbox" id="day-5" /><label>ה</label>
+                                                        <input type="checkbox" id="day-6" /><label>ו</label>
+                                                        <input type="checkbox" id="day-7" /><label>ש</label>
                                                     </div>
-                                                    <div>
-                                                        <input type="text" id="txtBatchValue" style="width:80px" />
-                                                    </div>
-                                                    <div>
-                                                        <label id="lblBatchSaprate">מרווח בין מנה למנה</label>
-                                                    </div>
-                                                    <div>
-                                                        <input type="text" id="txtBatchDelay" style="width:80px" />
-                                                        <select>
-                                                            <option value="M">דקות</option>
-                                                            <option value="H">שעות</option>
-                                                            <option value="D">ימים</option>
-                                                        </select>
-                                                        <div id="ddlBatchDelayMode" style="width:80px">
+                                                </div>
+
+                                            </div>
+                                            <div class="tab-content-panel">
+                                                <div class="panel-area active">
+                                                    <div class="panel-area-title">טווח זמנים</div>
+                                                    <fieldset dir="rtl">
+                                                        <legend>טווח זמנים</legend>
+                                                        שעת התחלה:
+                                                        <div class="spinContainer">
+                                                            <input type="time" class="spinInput" id="TimeStart" name="TimeStart" value="08:00" style="width:100px"
+                                                                   min="01:00" max="23:50" required pattern="[0-9]{2}:[0-9]{2}" step="2"
+                                                                   onpaste="return HandelAnyPaste(this);" onkeypress="return HandelAnyKey(event);" />
+                                                            @*<input type="button" title="הוספה" class="spinUpBtn" />
+                        <input type="button" title="הורדה" class="spinDownBtn" />*@
                                                         </div>
-                                                    </div>
-                                                    <div>
-                                                        <label id="lblBatchDayes">ימים</label>
-
-                                                        <div id="chkBatchDays">
-                                                            <input type="checkbox" id="day-1" /><label>א</label>
-                                                            <input type="checkbox" id="day-2" /><label>ב</label>
-                                                            <input type="checkbox" id="day-3" /><label>ג</label>
-                                                            <input type="checkbox" id="day-4" /><label>ד</label>
-                                                            <input type="checkbox" id="day-5" /><label>ה</label>
-                                                            <input type="checkbox" id="day-6" /><label>ו</label>
-                                                            <input type="checkbox" id="day-7" /><label>ש</label>
+                                                        שעת סיום:
+                                                        <div class="spinContainer">
+                                                            <input type="time" class="spinInput" id="TimeEnd" name="TimeEnd" value="22:00" style="width:100px"
+                                                                   min="01:00" max="23:50" required pattern="[0-9]{2}:[0-9]{2}" step="2"
+                                                                   onpaste="return HandelAnyPaste(this);" onkeypress="return HandelAnyKey(event);" />
+                                                            @*<input type="button" title="הוספה" class="spinUpBtn" />
+                        <input type="button" title="הורדה" class="spinDownBtn" />*@
                                                         </div>
-                                                    </div>
-
+                                                    </fieldset>
                                                 </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="tab-content-panel">
-                                        <div class="panel-area active">
-                                            <div class="panel-area-title">טווח זמנים</div>
-                                            <fieldset dir="rtl">
-                                                <legend>טווח זמנים</legend>
-                                                שעת התחלה:
-                                                <div class="spinContainer">
-                                                    <input type="time" class="spinInput" id="txtTimeBegin" value="08:00" style="width:80px"
-                                                           min="01:00" max="23:50" required pattern="[0-9]{2}:[0-9]{2}" step="2"
-                                                           onpaste="return HandelAnyPaste(this);" onkeypress="return HandelAnyKey(event);" />
-                                                    @*<input type="button" title="הוספה" class="spinUpBtn" />
-                                                    <input type="button" title="הורדה" class="spinDownBtn" />*@
-                                                </div>
-                                                שעת סיום:
-                                                <div class="spinContainer">
-                                                    <input type="time" class="spinInput" id="txtTimeEnd" value="22:00" style="width:80px"
-                                                           min="01:00" max="23:50" required pattern="[0-9]{2}:[0-9]{2}" step="2"
-                                                           onpaste="return HandelAnyPaste(this);" onkeypress="return HandelAnyKey(event);" />
-                                                    @*<input type="button" title="הוספה" class="spinUpBtn" />
-                                                    <input type="button" title="הורדה" class="spinDownBtn" />*@
-                                                </div>
-                                            </fieldset>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                             <div id="tab-5" class="ui-tabs-panel jcxwiz-panel">
                                 <div class="form-group">
@@ -522,10 +522,7 @@
                                 </div>
                               
                                     <dl title="שליחת עדכונים ב">
-                                        <dt class="dt_title">
-                                            עדכונים
-                                        </dt>
-                                        <dt>&nbsp;</dt>
+                                        
                                         <dt>שליחת עדכונים ב </dt>
                                         <dd>
                                             <input type="checkbox" id="chkNotifyBegin"/><span>תחילת השליחה</span>
@@ -550,22 +547,25 @@
                                         <dt>הוספת נמענים לעדכונים</dt>
                                         <dd>
                                             <input type="text"  id="txtNotify"  MaxLength="50" style="width:200px" />
-                                            <input type="button" id="btnNotifyAdd" value="הוסף" class="button-small"
+                                            <input type="button" id="btnNotifyAdd" value="הוסף" class="btn-default btn7 w-60"
                                                    title="הוסף נמען לרשימת מקבלי העדכונים" OnClick="btnAddNotifyClicked" />
 
                                         </dd>
                                         <dt style="font-weight: bold">רשימת נמענים </dt>
                                         <dd>
-                                            <div id="listNotify">
-                                            </div>
+                                            @*<div id="listNotify">
+                                            </div>*@
+
+                                            <select id="listNotify" name="listNotify" size="5" style="width:200px;height:100px"></select>
+
                                         </dd>
                                         <dd>
 
                                             <input type="button" id="btnNotifyRemove" value="הסר" OnClick="ListNotifyClicked"
-                                                   class="button-small" />
+                                                   class="btn-default btn7 w-60" />
 
                                             <input type="button" id="btnNotifyClear" value="נקה" OnClick="ListNotifyClear"
-                                                   class="button-small" />
+                                                   class="btn-default btn7 w-60" />
 
                                         </dd>
                                     </dl>
@@ -594,9 +594,9 @@
         </div>
 
         <div id="wizard-steps" class="panel-area">
-            <a id="wizard-prev" href="#" class="btn-tab wizard-prev ">הקודם</a>
-            <a id="wizard-next" href="#" class="btn-tab wizard-next">הבא</a>
-            <a id="wizard-submit" href="#" class="btn-tab wizard-end">סיום</a>
+            <input type="button" id="wizard-prev" class="btn-tab wizard-prev" value="הקודם" />
+            <input type="button" id="wizard-next" class="btn-tab wizard-next" value="הבא" />
+            <input type="button" id="wizard-submit" class="btn-tab wizard-end" value="סיום"/>
             <label id="wizard-message" style="color:red"></label>
         </div>
     </div>

@@ -1,29 +1,29 @@
 ﻿@{
-    
+
     Layout = "~/Views/Shared/_ViewAdmin.cshtml";
     ViewBag.Title = "Main";
     string UserName = ViewBag.UserName;
 }
 
 @section head {
-@Scripts.Render("~/bundles/jqx")
-@Scripts.Render("~/bundles/jqxgrid")
-<link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">
 
 
 }
 @section featured {
 }
- 
+
 @section scripts {
 
     <script type="text/javascript">
 
         $(document).ready(function () {
-            
+
 
             app_jqxcombos.createDropDownAdapter("AccountId", "AccountName", "AccountList", '/Admin/GetAccountsList', 0, 120, false);
- 
+
 
 
             $("#btnAccountMng").on('click', function () {
@@ -35,7 +35,7 @@
             $("#btnAccountCancel").on('click', function () {
                     app_query.doPost('/Admin/DoVirtualLoginCancel');
             });
-            
+
 
 
             $("#btnCacheClearAll").on('click', function () {
@@ -55,7 +55,8 @@
 
 
 
-
+    <div class="breadcrumbs">
+    </div>
 <div class="global indent">
     <!--content-->
     <div class="container rtl">
@@ -132,14 +133,14 @@
             </div>
         </div>
     </div>
-  
 
-    <div class="jobBox"> 
-         <div class="container">
+
+    <div class="jobBox">
+        <div class="container">
             <h2 style="text-align:center" class="indent"></h2>
         </div>
     </div>
-    <!--<div class="advantages-box indent"> 
+    <!--<div class="advantages-box indent">
     </div>-->
 </div>
 <div style="text-align:center">
@@ -148,3 +149,10 @@
         <li id="mngr"></li>
     </ul>
 </div>
+
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liMain");
+    //app_menu.breadcrumbs("/Admin/Main", "Tasks", 'en');
+    app_menu.footer("admin");
+</script>

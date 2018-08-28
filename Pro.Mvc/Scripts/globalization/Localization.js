@@ -82,7 +82,8 @@
                  filterselectstring: "בחירת סינון",
                  loadtext: "Loading...",
                  clearstring: "נקה",
-                 todaystring: "היום"
+                todaystring: "היום",
+                everpresentrowplaceholder:"הקלד\י-"
              }
             break;
         case "en":

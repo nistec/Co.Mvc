@@ -1,0 +1,149 @@
+﻿@model ProSystem.Query.AccountsQuery
+@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    ViewBag.Title = "Accounts";
+    //int acctype = Nistec.Types.ToInt(Request.QueryString["acctype"]);
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userModel = ViewBag.UserInfo;
+    var userInfo = @Html.Raw(Json.Encode(userModel));
+
+}
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxloader.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxtooltip.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/ad/accounts.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+        /*.jqx-grid-cell {
+            border: none;
+        }*/
+
+    </style>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    var members_grid;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        // prepare the data
+        wizard = new app_wiztabs();
+        wizard.displayStep(1);
+
+        members_grid = new app_accounts_grid();
+        members_grid.init(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
+
+
+        //members_grid = app_members_grid.load(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
+
+        app_jqxgrid.gridFilterEx(this, $("#grid-toolbar"), columnList, dateList);
+
+        });
+
+
+        var columnList = [
+         { label: 'מס. הלקוח', value: 'AccountId', checked: true },
+         { label: 'ת.ז הלקוח', value: 'IdNumber', checked: true },
+         { label: 'שם הלקוח', value: 'AccountName', checked: true },
+         { label: 'טלפון נייד', value: 'Mobile', checked: true },
+         { label: 'דואר אלקטרוני', value: 'Email', checked: true },
+         { label: 'עיר', value: 'City', checked: true },
+         { label: 'כתובת', value: 'Address', checked: false },
+         { label: 'קטגוריה', value: 'AccountCategoryName', checked: true }
+        ];
+        var dateList = [
+         { label: 'מועד הצטרפות', value: 'CreationDate', checked: false },
+         { label: 'תאריך עדכון', value: 'LastUpdate', checked: false }
+        ];
+        //app_jqxgrid.gridColumnsBar(columnList);
+        //$('#jqxgrid').on('bindingcomplete', function (event) {
+        //    app_jqxgrid.gridColumnsInit(columnList, '#jqxgrid')
+        //});
+
+    </script>
+}
+
+
+<div class="global-view">
+    <div id="wiz-container" class="container">
+
+        <div id="hTitle" class="panel-page-header rtl">
+            <span id="hTitle-text" style="margin:10px">רשימת לקוחות</span><span><a href="javascript:location.reload()"><i class="fa fa-refresh"></i></a></span>
+        </div>
+
+        <div id="wiz-1" class="wiz-tab active">
+
+            <div class="grid-wrap rtl">
+                <div id="grid-toolbar" class="grid-toolbar"></div>
+                <div class="rtl">
+                    <a id="member-item-add" class="btn-default btnIcon w-60 @(userModel.AllowAddClass)" href="#">הוספה</a>
+                    <a id="member-item-edit" class="btn-default btnIcon w-60 @(userModel.AllowEditClass)" href="#">עריכה </a>
+                    @*<a id="member-item-delete" class="btn-default btnIcon w-60 @(userModel.AllowDeleteClass)" href="#">מחיקה </a>*@
+                    @*<a id="member-item-refresh" class="btn-default btn7 w-60" href="javascript:members_grid.refresh();">רענון</a>*@
+                    @*<a id="member-item-filetr-remove" class="btn-default btn7 w-80 font-90" href="#">הסר סינון</a>
+                        <a id="member-item-query" class="btn-default btnIcon w-60" href="#">איתור</a>*@
+                </div>
+                <div id="jqxWidget">
+                    <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                </div>
+                <div id="jqxGridColumns"></div>
+            </div>
+        </div>
+        <div id="wiz-2" class="wiz-tab">
+            <div style="height:8px"></div>
+            <div class="panel-area">
+                <h3 id="wiz-2-title" class="rtl panel-area-title">
+                    עריכת לקוח
+                </h3>
+                <div id="divPartial2"></div>
+            </div>
+            <div class="rtl panel-area" style="margin-top:5px;">
+                <a id="member-item-update" class="btn-default btn7 w-60" href="#">עדכון</a>
+                <a id="member-item-update-plus" class="btn-default btn7 w-60" href="#">עדכון+</a>
+                <a id="member-item-cancel" class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">ביטול</a>
+            </div>
+        </div>
+        <div id="wiz-3" class="wiz-tab" style="margin:10px;">
+            <h3 id="wiz-3-title" class="rtl">
+                איתור מנויים
+            </h3>
+            <div id="loader" style="text-align:center">המתן...</div>
+            <div id="divPartial3" class="wiz-partial" style="background-color:transparent;"></div>
+            <div style="clear:both;"></div>
+            @*<div class="rtl">
+                    <a id="member-query-submit" class="btn-default btn7 w-60" href="#">איתור</a>
+                    <a id="member-query-submit-export" class="btn-default btn7 w-60" href="#">ייצוא לקובץ</a>
+                    <a id="member-query-cancel" class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">ביטול</a>
+                </div>*@
+        </div>
+        <div id="wiz-4" class="wiz-tab">
+            <div style="height:8px"></div>
+            <div class="panel-area">
+                <h3 id="wiz-4-title" class="rtl panel-area-title">
+                    עריכת משתמש
+                </h3>
+                <div id="divPartial4"></div>
+            </div>
+            <div class="rtl panel-area" style="margin-top:5px;">
+                <a id="user-item-update" class="btn-default btn7 w-60" href="#">עדכון</a>
+                <a id="user-item-update-plus" class="btn-default btn7 w-60" href="#">עדכון+</a>
+                <a id="user-item-cancel" class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">ביטול</a>
+            </div>
+        </div>
+    </div>
+</div>

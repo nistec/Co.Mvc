@@ -19,6 +19,10 @@ using Pro.Data.Registry;
 using Nistec.Generic;
 using Nistec.Runtime;
 using ProSystem.Data.Entities;
+using ProSystem.Query;
+using System.Data;
+using Nistec.Web.Controls;
+using ProSystem.Data;
 
 namespace Pro.Mvc.Controllers
 {
@@ -40,7 +44,7 @@ namespace Pro.Mvc.Controllers
 
         public ActionResult Manager()
         {
-            if (IsAdmin())
+            if (!IsSignedUser(UserRole.SubAdmin, false)) //(IsAdmin())
                 return RedirectToAction("Main", "Admin");
             return View();
         }
@@ -80,7 +84,9 @@ namespace Pro.Mvc.Controllers
             int PageSize = Types.ToInt(Request["pagesize"], 20);
             int PageNum = Types.ToInt(Request["pagenum"]);
 
-            var list = DbLogs.ViewLog(PageNum);
+            string QueryType = Types.NZ( Request["type"],"co");
+
+            var list = DbLogs.ViewLog(QueryType,PageNum);
             var row = list.FirstOrDefault<Dictionary<string,object>>();
             int totalRows = row == null ? 0 : row.Get<int>("TotalRows");
                 return QueryPagerServer<Dictionary<string, object>>(list, totalRows, su.UserId);// PageSize, PageNum);
@@ -99,7 +105,7 @@ namespace Pro.Mvc.Controllers
             int userId = GetUser();
             try
             {
-                if(!IsAdminOrMaster())
+                if (!IsSignedUser(UserRole.System, false)) //(!IsAdminOrMaster())
                 {
                     throw new Exception("User not allowed to DoVirtualLoginSet " + userId.ToString());
                 }
@@ -130,7 +136,7 @@ namespace Pro.Mvc.Controllers
             int userId = GetUser();
             try
             {
-                if (!IsAdminOrMaster())
+                if (!IsSignedUser(UserRole.System, false)) //(!IsAdminOrMaster())
                 {
                     throw new Exception("User not allowed to DoVirtualLoginCancel " + userId.ToString());
                 }
@@ -225,21 +231,21 @@ namespace Pro.Mvc.Controllers
         
         #endregion
 
-        #region Accounts property
+        #region Accounts property _legacy
 
-        public ActionResult Accounts()
-        {
-            if (!IsAdmin())
-            {
-                return RedirectToIndex("User not alllowed for this method");
-            }
-            return View(true);
-        }
+        //public ActionResult Accounts()
+        //{
+        //    if (!IsAdmin())
+        //    {
+        //        return RedirectToIndex("User not alllowed for this method");
+        //    }
+        //    return View(true);
+        //}
 
         public ActionResult DefAccount()
         {
-            if (!IsAdmin())
-            {
+            if (!IsSignedUser(UserRole.SubAdmin, false)) //(!IsAdmin())
+                {
                return RedirectToIndex("User not alllowed for this method");
             }
             return View(true);
@@ -247,24 +253,6 @@ namespace Pro.Mvc.Controllers
 
         [HttpPost]
         public JsonResult DefAccountUpdate()
-        //public JsonResult DefAccountUpdate(int PropId, string PropName, 
-        //   string  SmsSender,
-        //   string  MailSender,
-        //   int AuthUser,
-        //   int AuthAccount,
-        //   bool EnableSms,
-        //   bool EnableMail,
-        //   string  Path,
-        //   string  SignupPage,
-        //   bool EnableInputBuilder,
-        //   bool BlockCms,
-        //   int SignupOption,
-        //   string Design,
-        //   bool EnableSignupCredit,
-        //   string CreditTerminal,
-        //   string RecieptEvent,
-        //   string RecieptAddress,
-        //    int command)
         {
  
            
@@ -273,7 +261,7 @@ namespace Pro.Mvc.Controllers
             int accountId = GetAccountId();
             try
             {
-                if (!IsAdmin())
+                if (!IsSignedUser(UserRole.SubAdmin, false)) //(!IsAdmin())
                 {
                     throw new Exception("User not alllowed for this method");
                 }
@@ -324,7 +312,7 @@ namespace Pro.Mvc.Controllers
             int accountId = GetAccountId();
             try
             {
-                if (!IsAdmin())
+                if (!IsSignedUser(UserRole.SubAdmin, false)) //(!IsAdmin())
                 {
                     throw new Exception("User not alllowed for this method");
                 }
@@ -377,7 +365,7 @@ namespace Pro.Mvc.Controllers
         }
         #endregion
 
-        #region Users def
+        #region Users def _legacy
 
         public ActionResult UsersDef()
         {
@@ -393,23 +381,7 @@ namespace Pro.Mvc.Controllers
             var list = AdUserContext.GetUsersRoleView(accountId, userId);
             return Json(list, JsonRequestBehavior.AllowGet);
         }
-        [HttpPost]
-        public JsonResult GetAdminUsersRoles()
-        {
-            int accountId = Types.ToInt(Request["accountId"]);
-            int userId = GetUser();
-            var list = AdUserContext.GetUsersRoleView(accountId, userId);
-            return Json(list, JsonRequestBehavior.AllowGet);
-        }
-        [HttpPost]
-        public JsonResult GetAdminUsersProfile()
-        {
-            int accountId = Types.ToInt(Request["accountId"]);
-            int userId = GetUser();
-            //var list = DbPro.Instance.QueryEntityList<UserProfileView>(UserProfileView.MappingName, "AccountId", accountId);
-            var list = AdUserContext.GetUsersView(accountId, userId);
-            return Json(list, JsonRequestBehavior.AllowGet);
-        }
+       
         [HttpPost]
         public JsonResult GetUsersProfile()
         {
@@ -454,7 +426,7 @@ namespace Pro.Mvc.Controllers
                     UserRole = UserRole
                 };
                 
-                if (IsAdminOrManager() == false)
+                if (!IsSignedUser(Nistec.Web.Security.UserRole.System, false)) //(IsAdminOrManager() == false)
                 {
                     newItem.UserRole = view.UserRole;
                     newItem.IsBlocked = view.IsBlocked;
@@ -505,7 +477,7 @@ namespace Pro.Mvc.Controllers
             try
             {
                 //AccountId = GetAccountId();
-                if (IsAdminOrManager() ==false)
+                if (!IsSignedUser(Nistec.Web.Security.UserRole.System, false)) //(IsAdminOrManager() ==false)
                 {
                     result = new UserResult() { Status = (int)AuthState.UnAuthorized };
                 }
@@ -570,6 +542,143 @@ namespace Pro.Mvc.Controllers
         //    return Json(result);
         //}
 
+        #endregion
+
+        #region AdUsers
+
+        [HttpPost]
+        public JsonResult GetAdminUsersRoles()
+        {
+            int accountId = Types.ToInt(Request["accountId"]);
+            int userId = GetUser();
+            var list = AdUserContext.GetUsersRoleView(accountId, userId);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult GetAdminUsersProfile()
+        {
+            int accountId = Types.ToInt(Request["accountId"]);
+            int userId = GetUser();
+            //var list = DbPro.Instance.QueryEntityList<UserProfileView>(UserProfileView.MappingName, "AccountId", accountId);
+            var list = AdUserContext.GetUsersView(accountId, userId);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult AdUserDefUpdate()
+        {
+            string action = "עדכון משתמש";
+            AdContext<AdUserProfile> context = null;
+            try
+            {
+                var su = GetSignedUser(UserRole.SubAdmin, true);
+
+                ValidateUpdate(su.UserId, "AdUserDefUpdate");
+                bool isResetPass = Types.ToBool(Request.Form["IsResetPass"], false);
+                int accountId = 0;// su.AccountId;
+                context = new AdContext<AdUserProfile>(accountId);
+                context.Set(Request.Form);
+                //context.Current.AccountId = accountId;
+                var res = context.SaveChanges(false);
+                if (isResetPass)
+                {
+                    var status = ForgotUserPassword(context.Current);
+                    bool isok = false;
+                    string msg = StatusDesc.GetMembershipStatus("MembershipStatus", status, ref isok);
+                    if (status != 10)
+                    {
+                        ViewBag.Message = msg;
+                        return Json(FormResult.Get(-1, action, msg), JsonRequestBehavior.AllowGet);
+                    }
+                }
+                return Json(context.GetFormResult(res, null), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetTrace<DbSystem>(ex, action, Request), JsonRequestBehavior.AllowGet);
+            }
+        }
+        protected int ForgotUserPassword(AdUserProfile model)
+        {
+            //string token = Guid.NewGuid().ToString().Replace("-", "");
+            //string ConfirmUrl = "https://co.my-t.co.il/account/resetpassword?token=" + token;
+            //string AppUrl = "https://co.my-t.co.il/";
+            //string MailSenderFrom = "my-t <co@mytdocs.com>";
+            //string Subject = "Reset your Co password";
+            //string profile_name = "coProfile";
+            //var status = UserMembership.ForgotPassword(model.Email, token, ConfirmUrl, AppUrl, MailSenderFrom, Subject, profile_name);
+
+            var status = UserMembership.SendResetToken(model.Email, ProSettings.AppId);
+            return status;
+        }
+
+        [HttpPost]
+        public ActionResult AdUserDefInsert()
+        {
+            string action = "הוספת משתמש חדש";
+            AdContext<AdUserProfile> context = null;
+            try
+            {
+
+                var su = GetSignedUser(UserRole.SubAdmin ,true);
+
+                ValidateUpdate(su.UserId, "AdUserDefInsert");
+
+                int accountId = 0;// su.AccountId;
+
+                context = new AdContext<AdUserProfile>(accountId);
+                context.Set(Request.Form);
+                context.Validate(ProcedureType.Insert);
+                var cur = context.Current;
+                var res = context.Upsert(UpsertType.Insert, ReturnValueType.ReturnValue, 
+                    "DisplayName", cur.DisplayName,
+                    "Email", cur.Email,
+                    "Phone", cur.Phone,
+                    "UserName", cur.UserName,
+                    "UserRole", cur.UserRole,
+                    "AccountId", cur.AccountId,
+                    "Lang", cur.Lang,
+                    "Evaluation", cur.Evaluation,
+                    "IsBlocked", cur.IsBlocked,
+                    "Password", Guid.NewGuid().ToString().Substring(0, 8),
+                    "Profession", 0,
+                    "AppId", ProSettings.AppId);
+                int status = res.GetReturnValue();
+                var reslult = StatusDesc.GetMembershipResult(action, status);
+                return Json(reslult, JsonRequestBehavior.AllowGet);
+                //return Json(context.GetFormResult(res, Message), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetTrace<DbSystem>(ex, action, Request), JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public ActionResult AdUserDefDelete(int AccountId,int UserId)
+        {
+            string action = "מחיקת משתמש";
+            AdContext<AdUserProfile> context = null;
+            try
+            {
+                var su = GetSignedUser(UserRole.SubAdmin, true);
+                               
+                ValidateDelete(su.UserId, "AdUserDefDelete");
+
+                int accountId = 0;// su.AccountId;
+                context = new AdContext<AdUserProfile>(accountId);
+                //context.Set(Request.Form);
+                //context.Validate(ProcedureType.Delete);
+                //var cur = context.Current;
+                //var res = context.Delete("UserId", UserId, "AccountId", accountId, "AssignBy", user.UserId);
+                var status = context.DeleteReturnValue(-1, "UserId", UserId, "AccountId", AccountId, "AssignBy", su.UserId);
+                var reslult = StatusDesc.GetAuthResult(action, status);
+                return Json(reslult, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(FormResult.GetTrace<DbSystem>(ex, action, Request), JsonRequestBehavior.AllowGet);
+            }
+        }
         #endregion
 
         #region Def Entity Enum
@@ -648,8 +757,674 @@ namespace Pro.Mvc.Controllers
         #endregion
 
 
+        #region Accounts targets
+        /*
 
- 
+        [HttpPost]
+        public JsonResult GetAccountsTargets(
+           int QueryType,
+           int AccountId,
+           int UserId,
+           string IdNumber,
+           string Mobile,
+           string Email,
+           string AccountName,
+           string Address,
+           string City,
+           string Category,
+           string Branch,
+           int JoinedFrom,
+           int JoinedTo)
+        {
+            ResultModel model = null;
+            try
+            {
+
+                string key = string.Format("GetTargets_{0}_{1}", AccountId, UserId);
+                CacheRemove(key);
+
+                AccountsQuery query = new AccountsQuery()
+                {
+                    AccountId = AccountId,
+                    UserId = UserId,
+                    Address = Address,
+                    Branch = Branch,
+                    Category = Category,
+                    City = City,
+                    //ContactRule = ContactRule,
+                    JoinedFrom = JoinedFrom,
+                    JoinedTo = JoinedTo,
+                    IdNumber = IdNumber,
+                    Mobile = Mobile,
+                    Email = Email,
+                    AccountName = AccountName,
+                    //Place = Place,
+                    QueryType = QueryType,
+                    PageNum = 0,
+                    PageSize = 999999999
+                };
+                query.Normelize();
+                var totalRows = AccountsContext.ListQueryTargetsView(query);
+                ViewBag.TargetsCount = totalRows;
+
+                model = new ResultModel() { Status = totalRows, Title = "איתור נמענים", Message = string.Format("אותרו {0} נמענים", totalRows), Link = null, OutputId = totalRows };
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = -1, Title = "איתור נמענים", Message = "Error: " + ex.Message, Link = null, OutputId = 0 };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public ActionResult MailTargets()
+        {
+            AccountsQuery query = new AccountsQuery(Request.Form, 22);
+            query.AccountId = GetAccountId();
+            query.UserId = GetUser();
+            query.QueryType = 22;
+            return View(query);
+        }
+
+        public ActionResult MembersExport()
+        {
+            AccountsQuery query = new AccountsQuery(Request.Form, 20);
+            query.AccountId = GetAccountId();
+            query.UserId = GetUser();
+            query.QueryType = 20;
+            query.Normelize();
+            var d = MemberContext.ListQueryDataView(query);
+            return CsvActionResult.ExportToCsv(d, "Targets");
+
+            //return View(query);
+        }
+        [HttpPost]
+        public ActionResult DoMembersExport(string q)
+        {
+            if (q != null)
+            {
+                AccountsQuery query = AccountsQuery.Deserialize(q);
+                ViewBag.MemberQuery = null;
+                var d = MemberContext.ListQueryDataView(query);
+                return CsvActionResult.ExportToCsv(d, "Targets");
+            }
+            else
+            {
+                ViewBag.Message = "אירעה שגיאה לא הופקו נתונים לקובץ";
+                return null;
+            }
+        }
+
+        public ActionResult ExportTargets()
+        {
+            int uid = GetUser();
+            int accountId = GetAccountId();
+            var d = TargetView.ViewData(accountId, uid);
+            return CsvActionResult.ExportToCsv(d, "Targets");
+        }
+
+        protected DataTable GetTargetsData()
+        {
+            int uid = GetUser();
+            int accountId = GetAccountId();
+            return TargetView.ViewData(accountId, uid);
+        }
+        protected IList<TargetView> GetTargetsList()
+        {
+            int uid = GetUser();
+            int accountId = GetAccountId();
+            return TargetView.ViewList(accountId, uid);
+        }
+
+        protected string GetTargetsJson(bool isPrsonal)
+        {
+            int uid = GetUser();
+            int accountId = GetAccountId();
+            var list = TargetView.ViewList(accountId, uid);
+            return TargetView.ToJson(list, isPrsonal);
+        }
+
+        */
+        #endregion
+
+        #region Accounts
+
+        [HttpGet]
+        public ActionResult Accounts()
+        {
+            AccountsQuery query = new AccountsQuery(Request.QueryString, 1);
+            var su = GetSignedUser(false);
+            if (su == null)
+            {
+                return RedirectToLogin();
+            }
+            if (!su.IsAdmin)
+            {
+                return RedirectToIndex("User not alllowed for this method");
+            }
+
+            //query.AccountId = su.AccountId;
+            query.UserId = su.UserId;
+            //query.ExType = su.GetDataValue<int>("ExType");
+            //query.QueryType = 1;
+            return View(true, query);
+        }
+
+        [HttpPost]
+        [ActionName("Accounts")]
+        public ActionResult AccountsPost()
+        {
+            AccountsQuery query = new AccountsQuery(Request.Form, 0);
+            var su = GetSignedUser(false);
+            if (su == null)
+            {
+                return RedirectToLogin();
+            }
+            if (!su.IsAdmin)
+            {
+                return RedirectToIndex("User not alllowed for this method");
+            }
+            //query.AccountId = su.AccountId;
+            query.UserId = su.UserId;
+            //query.ExType = su.GetDataValue<int>("ExType");
+            //query.QueryType = 0;
+            return View(true, query);
+        }
+        /*
+        [HttpGet]
+        public ActionResult AccountsUpload()
+        {
+            return View(true);
+        }
+
+        [HttpGet]
+        public ActionResult AccountsRemove()
+        {
+            return View(true);
+        }
+
+        [HttpGet]
+        public ActionResult AccountsAdd()
+        {
+            return View(true);
+        }
+        [HttpGet]
+        public ActionResult AccountsEdit()
+        {
+            return View(true);
+        }
+      */
+
+        public ActionResult AccountsQuery()
+        {
+            if (!IsSignedUser(UserRole.SubAdmin, false)) //(!IsAdmin())
+            {
+                return RedirectToIndex("User not alllowed for this method");
+            }
+            return View(true);
+        }
+
+        public ActionResult _AccountsQuery()
+        {
+            if (!IsSignedUser(UserRole.SubAdmin, false)) //(!IsAdmin())
+            {
+                return RedirectToIndex("User not alllowed for this method");
+            }
+            return PartialView(true);
+        }
+
+        public JsonResult GetAccountsGrid()
+        {
+            try
+            {
+                var su = GetSignedUser(true);
+                if (!su.IsAdmin)
+                {
+                    throw new Exception("User not alllowed for this method");
+                }
+                AccountsQuery query = new AccountsQuery(Request);
+                query.Normelize();
+
+               
+                //query.AccountId = su.AccountId;
+
+                var list = AdContext.ListQueryView(query);
+                return QueryPagerServer<AdAccountView>(list, su.UserId);
+            }
+            catch (Exception ex)
+            {
+                string err = ex.Message;
+                return Json(GetSupportErrMessage("רשימת לקוחות"), JsonRequestBehavior.AllowGet);
+
+            }
+        }
+
+
+        #endregion
+
+        #region Accounts edit
+        /*
+        [HttpGet]
+        public ActionResult _AccountsAdd()
+        {
+            return PartialView(true, "_AccountsEdit", new EditModel() { Option = "a" });
+        }
+        [HttpGet]
+        public ActionResult _AccountsEdit(int id)
+        {
+            return PartialView(true, "_AccountsEdit", new EditModel() { Id = id, Option = "e" });
+        }
+        [HttpGet]
+        public ActionResult _AccountsView(int id)
+        {
+            return PartialView("_AccountsEdit", new EditModel() { Id = id, Option = "g" });
+        }
+        */
+
+        [HttpGet]
+        public ActionResult _AccountEdit(int id)
+        {
+            return PartialView(true,"AccountEdit", new EditModel() { Id = id, Option = "e", Args= "~/Views/Shared/_ViewIframe.cshtml" });
+        }
+
+        [HttpGet]
+        public ActionResult AccountEdit(int id)
+        {
+            return View(true, "AccountEdit", new EditModel() { Id = id, Option = "e",  Args= "~/Views/Shared/_ViewAdmin.cshtml" });
+        }
+
+        [HttpPost]
+        public JsonResult GetAccountsEdit()
+        {
+
+            try
+            {
+                var su = GetSignedUser(true);
+                if (!su.IsAdmin)
+                {
+                    throw new Exception("User not alllowed for this method");
+                }
+                int id = Types.ToInt(Request["id"]);
+
+                var item = AdContext<AdAccount>.Get().Get("AccountId",id);
+                return Json(item);
+            }
+            catch (Exception ex)
+            {
+                string err = ex.Message;
+                return Json(GetSupportErrMessage("עריכת לקוח"), JsonRequestBehavior.AllowGet);
+            }
+        }
+        
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult AccountUpdate()
+        {
+            int res = 0;
+            string action = "הגדרת לקוח";
+            AdAccount a = null;
+            ResultModel model = null;
+            try
+            {
+                var su = GetSignedUser(true);
+                if (su==null || !su.IsAdmin)
+                {
+                    throw new Exception ("User not alllowed for this method");
+                }
+                a = EntityContext.Create<AdAccount>(Request.Form);
+                //a.AccountId = usr.AccountId;
+                //var exType = usr.GetDataValue<int>("ExType");
+                EntityValidator validator = EntityValidator.ValidateEntity(a, "הגדרת לקוח", "he");//, new object[] { "@ExType", exType });
+                if (!validator.IsValid)
+                {
+                    return Json(GetFormResult(-1, action, validator.Result, 0), JsonRequestBehavior.AllowGet);
+
+                }
+
+                res = AdContext.DoSave(a,true);//, true, "", DataSourceTypes.CoSystem);
+                if (res <=0)
+                    model = new ResultModel() { Message = "הלקוח לא עודכן", Status = -1, Title = action };
+                else
+                    model = GetFormResult(res, action, "הלקוח עודכן", a.AccountId);
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                string err = ex.Message;
+                return Json(GetFormResult(-1, action, "אירעה שגיאה, הלקוח לא עודכן", 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult AccountDelete()
+        {
+            //MemberCategoryView
+            int res = 0;
+            string action = "הסרת לקוח";
+            MemberItem a = null;
+            try
+            {
+                var su = GetSignedUser(true);
+                if (su == null || !su.IsAdmin)
+                {
+                    throw new Exception("User not alllowed for this method");
+                }
+
+                int AccountId = Types.ToInt(Request["AccountId"]);
+                //int accountId = GetAccountId();
+                res = -2;// AdContext.DoDelete(AccountId, accountId);
+                string message = "";
+                switch (res)
+                {
+                    case -2:
+                        message = "אירעה שגיאה (Invalid Arguments Account) אנא פנה לתמיכה"; break;
+                    case -1:
+                        message = "הלקוח אינו קיים"; break;
+                    case 1:
+                        message = "הלקוח הוסר"; break;
+                    default:
+                        message = "הלקוח לא הוסר"; break;
+                }
+
+                var model = new ResultModel() { Status = res, Title = "הסרת לקוח", Message = message, Link = null, OutputId = 0 };
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
+        #region Accounts Nested
+
+        [HttpPost]
+        public JsonResult GetAccountsCategories()
+        {
+            int accountId = GetAccountId();
+            var list = AccountsCategoryView.ViewList();
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpPost]
+        public JsonResult DeleteAccountCategories(int propId)
+        {
+            int res = 0;
+            int accountId = GetAccountId();
+            ResultModel model = null;
+            try
+            {
+                res = AccountsCategoryView.DoDelete(propId);
+                model = new ResultModel() { Status = res, Title = "עדכון סווג", Message = "סווג הוסר למנוי " + propId, Link = null, OutputId = propId };
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = res, Title = "עדכון סווג", Message = ex.Message, Link = null, OutputId = propId };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+        //[HttpPost]
+        //// [ValidateAntiForgeryToken]
+        //public JsonResult UpdateAccountCategories()
+        //{
+        //    int res = 0;
+        //    int accountId = GetAccountId();
+        //    string action = "הגדרת סווג";
+        //    try
+        //    {
+        //        int rcdid = Types.ToInt(Request.Form["AccountRecord"]);
+        //        string proptypes = Request.Form["Categories"];
+        //        if (rcdid <= 0)
+        //        {
+        //            return Json(GetFormResult(-1, action, "נדרש ת.ז", 0), JsonRequestBehavior.AllowGet);
+        //        }
+
+        //        res = AccountsCategoryView..AddCategory(rcdid, proptypes, accountId);
+        //        return Json(GetFormResult(res, action, null, 0), JsonRequestBehavior.AllowGet);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+        //    }
+        //}
+
+        #endregion
+
+        #region Accounts_Label
+
+        [HttpPost]
+        public JsonResult GetAccountsLabel(int id)
+        {
+            int currentAccount = GetAccountId();
+            var list = AdContext<Accounts_Label>.GetEntityList("AccountId", id);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult UpsertAccountsLabels(string olabel,string nlabel, string val)
+        {
+            //int accountId = GetAccountId();
+            string action = "עדכון פרטים נוספים";
+            try
+            {
+                var su= GetSignedUser(UserRole.System, true);
+
+                var a = EntityContext.Create<Accounts_Label>(Request.Form);
+                EntityValidator validator = EntityValidator.ValidateEntity(a, action, "he");
+                if (!validator.IsValid)
+                {
+                    return Json(GetFormResult(-1, action, validator.Result, 0), JsonRequestBehavior.AllowGet);
+                }
+                
+                var context = new AdContext<Accounts_Label>(su.AccountId);
+                var res = context.Upsert(UpsertType.Upsert, ReturnValueType.ReturnValue, "LabelId", a.LabelId, "AccountId",a.AccountId,"Label",a.Label,"Val",a.Val);
+                return Json(res.GetResult(action), JsonRequestBehavior.AllowGet);
+                //return Json(FormResult.Get(res,action), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult DeleteAccountsLabels(int AccountId, long LabelId)//string Label)
+        {
+            string action = "מחיקת פרטים נוספים";
+            try
+            {
+                var su = GetSignedUser(UserRole.SubAdmin, true);
+                var context = new AdContext<Accounts_Label>(su.AccountId);
+                var res = context.Delete("AccountId", AccountId, "LabelId", LabelId);
+
+                return Json(FormResult.Get(res, action), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        #endregion
+
+        #region Accounts property
+
+        [HttpPost]
+        public JsonResult AccountProperty_Get(int id)
+        {
+            int accountId = GetAccountId();
+            var list = AccountsView.ViewList();
+            //var list = EntityPro.ViewEntityList<AccountsView>(EntityGroups.Enums, AccountsView.TableName, accountId);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult AccountProperty_Update()
+        {
+
+
+            int result = 0;
+            ResultModel rm = null;
+            int accountId = GetAccountId();
+            try
+            {
+                if (!IsSignedUser(UserRole.SubAdmin, false)) //(!IsAdmin())
+                {
+                    throw new Exception("User not alllowed for this method");
+                }
+                int command = Types.ToInt(Request["command"]);
+
+                AccountsView v = new AccountsView()
+                {
+                    PropId = Types.ToInt(Request["PropId"]),
+                    PropName = Request["PropName"],
+                    SmsSender = Request["SmsSender"],
+                    MailSender = Request["MailSender"],
+                    AuthUser = Types.ToInt(Request["AuthUser"]),
+                    AuthAccount = Types.ToInt(Request["AuthAccount"]),
+                    EnableSms = Types.ToBool(Request["EnableSms"], false),
+                    EnableMail = Types.ToBool(Request["EnableMail"], false),
+                    Path = Request["Path"],
+                    SignupPage = Request["SignupPage"],
+                    EnableInputBuilder = Types.ToBool(Request["EnableInputBuilder"], false),
+                    BlockCms = Types.ToBool(Request["BlockCms"], false),
+                    //SignupOption=Types.ToInt(Request["SignupOption"]),
+                    Design = Request["Design"]
+                    //EnableSignupCredit=Types.ToBool(Request["EnableSignupCredit"],false),
+                    //CreditTerminal= HttpUtility.UrlDecode( Request["CreditTerminal"]),
+                    //RecieptEvent = Request["RecieptEvent"],
+                    //RecieptAddress = Request["RecieptAddress"]
+                };
+
+                result = AccountsView.DoSave(v, (UpdateCommandType)command);
+                rm = new ResultModel(result);
+            }
+            catch (Exception ex)
+            {
+                string err = ex.Message;
+                result = -1;
+                rm = new ResultModel()
+                {
+                    Status = result,
+                    Message = err
+                };
+            }
+            return Json(rm, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+        #region Accounts Clearing
+
+        [HttpPost]
+        public JsonResult AccountClearing_Get(int id)
+        {
+            int accountId = GetAccountId();
+            var list = AccountsView.ViewList();
+            //var list = EntityPro.ViewEntityList<AccountsView>(EntityGroups.Enums, AccountsView.TableName, accountId);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult AccountClearing_Update()
+        {
+            int result = 0;
+            ResultModel rm = null;
+            int accountId = GetAccountId();
+            try
+            {
+                if (!IsSignedUser(UserRole.SubAdmin, false)) //(!IsAdmin())
+                {
+                    throw new Exception("User not alllowed for this method");
+                }
+                AccountsCreditView v = new AccountsCreditView()
+                {
+                    PropId = Types.ToInt(Request["PropId"]),
+                    //PropName = Request["PropName"],
+                    SignupOption = Types.ToInt(Request["SignupOption"]),
+                    EnableSignupCredit = Types.ToBool(Request["EnableSignupCredit"], false),
+                    CreditTerminal = HttpUtility.UrlDecode(Request["CreditTerminal"]),
+                    RecieptEvent = Request["RecieptEvent"],
+                    RecieptAddress = Request["RecieptAddress"]
+                };
+
+                result = AccountsCreditView.DoSave(v);
+                rm = new ResultModel(result);
+            }
+            catch (Exception ex)
+            {
+                string err = ex.Message;
+                result = -1;
+                rm = new ResultModel()
+                {
+                    Status = result,
+                    Message = err
+                };
+            }
+            return Json(rm, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+        #region Payments
+
+        public ActionResult PaymentsQuery()
+        {
+            return View(true);
+        }
+        public ActionResult Payments()
+        {
+            PaymentQuery query = new PaymentQuery(Request.Form);
+            return View(true, query);
+        }
+
+        public JsonResult GetPaymentsGrid()
+        {
+            try
+            {
+                PaymentQuery query = new PaymentQuery(Request);
+                var su = GetSignedUser(true);
+                query.AccountId = su.AccountId;
+
+                query.Normelize();
+                IEnumerable<PaymentsView> list = AccountPaymentContext.ListQueryView(query);
+                var row = list.FirstOrDefault<PaymentsView>();
+                int totalRows = row == null ? 0 : row.TotalRows;
+                return QueryPagerServer<PaymentsView>(list, totalRows, su.UserId);
+
+            }
+            catch (Exception ex)
+            {
+                TraceHelper.Log("Main", "GetPaymentsGrid", ex.Message, Request, -1);
+                return null;
+            }
+        }
+        public ActionResult PaymentsExport()
+        {
+            PaymentQuery query = new PaymentQuery(Request);
+            query.AccountId = GetAccountId();
+            query.UserId = GetUser();
+            query.Normelize();
+            var d = AccountPaymentContext.ListQueryDataView(query);
+            return CsvActionResult.ExportToCsv(d, "PaymentTargets");
+
+            //return View(query);
+        }
+
+        #endregion
+
+        #region Login
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -695,7 +1470,7 @@ namespace Pro.Mvc.Controllers
         {
             return View(true);
         }
+        #endregion
 
-      
     }
 }

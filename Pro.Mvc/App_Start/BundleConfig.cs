@@ -74,7 +74,7 @@ namespace Pro.Mvc
             "~/jqwidgets/jqxcombobox.js"
             ));
 
-            bundles.Add(new ScriptBundle("~/bundles/jqx").Include(
+               bundles.Add(new ScriptBundle("~/bundles/jqxmaster").Include(
             "~/jqwidgets/jqxcore.js",
             "~/jqwidgets/jqxdata.js", 
             "~/jqwidgets/jqxbuttons.js",
@@ -94,10 +94,14 @@ namespace Pro.Mvc
             "~/jqwidgets/jqxdropdownbutton.js",
             "~/jqwidgets/jqxwindow.js",
             "~/jqwidgets/jqxtooltip.js",
-            "~/jqwidgets/jqxNotification.js",
+            "~/jqwidgets/jqxeditor.js",
             "~/jqwidgets/jqxtabs.js"
             ));
- 
+
+            bundles.Add(new ScriptBundle("~/bundles/jqx").Include(
+            "~/jqwidgets/jqxNotification.js"
+             ));
+
             bundles.Add(new ScriptBundle("~/bundles/jqxgrid").Include(
             "~/jqwidgets/jqxgrid.js",
             "~/jqwidgets/jqxgrid.sort.js",

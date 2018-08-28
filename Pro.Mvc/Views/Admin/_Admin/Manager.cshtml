@@ -1,0 +1,68 @@
+﻿@model Pro.Mvc.Models.LoginModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Manager";
+
+    string Message=null;
+        
+}
+
+@section head {
+       @*<link rel="stylesheet" id="camera-css"  href="~/Content/camera.css" type="text/css" media="all"> 
+        <script type="text/javascript" src="~/Scripts/camera.js"></script> 
+    <script>
+        jQuery(function () {
+            jQuery('.camera_wrap').camera();
+        });
+	</script>*@
+}
+@section featured {
+}
+ 
+<div class="global">
+    
+    <div class="center-box">
+        <div class="container">
+            <div class="row">
+                <h2 style="text-align:center">ברוכים הבאים למנהל המערכת</h2>
+                        <div class="rtl">
+                            <h2>כניסה למנהל מערכת</h2>
+
+                            <section id="loginForm">
+                            @using (Html.BeginForm("Login","Admin" ,FormMethod.Post)) {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true)
+
+                               <fieldset>
+                                <legend></legend>
+                                <ul style="list-style:none; font-size:150%">
+                                    <li>@Html.LabelFor(m => m.UserName)</li>
+                                    <li>
+                                        
+                                        @Html.TextBoxFor(m => m.UserName)
+                                        @Html.ValidationMessageFor(m => m.UserName)
+                                    </li>
+                                    <li>@Html.LabelFor(m => m.Password)</li>
+                                    <li>
+                                        
+                                        @Html.PasswordFor(m => m.Password)
+                                        @Html.ValidationMessageFor(m => m.Password)
+                                    </li>
+                                    <li>
+                                        @Html.CheckBoxFor(m => m.RememberMe)
+                                        @Html.LabelFor(m => m.RememberMe, new { @class = "checkbox" })
+                                    </li>
+                                </ul>
+                                <input class="btn-default btn2" type="submit" value="כניסה" />
+                            </fieldset>
+                            }
+                                <p>@Message</p>
+                            </section>
+                            
+                          
+
+                       </div>
+            </div>
+        </div>
+    </div>
+</div>

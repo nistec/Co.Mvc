@@ -88,7 +88,7 @@ var app_tasks_act = {
             case 'N':
             case 'T':
                 if (status >= 8)
-                    app.redirectTo('/System/TaskInfo?id=' + id);
+                    app.redirectTo('/System/TaskInfo?id=' + id);//app_task_info.load("#task-Container",id);
                 else if (status > 1 && status < 8)
                     app.redirectTo('/System/TaskEdit?id=' + id);
                 else if (status == 0)//today
@@ -133,20 +133,22 @@ var app_tasks_act = {
     },
     tasks_active_open_task_info: function (status, id, model) {
 
-        switch (model) {
-            case 'N':
-            case 'T':
-                    app.redirectTo('/System/TaskInfo?id=' + id);
-                break;
-            case 'E':
-                    app.redirectTo('/System/TicketInfo?id=' + id);
-                break;
-            case 'R':
-                    app.redirectTo('/System/ReminderInfo?id=' + id);
-                break;
-            case 'C':
-                break;
-        }
+        var window = new window_task_info("#jqxWidget", id, model);
+
+        //switch (model) {
+        //    case 'N':
+        //    case 'T':
+        //        app.redirectTo('/System/TaskInfo?id=' + id);//app_task_info.load("#task-Container", id);
+        //        break;
+        //    case 'E':
+        //            app.redirectTo('/System/TicketInfo?id=' + id);
+        //        break;
+        //    case 'R':
+        //            app.redirectTo('/System/ReminderInfo?id=' + id);
+        //        break;
+        //    case 'C':
+        //        break;
+        //}
     },
     tasks_active_task_expired: function (status, id, model) {
 
@@ -213,6 +215,25 @@ var app_tasks_act = {
                 return '../../Images/icons/vi-orange-24.png';
         }
         return '../../Images/icons/task-24.png'
+    },
+    task_comments: function (id) {
+
+        if ($(".kanban-items-comments-" + id).is(':visible'))
+            $(".kanban-items-comments-" + id).hide();
+        else {
+            $(".kanban-items-comments-" + id).show();
+            app_system_model.task_comments(".kanban-items-comments-" + id, id);
+        }
+        return false;
+    },
+    task_sub: function (id) {
+        if ($(".kanban-items-sub-" + id).is(':visible'))
+            $(".kanban-items-sub-" + id).hide();
+        else {
+            $(".kanban-items-sub-" + id).show();
+            app_system_model.task_sub(".kanban-items-sub-" + id, id);
+        }
+        return false;
     }
 };
 
@@ -237,7 +258,9 @@ var app_tasks_act = {
                        { name: "content", map: "TaskBody", type: "string" },
                        { name: "tags", map: "Tags", type: "string" },//TaskTypeName
                        { name: "color", map: "ColorFlag", type: "string" },
-                       { name: "resourceId", map: "TaskModel", type: "string" }
+                       { name: "resourceId", map: "TaskModel", type: "string" },
+                       { name: "createdDate", map: "CreatedDate", type: "date" },
+                       { name: "assignBy", map: "AssignByName", type: "string" }
                 ],
                 datatype: "json",
                 id: 'TaskId',
@@ -256,6 +279,8 @@ var app_tasks_act = {
                 {
                     localData: [
                           { id: 'N', name: "לא משויך", image: '../../Images/icons/diagonal-red-24.png', common: true },
+                          { id: 't', name: "משימת צוות", image: '../../Images/icons/diagonal-red-24.png', common: true },
+                          { id: 'e', name: "כרטיס צוות", image: '../../Images/icons/diagonal-red-24.png', common: true },
                           { id: 'T', name: "משימה", image: '../../Images/icons/task-24.png' },
                           { id: 'E', name: "כרטיס", image: '../../Images/icons/event-gold-24.png' },
                           { id: 'R', name: "תזכורת", image: '../../Images/icons/comment-green-24.png' },
@@ -281,14 +306,36 @@ var app_tasks_act = {
                         + "<div class='jqx-kanban-item-avatar'></div>"
                         + "<div class='jqx-icon jqx-icon-close-white jqx-kanban-item-template-content jqx-kanban-template-icon'></div>"
                         + "<div class='jqx-kanban-item-text'></div>"
-                    + "<div class='jqx-kanban-item-footer'><div class='jqx-kanban-item-button' style='dislpay=inline;float:left'><i title='Open Task' class='fa fa-pencil-square'style='font-size:20px;color:dimgrey'></i></div><div class='jqx-kanban-item-button-display' style='dislpay=inline;float:left'><i title='View Task' class='fa fa-print' style='font-size:20px;color:dimgrey'></i></div><div class='jqx-kanban-item-button-expired' style='dislpay=inline;float:left'><i title='Expired Task' class='fa fa-close' style='font-size:20px;color:red'></i></div><div class='jqx-kanban-item-button-content panel-btn-2' title='Show Content' onclick='return toggleKanbanItem(this)' style='dislpay=inline;float:left'></div></div>"
+                        + "<div class='jqx-kanban-item-footer'><div class='jqx-kanban-item-button' style='dislpay=inline;float:left'><i title='Open Task' class='fa fa-pencil-square'style='font-size:20px;color:dimgrey'></i></div><div class='jqx-kanban-item-button-display' style='dislpay=inline;float:left'><i title='View Task' class='fa fa-print' style='font-size:20px;color:dimgrey'></i></div><div class='jqx-kanban-item-button-expired' style='dislpay=inline;float:left'><i title='Expired Task' class='fa fa-close' style='font-size:20px;color:red'></i></div><div class='jqx-kanban-item-button-content panel-btn-2' title='Show Content' onclick='return toggleKanbanItem(this)' style='dislpay=inline;float:left'></div></div>"
                         + "<div style='display:none' class='jqx-kanban-item-details panel-areaB' ></div>"
                         + "</div>",
                 itemRenderer: function (element, item, resource) {
                     //$(element).find(".jqx-kanban-item-color-status").html("<span style='line-height: 23px; margin-left: 5px; color:white;'>" + resource.name + "</span>");
                     //$(element).find(".jqx-kanban-item-footer").css("background-color", item.color);
                     $(element).find(".jqx-kanban-item-button-content").text(item.id);
-                    $(element).find(".jqx-kanban-item-details").html(app.htmlUnescape(item.content));
+                    //var idetails = $(element).find(".jqx-kanban-item-details");
+                    //if (idetails) {
+                    //    var h=app.htmlUnescape(item.content);
+                    //    idetails.html(h);
+                    //}
+
+                    var html_item =
+                        '<div class="panel-area rtl" style="font:12px arial, verdana">' +
+                        '<div style="display:inline-block;border-bottom:solid 2px #f68330;color:#f68330">' +
+                        '<label>מאת: <span style="color:#000">' + item.assignBy + '</span></label>,<label>נוצר: <span style="color:#000">' + app.formatDateString(item.createdDate) + '</span></label>' +
+                        ',<label><span style="color:#000"><a href="#" title="הערות" onclick="return app_tasks_act.task_comments(' + item.id + ');"><i class="fa fa-file-text-o" style="font-size:16px;color:#219f37"></i></a></span></label>' +
+                        ',<label><span style="color:#000"><a href="#" title="פעולות" onclick="return app_tasks_act.task_sub(' + item.id + ');"><i class="fa fa-tasks" style="font-size:16px;color:#219f37"></i></a></span></label>' +
+                        '</div>' +
+                        '<div style="color:#000"><label style="font-weight:bold">תאור:</label> ' + app.htmlUnescape(item.content) + '</div>' +
+                        '</div>' +
+                        '<div class="panel-area kanban-items-comments-' + item.id + '" style="color:#000;display:none"></div>' +
+                        '<div class="panel-area kanban-items-sub-' + item.id + '" style="color:#000;display:none"></div>';
+
+
+                    //var content_header = '<div><label>נוצר: ' + app.formatDateString(item.createdDate) + '</label>, <label>מאת: ' + item.assignBy + '</label></div>';
+                    //var content_html = content_header + '<div>תאור:</div>'+ app.htmlUnescape(item.content)
+
+                    $(element).find(".jqx-kanban-item-details").html(html_item);
                     var expiredEl = $(element).find(".jqx-kanban-item-button-expired");
                     if (item.status == 'done') {
                         $(element).find(".jqx-kanban-item-button").hide();
@@ -411,13 +458,22 @@ var app_tasks_act = {
                     slf.taskToday.load();
                 }
             });
-            $("#exp-assign").jqxExpander({ rtl: true, width: '100%', theme: 'arctic', animationType: 'fade', expandAnimationDuration: 500, collapseAnimationDuration: 350, expanded: false });
-            $('#exp-assign').on('expanding', function () {
+            $('#assign-exp-a').on('click', function (e) {
                 if (slf.taskShare == null) {
                     slf.taskShare = app_tasks_share.init();
                     //slf.taskShare.init();
                 }
+                $('#assign-exp-box').slideToggle();
+                return false;
             });
+
+            //$("#exp-assign").jqxExpander({ rtl: true, width: '100%', theme: 'arctic', animationType: 'fade', expandAnimationDuration: 500, collapseAnimationDuration: 350, expanded: false });
+            //$('#exp-assign').on('expanding', function () {
+            //    if (slf.taskShare == null) {
+            //        slf.taskShare = app_tasks_share.init();
+            //        //slf.taskShare.init();
+            //    }
+            //});
 
             $('#quick-reminder').click(function (e) {
                 e.preventDefault();
@@ -434,6 +490,22 @@ var app_tasks_act = {
         load: function (userInfo) {
             this.AllowEdit = userInfo.UserRole > 4 ? 1 : 0;
             this.grid(255);
+            /*
+            var cookiDef = app_cookies.getItem("task-user");
+            if (cookiDef{
+
+                var args = cookiDef.split(';');
+                if (args[0] == 'g') {
+                    if (!user_grid)
+                        user_grid = new user_task_grid(uinfo);
+                    current_mode = "grid";
+
+                    if (args[1] == 'g') {
+
+                    }
+               }
+            }
+            */
             return this;
         },
         remove: function (itemId, refreshToday) {
@@ -457,8 +529,79 @@ var app_tasks_act = {
             return this;
         }
     };
+
+    
 })(jQuery)
 
+var user_task_grid = function (uinfo) {
+    //var user_grid;
+    var columnList = [
+        { label: 'מספר משימה', value: 'TaskId', checked: false },
+        { label: 'סוג משימה', value: 'TaskTypeName', checked: false },
+        { label: 'פרוייקט', value: 'ProjectName', checked: false },
+        { label: 'מבצע המשימה', value: 'DisplayName', checked: false },
+        { label: 'יוצר המשימה', value: 'AssignByName', checked: false },
+        { label: 'סטאטוס', value: 'StatusName', checked: false },
+        { label: 'נושא', value: 'TaskSubject', checked: false },
+        { label: 'לקוח', value: 'ClientDetails', checked: false },
+        { label: 'תוכן', value: 'TaskBody', checked: false }
+    ];
+    var dateList = [
+        { label: 'מועד רישום', value: 'CreatedDate', checked: false },
+        { label: 'מועד לביצוע', value: 'DueDate', checked: false },
+        { label: 'מועד עדכון', value: 'LastUpdate', checked: false },
+        { label: 'מועד התחלה', value: 'StartedDate', checked: false },
+        { label: 'מועד סיום', value: 'EndedDate', checked: false },
+        { label: 'מועד התחלה משוער', value: 'EstimateStartTime', checked: false }
+    ];
+
+    var init = function (uinfo) {
+
+        if (user_grid)
+            return;
+
+        user_grid = app_tasks_grid.loadUser(uinfo);
+
+        app_jqxgrid.gridFilterEx(this, $("#grid-toolbar"), columnList, dateList);
+
+        $("#tbFilter").jqxButton({ width: 16, height: 16 });
+        $("#tbFilterRemove").jqxButton({ width: 16, height: 16 });
+
+        $("#tbFilter").on('click', function () {
+            user_grid.reload();
+        });
+        $("#tbFilterRemove").on('click', function () {
+            $("#chkAssignBy").prop("checked", false);
+            $("#rdStateAll").prop("checked", true);
+            $('#TaskState').val(0);
+            user_grid.reload();
+        });
+
+        //$("#chkAssignBy").on('change', function () {
+        //    task_grid.reload();
+        //});
+
+        $('#tb_form input').on('change', function () {
+            var state = $('input[name=TaskState]:checked').val();//$('input[name=TaskState]:checked', '#tb_form').val();
+            $('#TaskState').val(state);
+            //app_jqxgrid.searchFilter('TaskStatus', state, 'EQUAL', "#jqxgrid");
+            //user_grid.reload();
+           
+            reloadUserGrid(state);
+        });
+
+        var reloadUserGrid=function(state){
+
+            var source = $('#jqxgrid').jqxGrid('source');
+            source._source.data['assignMe'] = false;
+            source._source.data['UserMode'] = true;
+            source._source.data['state'] = state;
+            $('#jqxgrid').jqxGrid('source').dataBind();
+        }
+    }
+
+    init(uinfo);
+}
 
 //============================================================ app_tasks_today
 
@@ -1055,7 +1198,7 @@ app_tasks_share = {
         wizard.displayStep(1);
         $('#divPartial').html('');
         if (refresh)
-            $('#jqxgrid').jqxGrid('source').dataBind();
+            $('#assign-jqxgrid').jqxGrid('source').dataBind();
     },
     getTotalRows: function (data) {
         if (data) {
@@ -1344,35 +1487,35 @@ app_tasks_share = {
             // add new row.
             addButton.click(function (event) {
                 //var datarow = generatedata(1);
-                //$("#jqxgrid").jqxGrid('addrow', null, datarow[0]);
+                //$("#assign-jqxgrid").jqxGrid('addrow', null, datarow[0]);
                 app_popup.memberEdit(0);
             });
             editButton.click(function (event) {
                 //var datarow = generatedata(1);
-                //$("#jqxgrid").jqxGrid('addrow', null, datarow[0]);
-                var selectedrowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+                //$("#assign-jqxgrid").jqxGrid('addrow', null, datarow[0]);
+                var selectedrowindex = $("#assign-jqxgrid").jqxGrid('getselectedrowindex');
                 if (selectedrowindex < 0)
                     return;
-                var id = $("#jqxgrid").jqxGrid('getrowid', selectedrowindex);
+                var id = $("#assign-jqxgrid").jqxGrid('getrowid', selectedrowindex);
                 app_popup.memberEdit(id);
             });
             // delete selected row.
             deleteButton.click(function (event) {
-                var selectedrowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+                var selectedrowindex = $("#assign-jqxgrid").jqxGrid('getselectedrowindex');
                 if (selectedrowindex < 0)
                     return;
-                var rcdid = $('#jqxgrid').jqxGrid('getrowdata', selectedrowindex).RecordId;
+                var rcdid = $('#assign-jqxgrid').jqxGrid('getrowdata', selectedrowindex).RecordId;
                 //if (confirm('האם למחוק את המנוי ' + memid)) {
                 app_tasks_grid.memberDelete(rcdid);
                 //}
-                //$("#jqxgrid").jqxGrid('deleterow', id);
+                //$("#assign-jqxgrid").jqxGrid('deleterow', id);
             });
             // reload grid data.
             reloadButton.click(function (event) {
-                $("#jqxgrid").jqxGrid('source').dataBind();
+                $("#assign-jqxgrid").jqxGrid('source').dataBind();
             });
             clearFilterButton.click(function (event) {
-                $("#jqxgrid").jqxGrid('clearfilters');
+                $("#assign-jqxgrid").jqxGrid('clearfilters');
             });
             queryButton.click(function (event) {
                 app.redirectTo('/Main/TasksQuery');
@@ -1380,7 +1523,7 @@ app_tasks_share = {
         };
 
         // create Tree Grid
-        $("#jqxgrid").jqxGrid(
+        $("#assign-jqxgrid").jqxGrid(
         {
             width: '100%',
             autoheight: true,
@@ -1482,18 +1625,18 @@ app_tasks_share = {
             ]
             });
 
-        $("#jqxgrid").on("pagechanged", function (event) {
+        $("#assign-jqxgrid").on("pagechanged", function (event) {
             var args = event.args;
             var pagenum = args.pagenum;
             var pagesize = args.pagesize;
 
             $.jqx.cookie.cookie("jqxGrid_jqxWidget", pagenum);
         });
-        $('#jqxgrid').on('rowdoubleclick', function (event) {
+        $('#assign-jqxgrid').on('rowdoubleclick', function (event) {
             var args = event.args;
             var boundIndex = args.rowindex;
             var visibleIndex = args.visibleindex;
-            var id = $("#jqxgrid").jqxGrid('getrowid', boundIndex);
+            var id = $("#assign-jqxgrid").jqxGrid('getrowid', boundIndex);
             return taskEdit(id);
         });
 
@@ -1522,10 +1665,10 @@ app_tasks_share = {
             dataType: "json",
             success: function (data) {
                 app_dialog.alert(data.Message);
-                $('#jqxgrid').jqxGrid('source').dataBind();
+                $('#assign-jqxgrid').jqxGrid('source').dataBind();
             },
             completed: function (data) {
-                $('#jqxgrid').jqxGrid('source').dataBind();
+                $('#assign-jqxgrid').jqxGrid('source').dataBind();
             },
             error: function (e) {
                 app_dialog.alert(e);
@@ -1573,7 +1716,7 @@ app_tasks_share = {
     reload: function () {
         //this.source.data['assignMe'] = $("#chkAssignBy").is(':checked');
         //this.source.data['state'] = $('#TaskState').val();
-        $('#jqxgrid').jqxGrid('source').dataBind();
+        $('#assign-jqxgrid').jqxGrid('source').dataBind();
     }
 };
 
@@ -1921,4 +2064,457 @@ var app_reminder_window = function (tagWindow) {
     //this.updatePanel = function (item) {
     //    this.appMedia.updatePanel(item);
     //};
+}
+
+
+
+var app_task_info = {
+    TaskId: 0,
+    TagDiv: undefined,
+    Option: "a",
+    Callback: undefined,
+    doClose: function (tag) {
+        $(tag).hide();
+        $(tag).empty();
+    },
+    load: function (tagWindow, id) {
+        this.TaskId = id;
+        this.TagDiv = tagWindow;
+        this.Option = "a";
+        this.exp1_Inited = false;
+
+        var init = function () {
+
+            var slf = app_task_info;
+
+            var html = (function () {/*
+  <div class="global-view">
+    <div id="wiz-container" class="container rtl">
+
+        <div id="hTitle" class="panel-page-header rtl">
+            <span id="hTitle-text" style="margin:10px">משימה</span>
+        </div>
+        <div style="height:5px"></div>
+        <div id="wiz-1" class="wiz-tab active">
+            <div id="jqxWidget" style="margin: 0 auto; display: block; direction: rtl">
+
+                <div id="exp-0" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-title">משימה</div>
+                        <div class="expander-entry" id="entry-exp-0">
+                            <form class="fcForm" id="fcForm" method="post" action="/System/UpdateTask">
+                                <input type="hidden" id="TaskId" name="TaskId" value="0" />
+                                <input type="hidden" id="AccountId" name="AccountId" value="" />
+                                <input type="hidden" id="TeamId" name="TeamId" value="" />
+                                <input type="hidden" id="TaskSubject" name="TaskSubject" value="" />
+                                <input type="hidden" id="TaskModel" name="TaskModel" value="T" />
+                                <input type="hidden" id="UserId" name="UserId" value="0" />
+
+                                <div id="tab-content" class="tab-content" dir="rtl">
+                                    <div class="form-group">
+                                        <div class="field">
+                                            סוג משימה:
+                                        </div>
+                                        <select id="Task_Type" name="Task_Type" data-type="select-loader"></select>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            סטאטוס :
+                                        </div>
+                                        <input type="hidden" id="TaskStatus" name="TaskStatus" />
+                                        <label class="text-normal border white"><label id="TaskStatus-display"></label>  -  <i id="TaskStatus-color" class="fa fa-circle" style="font-size:16px;"></i></label>
+                                    </div>
+                                    <div class="form-group" id="TaskBody-div">
+                                        <div class="field">
+                                            תיאור: <span><a id="TaskBody-btn-view" href="#"><i class="fa fa-search-plus" style="font-size:16px"></i></a></span>
+                                        </div>
+                                        <textarea id="TaskBody" name="TaskBody" class="text-content"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            נוצר ב:
+                                        </div>
+                                        <input type="text" id="CreatedDate" name="CreatedDate" class="text-mid label" readonly="readonly" data-type="datetime" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            תאריך לביצוע:
+                                        </div>
+                                        <div id="DueDate" name="DueDate"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            משימה עבור:
+                                        </div>
+                                        <input type="text" id="DisplayName" readonly="readonly" data-field="DisplayName" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="field">
+                                            צבע :
+                                        </div>
+                                        <select id="ColorFlag" name="ColorFlag"></select>
+                                    </div>
+                                    <div id="jqxExp-1" class="panel-area rtl">
+
+                                        <div class="panel-area-title">
+                                            <a id="a-jqxExp-1" href="#">פרטים נוספים</a>
+                                        </div>
+                                        <div id="jqxExp-box" style="display:none">
+
+                                            <div class="form-group">
+                                                <div class="field">
+                                                    מועד התחלה:
+                                                </div>
+                                                <input id="StartedDate" name="StartedDate" type="text" readonly="readonly" class="text-mid label" data-type="datetime" />
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="field">
+                                                    מועד סיום:
+                                                </div>
+                                                <input id="EndedDate" name="EndedDate" type="text" readonly="readonly" class="text-mid label" data-type="datetime" />
+                                            </div>
+                                            <div id="Task_Parent-group" class="form-group">
+                                                <div class="field">
+                                                    משימת אב:
+                                                </div>
+                                                <input type="text" id="Task_Parent" name="Task_Parent" readonly /><a id="Task_Parent-link" href="#" title="הצג משימת אב"><i class="fa fa-search-plus"></i></a>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="field">
+                                                    פרוייקט:
+                                                </div>
+                                                <input type="text" id="Project_Id" name="Project_Id" /><i class="fa fa-search"></i>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="field">
+                                                    לקוח\מנוי:
+                                                </div>
+                                                <input type="text" id="ClientId" name="ClientId" /><i class="fa fa-search"></i>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="field">
+                                                    שיתוף:
+                                                </div>
+                                                <select id="ShareType" name="ShareType"></select>
+                                                <div style="height:5px"></div>
+                                                <div id="AssignTo" name="AssignTo"></div>
+                                            </div>
+                                            <div class="form-group rtl">
+                                                <div class="field">
+                                                    תגיות:
+                                                </div>
+                                                <div id="Tags" name="Tags"></div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div id="exp-1" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-1"><a id="a-exp-1" href="#">הערות</a></div>
+                        <div class="expander-entry pasive" id="entry-exp-1">
+                            <div class="grid-wrap rtl">
+                                <div id="jqxgrid1-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                    <a id="jqxgrid1-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                    <a id="jqxgrid1-edit" href="#" class="btn-default btnIcon"><i class="fa fa-edit"></i>עריכה</a>
+                                    <a id="jqxgrid1-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
+                                    <a id="jqxgrid1-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                </div>
+                                <div id="jqxgrid1-window"></div>
+                                <div id="jqxgrid1" style="position:relative;z-index:1;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="exp-2" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-2"><a id="a-exp-2" href="#">העברות</a></div>
+                        <div class="expander-entry pasive" id="entry-exp-2">
+                            <div class="grid-wrap rtl">
+                                <div id="jqxgrid2-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                    <a id="jqxgrid2-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                    <a id="jqxgrid2-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                </div>
+                                <div id="jqxgrid2-window"></div>
+                                <div id="jqxgrid2" style="position:relative;z-index:1;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="exp-3" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-3"><a id="a-exp-3" href="#">מד-זמן</a></div>
+                        <div class="expander-entry pasive" id="entry-exp-3">
+                            <div class="grid-wrap rtl">
+                                <div id="jqxgrid3-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                    <a id="jqxgrid3-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                    <a id="jqxgrid3-edit" href="#" class="btn-default btnIcon"><i class="fa fa-edit"></i>עריכה</a>
+                                    <a id="jqxgrid3-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
+                                    <a id="jqxgrid3-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                </div>
+                                <div id="jqxgrid3-window"></div>
+                                <div id="jqxgrid3" style="position:relative;z-index:1;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="exp-4" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-4"><a id="a-exp-4" href="#">פעולות</a></div>
+                        <div class="expander-entry pasive" id="entry-exp-4">
+                            <div class="grid-wrap rtl">
+                                <div id="jqxgrid4-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                    <a id="jqxgrid4-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                    <a id="jqxgrid4-edit" href="#" class="btn-default btnIcon"><i class="fa fa-edit"></i>עריכה</a>
+                                    <a id="jqxgrid4-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
+                                    <a id="jqxgrid4-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                </div>
+                                <div id="jqxgrid4-window"></div>
+                                <div id="jqxgrid4" style="position:relative;z-index:1;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="exp-5" class="jcxtab-panel">
+                    <div class="panel-area">
+                        <div class="panel-area-title" id="hxp-5"><a id="a-exp-5" href="#">קבצים</a></div>
+                        <div class="expander-entry1 pasive" id="entry-exp-5">
+                            <div id="task-files"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 5px"></div>
+                <div class="panel-area">
+                    <input id="fcSubmit" class="btn-default btn7 w-60" type="button" value="עדכון" />
+                    <input id="fcEnd" class="btn-default btn7 w-60" type="button" value="סיום" />
+                    <input id="fcCancel" class="btn-default btn7 w-60" type="button" value="x" />
+                    <a id="Task_Child-link" style="margin-right:10px" href="#" title="יצירת תת משימה"><i class="fa fa-share-alt"></i></a>
+                </div>
+
+            </div>
+        </div>
+        <div id="wiz-2" class="wiz-tab">
+            <h3 id="wiz-2-title" class="rtl">
+                עריכת משימה
+            </h3>
+            <div id="divPartial2" class="wiz-partial"></div>
+            <div class="rtl">
+                <a id="task-item-update" class="btn-default btn7 w-60" href="#">עדכון</a>
+                <a id="task-item-cancel" class="btn-default btn7 w-60" href="#">ביטול</a>
+            </div>
+        </div>
+        <div id="wiz-3" class="wiz-tab">
+            <div class="rtl">
+                <a class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">חזרה</a>
+            </div>
+            <div id="divPartial3"></div>
+        </div>
+        <div id="wiz-4" class="wiz-tab">
+            <h3 class="rtl">מעקב זמנים</h3>
+            <div id="divPartial4"></div>
+        </div>
+        <div id="wiz-5" class="wiz-tab">
+            <h3 class="rtl">הערות-עריכה</h3>
+            <div id="divPartial5"></div>
+        </div>
+        <div id="wiz-6" class="wiz-tab">
+            <h3 class="rtl">העברה</h3>
+            <div id="divPartial6"></div>
+        </div>
+        <div id="wiz-7" class="wiz-tab">
+            <h3 class="rtl">מעקב זמנים - עריכה</h3>
+            <div id="divPartial7"></div>
+        </div>
+    </div>
+</div>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+
+            if (slf.Option == "a") {
+                html = html.replace('form-group active', 'form-group pasive')
+            }
+            var container = $(html);
+
+            $(slf.TagDiv).empty();
+            $(slf.TagDiv).append(container);
+
+            loadData();
+
+            $(slf.TagDiv).show();
+
+            //return this;
+        };
+
+        var loadControls = function (record) {
+
+            var _slf = app_task_info;
+
+            $('#DueDate').jqxDateTimeInput({ showCalendarButton: false, readonly: true, width: '150px', rtl: true });
+
+            $("#ShareType").change(function () {
+                var index = $('option:selected', this).val();
+
+                if (index === "3") {
+                    $("#AssignTo").jqxComboBox({ disabled: false });
+                    //$("#AssignTo").jqxComboBox('open');
+                }
+                else {
+                    $("#AssignTo").jqxComboBox('uncheckAll');
+                    $("#AssignTo").jqxComboBox({ disabled: true });
+                }
+            });
+
+
+            //this.doSettings(record);
+            app_form.loadDataForm("fcForm", record, ["Project_Id", "ClientId", "Tags", "AssignTo"]);//,"Task_Type"]);
+
+            $("#AssignTo").jqxComboBox({ disabled: record.ShareType !== 3 });
+            $("#TaskBody").jqxEditor('val', app.htmlUnescape(record.TaskBody));
+
+            $("#TaskSubject").val(record.TaskSubject);
+            // $("#hTitle-text").text(this.Title + ": " + record.TaskSubject);
+            $("#hTitle").css("background-color", (record.ColorFlag || config.defaultColor));
+
+            // $('#DueDate').jqxDateTimeInput({ disabled: !this.IsEditable, showCalendarButton: this.IsEditable });
+            this.parentSettings(record.Task_Parent);
+
+            //if (this.Option !== 'g' && record.TaskStatus > 1 && record.TaskStatus < 8)
+            //    $("#fcEnd").show();
+            //else
+            //    $("#fcEnd").hide();
+
+
+            var align = app_style.langAlign(record.Lang);
+            $('#TaskBody').css('text-align', align)
+
+
+            app_tasks.setTaskStatus("#TaskStatus", record.TaskStatus);
+
+        }
+
+        var loadData = function () {
+
+            var _slf = app_task_info;
+            var url = "/System/GetTaskInfo";
+            var view_source =
+                {
+                    datatype: "json",
+                    id: 'TaskId',
+                    data: { 'id': _slf.TaskId },
+                    type: 'POST',
+                    url: url
+                };
+
+            var viewAdapter = new $.jqx.dataAdapter(view_source, {
+                loadComplete: function (record) {
+
+                    //_slf.doSettings(record, isInfo);
+                    loadControls(record);
+                    //slf.loadEvents();
+                },
+                loadError: function (jqXHR, status, error) {
+                    app_dialog.alert("error loading task data");
+                },
+                beforeLoadComplete: function (records) {
+                }
+            });
+
+            if (this.TaskId > 0) {
+                viewAdapter.dataBind();
+            }
+        }
+
+        var loadControls222 = function () {
+
+            var slf = app_task_info;
+
+
+            $('#app_task_info-TaskBody').jqxEditor({
+                height: '140px',
+                width: '100%',
+                editable: true,
+                rtl: true,
+                tools: 'bold italic underline | color background | left center right',
+                theme: config.theme
+                //stylesheets: ['editor.css']
+            });
+
+            $('#a-jqxExp-1').on('click', function (e) {
+                if (!slf.exp1_Inited) {
+                    slf.lazyLoad();
+                }
+                $('#jqxExp-box').slideToggle();
+                return false;
+            });
+
+
+            $('#app_task_info-DueDate').jqxDateTimeInput({ showCalendarButton: true, readonly: true, width: '150px', rtl: true });
+
+            app_jqx_adapter.createComboCheckAdapterAsync("UserId", "DisplayName", "#app_task_info-AssignTo", '/System/GetUsersList', null, 225, 0, null, null, function () {
+
+            });
+            app_form.setDateTimeNow('#app_task_info-CreatedDate');
+
+            $('#app_task_info-Cancel').on('click', function (e) {
+                slf.doClose(slf.TagDiv);
+            });
+
+            $('#app_task_info-Submit').on('click', function (e) {
+
+                var actionurl = $('#app_task_info-form').attr('action');
+                var status = app_jqx.getInputAutoValue("#app_task_info-TaskStatus", 1);
+                app_jqx.setInputAutoValue("#app_task_info-TaskStatus", status);
+
+                var value = $("#app_task_info-TaskBody").jqxEditor('val');
+                var AssignTo = app_jqxcombos.getComboCheckedValues("app_task_info-AssignTo");
+                var args = [{ key: 'TaskBody', value: app.htmlEscape(value) }, { key: 'AssignTo', value: AssignTo }];
+                var formData = app.serializeEx('#app_task_info-form input, #app_task_info-form select, #app_task_info-form hidden', args);
+
+                app_query.doFormSubmit("#app_system_ticket-form", actionurl, formData, function (data) {
+
+                    app_messenger.Post(data);
+                    slf.doClose(slf.TagDiv);
+                    if (slf.Callback)
+                        slf.Callback(data);
+                });
+
+            });
+
+
+            app_control.select2Ajax("#app_task_info-Task_Type", 240, null, '/System/GetListsSelect', { 'model': 5 });
+
+            app_control.select2Ajax("#app_task_info-TeamId", 240, null, '/System/GetListsSelect', { 'model': 10 });
+
+
+            //app_jqxcombos.createComboAdapter("UserTeamId", "DisplayName", "app_system_ticket-IntendedTo", '/System/GetUserTeamList', 0, 120, false);
+
+            app_jqx_combo_async.lookupInputAdapter('#app_task_info-ClientId', 'lu_Members', this.ClientId, function () {
+
+            });
+            app_jqx_combo_async.systemLookupInputAdapter('#app_task_info-Project_Id', 'lu_Project', this.ProjectId, function () {
+
+            });
+            app_jqx_adapter.createComboDisplayAsync("Tag", "#app_task_info-Tags", '/System/GetTagsList', null, 225, 0, true, this.Tags, function () {
+
+            });
+
+            slf.exp1_Inited = true;
+
+            //if (!this.IsEditable) {
+            //    $("#ClientId").prop("readonly", true);
+            //    $("#Project_Id").prop("readonly", true);
+            //    $("#Tags").jqxComboBox({ enableSelection: false });
+            //    $("#AssignTo").jqxComboBox({ enableSelection: false });
+            //    //$("#ShareType").jqxDropDownList({ enableSelection: false });
+            //    //app.disableSelect("#ShareType");
+            //}
+
+        }
+
+        init();
+
+    }//end ticketNew
 }

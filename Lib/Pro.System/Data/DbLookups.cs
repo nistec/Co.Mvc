@@ -32,6 +32,7 @@ namespace ProSystem.Data
             {
                 case "tags":
                     return EntityListContext<DbSystem, int>.GetList("Tag", "Tag", "Tags", "AccountId", accountId);
+                case "lu_Project":
                 case "project_name":
                     return EntityListContext<DbSystem, int>.GetList("ProjectId", "ProjectName", "Project", "AccountId", accountId);
                 default:

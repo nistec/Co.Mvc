@@ -1,4 +1,4 @@
-﻿//============================================================================================ app_control
+﻿//============================================================================================ app_common
 
 var app_common = {
 
@@ -23,6 +23,73 @@ var app_style = {
 
 //============================================================================================ app_rout
 
+var app_open = {
+
+    taskInfo: function (tag,id) {
+        var window = new window_task_info(tag, id, 'T');
+    },
+    topicInfo: function (tag, id) {
+        var window = new window_task_info(tag, id, 'P');
+    },
+    ticketInfo: function (tag, id) {
+        var window = new window_task_info(tag, id, 'E');
+    },
+    docInfo: function (tag, id) {
+        var window = new window_doc_info(tag, id);
+    },
+    modelInfo: function (tag,id, model) {
+        switch (model) {
+            case "T":
+                taskInfo(tag,id); break;
+            case "P":
+                topicInfo(tag,id); break;
+            case "E":
+                ticketInfo(tag,id); break;
+            case "D":
+                docInfo(tag,id); break;
+        }
+    },
+    modelEdit: function (id, model) {
+        switch (model) {
+            case "T":
+                taskEdit(id); break;
+            case "P":
+                topicEdit(id); break;
+            case "E":
+                ticketEdit(id); break;
+            case "D":
+                docEdit(id); break;
+        }
+    },
+    
+    taskEdit: function (id) {
+        app.redirectTo('/System/TaskEdit?id=' + id);
+    },
+    topicEdit: function (id) {
+        app.redirectTo('/System/TopicEdit?id=' + id);
+    },
+    ticketEdit: function (id) {
+        app.redirectTo('/System/TicketEdit?id=' + id);
+    },
+    docEdit: function (id) {
+        app.redirectTo('/System/DocEdit?id=' + id);
+    },
+    taskNew: function (pid) {
+        app.redirectTo('/System/TaskNew?pid=' + pid);
+    },
+    topicNew: function (pid) {
+        app.redirectTo('/System/TopicNew?pid=' + pid);
+    },
+    ticketNew: function (pid) {
+        app.redirectTo('/System/TicketNew?pid=' + pid);
+    },
+    docNew: function (pid) {
+        app.redirectTo('/System/DocNew?pid=' + pid);
+    },
+};
+
+//============================================================================================ app_rout
+
 var app_rout = {
 
     isAllowEdit: function (allowEdit) {
@@ -38,7 +105,7 @@ var app_rout = {
 };
 //============================================================================================ app_lookups
 
-app_lookups = {
+var app_lookups = {
     setInput: function (form, tagName, value) {
 
         switch (tagName) {
@@ -46,6 +113,7 @@ app_lookups = {
             case "AssignBy":
                 $('form#' + form + ' [name=' + tagName + ']').val(value);
                 app_lookup.user_name('#' + tagName, value);
+                break;
         }
     },
     lookup: function (tag,url, id) {
@@ -54,6 +122,26 @@ app_lookups = {
             app_query.doLookup(url, { 'id': id }, function (content) {
                 $(tag).val(content);
             });
+    },
+    user_role: function (form, tagLabel, tagValue, value) {
+
+        app_query.doLookup('/System/GetUsersRoles', null, function (records) {
+
+            var item = $.grep(records, function (item) {
+                    return item.RoleId == value;
+            });
+            if (item && item.length > 0) {
+                $('#' + tagLabel).val(item[0].RoleName);
+                $('form#' + form + ' [name=' + tagValue + ']').val(value);
+            }
+        });
+
+            //app_select.lookupFieldValue(form, tag, record, value)
+
+
+            //$('form#' + form + ' [name=' + tagValue + ']').val(record.RoleId);
+            //    $('#'+tagLabel).val(content.RoleName);
+            //});
     },
     user_name: function (tag, id) {
         app_lookups.lookup(tag,'/Common/Lookup_UserDisplay', id);
@@ -67,10 +155,26 @@ app_lookups = {
 };
 
 
+//============================================================================================ app_select_form
+var app_select_loader = {
+
+    loadTag: function (tagName,tagId, args, selectValue, readonly) {
+
+        switch (tagName) {
+            case "Task_Type":
+                app_control.select2Ajax('#' + tagId, 240, null, '/System/GetListsSelect', { 'model': args }, selectValue, readonly);
+                break;
+            case "Doc_Type":
+                app_control.select2Ajax('#' + tagId, 240, null, '/System/GetListsSelect', { 'model': 7 }, selectValue, readonly);
+                break;
+        }
+    }
+};
+
 //============================================================================================ app_select
 
 var app_select = {
-
+ 
     lookupFieldValue: function (form, tag, records, value) {
         var tag = tag.replace('#', '');
         var item = $.grep(records, function (item) { return item.value == value; });
@@ -103,6 +207,12 @@ var app_select = {
         });
         if (value >= 0)
             $(tag).val(value);
+    },
+    TaskStatus: function (form, tag, value) {
+        if (tag === undefined)
+            tag = "#Status";
+        var selectValues = { "1": "פתוח", "2": "בטיפול", "4": "מושהה", "8": "מבוטל", "16": "סגור" };
+        app_select.loadSelectInput(form, tag, selectValues, 0, value);
     },
     AdsStatus: function (form, tag, value) {
         if (tag === undefined)
@@ -148,7 +258,7 @@ var app_select = {
 };
 //============================================================================================ app_task
 
-app_tasks = {
+var app_tasks = {
     taskEdit: function (id, model) {
         var obj = model === undefined ? 'Task': app_tasks.taskModelObject(model);
         app.redirectTo('/System/' + obj +'Edit?id=' + id);
@@ -173,6 +283,150 @@ app_tasks = {
     //    var obj = model === undefined ? 'Task' : app_tasks.taskModelObject(model);
     //    app.redirectTo('/System/' + obj + 'Info?id=' + id);
     //},
+    tasks_getStatus: function (arg_state) {
+        if (arg_state == 'done')
+            return 16;
+        else if (arg_state == 'work')
+            return 2;
+        else if (arg_state == 'new')
+            return 1;
+        else if (arg_state == 'today')
+            return 0;
+        else
+            return -1;
+    },
+    open_task: function (status, id, model) {
+
+        switch (model) {
+            case 'N':
+            case 'T':
+                if (status >= 8)
+                    app.redirectTo('/System/TaskInfo?id=' + id);
+                else if (status > 1 && status < 8)
+                    app.redirectTo('/System/TaskEdit?id=' + id);
+                else if (status == 0)//today
+                    app.redirectTo('/System/TaskStart?id=' + id);
+                else if (status <= 1) {
+                    app_dialog.confirm("האם לאתחל משימה?", function () {
+                        app.redirectTo('/System/TaskStart?id=' + id);
+                    });
+
+                    //if (confirm("האם לאתחל משימה?"))
+                    //    app.redirectTo('/System/TaskStart?id=' + id);
+                }
+
+                break;
+            case 'E':
+                if (status >= 8)
+                    app.redirectTo('/System/TicketInfo?id=' + id);
+                else if (status > 1 && status < 8)
+                    app.redirectTo('/System/TicketEdit?id=' + id);
+                else if (status == 0) //today
+                    app.redirectTo('/System/TicketStart?id=' + id);
+                else if (status <= 1) {
+                    app_dialog.confirm("האם לאתחל כרטיס?", function () {
+                        app.redirectTo('/System/TicketStart?id=' + id);
+                    });
+                }
+                //if (status >= 8)
+                //    app.redirectTo('/System/TicketInfo?id=' + id);
+                //else
+                //    app.redirectTo('/System/TicketEdit?id=' + id);
+                break;
+            case 'R':
+                if (status >= 8)
+                    app.redirectTo('/System/ReminderInfo?id=' + id);
+                else
+                    app.redirectTo('/System/ReminderEdit?id=' + id);
+                break;
+            case 'C':
+                break;
+        }
+        //return false;
+    },
+    open_task_info: function (status, id, model) {
+
+        switch (model) {
+            case 'N':
+            case 'T':
+                app.redirectTo('/System/TaskInfo?id=' + id);
+                break;
+            case 'E':
+                app.redirectTo('/System/TicketInfo?id=' + id);
+                break;
+            case 'R':
+                app.redirectTo('/System/ReminderInfo?id=' + id);
+                break;
+            case 'C':
+                break;
+        }
+    },
+    task_expired: function (status, id, model) {
+
+        var item = '';
+        switch (model) {
+            case 'N':
+            case 'T':
+                item = 'משימה';
+                break;
+            case 'E':
+                item = 'כרטיס';
+                break;
+            case 'R':
+                item = 'תזכורת';
+                break;
+            case 'C':
+                break;
+        }
+
+        if (model !== 'R' && status !== 16) {
+            app_dialog.alert('לא ניתן לסגור ' + item);
+            return;
+        }
+
+        app_dialog.confirm('האם לסגור ' + item, function (id) {
+
+            //alert('expired ' + id)
+
+            app_query.doDataPost('/System/TaskExpired', { 'TaskId': id }, function (data) {
+
+                if (data.Status > 0) {
+                    //app_tasks_active.reload();
+                    //app_tasks_active.remove(id, true);
+                }
+            });
+
+        }, id);
+
+    },
+    getTaskModelName: function (model) {
+        switch (model) {
+            case 'N':
+            case 'T':
+                return 'משימה';
+            case 'E':
+                return 'כרטיס';
+            case 'R':
+                return 'תזכורות';
+            case 'C':
+                return 'יומן';
+        }
+        return 'NA'
+    },
+    getTaskModelIcon: function (model) {
+        switch (model) {
+            case 'N':
+            case 'T':
+                return '../../Images/icons/task-24.png';
+            case 'E':
+                return '../../Images/icons/event-gold-24.png';
+            case 'R':
+                return '../../Images/icons/comment-green-24.png';
+            case 'C':
+                return '../../Images/icons/vi-orange-24.png';
+        }
+        return '../../Images/icons/task-24.png'
+    },
     taskTitle:function(taskModel){
         switch (taskModel) {
             case "E":
@@ -923,7 +1177,7 @@ var app_jqx_list = {
 
     regionComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "Region" : tag, '/Common/GetRegionView', 0, 120, false) },
 
-    cityComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "City" : tag, '/Common/GetCityView', 150, 120, false) },
+    cityComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "City" : tag, '/Common/GetCityView', 0, 120, false) },
 
     genderComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "Gender" : tag, '/Common/GetGenderView', 150, 0, false) },
 
@@ -941,7 +1195,7 @@ var app_jqx_list = {
     enum3ComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "ExEnum3" : tag, '/Common/GetEnum3View', 0, 120, false) },
     userRoleComboAdapter: function (tag) { return app_jqxcombos.createDropDownAdapter("RoleId", "RoleName", tag === undefined ? "UserRole" : tag, '/Admin/GetUsersRoles', 0, 120, false) },
     campaignComboAdapter: function (tag) { return app_jqxcombos.createDropDownAdapterTag("PropId", "PropName", tag === undefined ? "#Campaign" : tag, '/Common/GetCampaignView', 200, 0, false, 'נא לבחור קמפיין') },
-    taskTypeComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "Task_Type" : tag, '/System/GetTaskTypeList', 0, 120, false) },
+    //taskTypeComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "Task_Type" : tag, '/System/GetTaskTypeList', 0, 120, false) },
     taskStatusComboAdapter: function (tag) { return app_jqxcombos.createDropDownAdapter("PropId", "PropName", tag === undefined ? "TaskStatus" : tag, '/System/GetTaskStatusList', 150, 120, false) }
 
 };
@@ -952,12 +1206,16 @@ var app_jqx_list = {
 
 var app_jqx_combo_async = {
 
+    labelsInputAdapter: function (tag, value, id,source, callback) {
+        tag = (tag === undefined || tag == null) ? "#Label" : tag;
+        return app_jqx_adapter.createArrayInputAutoAdapterAsync(tag, '/System/GetLabelList', { 'id': id, 'source': source}, 200, 10, null, value, callback);
+    },
     docFolderInputAdapter: function (tag, value, callback) {
         tag = (tag === undefined || tag == null) ? "#Folder" : tag;
         return app_jqx_adapter.createArrayInputAutoAdapterAsync(tag, '/System/GetTaskFolderList', null, 200, 10, null, value, callback);
     },
     systemLookupInputAdapter: function (tag, type, value, callback) {
-        var adapter = app_jqx_adapter.createInputAutoAdapterAsync("Value", "Label", tag, '/System/Lookup_GetList', { 'type': type }, 0, 10, null, value, callback);
+        var adapter = app_jqx_adapter.createInputAutoAdapterAsync("Value", "Label", tag, '/System/Lookup_DisplayList', { 'type': type }, 0, 10, null, value, callback);
         return adapter;
     },
     lookupInputAdapter: function (tag, type, value, callback) {
@@ -1018,7 +1276,7 @@ var app_jqx_combo_async = {
         return app_jqx_adapter.createDropDownAdapterAsync("PropId", "PropName", tag === undefined ? "#Campaign" : tag, '/Common/GetCampaignView', null, 200, 0, 'נא לבחור קמפיין', value, callback)
     },
     taskTypeComboAdapter: function (tag, value, callback) {
-        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "Task_Type" : tag, '/System/GetTaskTypeList', null, 0, 120, true, value, callback)
+        return app_jqx_adapter.createComboAdapterAsync("PropId", "PropName", tag === undefined ? "Task_Type" : tag, '/System/GetEnumTypesList', {'model':'T'}, 0, 120, true, value, callback)
     },
     taskStatusInputAdapter: function (tag, value, callback) {
         var adapter = app_jqx_adapter.createInputAutoAdapterAsync("PropId", "PropName", tag === undefined ? "TaskStatus" : tag, '/System/GetTaskStatusList', null, 120, 10, null, value, callback);
@@ -1041,3 +1299,124 @@ var app_jqx_combo_async = {
     },
 };
 
+
+
+var window_main_menu = {
+
+    //var items = [
+    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //]
+    //var array = [1, 1, 1, 0];
+    //var ul = '<ul class="submeunav">';
+
+    //array.forEach(function (item,index) {
+    //    if (item == 1)
+    //        ul += memberList[index].label;
+    //});
+    //ul += '</ul>';
+    //return ul;
+
+
+    do_menu: function (accName, uname, menus) {
+
+        var menu_main = (function () {/*
+      <li id="liMain" class="nbr-has-children overview">
+        <a href="#0">מנויים</a>
+        <ul class="submeunav">
+            <li><a href="/Main/Members" title="מנויים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> רשימת מנויים</a></li>
+            <li><a href="/Main/MembersAdd" title="הוספת מנוי"><i class="fa fa-angle-double-left" style="font-size:20px"></i> הוספת מנוי</a></li>
+            <li><a href="/Main/MembersUpload" title="קליטה מקובץ"><i class="fa fa-angle-double-left" style="font-size:20px"></i> קליטה מקובץ</a></li>
+            <li><a href="/Main/PaymentsQuery" title="תשלומים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> איתור תשלומים</a></li>
+        </ul>
+    </li>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+
+        var menu_payments = (function () {/*
+      <li id="liPay" class="nbr-has-children overview">
+        <a href="#0">תשלומים</a>
+        <ul class="submeunav">
+            <li><a href="/Main/PaymentsQuery" title="תשלומים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> איתור תשלומים</a></li>
+            <li><a href="/Common/DefPrice" title="מחירון"><i class="fa fa-angle-double-left" style="font-size:20px"></i> מחירון</a></li>
+            <li><a href="/Common/DefCampaign" title="קמפיין"><i class="fa fa-angle-double-left" style="font-size:20px"></i> קמפיין</a></li>
+        </ul>
+    </li>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+
+        var menu_comm = (function () {/*
+      <li id="liCom" class="nbr-has-children notifications">
+        <a href="#0">תקשורת</a>
+        <ul class="submeunav">
+            <li><a href="/Main/SmsBroadcast" title="שליחת מסרון"><i class="fa fa-angle-double-left" style="font-size:20px"></i> שליחת מסרון</a></li>
+            <li><a href="/Main/EmailBroadcast" title="שליחת דואר אלקטרוני"><i class="fa fa-angle-double-left" style="font-size:20px"></i> שליחת דואר אלקטרוני</a></li>
+            <li><a href="/Main/SendQuery" title="דוחות דיוור"><i class="fa fa-angle-double-left" style="font-size:20px"></i> דוחות דיוור</a></li>
+        </ul>
+     </li>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+
+        var menu_def = (function () {/*
+      <li id="liEntity" class="nbr-has-children comments">
+        <a href="#0">הגדרות</a>
+        <ul class="submeunav">
+            <li><a href="/Common/DefCategory" title="סיווגים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> סיווגים</a></li>
+            <li><a href="/Common/DefEntity?entity=branch" title="הגדרות כלליות"><i class="fa fa-angle-double-left" style="font-size:20px"></i> הגדרות כלליות</a></li>
+            <li><a href="/Common/DefCity" title="יישובים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> יישובים</a></li>
+        </ul>
+     </li>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+
+        var menu_report = (function () {/*
+      <li id="liReport" class="nbr-has-children bookmarks">
+        <a href="#0">הגדרות</a>
+        <ul class="submeunav">
+            <li><a href="/Report/ReportQuery" title="דוחות התפלגות נתונים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> דוחות התפלגות נתונים</a></li>
+        </ul>
+     </li>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+
+        var menu_cms = (function () {/*
+      <li id="liCms" class="nbr-has-children images">
+        <a href="#0">מערכת תוכן</a>
+        <ul class="submeunav">
+            <li><a href="/Cms/CmsWizardPages" title="עריכת תוכן כללי"><i class="fa fa-angle-double-left" style="font-size:20px"></i> עריכת תוכן כללי</a></li>
+            <li><a href="/Cms/CmsWizardForm" title="עריכת טופס רישום"><i class="fa fa-angle-double-left" style="font-size:20px"></i> עריכת טופס רישום</a></li>
+            <li><a href="/Cms/CmsMedia" title="מדיה"><i class="fa fa-angle-double-left" style="font-size:20px"></i> מדיה</a></li>
+        </ul>
+     </li>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+
+        var menu_system = (function () {/*
+      <li id="liSystem" class="nbr-has-children users">
+        <a id="liSystem-a" href="#0">מערכת ניהול</a>
+        <ul class="submeunav">
+            <li><a href="/System/Calendar" title="יומן"><i class="fa fa-angle-double-left" style="font-size:20px"></i> יומן</a></li>
+            <li><a href="/System/TaskUser" title="משימות"><i class="fa fa-angle-double-left" style="font-size:20px"></i> משימות</a></li>
+            <li><a href="/System/AdUsersDef" title="משתמשים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> משתמשים</a></li>
+            <li><a href="/System/AdDef" title="קבוצות"><i class="fa fa-angle-double-left" style="font-size:20px"></i> קבוצות</a></li>
+            <li><a href="/System/AdTeamDef" title="צוותים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> צוותים</a></li>
+            <li><a href="/Account/Logoff" title="יציאה"><i class="fa fa-angle-double-left" style="font-size:20px"></i> יציאה</a></li>
+        </ul>
+     </li>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+
+        var array = [];
+        array.push(menu_main);
+        array.push(menu_payments);
+        array.push(menu_comm);
+        array.push(menu_def);
+        array.push(menu_report);
+        array.push(menu_cms);
+        array.push(menu_system);
+
+        var html = '<ul style="direction:rtl">' +
+            '<li class="nbr-label"><label class="nbr-label-text"><span>' + accName + '</span><span>@@</span><span>' + uname + '</span></label></li>';
+
+        var menu_array = menus.split(',');
+
+        menu_array.forEach(function (item, index) {
+            if (item == "1")
+                html += array[index];
+        });
+
+        html += '</ul>';
+
+        $("#mainnav").html(html);
+    }
+}

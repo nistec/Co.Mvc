@@ -1,0 +1,188 @@
+﻿using System;
+using System.Collections.Generic;
+//using System.Linq;
+using System.Text;
+
+namespace Netcell.Lib
+{
+   
+
+    public enum UserType
+    {
+        Guest=0,
+        User = 1,
+        Manager = 2,
+        //Owner = 3,
+        Admin = 9,
+    }
+
+    public enum UserLevel
+    {
+        DenyAll = 0,
+        ReadOnly = 1,
+        FullControl = 2,
+    }
+
+    public enum AccUsingType
+    {
+        All = 0,
+        Api = 1,
+        Evaluate = 2,
+    }
+
+    public enum AccountType
+    {
+        Customer = 0,
+        Parent = 1,
+        Child = 2,
+        Owner = 3,
+        Evaluate = 4,
+        Demo = 5,
+        Admin = 9
+    }
+    public enum BlockType
+    {
+        NA = 0,
+        CB = 1,
+        RB = 2,
+        Email = 10
+    }
+
+    public enum StatisticMode
+    {
+        ReplyByAccount = 1,
+        ReplyByCampaign = 2,
+        ReplySummarize = 3,
+        MailDomain = 20,
+        MailDsn = 21,
+        MailGeo = 22
+    }
+
+    //public enum CampaignNotifyType
+    //{
+    //    None = 0,
+    //    OnStart = 1,
+    //    OnFinished = 2,
+    //    Both = 3,
+    //    OnBatchBegin = 4,
+    //    OnBatchEnd = 5,
+    //    BothAll = 6
+    //}
+
+    //public enum MediaType
+    //{
+    //    SMS,
+    //    WAP,
+    //    MMS,
+    //    BIN,
+    //    IVR,
+    //    MAL
+    //}
+
+    public enum WapLinkType
+    {
+        DownloadContentKey,
+        DownloadWapTransKey,
+        DownloadWapCampaignKey,
+        DownloadWapCampaignTest
+    }
+
+    public enum SessionType
+    {
+        Init = 0,
+        //SessionStart = 1,
+        //SessionEnd = 2,
+        Login = 3,
+        Logout = 4,
+        Logfailed = 5,
+        StartSender = 6,
+        ReloadSender = 7,
+        LoadSender = 8,
+        SenderSent = 9,
+        SenderFailed = 10
+    }
+
+    public enum DeviceRule
+    {
+        None = 0,
+        Mobile = 1,
+        Device = 2
+    }
+   
+    public enum ProductType
+    {
+        Default = 0,
+        Horoscop = 1,
+        Registry = 2,
+        App = 3,
+        Quiz = 4,
+        Trivia = 5,
+        Alert = 6,
+        Media = 7,
+        Session = 8
+    }
+    public enum CampaignSendType
+    {
+        Now = 0,
+        Pending = 1,
+        Fixed = 2,
+        Batches = 3,
+        Watch = 4,
+        Manual = 5
+        //Alert = 10,
+        //Media = 11
+
+    }
+    public enum SendInterval
+    {
+        None = 0,
+        Weekly = 1,
+        FixedDayWeek = 2,
+        Fixed = 3,
+        Monthly = 4,
+    }
+    public enum CampaignStatus
+    {
+        Wait = 0,
+        Saved = 1,
+        Dtaft=2,
+        Edit=8,
+        Expired = 9
+    }
+   
+    public enum ReminderType
+    {
+        Once = 0,
+        Fixed = 1
+    }
+
+    public enum SchedulerType
+    {
+        D,//Daily
+        M,//Monthly
+        C//Cycle
+    }
+    //public enum AccountType
+    //{
+    //    Customer = 0,
+    //    Parent = 1,
+    //    Child = 2,
+    //    Manager = 3,
+    //    Channel = 4,
+    //    Affiliate = 5
+    //}
+    //public enum SendType
+    //{
+    //    Now = 0,
+    //    Pending=1,
+    //    Fixed=2,
+    //    Batches=3,
+    //    Reminder=4,
+    //    Alert=10,
+    //    Media=11
+    //   //Horoscop = 1,
+    //    //Items = 2,
+    //    //App=3,
+    //    //Schedule = 4
+    //}
+}

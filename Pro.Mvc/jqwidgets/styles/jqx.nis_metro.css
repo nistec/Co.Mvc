@@ -7,6 +7,58 @@ old-background-color:#1784c7; blue
 color: #ff6a00; orange
 color dark gray-blue=#24343F
 c-------------------------------- */
+
+/*nissim edited*/
+/*begin nis-material*/
+
+.jqx-input input,
+.jqx-dropdownlist-state-normal,
+.jqx-combobox-state-normal,
+.jqx-datetimeinput,
+.jqx-numberinput,
+.jqx-maskedinput {
+    height: 21px !important;
+    background: #fff !important;
+    border-color: #fff;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid #c0c0c0 !important;
+    outline: none;
+    margin-bottom: -5px !important;
+}
+
+
+.jqx-fill-state-normal {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    -ms-touch-action: none;
+    font-family: Verdana,Arial,sans-serif;
+    font-style: normal;
+    font-size: 14px;
+    background: #fff !important;
+    margin-bottom: -5px !important;
+}
+
+.jqx-combobox-arrow-normal, .jqx-action-button {
+    -webkit-appearance: none;
+    outline: none;
+    overflow: hidden;
+    margin: 0 0 0 0;
+    border: solid 1px transparent !important;
+    cursor: pointer;
+}
+
+.jqx-combobox-input {
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
+    padding: 0 0 0 0;
+    outline: none;
+    border: none !important;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    -webkit-background-clip: padding-box;
+}
+/*end nis-material*/
 .jqx-rc-tl-nis_metro
 {
     -moz-border-radius-topleft: 0px;

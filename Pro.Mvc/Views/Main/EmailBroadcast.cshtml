@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewMain.cshtml";
     Page.Title = "Email";
 }
 @section head {
@@ -37,7 +37,7 @@
 
             $('#editor').jqxEditor({
                 height: '500px',
-                width: '89%',
+                width: '100%',
                 rtl: true
                 //theme: 'arctic'
                 //stylesheets: ['editor.css']
@@ -280,90 +280,87 @@
 </div>
 
 <div class="global-view">
-    <div class="container-box">
-        
+    <div id="wiz-container" class="container rtl">
 
-        
-            <div id="tag-form" class="panel-area">
-                <h3 class="rtl panel-area-title">שליחת דואר אלקטרוני</h3>
-                <div style="height: 10px;">
+        <div id="tag-form" class="panel-area">
+            <h3 class="rtl panel-area-title">שליחת דואר אלקטרוני</h3>
+            <div style="height: 10px;">
+
+            </div>
+            <form class="form" id="form" method="post" action="@Url.Action("SendMailCategory", "Main")">
+                <input type="hidden" id="Message" name="Message" />
+                <div id="wizard">
+
+                    <ul>
+                        <li><a href="#tab-1">1</a></li>
+                        <li><a href="#tab-2">2</a></li>
+                        <li><a href="#tab-3">3</a></li>
+                        <li><a href="#tab-4">4</a></li>
+                    </ul>
+                    <div id="tab-1" class="ui-tabs-panel">
+                        <h3>עיצוב</h3>
+                        <div id="listDesign"></div>
+                        <input type="hidden" id="Design" name="Design" />
+                    </div>
+                    <div id="tab-2" class="ui-tabs-panel">
+                        <h3>נמענים</h3>
+                        <div>
+                            <div class="form-group">
+                                סיווגים:
+                                <div id="listCategory"></div>
+                                <input type="hidden" id="Category" name="Category" />
+                                <input type="checkbox" id="allCategory" name="allCategory" /><span>  </span><span>שלח לכל המנויים</span>
+                            </div>
+                            <div class="form-group">
+                                סה"כ נמענים:<input type="number" id="TotalCount" readonly class="text-short" style="border:none" />
+                                <a id="btnShow" href="#" class="btn-tab">הצג נמענים</a>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab-3" class="ui-tabs-panel">
+                        <h3>נושא ופרסונאליזציה</h3>
+                        <div class="form-group">
+                            <div class="column">
+                                נושא:
+                            </div>
+                            <input type="text" id="Subject" name="Subject" class="text-wide" />
+                        </div>
+                        <div class="form-group">
+                            <div class="column">
+                                בחירת שדות פרסונאליים:
+                            </div>
+                            <div id="PersonalDisplay" name="PersonalDisplay"></div>
+                        </div>
+                        <p style="text-align: right; padding: 10px;max-height:100px;overflow:auto;">
+                            <span>לשליחת הודעה פרסונאלית יש לבחור את השדה מהרשימה (פרסונאלי) ולציין בגוף ההודעה במיקום הרצוי את שם השדה בתוך סוגריים מרובעים לדוגמא:</span>
+                            <br />
+                            <span>לדוגמא: [שם פרטי] שלום רב</span>
+
+                        </p>
+                    </div>
+                    <div id="tab-4" class="ui-tabs-panel">
+                        <h3>עריכת תוכן</h3>
+                        <div class="form-group">
+                            <div class="column">
+                                <fieldset>
+                                    <label for="rtl">ימין לשמאל</label>
+                                    <input type="radio" id="rtl" name="Dir" value="rtl" checked class="input-radio" />
+                                    <label for="ltr">שמאל לימין</label>
+                                    <input type="radio" id="ltr" name="Dir" value="ltr" class="input-radio" />
+                                </fieldset>
+                            </div>
+                            <textarea id="editor"></textarea>
+                        </div>
+
+                        @*<div>
+                            <input id="submit" type="submit" value="שליחה" class="btn-default btn2" />
+                            <input id="reset" type="reset" value="רענון" class="btn-default btn2" />
+                        </div>*@
+                    </div>
 
                 </div>
-                <form class="form" id="form" method="post" action="@Url.Action("SendMailCategory", "Main")">
-                    <input type="hidden" id="Message" name="Message" />
-                    <div id="wizard">
 
-                        <ul>
-                            <li><a href="#tab-1">1</a></li>
-                            <li><a href="#tab-2">2</a></li>
-                            <li><a href="#tab-3">3</a></li>
-                            <li><a href="#tab-4">4</a></li>
-                        </ul>
-                        <div id="tab-1" class="ui-tabs-panel">
-                            <h3>עיצוב</h3>
-                            <div id="listDesign"></div>
-                            <input type="hidden" id="Design" name="Design" />
-                        </div>
-                        <div id="tab-2" class="ui-tabs-panel">
-                            <h3>נמענים</h3>
-                            <div>
-                                <div class="form-group">
-                                    סיווגים:
-                                    <div id="listCategory"></div>
-                                    <input type="hidden" id="Category" name="Category" />
-                                    <input type="checkbox" id="allCategory" name="allCategory" /><span>  </span><span>שלח לכל המנויים</span>
-                                </div>
-                                <div class="form-group">
-                                    סה"כ נמענים:<input type="number" id="TotalCount" readonly class="text-short" style="border:none" />
-                                    <a id="btnShow" href="#" class="btn-tab">הצג נמענים</a>
-                                    <br />
-                                </div>
-                            </div>
-                        </div>
-                        <div id="tab-3" class="ui-tabs-panel">
-                            <h3>נושא ופרסונאליזציה</h3>
-                            <div class="form-group">
-                                <div class="column">
-                                    נושא:
-                                </div>
-                                <input type="text" id="Subject" name="Subject" class="text-wide" />
-                            </div>
-                            <div class="form-group">
-                                <div class="column">
-                                    בחירת שדות פרסונאליים:
-                                </div>
-                                <div id="PersonalDisplay" name="PersonalDisplay"></div>
-                            </div>
-                            <p style="text-align: right; padding: 10px;max-height:100px;overflow:auto;">
-                                <span>לשליחת הודעה פרסונאלית יש לבחור את השדה מהרשימה (פרסונאלי) ולציין בגוף ההודעה במיקום הרצוי את שם השדה בתוך סוגריים מרובעים לדוגמא:</span>
-                                <br />
-                                <span>לדוגמא: [שם פרטי] שלום רב</span>
-
-                            </p>
-                        </div>
-                        <div id="tab-4" class="ui-tabs-panel">
-                            <h3>עריכת תוכן</h3>
-                            <div class="form-group">
-                                <div class="column">
-                                    @*נוסח:*@
-                                    <fieldset>
-                                        <label for="rtl">ימין לשמאל</label>
-                                        <input type="radio" id="rtl" name="Dir" value="rtl" checked class="input-radio" />
-                                        <label for="ltr">שמאל לימין</label>
-                                        <input type="radio" id="ltr" name="Dir" value="ltr" class="input-radio" />
-                                    </fieldset>
-                                </div>
-                                <textarea id="editor"></textarea>
-                            </div>
-                            
-                            @*<div>
-                <input id="submit" type="submit" value="שליחה" class="btn-default btn2" />
-                <input id="reset" type="reset" value="רענון" class="btn-default btn2" />
-            </div>*@
-                        </div>
-
-                    </div>
-                    
             </form>
         </div>
 

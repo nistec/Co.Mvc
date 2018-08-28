@@ -1,7 +1,7 @@
 ﻿@{
 
     //ViewBag.Title = "System";
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     int rcdid = Nistec.Types.ToInt(Request["id"]);
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
 
@@ -14,7 +14,11 @@
     <script src="~/jqwidgets/jqxkanban.nis.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
-    <script src="~/Scripts/app/system/system-models.js"></script>
+    <script src="~/Scripts/app/app-system-model.js"></script>
+
+    <!-- user grid-->
+    <script src="~/Scripts/app/system/report-tasks-grid.js"></script>
+    <script src="~/jqwidgets/jqxgrid.grouping.js"></script>
 
     <script type="text/javascript" src="~/jqwidgets/jqxsortable.js"></script>
     <script type="text/javascript" src="~/Scripts/app/system/task-user-v1.js"></script>
@@ -65,41 +69,46 @@
         i {
             padding-left: 4px;
         }
+        /*grid view*/
+        input {
+            direction: rtl;
+            text-align: right;
+        }
 
         .jqx-grid-cell {
             border-left: none;
             border-right: none;
         }
 
-        /*.jqx-kanban-item-color-status {
-            width: 100%;
-            height: 25px;
-            border-top-left-radius: 3px;
-            border-top-right-radius: 3px;
-            position: relative;
-            margin-top: 0px;
-            top: 0px;
-        }
-        .jqx-kanban-item {
-            padding-top: 0px;
+        .green {
+            color: black\9;
+            background-color: #19a709;
         }
 
-
-        .jqx-kanban-item-text {
-            padding-top: 6px;
+        .yellow {
+            color: black\9;
+            background-color: yellow;
         }
 
-
-        .jqx-kanban-item-avatar {
-            top: 9px;
+        .red {
+            color: black\9;
+            background-color: #e83636;
         }
 
+        .green:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .green:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+            color: black;
+            background-color: #19a709;
+        }
 
-        .jqx-kanban-template-icon {
-            position: absolute;
-            right: 3px;
-            top: 12px;
-        }*/
+        .yellow:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .yellow:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+            color: black;
+            background-color: yellow;
+        }
+
+        .red:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected), .jqx-widget .red:not(.jqx-grid-cell-hover):not(.jqx-grid-cell-selected) {
+            color: black;
+            background-color: #e83636;
+        }
     </style>
 
 }
@@ -108,8 +117,9 @@
 @section scripts {
 
     <script type="text/javascript">
-        var theme = 'nis_metro';
-
+      var theme = 'nis_metro';
+        var user_grid;
+        var current_mode = 'kanban';
     $(document).ready(function () {
         JSON.useDateParser();
         var uinfo = JSON.parse('@userInfo');
@@ -120,13 +130,15 @@
         $("#Status-group").on('buttonclick', function (event) {
             var val = $(event.args.button).data('val');
             if (val == '0')
-                app.redirectTo('/System/TopicNew?pid=0');
+                app_open.topicNew(0);
             if (val == '1')
-                app.redirectTo('/System/TaskNew?pid=0');
+                app_open.taskNew(0);
             else if (val == '2')
                 app.redirectTo('/System/ReminderNew?pid=0');
             else if (val == '3')
-                app.redirectTo('/System/TicketNew?pid=0');
+                toggleView();//app.redirectTo('/System/DocNew?pid=0');
+            //else if (val == '3')
+            //    app.redirectTo('/System/TicketNew?pid=0');
             else if (val == '100')
                 $("#task-Board").toggle();
                 //app.redirectTo('/System/ReportTasks');
@@ -137,6 +149,23 @@
             //dataAdapter.dataBind();
             //app_tasks_active.refresh();
         });
+
+        var toggleView = function () {
+
+            if (current_mode == 'kanban') {
+                $("#task_user_kanban").hide();
+                $("#task_user_grid").show();
+                if (!user_grid)
+                    user_grid = new user_task_grid(uinfo);
+                current_mode = "grid";
+            }
+            else {
+                $("#task_user_grid").hide();
+                $("#task_user_kanban").show();
+                current_mode = "kanban";
+            }
+        }
+
     });
 
     </script>
@@ -151,24 +180,26 @@
 
         <div class="panel-page-header rtl">המשימות שלי</div>
         <div style="height:5px"></div>
-
+        
         <div class="rtl" style="height:44px">
             <div id='Status-group' class="panel-area switch-group rtl">
                 <div class="switch-item pasive" id="Status-Topic" data-val="0" title="סוגיה חדשה"><a href="#">סוגיה<i class="fa fa-plus-square-o"></i></a></div>
                 <div class="switch-item" id="Status-Task" data-val="1" title="משימה חדשה"><a href="#">משימה<i class="fa fa-plus-square-o"></i></a></div>
-                <div class="switch-item" id="Status-Reminder" data-val="2" title="תזכורת חדשה"><a href="#">תזכורת<i class="fa fa-calendar-o"></i></a></div>
-                <div class="switch-item" id="Status-Ticket" data-val="3" title="פתיחת כרטיס"><a href="#">כרטיס<i class="fa fa-edit"></i></a></div>
-                <div class="switch-item" id="Task-Report" data-val="100" title="ניהול משימות"><a href="#">ניהול<i class="fa fa-newspaper-o"></i></a></div>
+                @*<div class="switch-item" id="Status-Reminder" data-val="2" title="תזכורת חדשה"><a href="#">תזכורת<i class="fa fa-calendar-o"></i></a></div>*@
+                @*<div class="switch-item" id="Status-Ticket" data-val="3" title="פתיחת כרטיס"><a href="#">כרטיס<i class="fa fa-edit"></i></a></div>*@
+                @*<div class="switch-item" id="Status-Doc" data-val="3" title="פתיחת מסמך"><a href="#">תיעוד<i class="fa fa-edit"></i></a></div>*@
+                <div class="switch-item" id="Status-View" data-val="3" title="שינוי תצוגה"><a href="#">תצוגה<i class="fa fa-table"></i></a></div>
+                <div class="switch-item" id="Task-Report" data-val="100" title="תפריט ניהול משימות"><a href="#">תפריט<i class="fa fa-newspaper-o"></i></a></div>
                 @*<div class="switch-item" id="Topic-Report" data-val="101" title="דוח כללי"><a href="#">נושאים<i class="fa fa-newspaper-o"></i></a></div>*@
             </div>
         </div>
         <div id="task-Board" class="rtl" style="display:none">
-           
+
         </div>
 
         <div id="QuickReminder-window"></div>
 
-        <div id="exp-today" class="panel-area tab-panel1" style="padding:0 !important">
+        <div id="exp-today" class="panel-area tab-panel1 pasive" style="padding:0 !important">
             <div class="panel-area-title rtl">
                 <span>משימות ותזכורות להיום</span><span> </span><a id="quick-reminder" href="#"><i class="fa fa-calendar-o"></i></a>
             </div>
@@ -180,22 +211,63 @@
         </div>
 
         <div id="jqxWidget" class="panel-area">
-            <div id="fcBody" style="margin: 0;height:600px">
+            <div id="task-Container" class="rtl">
+
+            </div>
+
+            <div id="task_user_kanban" style="margin: 0;height:100vh">
                 <!--max-height:700px;overflow-y:auto;overflow-x:hidden-->
                 <input type="hidden" id="AccountId" name="AccountId" value="" />
                 <input type="hidden" id="StatusFilter" value="" />
                 <div id="kanban" style="position:relative;z-index:1;height:100%"></div>
             </div>
+            <div id="task_user_grid" class="pasive">
+                <div class="grid-wrap rtl">
+                    <div id="grid-toolbar-options" class="grid-toolbar" style="font-size: 80%;">
+                        <form id="tb_form">
+                            <input type="hidden" id="TaskState" value="0" />
+                            <div style="height:5px"></div>
+                            <div style="display:inline;float:right">
+                                <span style="display:none"><input type="checkbox" id="chkAssignBy" checked="checked" /></span>
+                                <span>הצג משימות</span>
+                                <input type="radio" name="TaskState" value="1" /><span>ממתינות בלבד</span>
+                                <input type="radio" name="TaskState" value="2" /><span>פעילות בלבד</span>
+                                <input type="radio" name="TaskState" value="16" /><span>סגורות בלבד</span>
+                                <input type="radio" name="TaskState" value="0" id="rdStateAll" checked="checked" /><span>הכל</span>
+                                <span> . </span>
+                            </div>
+                            <div id="tbFilter" style="margin-left: 5px; float: right; " title='סינון'><img src='../scripts/app/images/filter.gif'></div>
+                            <div id="tbFilterRemove" style="margin-left: 5px; float: right;" title='ביטול סינון'><img src='../scripts/app/images/filterRemove.gif'></div>
+                        </form>
+                    </div>
+                    <div id="grid-toolbar" class="grid-toolbar"></div>
+                    <div id="jqxWidget">
+                        <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
 
-        <div id="exp-assign" class="panel-area tab-panel1" style="padding:0 !important">
+        <div id="assign-exp" class="panel-area rtl">
+            <div class="panel-area-title">
+                <a id="assign-exp-a" href="#">שיתוף</a>
+            </div>
+            <div id="assign-exp-box" style="display:none">
+                <div id="assign-jqxgrid" style="position:relative;z-index:1;"></div>
+            </div>
+        </div>
+
+
+        @*<div id="exp-assign" class="panel-area tab-panel1" style="padding:0 !important">
             <div class="panel-area-title">שיתוף</div>
             <div class="expander-entry">
                 <div class="grid-wrap1 rtl">
                     <div id="jqxgrid" style="position:relative;z-index:1;"></div>
                 </div>
             </div>
-        </div>
+        </div>*@
 
     </div>
 </div>
@@ -239,7 +311,7 @@
     </div>
 </footer>
 <script type="text/javascript">
-    app_menu.activeLayoutMenu("liSystem");
+    app_menu.activeLayoutMenu("liMain");
     app_menu.breadcrumbs("System", "Tasks", 'en');
     app_task_model.taskBoard("#task-Board");
 </script>

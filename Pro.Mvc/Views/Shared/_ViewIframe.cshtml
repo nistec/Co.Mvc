@@ -11,12 +11,12 @@
     <title>@ViewBag.Title</title>
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <!--CSS-->
-    <link rel="stylesheet" href="~/Content/css/style.css">
+    <link rel="stylesheet" href="~/Content/css/style-rtl.css">
     <link rel="stylesheet" href="~/Content/fonts/font-awesome.css">
     <link rel="stylesheet" href="~/Content/css/view-form.css" type="text/css" />
     <link href="~/Content/fonts/font-awesome.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.base.css" type="text/css" />
-    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.arctic.css" type="text/css" />
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.nis_base.css" type="text/css" />
+    <link rel="stylesheet" href="~/jqwidgets/styles/jqx.nis_metro.css" type="text/css" />
     <link href="~/Scripts/jq/jquery-ui-1.12.0/jquery-ui.css" rel="stylesheet" />
 
     <script type="text/javascript" src="~/Scripts/globalization/globalize.js"></script>
@@ -25,21 +25,27 @@
 
     <!--JS-->
     <script src="~/Scripts/jq/jquery-2.1.4.js"></script>
-    <script src="~/Scripts/jq/jquery-ui-1.12.0/jquery-ui.min.js"></script>
+    <script src="~/Scripts/jq/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 
-    @*<script src="~/Scripts/bootstrap/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">*@
-
-    <script src="~/Scripts/app/app-model-1.0.js?ver=20180001"></script>
-    <script src="~/Scripts/app/app-control-1.0.js?ver=20180001"></script>
-    <script src="~/Scripts/app/app-jqx-1.0.js?ver=20180001"></script>
+    <script src="~/Scripts/app/app-model-1.0.js"></script>
+    <script src="~/Scripts/app/app-jqx-1.0.js"></script>
+    <script src="~/Scripts/app/app-control-1.0.js"></script>
     <script src="~/Scripts/app/app-global.js"></script>
     <script src="~/Scripts/app/dateFormat.js"></script>
+    <script src="~/Scripts/app/app-system-model.js"></script>
+
 
     <script src="~/Scripts/HubSpot/messenger/js/messenger.min.js"></script>
     <script src="~/Scripts/HubSpot/messenger/js/messenger-theme-future.js"></script>
     <link href="~/Scripts/HubSpot/messenger/css/messenger-rtl.css" rel="stylesheet" />
     <link href="~/Scripts/HubSpot/messenger/css/messenger-theme-flat.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/Scripts/plagins/tabs/jcxtabs-light.min.css" />
+    <script src="~/Scripts/plagins/tabs/jcxtabs.min.js"></script>
+    <link href="~/Scripts/plagins/select/css/select2.css" rel="stylesheet" />
+    <script src="~/Scripts/plagins/select/select2.js"></script>
+
+    @Scripts.Render("~/bundles/jqxmaster")
 
     @RenderSection("head", required: false)
 

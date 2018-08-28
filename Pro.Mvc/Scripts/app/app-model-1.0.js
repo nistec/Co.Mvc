@@ -1,26 +1,44 @@
 ﻿//app-model
 String.prototype.jsonEscape = function () { return this.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t").replace(/\f/g, "\\f").replace(/"/g, "\\\"").replace(/'/g, "\\\'").replace(/\&/g, "\\&"); }
 
-$("select").selectmenu({
-    width: 200,
-    open: function (event, ui) {
-        $(this).selectmenu("menuWidget").hide().slideDown("fast");
-    },
-    close: function (event, ui) {
-        var $menuWudget = $(this).selectmenu("menuWidget");
-        $menuWudget.parent().show();
-        $menuWudget.slideUp("fast");
-    }
-});
+$.fn.hasClassStartsWith = function (prefix) {
+    return $(this).is(`[class^=${prefix}]`);
+};
+
+var responsiveIframe = function () {
+    // Find all iframes
+    var $iframes = $("iframe");
+
+    // Find &#x26; save the aspect ratio for all iframes
+    $iframes.each(function () {
+        $(this).data("ratio", this.height / this.width)
+            // Remove the hardcoded width &#x26; height attributes
+            .removeAttr("width")
+            .removeAttr("height");
+    });
+
+    // Resize the iframes when the window is resized
+    $(window).resize(function () {
+        $iframes.each(function () {
+            // Get the parent container&#x27;s width
+            var width = $(this).parent().width();
+            $(this).width(width)
+                .height(width * $(this).data("ratio"));
+        });
+        // Resize to fix all iframes on page load.
+    }).resize();
+}
 
 var config = {
     base: '',//'/party'
     debug: false,
     mobileWidth: '300px',
-    defaultColor:'#46d6db'
+    defaultColor: '#46d6db',
+    theme: 'nis_metro',
+    domain:'localhost'//'.my-t.co.il'
 };
 
-app = {
+var app = {
     globalID: 1,
     isMobileDevice: undefined,
     baseClassNames: {
@@ -44,6 +62,10 @@ app = {
                 this.isMobileDevice = false;
         }
         return this.isMobileDevice;
+    },
+    domainName: function () {
+        var hostName = window.location.hostname;
+        return hostName.substring(hostName.lastIndexOf(".", hostName.lastIndexOf(".") - 1) + 1);
     },
     appPath: function () {
         return window.location.protocol + "//" + window.location.host + config.base;
@@ -220,6 +242,7 @@ app = {
             .replace(/>/g, '&gt;');
     },
     htmlUnescape: function (str) {
+        //console.log(str);
         return str
             //.replace(/&#123;/g, '{')
             //.replace(/&#125;/g, '}')
@@ -238,6 +261,12 @@ app = {
         var text = html.replace(/<(?:.|\n)*?>/gm, '');
         return text;
         //return html.replace(/<(?:.|\n)*?>/gm, '');
+    },
+    textToHtml: function (str) {
+        if (!str)
+            return "";
+        str = str.replace(/(?:\r\n|\r|\n)/g, '<br>');
+        return str;
     },
     requestQuery: function (name, url) {
         if (!url) url = window.location.href;
@@ -312,19 +341,40 @@ app = {
         }
     },
     parseJsonDate: function (value) {
-
+        var reg = /^\/Date\((d|-|.*)\)[\/|\\]$/;
         if (typeof value === 'string') {
-            var strd = /\/Date\((\d*)\)\//.exec(value);
+            //var strd = /\/Date\((\d*)\)\//.exec(value);
+            var strd = reg.exec(value);
             return (strd) ? new Date(+strd[1]) : value;
         }
         return value;
+        /*
+        if (window.JSON && !window.JSON.dateParser) {
+            var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
+            var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
+
+            JSON.dateParser = function (key, value) {
+                if (typeof value === 'string') {
+                    var a = reISO.exec(value);
+                    if (a)
+                        return new Date(value);
+                    a = reMsAjax.exec(value);
+                    if (a) {
+                        var b = a[1].split(/[-+,.]/);
+                        return new Date(b[0] ? +b[0] : 0 - +b[1]);
+                    }
+                }
+                return value;
+            };
+
+        }
+        */
         //value = new Date(parseInt(value.replace("/Date(", "").replace(")/", ""), 10));
         //return new Date(value);
     },
     jsonDateToString : function (value,addTime) {
-
         if (typeof value === 'string') {
-            var strd = /\/Date\((\d*)\)\//.exec(value);
+            var strd = /^\/Date\((d|-|.*)\)[\/|\\]$/.exec(value);
             if (strd) {
                 var d = new Date(+strd[1]);
                 return app.dateToString(d,addTime);
@@ -526,6 +576,94 @@ app = {
    
 };
 
+
+//============================================================================================ app_cookies
+
+app_cookies = {
+    getItem: function (sKey) {
+        if (!sKey || !this.hasItem(sKey)) { return null; }
+        return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+    },
+    setItemConfig: function (sKey, sValue, bSecure) {//config.domain
+        app_cookies.setItem(sKey, sValue, 60 * 60 * 24 * 30, "/", app.domainName(), bSecure);
+    },
+    /**
+    * app_cookies.setItem(sKey, sValue, vEnd, sPath, sDomain, bSecure)
+    *
+    * ;max-age=max-age-in-seconds (e.g., 60*60*24*365 for a year)
+    * @argument sKey (String): the name of the cookie;
+    * @argument sValue (String): the value of the cookie;
+    * @optional argument vEnd (Number, String, Date Object or null): the max-age in seconds (e.g., 31536e3 for a year) or the
+    *  expires date in GMTString format or in Date Object format; if not specified it will expire at the end of session; 
+    * @optional argument sPath (String or null): e.g., "/", "/mydir"; if not specified, defaults to the current path of the current document location;
+    * @optional argument sDomain (String or null): e.g., "example.com", ".example.com" (includes all subdomains) or "subdomain.example.com"; if not
+    * specified, defaults to the host portion of the current document location;
+    * @optional argument bSecure (Boolean or null): cookie will be transmitted only over secure protocol as https;
+    * @return undefined;
+    **/
+    setItem1: function (sKey, sValue, sPath, sDomain, bSecure) {
+
+        app_cookies.setItem(sKey, sValue, 60 * 60 * 24 * 1, sPath, sDomain, bSecure);
+    },
+    setItem30: function (sKey, sValue, sPath, sDomain, bSecure) {
+
+        app_cookies.setItem(sKey, sValue, 60 * 60 * 24 * 30, sPath, sDomain, bSecure);
+    },
+    setItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+
+        if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/.test(sKey)) { return; }
+        var sExpires = "";
+        if (vEnd === undefined || vEnd == null)
+            vEnd = 60 * 60 * 24 * 30;
+        if (vEnd) {
+            switch (typeof vEnd) {
+                case "number": sExpires = "; max-age=" + vEnd; break;
+                case "string": sExpires = "; expires=" + vEnd; break;
+                case "object": if (vEnd.hasOwnProperty("toGMTString")) { sExpires = "; expires=" + vEnd.toGMTString(); } break;
+            }
+        }
+        document.cookie = escape(sKey) + "=" + escape(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
+    },
+    removeItem: function (sKey) {
+        if (!sKey || !this.hasItem(sKey)) { return; }
+        var oExpDate = new Date();
+        oExpDate.setDate(oExpDate.getDate() - 1);
+        document.cookie = escape(sKey) + "=; expires=" + oExpDate.toGMTString() + "; path=/";
+    },
+    hasItem: function (sKey) { return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie); },
+    getEncItem: function (sKey) {
+        if (!sKey || !this.hasItem(sKey)) { return null; }
+        var val = unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+        return val ? decodeURIComponent(val) : null;
+    },
+    setEncItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+        if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/.test(sKey)) { return; }
+        var sExpires = "";
+        if (vEnd) {
+            switch (typeof vEnd) {
+                case "number": sExpires = "; max-age=" + vEnd; break;
+                case "string": sExpires = "; expires=" + vEnd; break;
+                case "object": if (vEnd.hasOwnProperty("toGMTString")) { sExpires = "; expires=" + vEnd.toGMTString(); } break;
+            }
+        }
+        var encVal = encodeURIComponent(sValue);
+        document.cookie = escape(sKey) + "=" + escape(encVal) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
+    },
+
+    
+};
+
+// app_cookies.setItem("test1", "Hello world!");
+// app_cookies.setItem("test2", "Hello world!", new Date(2020, 5, 12));
+// app_cookies.setItem("test3", "Hello world!", new Date(2027, 2, 3), "/blog");
+// app_cookies.setItem("test4", "Hello world!", "Sun, 06 Nov 2022 21:43:15 GMT");
+// app_cookies.setItem("test5", "Hello world!", "Tue, 06 Dec 2022 13:11:07 GMT", "/home");
+// app_cookies.setItem("test6", "Hello world!", 150);
+// app_cookies.setItem("test7", "Hello world!", 245, "/content");
+// app_cookies.setItem("test8", "Hello world!", null, null, "example.com");
+// app_cookies.setItem("test9", "Hello world!", null, null, null, true);
+
+// alert(app_cookies.getItem("test1"));
 
 //============================================================================================ app_perms
 
@@ -858,7 +996,6 @@ var app_messenger = {
     }*/
 };
 
-
 //============================================================================================ app_model
 
 var app_model = {
@@ -873,7 +1010,7 @@ var app_model = {
             //contentType: "application/x-www-form-urlencoded;charset=utf-8",
             data: postData,
             success: function (data) {
-                if (callback);
+                if (callback)
                 callback(data);
             },
             error: function (jqXHR, status, error) {
@@ -1046,6 +1183,24 @@ var app_query = {
                 app_messenger.Error(error);
             }
         });
+    },
+    doDataAdapter: function (url, data, callback) {
+        $.ajax({
+            url: url,
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            success: function (data) {
+                console.log(data);
+                if (callback) {
+                    callback(data);//.Content);
+                }
+            },
+            error: function (jqXHR, status, error) {
+                //app_dialog.alert(error);
+                app_messenger.Error(error);
+            }
+        });
     }
 
 };
@@ -1124,12 +1279,67 @@ var app_validation = {
     }
 };
 
-
 //============================================================================================ app_dialog
 
 var app_dialog = {
 
     //mode=auto|modal
+    /*
+    alert: function (msg, callback, args) {
+
+        vex.dialog.alert({
+            message: msg,
+            className: 'vex-theme-default',
+            callback: function (value) {
+                if (callback)
+                    callback(value, args);
+                //console.log(value)
+            }
+        });
+    },
+    notify: function (msg, callback, args) {
+
+        var d=vex.dialog.open({
+            message: msg,
+            className: 'vex-theme-default',
+            //input: [
+            //    '<input name="username" type="text" placeholder="Username" required />',
+            //    '<input name="password" type="password" placeholder="Password" required />'
+            //].join(''),
+            buttons: [
+                $.extend({}, vex.dialog.buttons.YES, { text: 'אישור' }),
+                // $.extend({}, vex.dialog.buttons.NO, { text: 'Back' })
+            ],
+            callback: function (data) {
+                if (callback) {
+                    callback(args);
+                }
+                //if (!data) {
+                //    console.log('Cancelled')
+                //} else {
+                //    console.log('Username', data.username, 'Password', data.password)
+                //}
+            }
+        });
+
+        setTimeout(function () {
+            vex.close(d);
+        }, 2000);
+    },
+    confirm: function (message, callback, args) {
+
+        vex.dialog.confirm({
+            message: message,
+            className: 'vex-theme-default',
+            callback: function (value) {
+                if (callback)
+                    callback(value,args);
+                //console.log(value)
+            }
+        })
+    },
+    */
+    
     alert: function (msg,callback,args) {
         //font: normal normal normal 10px/1.5 Arial, Helvetica, sans-serif;
         var d = $('<div id="alert-message" title="..." style="direction:rtl;">' +
@@ -1178,9 +1388,12 @@ var app_dialog = {
             d.dialog("close");
         }, 2000);
     },
-    confirm: function (message, callback, args) {
+    confirm: function (message, callback, args, onCancel) {
         var divmessage = $('<div class="rtl">' + message + '</div>');
         var dialog = $("<div class='bdialog'></div>").append(divmessage).appendTo("body").dialog({
+            //var dialog = $('<div id="alert-message" title="..." style="direction:rtl;">' +
+            //    '<div style="margin-right: 20px;margin-top:10px;">' +
+            //    '<p>' + message + '</p></div></div>').dialog({
             resizable: false,
             height: "auto",
             width: 350,
@@ -1195,11 +1408,13 @@ var app_dialog = {
                 },
                 "ביטול": function () {
                     $(this).dialog("close");
+                    if (onCancel)
+                        onCancel(args);
                 }
             }
         });
     },
-
+    
     popMessage: function (caption, msg, mode, callback, args) {
         var modal = false;
         var auto = false;
@@ -1341,7 +1556,7 @@ var app_dialog = {
         });
     },
 
-    dialogDiv: function (tag, width, height, title, scrolling) {
+    dialogDiv: function (tag, title, scrolling) {
         if (!scrolling)
             scrolling = 'no';
         if (app.IsMobile()) {
@@ -1355,14 +1570,18 @@ var app_dialog = {
             width: "auto",
             height: "auto",
             title: title,
-            dialogClass: 'ui-dialog-osx',
+            dialogClass: 'ui-dialog-osx'
+            //my: "center",
+            //at: "center",
+            //of: window
             //create: function (event, ui) {
             //    $(".ui-widget-header").hide();
             //},
-            close: function () {
-                iframe.attr("src", "");
-            }
+            //close: function () {
+            //    iframe.attr("src", "");
+            //}
         });
+
         dialog.dialog("open");
         return dialog;
     },
@@ -1508,12 +1727,12 @@ var app_dialog = {
         });
         dialog.dialog("open");
 
-        /*
-        <div id="dialog" title="Send broadcast">
-                <div class="progress-label">Wait...</div>
-                <div id="progressbar"></div>
-        </div>
-        */
+        
+        //<div id="dialog" title="Send broadcast">
+        //        <div class="progress-label">Wait...</div>
+        //        <div id="progressbar"></div>
+        //</div>
+        
         //function progress() {
         //    var val = progressbar.progressbar("value") || 0;
         //    progressbar.progressbar("value", val + Math.floor(Math.random() * 3));
@@ -1524,42 +1743,6 @@ var app_dialog = {
 
     },
  
-
-    //confirm: function (message, callback,args) {
-
-    //    vex.dialog.confirm({
-    //        message: message,
-    //        callback: function (value) {
-    //            if (value) {
-    //                if (callback)
-    //                    callback(args);
-    //            }
-    //        }
-    //    });
-    //},
-
-    //dialogIframe_vex: function (src, width, height, title, scrolling) {
-    //    if (!scrolling)
-    //        scrolling = 'no';
-    //    var iframe = $('<iframe scrolling="' + scrolling + '" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen></iframe>');
-    //    var content= $("<div class='bdialog'></div>").append(iframe);//.appendTo("body");
-    //    iframe.attr({
-    //        width: width,
-    //        height: height,
-    //        src: src
-    //    });
-
-    //    vex.open({
-    //        message: title,
-    //        content: content,
-    //        callback: function (data) {
-    //            if (data === false) {
-    //                return console.log('Cancelled');
-    //            }
-    //            return console.log(title);
-    //        }
-    //    });
-    //}
 };
 
 //============================================================================================ app_iframe
@@ -1597,7 +1780,7 @@ var app_iframe = {
         $("#" + tag).empty();
         var panel = $('<div class="panel-header"></div>');
         panel.append('<span style="float:right">' + title + '</span>');
-        var close = $('<a href="#" style="float:left;margin:5px 10px"><i class="fa fa-close" style="font-size:16px"></i></a>')
+        var close = $('<a href="#"><i class="fa fa-close" style="font-size:16px"></i></a>')
           .on("click", function (e) {
               e.preventDefault();
               $("#" + tag).hide();
@@ -1629,7 +1812,7 @@ var app_iframe = {
         $(tag).empty();
         var panel = $('<div class="panel-header"></div>');
         panel.append('<span style="float:right">' + title + '</span>');
-        var close = $('<a href="#" style="float:left;margin:5px 10px"><i class="fa fa-close" style="font-size:16px"></i></a>')
+        var close = $('<a href="#"><i class="fa fa-close" style="font-size:16px"></i></a>')
           .on("click", function (e) {
               e.preventDefault();
               $(tag).hide();
@@ -1660,7 +1843,7 @@ var app_iframe = {
                 app_jqx.loaderClose();
             });
         }
-
+        div = div.replace("#", "");
         $("#" + div).append(iframe);
         iframe.attr({
             scrolling: scrolling,
@@ -1669,6 +1852,104 @@ var app_iframe = {
             src: src
         });
         //$("#" + div).find('.divWait').remove();
+    },
+    appendDocPanelSwitch: function (parentName, content, width, height, scroll, title) {
+        parentName = parentName.replace("#", "");
+        var tag = parentName + "-panel";
+
+        if ($("#" + tag).length == 0) {
+            $("#" + parentName).after('<div id="' + tag + '" class="panel-window"></div>');
+        }
+        else {
+            $("#" + tag).empty();
+        }
+
+        $("#" + parentName).hide();
+
+        //app_iframe.showPanel("#" + tag, src, width, height, scroll, title);
+        $("#" + tag).empty();
+        var panel = $('<div class="panel-header"></div>');
+        panel.append('<span style="float:right">' + title + '</span>');
+        var close = $('<a href="#"><i class="fa fa-close" style="font-size:16px"></i></a>')
+            .on("click", function (e) {
+                e.preventDefault();
+                $("#" + tag).hide();
+                $("#" + parentName).show();
+                $("#" + tag).empty();
+            });
+        panel.append(close);
+        $("#" + tag).append(panel);
+
+        app_iframe.appendDocIframe(tag, content, width, height, scroll);
+
+        $("#" + tag).show();
+    },
+    appendDocIframe: function (tag, content, width, height, scrolling, loaderTag) {
+        if (app.IsMobile()) {
+            width = config.mobileWidth;
+        }
+        //$("#" + div).html('<div class="divWait">המתן...</div>');
+        var iframe_content = '<html><head></head><body>' + content + '</body></html>';
+
+        var iframe = $('<iframe frameborder="0" marginwidth="0" marginheight="0" allowfullscreen></iframe>');
+        if (loaderTag) {
+            var loader = $(loaderTag);//"#wiz-loader1");
+            iframe.ready(function () {
+                //loader.addClass('active');
+                app_jqx.loaderOpen();
+            })
+            iframe.load(function () {
+                //loader.removeClass('active');
+                app_jqx.loaderClose();
+            });
+        }
+        tag = tag.replace("#", "");
+        $("#" + tag).append(iframe);
+
+        iframe.attr({
+            scrolling: scrolling,
+            width: width,
+            height: height
+            //src: src
+        });
+
+        // if jQuery is available, you may use the get(0) function to obtain the DOM object like this:
+        //   var iframe = $('iframe#target_iframe_id').get(0);
+
+        var iframe = $(iframe).get(0);
+        var iframedoc = iframe[0].document;
+        if (iframe[0].contentDocument)
+            iframedoc = iframe[0].contentDocument;
+        else if (iframe[0].contentWindow)
+            iframedoc = iframe[0].contentWindow.document;
+
+        if (iframedoc) {
+            // Put the content in the iframe
+            iframedoc.open();
+            iframedoc.writeln(iframe_content);
+            iframedoc.close();
+        } else {
+            //just in case of browsers that don't support the above 3 properties.
+            //fortunately we don't come across such case so far.
+            app_dialog.alert('Cannot inject dynamic contents into iframe.');
+        }
+        //$("#" + div).find('.divWait').remove();
+    },
+    responsiveIframe: function (tag) {
+
+        // Remove the hardcoded width &#x26; height attributes
+        $(tag).data("ratio", this.height / this.width)
+            .removeAttr("width")
+            .removeAttr("height");
+
+        // Resize the iframes when the window is resized
+        $(window).resize(function () {
+            // Get the parent container&#x27;s width
+            var width = $(tag).parent().width();
+            $(tag).width(width).height(width * $(tag).data("ratio"));
+
+            // Resize to fix all iframes on page load.
+        }).resize();
     },
     loadIframe: function (div, src, width, height, scrolling) {
         if (app.IsMobile()) {
@@ -1838,19 +2119,297 @@ var app_iframe = {
     //})(document);
 };
 
+class panel_dialog_base {
+
+    constructor($element,tagPrefix ,title) {
+        this.$element = $($element);
+        this.Adapter = null;
+        this.Title = title;
+        this.TagPrefix = tagPrefix;
+    }
+
+    loadHtml($element, readonly,callBack) {
+
+        //var pasive = readonly ? " pasive" : "";
+
+        //var html = '<div id="user-Window" class="container" style="margin:5px;width:400px">' +
+
+        //    '<div>' +
+        //    '<a id="user-Submit" class="btn-default btn7 w-60" href="#">עדכון</a> ' +
+        //    '<a id="user-Cancel" class="btn-default btn7 w-60" href="#">ביטול</a>' +
+        //    '</div>' +
+        //    '</div>';
+
+        //if ($element == null)
+        //    return html;
+    };
+
+    inputRules() {
+
+        //$('#user-Form').jqxValidator({
+        //    rtl: true,
+        //    hintType: 'label',
+        //    animationDuration: 0,
+        //    rules: input_rules
+        //});
+        //$('#user-Form').jqxValidator('hide');
+    }
+
+    loadData(actModel, record) {
+
+
+    }
+
+    init(actModel, record, dataAdapter, readonly) {
+        this.AccountId = actModel.AccountId;
+        this.Adapter = dataAdapter;
+        this.ReadOnly = (readonly) ? true : false;
+        var slf = this;
+
+        this.loadHtml(this.$element, readonly, function (html) {
+
+            app_panel.appendPanelAfter(slf.$element.selector, html, slf.Title);
+
+        });
+
+
+        this.loadData(actModel, record);
+
+        $('#' + this.TagPrefix + '-Submit').on('click', function (e) {
+            e.preventDefault();
+            slf.doSubmit();
+        });
+        $('#' + this.TagPrefix + '-Cancel').on('click', function (e) {
+            slf.doClose();
+            return false;
+        });
+
+        this.inputRules();
+    };
+
+    display() {
+        app_panel.panelAfterShow(this.$element.selector);
+    }
+
+    doClose() {
+        app_panel.panelAfterClose(this.$element.selector);
+    };
+
+    doSubmit() {
+        var slf = this;
+        //e.preventDefault();
+        var actionUrl = $('#' + this.TagPrefix + '-Form').attr('action');
+        var formData = $('#' + this.TagPrefix + '-Form').serialize();
+
+        app_query.doFormSubmit('#' + this.TagPrefix + '-Form', actionUrl, formData, function (data) {
+            if (data.Status > 0) {
+
+                if (slf.Adapter)
+                    slf.Adapter.dataBind();
+                slf.doClose();
+                //if (slf.Dialog)
+                //    app_dialog.dialogClose(slf.Dialog);
+            }
+            else
+                app_messenger.Post(data, 'error');
+        });
+    };
+
+    doClear() {
+        app_form.clearDataForm('#' + this.TagPrefix + '-Form');
+    }
+}
+
+
+var app_panel = {
+    panelClose: function (tag, doempty) {
+        tag = tag.replace("#", "");
+        $("#" + tag).hide();
+        if (doempty)
+            $("#" + tag).empty();
+    },
+    panelSwitchClose: function (parentName, isSwitch, doempty) {
+        parentName = parentName.replace("#", "");
+        var tag = parentName + "-panel";
+        $("#" + tag).hide();
+        if (isSwitch)
+            $("#" + parentName).show();
+        if (doempty)
+            $("#" + tag).empty();
+    },
+    appendPanelAfter: function (parentName, content, title) {//width, height, scroll,
+        parentName = parentName.replace("#", "");
+        var tag = parentName + "-panel";
+
+        if (content.startsWith("#")) {
+            content = $(content).html();
+        }
+
+        if ($("#" + tag).length == 0) {
+            $("#" + parentName).after('<div id="' + tag + '" class="panel-window"></div>');
+        }
+        else {
+            $("#" + tag).empty();
+        }
+
+        $("#" + tag).hide();
+
+        //$("#" + parentName).hide();
+
+        //app_iframe.showPanel("#" + tag, src, width, height, scroll, title);
+        $("#" + tag).empty();
+        var panel = $('<div class="panel-header"></div>');
+        panel.append('<span style="float:right">' + title + '</span>');
+        var close = $('<a href="#"><i class="fa fa-close" style="font-size:16px"></i></a>')
+            .on("click", function (e) {
+                e.preventDefault();
+                $("#" + tag).hide();
+                $("#" + parentName).show();
+                $("#" + tag).empty();
+            });
+        panel.append(close);
+        $("#" + tag).append(panel);
+        $("#" + tag).append(content);
+
+        //app_iframe.appendIframe(tag, src, width, height, scroll);
+
+        //$("#" + tag).show();
+
+        return $("#" + tag);
+    },
+    panelAfterShow: function (tagParent,tagAfter) {
+
+        $(tagParent).hide();
+        if (tagAfter === undefined || tagAfter == null) {
+            tagAfter = tagParent + "-panel";
+        }
+        $(tagAfter).show();
+    },
+    panelAfterClose: function (tagParent, doempty) {
+        if (doempty === undefined)
+            doempty = true;
+        var tagAfter = tagParent + "-panel";
+        $(tagAfter).hide();
+        $(tagParent).show();
+        if (doempty)
+            $(tagAfter).empty();
+    },
+    appendPanelSwitch: function (parentName, content, width, height, scroll, title) {
+        parentName = parentName.replace("#", "");
+        var tag = parentName + "-panel";
+
+        if (content.startsWith("#")) {
+            content = $(content).html();
+        }
+
+        if ($("#" + tag).length == 0) {
+            $("#" + parentName).after('<div id="' + tag + '" class="panel-window"></div>');
+        }
+        else {
+            $("#" + tag).empty();
+        }
+
+        $("#" + parentName).hide();
+
+        //app_iframe.showPanel("#" + tag, src, width, height, scroll, title);
+        $("#" + tag).empty();
+        var panel = $('<div class="panel-header"></div>');
+        panel.append('<span style="float:right">' + title + '</span>');
+        var close = $('<a href="#"><i class="fa fa-close" style="font-size:16px"></i></a>')
+            .on("click", function (e) {
+                e.preventDefault();
+                $("#" + tag).hide();
+                $("#" + parentName).show();
+                $("#" + tag).empty();
+            });
+        panel.append(close);
+        $("#" + tag).append(panel);
+        $("#" + tag).append(content);
+        //app_iframe.appendIframe(tag, src, width, height, scroll);
+
+        $("#" + tag).show();
+    },
+    appendPanel: function (parentName, content, width, height, scroll, title) {
+        parentName = parentName.replace("#", "");
+        var tag = parentName + "-panel";
+
+        if ($("#" + tag).length == 0) {
+            $("#" + parentName).after('<div id="' + tag + '" class="panel-window"></div>');
+        }
+        else {
+            $("#" + tag).empty();
+        }
+
+        $("#" + tag).append(content);
+
+        //app_iframe.showPanel("#" + tag, src, width, height, scroll, title);
+
+    },
+    appendPanelPop: function (parentName, content, title) {
+        parentName = parentName.replace("#", "");
+        //$("#" + parentName).empty();
+
+        var tag = parentName + "-panel";
+
+        if ($("#" + tag).length == 0) {
+            $("#" + parentName).after('<div id="' + tag + '" class="panel-window"></div>');
+        }
+        else {
+            $("#" + tag).empty();
+        }
+
+        $("#" + tag).empty();
+        var panel = $('<div class="panel-header"></div>');
+        panel.append('<span style="float:right">' + title + '</span>');
+        var close = $('<a href="#"><i class="fa fa-close" style="font-size:16px"></i></a>')
+            .on("click", function (e) {
+                e.preventDefault();
+                //$("#" + tag).hide();
+                $("#" + tag).empty();
+            });
+        panel.append(close);
+        $("#" + tag).append(panel);
+        $("#" + tag).append(content);
+    },
+    showPanel: function (tag, content, width, height, scroll, title) {
+        $(tag).empty();
+        var panel = $('<div class="panel-header"></div>');
+        panel.append('<span style="float:right">' + title + '</span>');
+        var close = $('<a href="#"><i class="fa fa-close" style="font-size:16px"></i></a>')
+            .on("click", function (e) {
+                e.preventDefault();
+                $(tag).hide();
+                $(tag).empty();
+            });
+        panel.append(close);
+        $(tag).append(panel);
+        $(tag).append(content);
+
+        //app_iframe.appendIframe(tag, src, width, height, scroll);
+
+        $(tag).show();
+    },
+
+}
 //============================================================================================ app_form
 
 var app_form = {
 
-    loadDataForm: function (form, record, exclude) {
+    loadDataForm: function (form, record, exclude,readonly) {
 
         $('#' + form + ' input, #' + form + ' select, #' + form + ' textarea').each(function (index) {
             var input = $(this);
             var tag = input.attr('name');
-            var datatype = $(this).attr("data-type");
-            var datafield = $(this).attr("data-field");
-            var currentId = $(this).attr('id');
+            var datatype = input.attr("data-type");
+            var datafield = input.attr("data-field");
+            var datatrigger = input.attr("data-trigger");
+            
+            var tagId = input.attr('id');
+            var dataselect2 = input.attr("data-select2-id");
+
             //var type = input.prop('tagName');
+
+            
 
             if (datafield !== undefined && datafield !== null)
                 tag = datafield;
@@ -1864,14 +2423,30 @@ var app_form = {
                 var value = record[tag];
                 if (!isexclude) {
 
-                    if (input.length > 0) {
-                        var parent = input[0].parentElement;
-
-                        if (parent && $(parent).hasClass("jqx-widget"))
-                            datatype = "jqx-widget";
+                    if (datatype === undefined) {
+                        if (dataselect2 !== undefined && dataselect2 == tagId)
+                            datatype = "select2";
+                        else if (input.length > 0) {
+                            var parent = input[0].parentElement;
+                            if (parent) {
+                                if ($(parent).hasClass("jqx-editor"))
+                                    datatype = "jqx-editor";
+                                else if ($(parent).hasClass("jqx-combobox"))
+                                    datatype = "jqx-combobox";
+                                else if ($(parent).hasClass("jqx-widget"))
+                                    datatype = "jqx-widget";
+                            }
+                        }
                     }
 
                     if (value !== undefined && value != null) {
+                        //typeof date.getMonth === 'function'
+                        //if (datatype === undefined && value instanceof Date) {
+                        //    if (input.hasClass("jqx-input-content"))
+                        //        datatype = "jqx-date";
+                        //    else
+                        //        datatype = "date";
+                        //}
 
                         switch (datatype) {
                             case "datetime":
@@ -1881,45 +2456,77 @@ var app_form = {
                             case "bool":
                                 input.attr("checked", value); break;
                             case "select-input":
-                                $('form#' + form + '#' + tag).val(value);
+                                $('#' + tag).val(value);
                                 $('form#' + form + ' [name=' + tag + ']').val(value);
+                                break;
+                            case "html-editor":
+                                $("#" + tagId).val(app.htmlUnescape(value));
+                                break;
+                            case "jqx-editor":
+                                $("#" + tagId).jqxEditor('val', app.htmlUnescape(value));
+                                break;
+                            //case "jqx-date":
+                            //    $('form#' + form + ' [name=' + tag + ']').val(value);
+                            //    if (readonly)
+                            //        $("#" + app_form.getJqxId(tagId)).jqxDateTimeInput({ showCalendarButton: false, readonly: true });
+                            //    break;
+                            case "jqx-combobox":
+                                //$('form#' + form + '#' + tag).val(value);
+                                $('form#' + form + ' [name=' + tag + ']').val(value);
+                                if (readonly)
+                                    $('#' + tag).jqxComboBox({ enableSelection: false });
                                 break;
                             case "jqx-widget":
                             case "jqx-dropdwon":
                                 //$('form#' + form + '#' + tag).val(value);
                                 $('form#' + form + ' [name=' + tag + ']').val(value);
+                                //if (readonly)
+                                //    $('#' + tag).jqxDropDownList({ enableSelection: false });
                                 break;
-                            case "lookup":
+                             case "lookup":
                                 app_lookup.setInput(form, tag, value);
                                 break;
+                            case "select2":
+                                $('#' + tagId).select2('val', value);
+                                if (readonly)
+                                    $('#' + tagId).prop("disabled", true);
 
+                                //$('#' + tag).val(value).trigger("change.select2");
+                                break;
+                            case "select-loader":
+                                var dataargs = input.attr("data-args");
+                                app_select_loader.loadTag(tag,tagId, dataargs, value, readonly);
+                                break;
                             default:
 
                                 var str = value.toString();
                                 if (str.match(/Date/gi)) {
                                     var d = formatJsonShortDate(value)
-                                    app_form.setInputValue(input,form, currentId, tag, d);
+                                    app_form.setInputValue(input, form, tagId, tag, d, readonly);
                                 }
                                 //else if (typeof value === 'boolean')
                                 //    input.attr("checked", value); 
-                                //else if (currentId === tag)
-                                //    $('#' + currentId).val(value);
+                                //else if (tagId === tag)
+                                //    $('#' + tagId).val(value);
                                 else
-                                    app_form.setInputValue(input, form, currentId, tag, value);
+                                    app_form.setInputValue(input, form, tagId, tag, value, readonly);
                                 break;
                         }
+                        if (datatrigger)
+                            input.trigger(datatrigger);
                     }
                     else {
-                        app_form.setInputValue(input, form, currentId, tag, null); //$('#' + tag).val(null);
+                        app_form.setInputValue(input, form, tagId, tag, null, readonly); //$('#' + tag).val(null);
                     }
                     
                 }
             }
         });
     },
-    setInputValue: function (input, form, id, tag, value) {
+    setInputValue: function (input, form, id, tag, value, readonly) {
 
-        if (id == 'input' + tag) {//for jqx
+        if (input.hasClassStartsWith("jqx-")) {
+        //if (id == 'input' + tag) {//for jqx
             if (typeof value === 'boolean')
                 $('form#' + form + ' [name=' + tag + ']').attr("checked", value);
             else
@@ -1929,6 +2536,20 @@ var app_form = {
             input.attr("checked", value); 
         else
             input.val(value);
+
+        if (readonly) {
+            if (input.is('select'))
+                input.prop("disabled", true);
+            else
+                input.prop("readonly", true);
+        }
+    },
+    getJqxId: function (tagId) {
+        return tagId.replace(/^(input)/, "");
+    },
+    setReadonly(input, readonly) {
+        if (readonly)
+            input.prop("readonly", true);
     },
     setDateNow: function (tag) {
         $(tag).val(app.toLocalDateString(Date.now()));
@@ -1959,7 +2580,7 @@ var app_form = {
     onRadioChange: function (selector,formname) {
         if ($(selector).is(':checked')) {
             var action = $(selector).val();
-            $("#" + formname).attr('action') = action;
+            $("#" + formname).attr('action', action);
         }
     },
     radioSelectedValue: function (name) {
@@ -1979,10 +2600,213 @@ var app_form = {
         else {
             $("#progressbar").hide();
         }
-    }
+    },
+    clearDataForm: function (form) {
+        $('#' + form + ' input, #' + form + ' select, #' + form + ' textarea').each(function (index) {
+            var input = $(this);
+            var type = input.attr('type');
+            if (type == 'check' || type == 'radio')
+                input.checked = false;
+            else
+                input.val('');
+        });
+    },
+    doFormPost: function (formTag, callback, preSubmit, validatorTag) {
+        if (validatorTag)
+            $(validatorTag).empty();
+        var actionurl = $(formTag).attr('action');
+        if (preSubmit)
+            preSubmit();
+        var validationResult = function (isValid) {
+            if (isValid) {
+                $.ajax({
+                    url: actionurl,
+                    type: 'post',
+                    dataType: 'json',
+                    data: $(formTag).serialize(),
+                    success: function (data) {
+                        if (callback)
+                            callback(data);
+                        else
+                            app_messenger.Post(data.Message);
+                    },
+                    error: function (jqXHR, status, error) {
+                        app_dialog.alert(error);
+                    }
+                });
+            }
+            else {
+                if (validatorTag)
+                    $(validatorTag).text("חסרים פרטים הכרחיים לעדכון");
+            }
+        }
+        $(formTag).jqxValidator('validate', validationResult);
+    },
 };
 
 var app_control = {
+
+    select2Ajax1: function (tag, width, option, url, data, selectValue, callback, onChange) {
+        if (width === undefined || width === 0)
+            width = 200;
+
+        var valueField = "id";
+        var labelField = "text";
+
+        if (option === undefined || option == null)
+            option = { disable_search_threshold: 0 };
+        $.extend(option, { width: width, rtl: true});
+
+        $(tag).empty()
+        var $select = $(tag);
+        
+
+        $.ajax({
+            type: "post",
+            dataType: 'json',
+            url: url,
+            data: data,
+            success: function (data) {
+                // Parse the returned json data
+                //var opts = $.parseJSON(data);
+                $.each(data, function (i, d) {
+                    if (d[valueField] == selectValue)
+                        $select.append($("<option></option>")//.css('padding', '28px')
+                            .attr("value", d[valueField]).attr("selected", true)
+                            .text(d[labelField]));
+                    else
+                    $select.append($("<option></option>")//.css('padding', '28px')
+                        .attr("value", d[valueField]).attr("disabled", false)
+                        .text(d[labelField]));
+                });
+
+                if (onChange) {
+                    $(tag).on("change", function (e) {
+                        onChange(e);
+                        //log("change " + JSON.stringify({ val: e.val, added: e.added, removed: e.removed }));
+                    });
+                }
+
+                $(tag).chosen(option);
+                
+
+                if (selectValue) {
+                    $select.val(selectValue);
+                }
+
+                if (callback)
+                    callback(data);
+
+                
+            }
+        });
+
+        //return $select;
+    },
+    //select3Tags: function (tag, width, placeholder, maximumSelection, tags, callback, onChange) {
+    select2Ajax: function (tag, width, option, url, data, selectValue, readonly, callback, onChange) {
+        if (width === undefined || width === 0)
+            width = 200;
+
+        if (option === undefined || option == null)
+            option = { minimumResultsForSearch: - 1 };
+
+       // $.extend(option, { 'width': width });
+
+        var $select = $(tag).select2();
+
+        //$(tag).attr("readonly", true);
+
+        //var $select=$(tag).select2({
+        //    width: width,
+        //    placeholder: "בחירת סוג"
+        //    //allowClear: true,
+        //    //multiple:false,
+        //    //maximumSelectionSize:1,
+        //    //minimumResultsForSearch: -1,
+        //    //dropdownCssClass: 'no-search'
+        //    //selectOnClose: true
+        //});
+
+        $.ajax({
+            type: "post",
+            dataType: 'json',
+            url: url,
+            data: data,
+            success: function (data) {
+                //[{ id: 0, text: 'story' }, { id: 1, text: 'bug' }, { id: 2, text: 'task' }]
+                $.extend(option, { 'data': data, 'width': width });
+                $(tag).select2(option);
+
+                //$(tag).select2({ data: data });
+                //$(tag).select2("readonly",true);
+               
+
+                if (onChange) {
+                    $(tag).on("change", function (e) {
+                        onChange(e);
+                        //log("change " + JSON.stringify({ val: e.val, added: e.added, removed: e.removed }));
+                    });
+                }
+
+                if (selectValue) {
+                    $(tag).select2('val', selectValue);
+                    //$(tag).val(selectValue);//.trigger('change');
+                   // var v=$(tag).val();
+                }
+                if (readonly)
+                    $(tag).prop("disabled", true);
+
+                if (callback) {
+                    callback(data);
+                }
+            }
+        });
+        //return $select;
+    },
+    select2Tags: function (tag, width, placeholder, maximumSelection, tags, callback, onChange) {
+        if (width === undefined || width === 0)
+            width = 200;
+
+        var $select =$(tag).select2({
+            width: width,
+            placeholder: placeholder,
+            allowClear: true,
+            tokenSeparators: [",", " "],
+            maximumInputLength: maximumSelection,
+            tags: tags//["red", "green", "blue"]
+        });
+
+        if (callback) {
+            $(tag).on("change", function (e) {
+                callback(e);
+                //log("change " + JSON.stringify({ val: e.val, added: e.added, removed: e.removed }));
+            });
+        }
+        return $select;
+     },
+    select2Data: function (tag, width, placeholder, data, selectValue, onChange) {
+        if (width === undefined || width === 0)
+            width = 200;
+
+        var $select =$(tag).select2({
+            width: width,
+            placeholder: placeholder,
+            allowClear: true,
+            data: data//[{ id: 0, text: 'story' }, { id: 1, text: 'bug' }, { id: 2, text: 'task' }]
+        });
+
+        if (onChange) {
+            $(tag).on("change", function (e) {
+                onChange(e);
+                //log("change " + JSON.stringify({ val: e.val, added: e.added, removed: e.removed }));
+            });
+        }
+        if (selectValue) {
+            $select.val(selectValue);
+        }
+        return $select;
+    },
     selectTag: function (tag, width) {
         if (width === undefined)
             width = 200;
@@ -2000,7 +2824,7 @@ var app_control = {
         //});
         $(tag).css('width', width);
     },
-    fillSelect: function (tag, url, data, valueField, labelField, selectValue) {
+    fillSelect: function (tag, url, data, valueField, labelField, selectValue,callback) {
 
         $(tag).empty()
         var $dropDown = $(tag);
@@ -2020,6 +2844,9 @@ var app_control = {
                 if (selectValue) {
                     $dropDown.val(selectValue);
                 }
+
+                if (callback)
+                    callback(data);
             }
         });
     },
@@ -2034,12 +2861,12 @@ var app_control = {
                 .text(record[labelField]));
         });
     },
-    appendSelectOptions: function (tag, selectValues) {
+    appendSelectOptions: function (tag, optionValues) {
 
        // var selectValues = { "0": "ללא", "1": "צוות", "2": "פרטי", "3": "לפי בחירה" };
         $(tag).empty();
         var $dropDown = $(tag);
-        $.each(selectValues, function (key, value) {
+        $.each(optionValues, function (key, value) {
             $dropDown.append($("<option></option>")
                 .attr("value", key)
                 .text(value));
@@ -2270,3 +3097,9 @@ var app_control = {
 //        });
 //    }
 //};
+
+
+var app_debug = {
+
+  
+}

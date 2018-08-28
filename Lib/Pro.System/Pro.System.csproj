@@ -50,10 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\ResultStatusModel.cs" />
+    <Compile Include="Data\Admin\Payment.cs" />
+    <Compile Include="Query\AccountsQuery.cs" />
     <Compile Include="Data\Entities\CalendarBook.cs" />
     <Compile Include="Data\Entities\Deals.cs" />
     <Compile Include="Data\Entities\FormContext.cs" />
-    <Compile Include="Data\Entities\Docs.cs" />
+    <Compile Include="Data\Entities\DocsContext.cs" />
     <Compile Include="Data\Entities\EntityPro.cs" />
     <Compile Include="Data\Entities\Budget.cs" />
     <Compile Include="Data\Entities\Products.cs" />
@@ -68,8 +70,6 @@
     <Compile Include="Data\DbSystem.cs" />
     <Compile Include="Data\Entities\MediaContext.cs" />
     <Compile Include="Data\Entities\ProjectContext.cs" />
-    <Compile Include="Data\Entities\TaskStatusEntity.cs" />
-    <Compile Include="Data\Entities\TaskTypeEntity.cs" />
     <Compile Include="Data\EntityResultModel.cs">
       <SubType>Code</SubType>
     </Compile>

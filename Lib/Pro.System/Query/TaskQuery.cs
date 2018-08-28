@@ -45,6 +45,7 @@ namespace ProSystem.Query
             Mode = Request["op"];
             DateFrom = Types.ToNullableDateIso(Request["DateFrom"]);
             DateTo = Types.ToNullableDateIso(Request["DateTo"]);
+            UserMode = Types.ToBool(Request["UserMode"], false);
 
             if (enableFilter)
                 LoadSortAndFilter(Request);
@@ -58,7 +59,6 @@ namespace ProSystem.Query
             //Filter = SqlFormatter.ValidateSqlInput(Filter);
 
         }
-
         public int TaskId { get; set; }
         public int UserId { get; set; }
         public int AccountId { get; set; }
@@ -68,6 +68,7 @@ namespace ProSystem.Query
         public int TaskStatus { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
+        public bool UserMode { get; set; }
 
     }
 }

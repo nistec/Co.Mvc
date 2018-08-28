@@ -27,6 +27,13 @@ namespace Pro.Mvc.Models
     {
         public EditModel() { }
         public EditModel(HttpRequestBase Request) { Load(Request); }
+
+        public string GetLayout(string curlayout)
+        {
+            if (string.IsNullOrEmpty(Layout))
+                return "~/Views/Shared/" + curlayout + ".cshtml";
+            return "~/Views/Shared/" + Layout + ".cshtml";
+        }
    }
     public class EditModel<Tp, Ti>
         where Tp : struct
@@ -39,6 +46,7 @@ namespace Pro.Mvc.Models
             Id = Nistec.GenericTypes.ConvertTo<Ti>(Request["id"]);//.Types.ToLong(Request["id"]);
             PId = Nistec.GenericTypes.ConvertTo<Tp>(Request["pid"]);
             Args = Request["args"];
+            Layout = Request["Layout"];
         }
 
         protected void Load(HttpRequestBase Request)
@@ -47,6 +55,7 @@ namespace Pro.Mvc.Models
             Id = Nistec.GenericTypes.ConvertTo<Ti>(Request["id"]);//.Types.ToLong(Request["id"]);
             PId = Nistec.GenericTypes.ConvertTo<Tp>(Request["pid"]);
             Args = Request["args"];
+            Layout = Request["Layout"];
         }
 
         public Ti AddId
@@ -62,8 +71,32 @@ namespace Pro.Mvc.Models
         public string Option { get; set; }
         public Ti Id { get; set; }
         public Tp PId { get; set; }
+        public string Layout { get; set; }
+        public string LayoutView
+        {
+            get
+            {
+                if (Layout == null)
+                    return null;
+                return "~/Views/Shared/" + Layout + ".cshtml";
+            }
+        }
+        public bool IsIframe
+        {
+            get
+            {
+                return Layout == "_ViewIframe";
+            }
+        }
+        public string GetLayoutView(string curlayout)
+        {
+                if (Layout == null)
+                    return curlayout;
+                return "~/Views/Shared/" + Layout + ".cshtml";
+        }
         public string Args { get; set; }
         public object Data { get; set; }
+        public bool IsInfo { get; set; }
 
         public bool IsEdit
         {
@@ -81,22 +114,22 @@ namespace Pro.Mvc.Models
         {
             get { return Option == null ? false : Option.Contains("d"); }
         }
-        public string IsEditClass
-        {
-            get { return IsEdit ? "item-pasive":""; }
-        }
-        public string IsAddClass
-        {
-            get { return IsAdd ? "item-pasive" : ""; }
-        }
-        public string IsViewClass
-        {
-            get { return IsView ? "item-pasive" : ""; }
-        }
-        public string IsDeleteClass
-        {
-            get { return IsDelete ? "item-pasive" : ""; }
-        }
+        //public string IsEditClass
+        //{
+        //    get { return IsEdit ? "item-pasive":""; }
+        //}
+        //public string IsAddClass
+        //{
+        //    get { return IsAdd ? "item-pasive" : ""; }
+        //}
+        //public string IsViewClass
+        //{
+        //    get { return IsView ? "item-pasive" : ""; }
+        //}
+        //public string IsDeleteClass
+        //{
+        //    get { return IsDelete ? "item-pasive" : ""; }
+        //}
     }
 
     public class UploadProcModel

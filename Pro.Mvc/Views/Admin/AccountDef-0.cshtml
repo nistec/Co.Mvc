@@ -1,0 +1,213 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    Page.Title = "Main";
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head {
+    @Scripts.Render("~/bundles/jqx")
+
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/Scripts/app/model/generic/_baseEntity-def.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/model/generic/account-def.js"></script>
+
+    <style type="text/css">
+        .input {
+            direction: rtl;
+            text-align: right;
+            height: 20px;
+        }
+    </style>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            JSON.useDateParser();
+
+            var def = new app_account_def(JSON.parse('@userInfo'));
+
+        });
+    </script>
+}
+
+<div class="breadcrumbs">
+</div>
+
+
+<div class="global-view">
+    <h3 class="rightPan">הגדרות כלליות-<span>לקוחות</span></h3>
+    <div class="container-rtl">
+
+        <input type="hidden" id="insertFlag" value="0" />
+        <div>עריכה</div>
+        <div style="direction:rtl; margin-right:10px">
+
+            <form id="form" action="./">
+
+                <div style="direction: rtl; text-align: right">
+                    <div id="trcode" class="form-group">
+                        <label class="column-large">
+                            קוד לקוח :
+                        </label>
+                        <input id="PropId" readonly="readonly" class="input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="column-large">
+                            שם הלקוח:
+                        </label>
+                        <input id="PropName" class="input" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="column-large">
+                            מספר שולח מסרון:
+                        </label>
+                        <input id="SmsSender" class="input" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="column-large">
+                            שם שולח מייל:
+                        </label>
+                        <input id="MailSender" class="input" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="column-large">
+                            מספר משתמש EPHONE:
+                        </label>
+                        <input type="number" id="AuthUser" class="input" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="column-large">
+                            מספר חשבון  EPHONE:
+                        </label>
+                        <input id="AuthAccount" class="input" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="column-large">
+                            לאפשר שליחת מסרון:
+                        </label>
+                        <div id="EnableSms" class="input"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="column-large">
+                            לאפשר שליחת מייל:
+                        </label>
+                        <div id="EnableMail" class="input"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="column-large">
+                            כתובת עמוד רישום:
+                        </label>
+                        <input type="text" id="Path" class="input" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="column-large">
+                            שם עמוד רישום:
+                        </label>
+                        <input id="SignupPage" class="input" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="column-large">
+                            האם לאפשר טופס רישום דינאמי:
+                        </label>
+                        <div id="EnableInputBuilder" class="input"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="column-large">
+                            קוד גוגל אנליטיקס:
+                        </label>
+                        <input id="GoogleAnalytics" class="input" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="column-large">
+                            קמפיין פעיל:
+                        </label>
+                        <input type="number" id="ActiveCampaign" class="input" />
+                    </div>
+                    <div>
+                        <input style="margin-right: 5px;" type="button" id="Save" value="עדכון" />
+                        <input id="Cancel" type="button" value="ביטול" />
+                    </div>
+                </div>
+                @*<table style="border-spacing: 10px;border-collapse: separate;direction:rtl">
+                        <tr id="trcode">
+                            <td align="right">קוד לקוח:</td>
+                            <td align="left"><input id="PropId" readonly="readonly" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right">שם לקוח:</td>
+                            <td align="left"><input type="text" id="PropName" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right">מספר שולח מסרון:</td>
+                            <td align="left"><input type="text" id="SmsSender" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right">שם שולח מייל:</td>
+                            <td align="left"><input type="text" id="MailSender" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right">מספר משתמש:</td>
+                            <td align="left"><input type="number" id="AuthUser" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right">מספר חשבון:</td>
+                            <td align="left"><input type="text" id="AuthAccount" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right">לאפשר שליחת מסרון:</td>
+                            <td align="left"><div id="EnableSms" class="input"></div></td>
+                        </tr>
+                        <tr>
+                            <td align="right">לאפשר שליחת מייל:</td>
+                            <td align="left"><div id="EnableMail" class="input"></div></td>
+                        </tr>
+                        <tr>
+                            <td align="right">כתובת עמוד רישום:</td>
+                            <td align="left"><input type="text" id="Path" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right">שם עמוד רישום:</td>
+                            <td align="left"><input type="text" id="SignupPage" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right">האם לאפשר טופס רישום דינאמי:</td>
+                            <td align="left"><div id="EnableInputBuilder" class="input"></div></td>
+                        </tr>
+                        <tr>
+                            <td align="right">קוד גוגל:</td>
+                            <td align="left"><input type="text" id="GoogleAnalytics" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right">קמפיין פעיל:</td>
+                            <td align="left"><input type="number" id="ActiveCampaign" class="input" /></td>
+                        </tr>
+                        <tr>
+                            <td align="right"></td>
+                            <td style="padding-top: 10px;" align="right">
+                                <input style="margin-right: 5px;" type="button" id="Save" value="עדכון" />
+                                <input id="Cancel" type="button" value="ביטול" />
+                            </td>
+                        </tr>
+                    </table>*@
+            </form>
+        </div>
+    </div>
+</div>
+
+    <script type="text/javascript">
+        app_menu.activeLayoutMenu("liAdmin");
+        //app_menu.breadcrumbs("/Admin/Main", "Tasks", 'en');
+        app_menu.footer("admin");
+    </script>

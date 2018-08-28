@@ -31,43 +31,8 @@ namespace Pro.Mvc.Controllers
 
     public class RegistryController : Controller
     {
-        #region protected methods
-        protected string GetReferrer()
-        {
-            string referer = Request.ServerVariables["HTTP_REFERER"];
-            if (string.IsNullOrEmpty(referer))
-                return Request.ServerVariables["HTTP_HOST"]; ;
-            return referer;
-        }
-        protected bool ValidateReferrer(string baseUrl = null)
-        {
-            if (baseUrl == null)
-                baseUrl = NetConfig.Get<string>("baseUrl");
-            string referer = Request.ServerVariables["HTTP_REFERER"];
-            if (string.IsNullOrEmpty(referer) || string.IsNullOrEmpty(baseUrl))
-                return false;
-            return Nistec.Regx.RegexValidateIgnoreCase(baseUrl, referer);
-        }
+       
 
-        protected string GetTemplateContent(string template)
-        {
-            if (string.IsNullOrEmpty(template))
-                return null;
-            StringBuilder sb = new StringBuilder();
-            //sb.Append("<link rel=\"stylesheet\" href=\"/Templates/" + template + "/html5reset-1.6.1.css\" />");
-            sb.Append("<link rel=\"stylesheet\" href=\"/Templates/" + template + "/registry.css\" />");
-            sb.Append("<script type=\"text/javascript\" src=\"/Templates/" + template + "/registry.js\"></script>");
-            return sb.ToString();
-        }
-
-
-        //protected RegistryPage GetRegistryPage(int AccountId, string folder, string pageType)
-        //{
-        //    RegistryPage rp = CmsRegistryContext.LoadRegistryPage(folder, "MainEx");
-        //    rp.SignKey = Pro.Data.Entities.SignupContext.CreateSignKey(AccountId);
-        //    return rp;
-        //}
-        #endregion
         #region properties
 
         [HttpPost]
@@ -622,7 +587,44 @@ namespace Pro.Mvc.Controllers
              }
          }
 
-         protected string GetCurrentPath()
+        #region protected methods
+        protected string GetReferrer()
+        {
+            string referer = Request.ServerVariables["HTTP_REFERER"];
+            if (string.IsNullOrEmpty(referer))
+                return Request.ServerVariables["HTTP_HOST"]; ;
+            return referer;
+        }
+        protected bool ValidateReferrer(string baseUrl = null)
+        {
+            if (baseUrl == null)
+                baseUrl = NetConfig.Get<string>("baseUrl");
+            string referer = Request.ServerVariables["HTTP_REFERER"];
+            if (string.IsNullOrEmpty(referer) || string.IsNullOrEmpty(baseUrl))
+                return false;
+            return Nistec.Regx.RegexValidateIgnoreCase(baseUrl, referer);
+        }
+
+        protected string GetTemplateContent(string template)
+        {
+            if (string.IsNullOrEmpty(template))
+                return null;
+            StringBuilder sb = new StringBuilder();
+            //sb.Append("<link rel=\"stylesheet\" href=\"/Templates/" + template + "/html5reset-1.6.1.css\" />");
+            sb.Append("<link rel=\"stylesheet\" href=\"/Templates/" + template + "/registry.css\" />");
+            sb.Append("<script type=\"text/javascript\" src=\"/Templates/" + template + "/registry.js\"></script>");
+            return sb.ToString();
+        }
+
+
+        //protected RegistryPage GetRegistryPage(int AccountId, string folder, string pageType)
+        //{
+        //    RegistryPage rp = CmsRegistryContext.LoadRegistryPage(folder, "MainEx");
+        //    rp.SignKey = Pro.Data.Entities.SignupContext.CreateSignKey(AccountId);
+        //    return rp;
+        //}
+       
+        protected string GetCurrentPath()
          {
              return Request.Url.AbsolutePath;
          }
@@ -645,10 +647,11 @@ namespace Pro.Mvc.Controllers
              else
                  return request.UserHostAddress;
          }
+        #endregion
 
-         #region Async
+        #region Async
 
-         [NonAction]
+        [NonAction]
          public async void LogAsync(string folder, string Action, string LogText, HttpRequestBase request, int LogType = 0)
          {
              await Task.Run(() => TraceHelper.Log(folder, Action, LogText, request, LogType));

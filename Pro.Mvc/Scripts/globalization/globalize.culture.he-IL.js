@@ -136,7 +136,8 @@ Globalize.addCultureInfo( "he-IL", "default", {
             loadtext: "Loading...",
             clearstring: "נקה",
             todaystring: "היום",
-            Search: "איתור"
+            Search: "איתור",
+            everpresentrowplaceholder:"הקלד\י-"
 
 		}
 	}

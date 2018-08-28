@@ -1,0 +1,140 @@
+﻿@model ProNetcell.Data.Entities.ContactQuery
+@{
+    Layout = "~/Views/Shared/_ViewNetcell.cshtml";
+    ViewBag.Title = "Members";
+    //int acctype = Nistec.Types.ToInt(Request.QueryString["acctype"]);
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userModel=ViewBag.UserInfo;
+    var userInfo = @Html.Raw(Json.Encode(userModel));
+    
+}
+@section head { 
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxloader.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxtooltip.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/netcell/contacts.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
+    <style type="text/css">
+        input {
+            direction:rtl;text-align:right;
+        }
+        /*.jqx-grid-cell {
+            border: none;
+        }*/
+        
+    </style>
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+    //var NScustomers = {};
+    var contacts_grid;
+
+    $(document).ready(function () {
+        JSON.useDateParser();
+        var theme = 'Arctic';
+        // prepare the data
+        wizard = new app_wiztabs();
+        wizard.displayStep(1);
+        
+        contacts_grid = new app_contacts_grid();
+        contacts_grid.init(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
+
+        app_jqxgrid.gridFilterEx(this, $("#grid-toolbar"), columnList, dateList);
+
+        });
+
+
+        var columnList = [
+         { label: 'ת.ז המנוי', value: 'MemberId', checked: true },
+         { label: 'שם המנוי', value: 'MemberName', checked: true },
+         { label: 'טלפון נייד', value: 'CellPhone', checked: true },
+         { label: 'דואר אלקטרוני', value: 'Email', checked: true },
+         { label: 'עיר', value: 'CityName', checked: true },
+         { label: 'כתובת', value: 'Address', checked: false },
+         { label: 'שם חברה', value: 'CompanyName', checked: true }
+        ];
+        var dateList = [
+         { label: 'מועד הצטרפות', value: 'JoiningDate', checked: false }
+         //{ label: 'תאריך עדכון', value: 'LastUpdate', checked: false }
+        ];
+        app_jqxgrid.gridColumnsBar(columnList);
+        $('#jqxgrid').on('bindingcomplete', function (event) {
+            app_jqxgrid.gridColumnsInit(columnList, '#jqxgrid')
+        });
+
+    </script>
+}
+
+
+<div class="breadcrumbs">
+</div>
+@*<div class="top-space"></div>*@
+
+<div class="global-view">
+    <div id="wiz-container" class="container">
+
+        <div id="hTitle" class="panel-page-header rtl">
+            <span id="hTitle-text" style="margin:10px">רשימת מנויים</span><span><a href="javascript:location.reload()"><i class="fa fa-refresh"></i></a></span>
+        </div>
+
+        <div id="wiz-1" class="wiz-tab active">
+            
+            <div class="grid-wrap rtl">
+                <div id="grid-toolbar" class="grid-toolbar"></div>
+                <div class="rtl">
+                    <a id="contact-item-add" class="btn-default btnIcon w-60 @(userModel.AllowAddClass)" href="#">הוספה</a>
+                    <a id="contact-item-edit" class="btn-default btnIcon w-60 @(userModel.AllowEditClass)" href="#">עריכה </a>
+                    <a id="contact-item-delete" class="btn-default btnIcon w-60 @(userModel.AllowDeleteClass)" href="#">מחיקה </a>
+                    @*<a id="contact-item-refresh" class="btn-default btn7 w-60" href="javascript:contacts_grid.refresh();">רענון</a>*@
+                    <a id="contact-item-filetr-remove" class="btn-default btn7 w-80 font-90" href="#">הסר סינון</a>
+                    <a id="contact-item-query" class="btn-default btnIcon w-60" href="#">איתור</a>
+                </div>
+                <div id="jqxWidget">
+                    <div id="jqxgrid" style="position:relative;z-index:1;"></div>
+                </div>
+                <div id="jqxGridColumns"></div>
+             </div>
+        </div>
+        <div id="wiz-2" class="wiz-tab">
+            <div style="height:8px"></div>
+            <div class="panel-area">
+                <h3 id="wiz-2-title" class="rtl panel-area-title">
+                    עריכת מנוי
+                </h3>
+                @*<div id="loader" style="text-align:center">המתן...</div>*@
+                <div id="divPartial2"></div>
+            </div>
+                <div class="rtl panel-area" style="margin-top:5px;">
+                    <a id="contact-item-update" class="btn-default btn7 w-60" href="#">עדכון</a>
+                    <a id="contact-item-update-plus" class="btn-default btn7 w-60" href="#">עדכון+</a>
+                    <a id="contact-item-cancel" class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">ביטול</a>
+                </div>
+            </div>
+        <div id="wiz-3" class="wiz-tab" style="margin:10px;">
+            <h3 id="wiz-3-title" class="rtl">
+                איתור מנויים
+            </h3>
+            <div id="loader" style="text-align:center">המתן...</div>
+            <div id="divPartial3" class="wiz-partial" style="background-color:transparent;"></div>
+            <div style="clear:both;"></div>
+                @*<div class="rtl">
+                <a id="contact-query-submit" class="btn-default btn7 w-60" href="#">איתור</a>
+                <a id="contact-query-submit-export" class="btn-default btn7 w-60" href="#">ייצוא לקובץ</a>
+                <a id="contact-query-cancel" class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">ביטול</a>
+            </div>*@
+            </div>
+    </div>
+</div>
+    <script type="text/javascript">
+        app_menu.activeLayoutMenu("liMain");
+        app_menu.breadcrumbs("Main", "Members", 'en');
+    </script>
+

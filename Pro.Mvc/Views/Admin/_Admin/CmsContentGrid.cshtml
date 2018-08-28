@@ -1,0 +1,66 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewAdmin.cshtml";
+    Page.Title = "Cms";
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+
+}
+
+@section head {
+}
+@section scripts {
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/Scripts/app/cms/cms_content-grid.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-cms.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js?ver=20180001"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            JSON.useDateParser();
+            var def;
+            app_jqxcombos.createDropDownAdapter("AccountId", "AccountName", "AccountList", '/Admin/GetAccountsList', 0, 120, false);
+            $('#AccountList').on('change', function (event) {
+                var args = event.args;
+                if (args) {
+                    var item = args.item;
+                    var label = item.label;
+                    var value = item.value;
+                    def = app_cms_content_grid.load(JSON.parse('@userInfo'), value);
+                }
+            });
+
+
+            //$("#btnClearCache").on('click', function () {
+            //    app_query.doPost('/Cms/CmsClearCache', {});
+            //})
+
+
+        });
+
+        function triggerCmsComplete() {
+            app_dialog.dialogIframClose();
+            //popupIframeClose();
+            //def.refresh();
+        }
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+</div>
+
+<div class="global-view">
+
+    <div class="container-rtl">
+        <div class="grid-wrap">
+            <h3 class="rtl">מערכת תוכן לניהול האתר</h3>
+            <div id="AccountList" name="AccountList"></div>
+            <div id="jqxWidget">
+                <div id="jqxgrid" style="position: relative; z-index: 1;"></div>
+            </div>
+            @*<div class="@optionsClass">
+                    <input type="button" id="btnClearCache" value="ניקוי כללי" />
+                </div>*@
+            <p>במערכת תוכן זו ניתן לערוך את התכנים הרלוונטים לעמודי האינטרנט:</p>
+        </div>
+    </div>
+</div>

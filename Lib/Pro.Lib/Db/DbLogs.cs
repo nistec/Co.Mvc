@@ -70,14 +70,35 @@ namespace Pro.Data
 
         #endregion
 
-         public static IList<Dictionary<string,object>> ViewLog(int PageNum, string Action=null,string Folder=null)
+       //  public static IList<Dictionary<string,object>> ViewLog(int PageNum, string Action=null,string Folder=null, DateTime? DateFrom=null, DateTime? DateTo=null)
+       // {
+       //     int PageSize=20;
+       //     using (var db = DbContext.Create<DbLogs>())
+       //     {
+       //         return db.ExecuteDictionary("sp_LogReader", "QueryType", "co", "PageSize", PageSize, "PageNum", PageNum, "Action", Action, "Folder", Folder, "DateFrom", DateFrom, "DateTo", DateTo);
+       //     }
+       //}
+
+        //public static IList<Dictionary<string, object>> ViewLog(string QueryType, int PageNum, string Action = null, string Folder = null, DateTime? DateFrom = null, DateTime? DateTo = null)
+        //{
+        //    //QueryType-- co, sys,auth
+        //    int PageSize = 20;
+        //    using (var db = DbContext.Create<DbLogs>())
+        //    {
+        //        return db.ExecuteDictionary("sp_LogReader", "QueryType", QueryType, "PageSize", PageSize, "PageNum", PageNum, "Action", Action, "Folder", Folder, "DateFrom", DateFrom, "DateTo", DateTo);
+        //    }
+        //}
+        public static IList<Dictionary<string, object>> ViewLog(string QueryType, int PageNum, string Action = null, string Folder = null, DateTime? DateFrom = null, DateTime? DateTo = null)
         {
-            int PageSize=20;
+            //QueryType-- co, sys,auth
+            int PageSize = 20;
             using (var db = DbContext.Create<DbLogs>())
             {
-                return db.ExecuteDictionary("sp_LogReader", "QueryType", "co", "PageSize", PageSize, "PageNum", PageNum, "Action", Action, "Folder", Folder);
+                return db.ExecuteDictionary("sp_Log_View", "QueryType", QueryType, "PageSize", PageSize, "PageNum", PageNum, "Action", Action, "Folder", Folder, "DateFrom", DateFrom, "DateTo", DateTo);
             }
-       }
+        }
+
+        
 
     }
     

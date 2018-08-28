@@ -23,6 +23,13 @@ namespace Pro.Mvc.Controllers
     [Authorize]
     public class MainController : BaseController
     {
+
+        [HttpGet]
+        public ActionResult Main()
+        {
+            return View(true);
+        }
+
         #region Dashboard
 
         [HttpGet]
@@ -167,6 +174,10 @@ namespace Pro.Mvc.Controllers
                 //var Acc = AccountProperty.View(accountId);
                 //var targets = SmsSender.GetTargetsByCategory(accountId, isPersonal, category, PersonalDisplay, isAll);
                 //model = SmsSender.Send(Acc, Message, PersonalDisplay, targets);
+
+
+
+                //ProcSender.
 
                 ApiRequest req = new ApiRequest(Request, false);
                 model = req.SendSmsGroup();

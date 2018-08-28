@@ -32,6 +32,7 @@ namespace Pro.Lib.Sender
             var msg = BuildMailMessageGroup();
             return HttpSender.Send(ApiUrlSendMailGroup, "POST", msg.ToJson());
         }
+       
 
         public ApiResult SendSmsByCategory()
         {
@@ -68,13 +69,31 @@ namespace Pro.Lib.Sender
 
             AccountId = signedUser.AccountId;
             UserId = signedUser.UserId;
-
+            Sender = Request["Sender"];
             Message = Request["Message"];
+            MultimediaBody = Request["Body"];
+            PersonalFields = Request["PersonalFields"];
             PersonalDisplay = Request["PersonalDisplay"];
             IsPersonal = string.IsNullOrEmpty(PersonalDisplay) ? false : true;
             Categories = Request["Category"];
             IsAll = Types.ToBool(Request["allCategory"], false);
             TimeToSend = Types.ToNullableDateTimeIso(Request["TimeToSend"]);
+
+            ScheduleType = (ScheduleTypes)Types.ToInt(Request["ScheduleType"]);
+
+            if(ScheduleType== ScheduleTypes.Parts)
+            {
+                SchedulerParts = new SchedulerParts()
+                {
+                    DaysInWeek = Request["DaysInWeek"],
+                    Interval = Types.ToInt(Request["Interval"]),
+                    IntervalType = (IntervalTypes)Types.ToInt(Request["IntervalType"]),
+                    PartCount = Types.ToInt(Request["PartCount"]),
+                    ScheduleType = ScheduleType,
+                    TimeEnd = Request["TimeEnd"],
+                    TimeStart = Request["TimeStart"]
+                };
+            }
 
             if(isMail)
             {
@@ -95,6 +114,7 @@ namespace Pro.Lib.Sender
         public int UserId { get; set; }
         public string Method { get; set; }
         public string Message { get; set; }
+        public string MultimediaBody { get; set; }
         public string PersonalDisplay { get; set; }
         public string PersonalFields { get; set; }
         
@@ -102,10 +122,13 @@ namespace Pro.Lib.Sender
         public string Categories { get; set; }
         public bool IsAll { get; set; }
         public DateTime? TimeToSend { get; set; }
-        
+        public string Sender { get; set; }
         public string Subject { get; set; }
         public string ReplyTo { get; set; }
         public string Title { get; set; }
+        public ScheduleTypes ScheduleType { get; set; }
+
+        public SchedulerParts SchedulerParts { get; set; }
 
         protected string GetTimeToSend()
         {
@@ -115,6 +138,11 @@ namespace Pro.Lib.Sender
         {
             return IsAll ? "-ALL-" : Categories;
         }
+        public string GetArgs()
+        {
+            return string.IsNullOrEmpty(ReplyTo) ? null : "{\"replyto\":\"" + ReplyTo + "\"}";
+        }
+
         public SmsMessageGroupRequest BuildSmsMessageGroup()
         {
             var Acc = AccountProperty.View(AccountId);
@@ -306,5 +334,30 @@ namespace Pro.Lib.Sender
                 return db.ExecuteList<Target>("sp_Targets_Category", "AccountId", AccountId, "IsPersonal", IsPersonal, "Platform", 1, "CategoryId", 0, "IsAll", true);
         }
         #endregion
+    }
+
+    public class SchedulerParts
+    {
+        public ScheduleTypes ScheduleType { get; set; }
+        public int PartCount { get; set; }
+        public int Interval { get; set; }
+        public IntervalTypes IntervalType { get; set; }
+        public string DaysInWeek { get; set; }
+        public string TimeStart { get; set; }
+        public string TimeEnd { get; set; }
+
+    }
+
+    public enum ScheduleTypes:byte
+    {
+        Now=0,
+        Pending=1,
+        Parts=2
+    }
+    public enum IntervalTypes
+    {
+        M = 'M',
+        H = 'H',
+        D = 'D'
     }
 }

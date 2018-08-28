@@ -32,6 +32,26 @@ namespace Pro.Mvc.Controllers
         {
             return View(true);
         }
+
+        public ActionResult _DefUser()
+        {
+            return PartialView(true);
+        }
+        [HttpPost]
+        public JsonResult GetUserInfo()
+        {
+            try {
+                var su = GetSignedUser(true);
+                //int accountId = su.AccountId;
+                //int userId = su.UserId;
+                UserProfile u = UserProfile.Get(su.UserId);
+                return Json(u, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, "פרטים אישיים", ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        } 
         /*
         public ActionResult DefUser()
         {
@@ -123,7 +143,7 @@ namespace Pro.Mvc.Controllers
                     UserRole = UserRole
                 };
                 UserProfile view = UserProfile.Get(UserId);
-                if (IsAdminOrManager() == false)
+                if (!IsSignedUser(Nistec.Web.Security.UserRole.Manager, false)) //(IsAdminOrManager() == false)
                 {
                     newItem.UserRole = view.UserRole;
                     newItem.IsBlocked = view.IsBlocked;
@@ -174,7 +194,7 @@ namespace Pro.Mvc.Controllers
             try
             {
                 AccountId = GetAccountId();
-                if (IsAdminOrManager() == false)
+                if (!IsSignedUser(Nistec.Web.Security.UserRole.Manager, false)) //(IsAdminOrManager() == false)
                 {
                     result = new UserResult() { Status = (int)AuthState.UnAuthorized };
                 }
@@ -290,21 +310,21 @@ namespace Pro.Mvc.Controllers
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
-        
 
-        [HttpPost]
-        public JsonResult GetTaskTypeList(string model)
-        {
-            int accountId = GetAccountId();
-            return Json(TaskTypeEntity.ViewList(accountId, model), JsonRequestBehavior.AllowGet);
-            //return Json(EntityProCache.ViewEntityList<TaskTypeEntity>(EntityCacheGroups.Enums, TaskTypeEntity.TableName, accountId), JsonRequestBehavior.AllowGet);
-        }
+        //[HttpPost]
+        //public JsonResult GetTaskTypeList(string model)
+        //{
+        //    int accountId = GetAccountId();
+        //    return Json(TaskTypeEntity.ViewList(accountId, model), JsonRequestBehavior.AllowGet);
+        //    //return Json(EntityProCache.ViewEntityList<TaskTypeEntity>(EntityCacheGroups.Enums, TaskTypeEntity.TableName, accountId), JsonRequestBehavior.AllowGet);
+        //}
+
         [HttpPost]
         public JsonResult GetTaskStatusList()
         {
-            return Json(Lists<TaskStatusEntity>.Get_List(), JsonRequestBehavior.AllowGet);
-            //return Json(EntityProCache.Get_List<TaskStatusEntity>(TaskStatusEntity.TableName), JsonRequestBehavior.AllowGet);
+            return Json(Lists<TaskStatus>.Get_List(), JsonRequestBehavior.AllowGet);
         }
+
         [HttpPost]
         public JsonResult GetTaskAssignmentList(int rcdid)
         {
@@ -357,6 +377,33 @@ namespace Pro.Mvc.Controllers
             var tags = TaskContext.GetTasksFoldersJson(accountId);
             return GetJsonResult(tags);
         }
+        [HttpPost]
+        public ContentResult GetLabelList(int id, string source)
+        {
+            //int accountId = GetAccountId();
+            var tags = AdContext.GetLabelJson(id, source);
+            return GetJsonResult(tags);
+        }
+        #endregion
+
+        #region lists items
+
+        [HttpPost]
+        public JsonResult GetListsSelect(int model)
+        {
+            int accountId = GetAccountId();
+            var list = Lists.ExecListSelect(accountId, (ListsTypes)model);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpPost]
+        public JsonResult GetListsTags(int model)
+        {
+            int accountId = GetAccountId();
+            var list = Lists.ExecListTags(accountId, (ListsTypes)model);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
 
         #endregion
 
@@ -370,13 +417,13 @@ namespace Pro.Mvc.Controllers
             switch (entity)
             {
                 case "task_type":
-                    return Json(EntityPro.ViewEntityList<TaskTypeEntity>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, ListsTypes.Task_Types), JsonRequestBehavior.AllowGet);
+                    return Json(EntityPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, ListsTypes.Task_Types), JsonRequestBehavior.AllowGet);
                 case "topic_type":
-                    return Json(EntityPro.ViewEntityList<TaskTypeEntity>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, ListsTypes.Topic_Types), JsonRequestBehavior.AllowGet);
+                    return Json(EntityPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, ListsTypes.Topic_Types), JsonRequestBehavior.AllowGet);
                 case "ticket_type":
-                    return Json(EntityPro.ViewEntityList<TaskTypeEntity>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, ListsTypes.Ticket_Types), JsonRequestBehavior.AllowGet);
+                    return Json(EntityPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, ListsTypes.Ticket_Types), JsonRequestBehavior.AllowGet);
                 case "doc_type":
-                    return Json(EntityPro.ViewEntityList<TaskTypeEntity>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, ListsTypes.Doc_Types), JsonRequestBehavior.AllowGet);
+                    return Json(EntityPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, ListsTypes.Doc_Types), JsonRequestBehavior.AllowGet);
                 //case "tags":
                 //    return Json(EntityPro.ViewEntityList<string>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, ListsTypes.Tags), JsonRequestBehavior.AllowGet);
                 default:
@@ -413,24 +460,24 @@ namespace Pro.Mvc.Controllers
             switch (entity)
             {
                 case "task_type":
-                    ViewBag.TagPropId = TaskTypeEntity.TagPropId;
-                    ViewBag.TagPropName = TaskTypeEntity.TagPropName;
-                    ViewBag.TagPropTitle = TaskTypeEntity.TagPropTitle;
+                    ViewBag.TagPropId = EnumTypes.TagPropId;
+                    ViewBag.TagPropName = EnumTypes.TagPropName;
+                    ViewBag.TagPropTitle = EnumTypes.TagPropTitle;
                     break;
                 case "topic_type":
-                    ViewBag.TagPropId = TaskTypeEntity.TagPropId;
-                    ViewBag.TagPropName = TaskTypeEntity.TagPropNameTopic;
-                    ViewBag.TagPropTitle = TaskTypeEntity.TagPropNameTopic;
+                    ViewBag.TagPropId = EnumTypes.TagPropId;
+                    ViewBag.TagPropName = EnumTypes.TagPropNameTopic;
+                    ViewBag.TagPropTitle = EnumTypes.TagPropNameTopic;
                     break;
                 case "ticket_type":
-                    ViewBag.TagPropId = TaskTypeEntity.TagPropId;
-                    ViewBag.TagPropName = TaskTypeEntity.TagPropNameTicket;
-                    ViewBag.TagPropTitle = TaskTypeEntity.TagPropNameTicket;
+                    ViewBag.TagPropId = EnumTypes.TagPropId;
+                    ViewBag.TagPropName = EnumTypes.TagPropNameTicket;
+                    ViewBag.TagPropTitle = EnumTypes.TagPropNameTicket;
                     break;
                 case "doc_type":
-                    ViewBag.TagPropId = TaskTypeEntity.TagPropId;
-                    ViewBag.TagPropName = TaskTypeEntity.TagPropNameDoc;
-                    ViewBag.TagPropTitle = TaskTypeEntity.TagPropNameDoc;
+                    ViewBag.TagPropId = EnumTypes.TagPropId;
+                    ViewBag.TagPropName = EnumTypes.TagPropNameDoc;
+                    ViewBag.TagPropTitle = EnumTypes.TagPropNameDoc;
                     break;
             }
 
@@ -450,7 +497,7 @@ namespace Pro.Mvc.Controllers
 
                 if ((UpdateCommandType)command == UpdateCommandType.Delete)
                 {
-                    result = EntityPro.DoDelete(TaskTypeEntity.TableName, EntityType, PropId, 0, accountId);
+                    result = EntityPro.DoDelete(EnumTypes.TableName, EntityType, PropId, 0, accountId);
                 }
                 else
                 {
@@ -458,13 +505,13 @@ namespace Pro.Mvc.Controllers
                     switch (EntityType)
                     {
                         case "task_type":
-                            result = EntityPro.DoSave<TaskTypeEntity>(new TaskTypeEntity() { PropId = PropId, PropName = PropName, AccountId = accountId, TaskModel = "T" }, ListsTypes.Task_Types, (UpdateCommandType)command); break;
+                            result = EntityPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "T" }, ListsTypes.Task_Types, (UpdateCommandType)command); break;
                         case "topic_type":
-                            result = EntityPro.DoSave<TaskTypeEntity>(new TaskTypeEntity() { PropId = PropId, PropName = PropName, AccountId = accountId, TaskModel = "P" }, ListsTypes.Topic_Types, (UpdateCommandType)command); break;
+                            result = EntityPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "P" }, ListsTypes.Topic_Types, (UpdateCommandType)command); break;
                         case "ticket_type":
-                            result = EntityPro.DoSave<TaskTypeEntity>(new TaskTypeEntity() { PropId = PropId, PropName = PropName, AccountId = accountId, TaskModel = "E" }, ListsTypes.Ticket_Types, (UpdateCommandType)command); break;
+                            result = EntityPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "E" }, ListsTypes.Ticket_Types, (UpdateCommandType)command); break;
                         case "doc_type":
-                            result = EntityPro.DoSave<TaskTypeEntity>(new TaskTypeEntity() { PropId = PropId, PropName = PropName, AccountId = accountId, TaskModel = "D" }, ListsTypes.Doc_Types, (UpdateCommandType)command); break;
+                            result = EntityPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "D" }, ListsTypes.Doc_Types, (UpdateCommandType)command); break;
                         //case "tags":
                         //    result = EntityPro.DoSave<TaskTypeEntity>(PropId, PropName, accountId, (UpdateCommandType)command); break;
                     }
@@ -507,6 +554,48 @@ namespace Pro.Mvc.Controllers
             return Json(list, JsonRequestBehavior.AllowGet);
 
         }
+
+
+        //[HttpPost]
+        //public JsonResult Lookup_GetList(string type)
+        //{
+        //    int accountId = GetAccountId();
+
+        //    switch (type)
+        //    {
+        //        case "members":
+        //            return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "BranchId", "BranchName", "lu_Members", accountId), JsonRequestBehavior.AllowGet);
+        //        case "branch":
+        //            return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "BranchId", "BranchName", "Branch", accountId), JsonRequestBehavior.AllowGet);
+        //        case "charge":
+        //            return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "ChargeId", "ChargeName", "Charge", accountId), JsonRequestBehavior.AllowGet);
+        //        case "city":
+        //            return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "CityId", "CityName", "Cities", accountId), JsonRequestBehavior.AllowGet);
+        //        //case "place":
+        //        //    return Json(EntityPro.ViewEntityList<PlaceView>(EntityGroups.Enums, PlaceView.TableName, accountId), JsonRequestBehavior.AllowGet);
+        //        case "region":
+        //            return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "RegionId", "RegionName", "Region", accountId), JsonRequestBehavior.AllowGet);
+        //        case "category":
+        //            return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "CategoryId", "CategoryName", "Categories", accountId), JsonRequestBehavior.AllowGet);
+        //        case "role":
+        //            return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "RoleId", "RoleName", "Roles", accountId), JsonRequestBehavior.AllowGet);
+        //        case "status":
+        //            return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "StatusId", "StatusName", "Status", accountId), JsonRequestBehavior.AllowGet);
+        //        case "enum1":
+        //        case "exenum1":
+        //            return Json(DbLookups.ViewEnumList(EntityGroups.Enums, "PropId", "PropName", "Enum", accountId, 1), JsonRequestBehavior.AllowGet);
+        //        case "enum2":
+        //        case "exenum2":
+        //            return Json(DbLookups.ViewEnumList(EntityGroups.Enums, "PropId", "PropName", "Enum", accountId, 1), JsonRequestBehavior.AllowGet);
+        //        case "enum3":
+        //        case "exenum3":
+        //            return Json(DbLookups.ViewEnumList(EntityGroups.Enums, "PropId", "PropName", "Enum", accountId, 1), JsonRequestBehavior.AllowGet);
+        //        default:
+        //            return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "Value", "Label", type, accountId), JsonRequestBehavior.AllowGet);
+
+        //            //return Json(null, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
 
         [HttpPost]
         public JsonResult Lookup_ProjectName(int id)
@@ -1209,7 +1298,7 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult TopicInfo(int id)
         {
-            return View(true, "TopicEdit", new EditTaskModel() { Id = id, Option = "g" });//, Data = TaskContext.Get(id) });
+            return View(true, new EditTaskModel() { Id = id, Option = "g", IsInfo = true });//, Data = TaskContext.Get(id) });
         }
 
         [HttpPost]
@@ -1302,8 +1391,7 @@ namespace Pro.Mvc.Controllers
         #endregion
 
         #region docs
-
-
+        
         [HttpGet]
         public ActionResult ReportDocs()
         {
@@ -1330,7 +1418,7 @@ namespace Pro.Mvc.Controllers
                 int userId = signedUser.UserId;
                 int accountId = signedUser.AccountId;
 
-                var list = DocsContext.ViewDocs(accountId, userId, AssignBy, DocStatus);
+                var list = DocsContext<DocListView>.ViewDocs(accountId, userId, AssignBy, DocStatus);
                 //var row = list.FirstOrDefault<MemberListView>();
                 //int totalRows = row == null ? 0 : row.TotalRows;
                 return Json(list, JsonRequestBehavior.AllowGet);
@@ -1365,7 +1453,7 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult DocInfo(int id)
         {
-            return View(true, "DocEdit", new EditTaskModel() { Id = id, Option = "g" });
+            return View(true, new EditTaskModel() { Id = id, Option = "g", IsInfo=true });
         }
 
         [HttpPost]
@@ -1375,13 +1463,14 @@ namespace Pro.Mvc.Controllers
 
             string json = "";
             DocItem item = null;
+            int accountId = GetAccountId();
+
             if (id > 0)
             {
-                item = DocsContext.Get(id).Get("DocId", id);
+                item = DocsContext<DocItem>.Get(accountId).Get("DocId", id);
             }
             else
             {
-                int accountId = GetAccountId();
                 item = new DocItem() { AccountId = accountId };// DbSystem.SysCounters(2) };
             }
             if (item != null)
@@ -1395,10 +1484,11 @@ namespace Pro.Mvc.Controllers
             int id = Types.ToInt(Request["id"]);
 
             string json = "";
-            DocItem item = null;
+            DocItemInfo item = null;
+            int accountId = GetAccountId();
             if (id > 0)
             {
-                item = DocsContext.Get(id).Get("DocId", id);
+                item = DocsContext<DocItemInfo>.Get(accountId).ExecGet("DocId", id);
             }
             else
             {
@@ -1442,7 +1532,7 @@ namespace Pro.Mvc.Controllers
                     a.AssignBy = user;
                 }
 
-                int docId = DocsContext.Get(accountId).AddOrUpdate(a);
+                int docId = DocsContext<DocItem>.Get(accountId).AddOrUpdate(a);
                 res = docId > 0 ? 1 : 0;
                 return Json(ResultModel.GetFormResult(res, action, null, docId), JsonRequestBehavior.AllowGet);
 
@@ -1482,7 +1572,7 @@ namespace Pro.Mvc.Controllers
                 }
                 //int user = GetUser();
                 //var res = TaskContext.DoUpdate(item);
-                var res = DocsContext.Get(su.AccountId).AddOrUpdate(a);
+                var res = DocsContext<DocItem>.Get(su.AccountId).AddOrUpdate(a);
                 return Json(new FormResult(res)
                 {
                     OutputId = (res > 0) ? a.DocId : 0,
@@ -1506,7 +1596,7 @@ namespace Pro.Mvc.Controllers
             try
             {
                 int accountId = GetAccountId();
-                res = DocsContext.Get(accountId).ArchiveDocs(id, accountId);
+                res = DocsContext<DocItem>.Get(accountId).ArchiveDocs(id, accountId);
                 string message = res > 0 ? "המסמך אורכב בהצלחה" : "המסמך לא אורכב";
                 var model = new ResultModel() { Status = res, Title = action, Message = message, Link = null, OutputId = 0 };
 
@@ -1532,7 +1622,7 @@ namespace Pro.Mvc.Controllers
             {
                 int accountId = GetAccountId();
                 //not supported
-                //res = DocsContext.Get(accountId).Delete("DocId",id, "AccountId",accountId);
+                //res = DocsContext<DocItem>.Get(accountId).Delete("DocId",id, "AccountId",accountId);
                 string message = res > 0 ? "המסמך הוסר בהצלחה" : "המסמך לא הוסר";
                 var model = new ResultModel() { Status = res, Title = action, Message = message, Link = null, OutputId = 0 };
 
@@ -1720,7 +1810,7 @@ namespace Pro.Mvc.Controllers
             try
             {
                 int userId = GetUser();
-                var res = DocsContext.DocFormStart(id, userId);
+                var res = DocsContext<DocItem>.DocFormStart(id, userId);
                 return Json(new FormResult(res), JsonRequestBehavior.AllowGet);
 
             }
@@ -1852,10 +1942,16 @@ namespace Pro.Mvc.Controllers
             return View(true,new EditTaskModel() { Id = id,  Option = "e" });//, Data = TaskContext.Get(id) });
         }
         [HttpGet]
+        public ActionResult TaskEdit_Pin(int id)
+        {
+            return View(true, "TaskEdit", new EditTaskModel() { Id = id, Option = "e", Layout="_ViewIframe" });
+        }
+
+        [HttpGet]
         public ActionResult TaskInfo(int id)
         {
             //return View(true, "TaskEdit", new EditTaskModel() { Id = id, Option = "g", Data = TaskContext.Get(id) });
-            return View(true, new EditTaskModel() { Id = id, Option = "g" });//, Data = TaskContext.GetInfo(id) });
+            return View(true, new EditTaskModel() { Id = id, Option = "g", IsInfo = true });//, Data = TaskContext.GetInfo(id) });
         }
         [HttpGet]
         public ActionResult TaskStart(int id)
@@ -2745,6 +2841,13 @@ namespace Pro.Mvc.Controllers
         #region TaskNew
 
         [HttpGet]
+        public ActionResult TaskNew2(int pid)
+        {
+            //TaskContext.NewTaskId() 
+            return View(true, new EditTaskModel() { PId = pid });
+        }
+
+        [HttpGet]
         public ActionResult TaskNew(int pid)
         {
             //TaskContext.NewTaskId() 
@@ -2953,7 +3056,7 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult ReminderInfo(int id)
         {
-            return View(true, "Reminder", new EditTaskModel() { Id = id, Option = "g" });
+            return View(true, "Reminder", new EditTaskModel() { Id = id, Option = "g", IsInfo = true });
         }
 
         [HttpPost]
@@ -2984,7 +3087,7 @@ namespace Pro.Mvc.Controllers
                 }
                 else
                 {
-                    a.UserId = userId;
+                    //a.UserId = userId;
                     //a.AssignByAccount = accountId;
                     a.AccountId = accountId;
                     a.AssignBy = userId;
@@ -3009,9 +3112,10 @@ namespace Pro.Mvc.Controllers
             //MemberCategoryView a = null;
             try
             {
+
                 int accountId = GetAccountId();
                 res = ReminderContext.Get(accountId).Archive(id, accountId);
-                string message = GetResultMessage(res, action );
+                string message = GetResultMessage(res, action);
                 var model = new ResultModel() { Status = res, Title = action, Message = message, Link = null, OutputId = 0 };
 
                 return Json(model, JsonRequestBehavior.AllowGet);
@@ -3023,6 +3127,63 @@ namespace Pro.Mvc.Controllers
             }
         }
 
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult ReminderExpired(int id)
+        {
+            int res = 0;
+            string action = "אישור תזכורת";
+            try
+            {
+                var su = GetSignedUser(true);
+                res = ReminderContext.Reminder_Expired(id, su.UserId);
+                var model = FormResult.GetResultMessage(res, action);
+                return Json(model, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult ReminderNotify(int id)
+        {
+            int res = 0;
+            string action = "אישור תזכורת";
+            try
+            {
+                var su = GetSignedUser(true);
+                res = ReminderContext.Reminder_Notify(id, su.UserId);
+                var model = FormResult.GetResultMessage(res,"Notify");
+                return Json(model, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult ReminderReaded(int id)
+        {
+            int res = 0;
+            string action = "אישור תזכורת";
+            try
+            {
+                var su = GetSignedUser(true);
+                res = ReminderContext.Reminder_Readed(id, su.UserId);
+                var model = FormResult.GetResultMessage(res, "Readed");
+                return Json(model, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
 
         [HttpPost]
         // [ValidateAntiForgeryToken]
@@ -3046,7 +3207,26 @@ namespace Pro.Mvc.Controllers
                 return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
             }
         }
+        [HttpPost]
+        public ActionResult GetReminderItem(int id)
+        {
+            try
+            {
+                var su = GetSignedUser(true);
 
+                var list = ReminderContext.View(su.AccountId, su.UserId, id);
+                return Json(list, JsonRequestBehavior.AllowGet);
+
+
+                //var item = ReminderContext.Get(su.AccountId).Get("RemindId",id);
+                //return Json(item, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var result = FormResult.GetTrace<DbSystem>(ex, "הודעות", Request);
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+        }
         [HttpPost]
         public ActionResult GetReminderGrid()
         {
@@ -3056,8 +3236,9 @@ namespace Pro.Mvc.Controllers
                 ReminderMode Mode = (ReminderMode)Types.ToInt(Request["Mode"]);
                 int AccountId = Types.ToInt(Request["AccountId"]);
                 int UserId = Types.ToInt(Request["UserId"]);
-                int RemindStatus = Types.ToInt(Request["RemindStatus"]);
-                int AssignBy = Types.ToInt(Request["AssignBy"]);
+                bool Readed = Types.ToBool(Request["Readed"],false);
+                int Remind_Parent = Types.ToInt(Request["Remind_Parent"]);
+               
 
                 //ReminderQuery query = new ReminderQuery(Request, false);
                 var su = GetSignedUser(true);
@@ -3066,17 +3247,17 @@ namespace Pro.Mvc.Controllers
 
                 //var parameters=QueryFilter.GetParameters("PageSize", 0, "PageNum", 0, "Mode", (int)Mode, "AccountId", AccountId, "UserId", UserId, "AssignBy", AssignBy, "RemindStatus", RemindStatus)
 
-                var list = ReminderContext.View(Mode, AccountId, UserId, AssignBy, RemindStatus);
+                var list = ReminderContext.View(Mode, AccountId, UserId, Readed, Remind_Parent);
                 return Json(list, JsonRequestBehavior.AllowGet);
 
                 //var row = list.FirstOrDefault<MemberListView>();
                 //int totalRows = row == null ? 0 : row.TotalRows;
                 //return QueryPagerServer<ReminderListView>(list,su.UserId);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Json(null, JsonRequestBehavior.AllowGet);
-
+                var result=FormResult.GetTrace<DbSystem>(ex,"הודעות", Request);
+                return Json(result, JsonRequestBehavior.AllowGet);
             }
         }
         #endregion
@@ -3150,24 +3331,32 @@ namespace Pro.Mvc.Controllers
             //TaskContext.NewTaskId()
             return View(true,new EditTaskModel() { PId = pid });
         }
+
+        [HttpGet]
+        public ActionResult _TicketNew()
+        {
+            //TaskContext.NewTaskId()
+            return PartialView(true, new EditTaskModel() { PId = 0 });
+        }
+
         [HttpGet]
         public ActionResult TicketStart(int id)
         {
             int accountId = GetAccountId();
             int user = GetUser();
             TaskContext.Task_Status_Change(id, user, 2, "אתחול כרטיס", null);
-            return View(true, "TicketEdit", new EditTaskModel() { Id = id, Option = "e" });//, Data = TaskContext.Get(id) });
+            return View(true, "TicketEdit", new EditTaskModel() { Id = id, Option = "e" });
         }
            
         [HttpGet]
         public ActionResult TicketEdit(int id)
         {
-            return View(true,new EditTaskModel() { Id = id, Option = "e" });// , Data = TaskContext.Get(id) });
+            return View(true,new EditTaskModel() { Id = id, Option = "e" });
         }
         [HttpGet]
         public ActionResult TicketInfo(int id)
         {
-            return View(true,"TicketEdit", new EditTaskModel() { Id = id, Option = "g" });//, Data = TaskContext.Get(id) });
+            return View(true, new EditTaskModel() { Id = id, Option = "g", IsInfo = true });
         }
        
         
@@ -3373,7 +3562,7 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult ProjectInfo(int id)
         {
-            return View(true, "ProjectEdit", new EditTaskModel() { Id = id, Option = "g" });//, Data = TaskContext.Get(id) });
+            return View(true, "ProjectEdit", new EditTaskModel() { Id = id, Option = "g", IsInfo = true });//, Data = TaskContext.Get(id) });
         }
 
         [HttpPost]

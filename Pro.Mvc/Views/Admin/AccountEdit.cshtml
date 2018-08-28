@@ -1,0 +1,519 @@
+﻿@model Pro.Mvc.Models.EditModel
+@{
+    //ViewBag.Title = "System";
+    Layout = Model.Args;// "~/Views/Shared/_ViewIframe.cshtml";
+    int rcdid = Nistec.Types.ToInt(Request["id"]);
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+    var dataModel = @Html.Raw(Json.Encode(Model));
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <link rel="stylesheet" href="~/Scripts/plagins/tabs/jcxtabs-light.min.css" />
+    <script src="~/Scripts/plagins/tabs/jcxtabs.min.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/ad/account-edit.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/ad/account-def.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
+    <script src="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.js"></script>
+    <link href="~/Scripts/plagins/colorpicker/jquery.simplecolorpicker.css" rel="stylesheet" />
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+        /*.tab-panel {width:100%}*/
+        .expander-entry {
+            margin: 0 !important;
+            padding: 5px !important
+        }
+
+        .padding-r10 {
+            padding-left: 10px;
+        }
+        
+    </style>
+
+    <!--uploder==============================-->
+    <script src="~/jqwidgets/jqxsplitter.js"></script>
+    <script src="~/Scripts/plagins/colorbox/jquery.colorbox-min.js"></script>
+    <link rel="stylesheet" href="~/Scripts/plagins/colorbox/colorbox.css" />
+    <script type="text/javascript" src="~/Scripts/app/app-media.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/vendor/jquery.ui.widget.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.iframe-transport.js"></script>
+    <script src="~/Scripts/plagins/uploader/js/jquery.fileupload.js"></script>
+
+    @*<link href="~/Scripts/bootstrap/css/bootstrap.css" rel="stylesheet" />*@
+    <link rel="stylesheet" href="~/Scripts/plagins/uploader/css/jquery.fileupload.css">
+
+
+}
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+        var theme = 'nis_metro';
+        var acc_def;
+
+        $(document).ready(function () {
+            //JSON.useDateParser();
+            $("#fcEnd").hide();
+            var uinfo = JSON.parse('@userInfo');
+
+            acc_def = new app_account_def(JSON.parse('@dataModel'), uinfo);
+            acc_def.init(false);
+
+        });
+
+    </script>
+}
+
+<div class="breadcrumbs">
+</div>
+
+
+<div class="global-view">
+    <div id="wiz-container" class="container rtl">
+
+        <div id="hTitle" class="panel-page-header rtl">
+            <span id="hTitle-text" style="margin:10px"></span>
+        </div>
+
+        <div style="height:5px"></div>
+        <div id="wiz-1" class="wiz-tab active">
+            <div id="jqxWidget" class="box-hide-5">
+
+                <div id="accordion" class="jcx-tabs rtl tab-content">
+                    <ul id="tab-query" class="nav nav-tabs1">
+                        <li class="active"><a id="hxp-0" href="#exp-0" data-toggle="tab">לקוח</a></li>
+                        <li><a id="hxp-1" href="#exp-1" data-toggle="tab">הגדרות</a></li>
+                        <li><a id="hxp-2" href="#exp-2" data-toggle="tab">סליקה</a></li>
+                        <li><a id="hxp-3" href="#exp-3" data-toggle="tab">פרטים</a></li>
+                        <li><a id="hxp-4" href="#exp-4" data-toggle="tab">משתמשים</a></li>
+                        <li><a id="hxp-5" href="#exp-5" data-toggle="tab">קרדיט</a></li>
+                        <li><a id="hxp-6" href="#exp-6" data-toggle="tab">מחירים</a></li>
+                        <li><a id="hxp-7" href="#exp-7" data-toggle="tab">קבצים</a></li>
+                    </ul>
+                    <div id="exp-0" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-title">לקוח</div>
+                            <div class="expander-entry">
+                                <form class="fcForm" id="fcForm" method="post" action="/Admin/AccountUpdate">
+                                    <div style="direction: rtl; text-align: right;">
+                                        <div class="tab-container">
+                                            <div id="tab-personal">
+                                                <h3 class="panel-area-title">פרטים</h3>
+
+                                                <div class="form-group-inline">
+                                                    <div class="field">קוד לקוח :</div>
+                                                    <input id="AccountId" name="AccountId" type="text" class="text-mid" readonly />
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">ת.ז\ח.פ :</div>
+                                                    <input id="IdNumber" name="IdNumber" type="text" class="text-mid" />
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">שם לקוח :</div>
+                                                    <input id="AccountName" name="AccountName" type="text" class="text-mid" />
+                                                </div>
+                                                <br />
+                                                <div class="form-group-inline">
+                                                    <div class="field">טלפון נייד:</div>
+                                                    <input id="Mobile" name="Mobile" type="text" class="text-mid" />
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">טלפון:</div>
+                                                    <input id="Phone" name="Phone" type="text" class="text-mid" />
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">דאר אלקטרוני:</div>
+                                                    <input id="Email" name="Email" type="text" class="text-mid" />
+                                                </div>
+                                                <br />
+                                                <div class="form-group-inline">
+                                                    <div class="field">כתובת :</div>
+                                                    <input id="Address" name="Address" type="text" class="text-mid" />
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">עיר :</div>
+                                                    <input id="City" name="City" type="text" class="text-mid" />
+                                                </div>
+
+                                            </div>
+
+                                            <div id="tab-general">
+                                                <h3 class="panel-area-title">פרטים כלליים</h3>
+                                                <div class="form-group-inline">
+                                                    <div class="field">סניף :</div>
+                                                    <input id="Branch" name="Branch" type="text" class="text-mid" />
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">נתיב :</div>
+                                                    <input id="Path" name="Path" type="text" class="text-mid" />
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">קטגוריה :</div>
+                                                    <div id="AccountCategory" name="AccountCategory"></div>
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">מאת דואל :</div>
+                                                    <input id="MailSender" name="MailSender" type="text" class="text-mid" />
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">מאת מסרון :</div>
+                                                    <input id="SmsSender" name="SmsSender" type="text" class="text-mid" />
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">חשבון תקשורת :</div>
+                                                    <input id="EphoneId" name="EphoneId" type="text" class="text-mid" />
+                                                    @*<a href="#" id="EphoneId-btn" class="btn-small" title="עדכון חשבון תקשורת">...</a>*@
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">מספר מנוי :</div>
+                                                    <input id="MemberId" name="MemberId" type="text" class="text-mid" />
+                                                    @*<a href="#" id="MemberId-btn" class="btn-small" title="עדכון מנוי">...</a>*@
+                                                </div>
+
+
+                                            </div>
+
+                                            <div id="tab-notes">
+                                                <h3 class="panel-area-title">הערות</h3>
+                                                <div class="form-group">
+                                                    <div class="field">הערות:</div>
+                                                    <textarea id="Note" name="Note" style="width:99%;height:60px"></textarea>
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <input id="IsActive" name="IsActive" type="checkbox" /> <span> פעיל</span>
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">מועד הצטרפות:</div>
+                                                    <input id="CreationDate" name="CreationDate" type="text" class="text-mid" readonly="readonly" />
+                                                </div>
+                                                <div class="form-group-inline">
+                                                    <div class="field">מועד עדכון:</div>
+                                                    <input id="LastUpdate" name="LastUpdate" type="text" readonly="readonly" class="text-mid" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*<div style="clear: both;"></div>*@
+                                    </div>
+                                    <div style="height: 5px"></div>
+                                    <div class="@(ViewBag.UserInfo.UserId) panel-area">
+                                        <input id="exp-0-Submit" class="btn-default btn7 w-60" type="button" value="עדכון" />
+                                        <input id="exp-0-Cancel" class="btn-default btn7 w-60" type="button" value="x" />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="exp-1" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-1">הערות</div>
+                            <div class="expander-entry">
+                                <form id="form" action="./">
+                                    <div style="width:100%">
+                                        <div style="direction: rtl; text-align: right;">
+                                            <div id="trcode" class="form-group pasive">
+                                                <div class="field">
+                                                    קוד לקוח :
+                                                </div>
+                                                <input type="hidden" id="PropIdAccount" class="input" />
+                                            </div>
+                                            <div class="form-group-inline pasive">
+                                                <div class="field">
+                                                    שם הלקוח:
+                                                </div>
+                                                <input type="hidden" id="PropName" class="input" />
+                                            </div>
+                                            <br />
+                                            <div class="form-group-inline">
+                                                <div class="field">
+                                                    מספר שולח מסרון:
+                                                </div>
+                                                <input type="text" id="SmsSender" class="input" />
+                                            </div>
+
+                                            <div class="form-group-inline">
+                                                <div class="field">
+                                                    שם שולח מייל:
+                                                </div>
+                                                <input type="text" id="MailSender" class="input" />
+                                            </div>
+
+                                            <div class="form-group-inline">
+                                                <div class="field">
+                                                    מספר משתמש EPHONE:
+                                                </div>
+                                                <input type="number" id="AuthUser" class="input" />
+                                            </div>
+
+                                            <div class="form-group-inline">
+                                                <div class="field">
+                                                    מספר חשבון  EPHONE:
+                                                </div>
+                                                <input type="text" id="AuthAccount" class="input" />
+                                            </div>
+                                        </div>
+                                        <div style="height:10px;"></div>
+                                        <div style="direction: rtl; text-align: right;">
+
+                                            <div class="form-group-inline">
+                                                <div class="field">
+                                                    כתובת עמוד רישום:
+                                                </div>
+                                                <input type="text" id="Path" class="input" />
+                                            </div>
+
+                                            <div class="form-group-inline">
+                                                <div class="field">
+                                                    שם עמוד רישום:
+                                                </div>
+                                                <input type="text" id="SignupPage" class="input" />
+                                            </div>
+                                            <div class="form-group-inline">
+                                                <div class="field">
+                                                    תבנית עיצוב:
+                                                </div>
+                                                <input type="text" id="Design" class="input" />
+                                            </div>
+                                            <br />
+                                            <div class="form-group-inline">
+                                                <div class="field">
+                                                    לאפשר שליחת מסרון: <input type="checkbox" name="EnableSms" id="EnableSms">
+                                                </div>
+
+                                            </div>
+
+                                            <div class="form-group-inline">
+                                                <div class="field">
+                                                    לאפשר שליחת מייל: <input type="checkbox" name="EnableMail" id="EnableMail">
+                                                </div>
+
+                                            </div>
+                                            <div class="form-group-inline">
+                                                <div class="field">
+                                                    האם לאפשר טופס רישום דינאמי:  <input type="checkbox" name="EnableInputBuilder" id="EnableInputBuilder">
+                                                </div>
+
+                                            </div>
+                                            <div class="form-group-inline">
+                                                <div class="field">
+                                                    האם לחסום שינויים במערכת התוכן: <input type="checkbox" name="BlockCms" id="BlockCms">
+                                                </div>
+                                            </div>
+                                            <div style="height:10px;"></div>
+                                            <div>
+                                                <input class="btn-default btn7 w-60" type="button" id="property-Save" value="עדכון" />
+                                                <input class="btn-default btn7 w-60" type="button" id="property-Cancel" value="ביטול" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="exp-2" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-2">אשראי</div>
+                            <div class="expander-entry">
+                                <form id="form2" action="./">
+                                    <div style="direction: rtl; text-align: right;">
+                                        <div class="form-group">
+                                            <label class="column-large">
+                                                קוד לקוח :
+                                            </label>
+                                            <input type="hidden" id="PropIdClearing"  class="input" />
+                                        </div>
+                                        @*<div class="form-group">
+                                                <label class="column-large">
+                                                    שם הלקוח:
+                                                </label>
+                                                <input id="PropNameCredit" class="input" readonly="readonly" />
+                                            </div>*@
+
+                                        <div class="form-group">
+                                            <fieldset>
+                                                <div class="field">
+                                                    אפשרויות רישום מנויים:
+                                                </div>
+                                                <select name="SignupOption" id="SignupOption">
+                                                    <option value="0" selected>רישום בלבד</option>
+                                                    <option value="1">רישום עם תשלום אופציונאלי</option>
+                                                    <option value="2">רישום מחייב תשלום</option>
+                                                </select>
+                                            </fieldset>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                האם לחייב באשראי:
+                                            </div>
+                                            <input type="checkbox" name="EnableSignupCredit" id="EnableSignupCredit">
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                מסוף אשראי:
+                                            </div>
+                                            <input type="text" id="CreditTerminal" class="input" />
+                                        </div>
+                                        <div class="form-group">
+                                            <fieldset>
+                                                <div class="field">
+                                                    בעת אירוע תשלום:
+                                                </div>
+                                                <select name="RecieptEvent" id="RecieptEvent">
+                                                    <option value="" selected>none</option>
+                                                    <option value="email">email</option>
+                                                </select>
+                                            </fieldset>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="field">
+                                                כתובת להעברה:
+                                            </div>
+                                            <input type="text" id="RecieptAddress" class="input" />
+                                        </div>
+                                        <div style="height:10px;"></div>
+                                        <div>
+                                            <input class="btn-default btn7 w-60" type="button" id="credit-Save" value="עדכון" />
+                                            <input class="btn-default btn7 w-60" type="button" id="credit-Cancel" value="ביטול" />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="exp-3" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-3">פרטים</div>
+                            <div class="expander-entry">
+                                <div id="jqxgrid3-panel" class="grid-wrap rtl">
+                                    <div id="jqxgrid3-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                        <a id="jqxgrid3-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                        <a id="jqxgrid3-edit" href="#" class="btn-default btnIcon"><i class="fa fa-edit"></i>עריכה</a>
+                                        <a id="jqxgrid3-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
+                                        <a id="jqxgrid3-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                    </div>
+                                    <div id="jqxgrid3-window"></div>
+                                    <div id="jqxgrid3" style="position:relative;z-index:1;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="exp-4" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-4">משתמשים</div>
+                            <div class="expander-entry">
+                                <div id="jqxgrid4-panel" class="grid-wrap rtl">
+                                    <div id="jqxgrid4-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                        <a id="jqxgrid4-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                        <a id="jqxgrid4-edit" href="#" class="btn-default btnIcon"><i class="fa fa-edit"></i>עריכה</a>
+                                        <a id="jqxgrid4-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
+                                        <a id="jqxgrid4-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                    </div>
+                                    <div id="jqxgrid4-window"></div>
+                                    <div id="jqxgrid4" style="position:relative;z-index:1;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="exp-5" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-5">קרדיט</div>
+                            <div class="expander-entry">
+                                <div id="jqxgrid5-panel" class="grid-wrap rtl">
+                                    <div id="jqxgrid5-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                        <a id="jqxgrid5-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                        <a id="jqxgrid5-edit" href="#" class="btn-default btnIcon"><i class="fa fa-edit"></i>עריכה</a>
+                                        <a id="jqxgrid5-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
+                                        <a id="jqxgrid5-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                    </div>
+                                    <div id="jqxgrid5-window"></div>
+                                    <div id="jqxgrid5" style="position:relative;z-index:1;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="exp-6" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-6">מחירים</div>
+                            <div class="expander-entry">
+                                <div id="jqxgrid6-panel" class="grid-wrap rtl">
+                                    <div id="jqxgrid6-bar" class="@(Model.Option == "g" ? "item-pasive" : null)">
+                                        <a id="jqxgrid6-add" href="#" class="btn-default btnIcon"><i class="fa fa-plus-square-o"></i>הוספה</a>
+                                        <a id="jqxgrid6-edit" href="#" class="btn-default btnIcon"><i class="fa fa-edit"></i>עריכה</a>
+                                        <a id="jqxgrid6-remove" href="#" class="btn-default btnIcon"><i class="fa fa-remove"></i>הסרה</a>
+                                        <a id="jqxgrid6-refresh" href="#" class="btn-default btnIcon"><i class="fa fa-refresh"></i>רענון</a>
+                                    </div>
+                                    <div id="jqxgrid6-window"></div>
+                                    <div id="jqxgrid6" style="position:relative;z-index:1;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="exp-7" class="jcxtab-panel">
+                        <div class="panel-area">
+                            <div class="panel-area-title" id="hxp-7">קבצים</div>
+                            <div class="expander-entry1">
+                                <div id="task-files"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="height: 5px"></div>
+                <div class="@(ViewBag.UserInfo.UserId) panel-area pasive">
+                    <input id="fcSubmit" class="btn-default btn7 w-60" type="button" value="עדכון" />
+                    <input id="fcCancel" class="btn-default btn7 w-60" type="button" value="x" />
+                </div>
+
+            </div>
+        </div>
+        <div id="wiz-2" class="wiz-tab">
+            <h3 id="wiz-2-title" class="rtl">
+                עריכת משימה
+            </h3>
+            <div id="divPartial2" class="wiz-partial pasive"></div>
+            <div class="rtl">
+                <a id="task-item-update" class="btn-default btn7 w-60" href="#">עדכון</a>
+                <a id="task-item-cancel" class="btn-default btn7 w-60" href="#">ביטול</a>
+            </div>
+        </div>
+        <div id="wiz-3" class="wiz-tab">
+            <div class="rtl">
+                <a class="btn-default btn7 w-60" href="javascript:wizard.displayStep(1);">חזרה</a>
+            </div>
+            <div id="divPartial3"></div>
+        </div>
+        <div id="wiz-4" class="wiz-tab">
+            <h3 class="rtl">מעקב זמנים</h3>
+            <div id="divPartial4"></div>
+        </div>
+        <div id="wiz-5" class="wiz-tab">
+            <h3 class="rtl">הערות-עריכה</h3>
+            <div id="divPartial5"></div>
+        </div>
+        <div id="wiz-6" class="wiz-tab">
+            <h3 class="rtl">העברה</h3>
+            <div id="divPartial6"></div>
+        </div>
+        <div id="wiz-7" class="wiz-tab">
+            <h3 class="rtl">מעקב זמנים - עריכה</h3>
+            <div id="divPartial7"></div>
+        </div>
+    </div>
+</div>
+<!--end of content-wrapper-->
+<!--footer-->
+<footer></footer>
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liMain");
+    app_menu.breadcrumbs("/Admin/Accounts", "Account-Edit", 'en');
+    //app_menu.footer("task");
+</script>
+

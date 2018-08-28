@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/_View.cshtml";
+    Layout = "~/Views/Shared/_ViewSystem.cshtml";
     Page.Title = "Users";
     var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
 }
@@ -106,7 +106,7 @@
                                              <tr>
                                                  <td colspan="2"><div id="signResult"></div></td>
                                              </tr>
-</table>
+                                        </table>
                                </form>
                              </div>
                          </div>

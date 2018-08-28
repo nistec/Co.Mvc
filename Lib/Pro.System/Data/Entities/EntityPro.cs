@@ -21,7 +21,9 @@ namespace ProSystem.Data.Entities
     public static class EntityGroups
     {
         public const string Enums = "Enums";
-        public const string Members = "Tasks";
+        public const string Members = "Members";
+        public const string Tasks = "Tasks";
+        public const string Admin = "Admin";
         public const string Settings = "Settings";
         public const string Reports = "Reports";
         public const string Registry = "Registry";
@@ -137,6 +139,29 @@ namespace ProSystem.Data.Entities
             }
         }
 
+        public static IEnumerable<T> ViewAdminEntityList<T>(string GroupName, string TableName) where T : IEntityPro
+        {
+            string key = WebCache.GetKey(Settings.ProjectName, GroupName, 0, TableName);// GetKey(TableName, AccountId);
+            IEnumerable<T> list = null;
+
+            if (EntityPro.EnableCache)
+                list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
+            if (list == null || list.Count() == 0)
+            {
+                using (var db = DbContext.Create<DbSystem>())
+                {
+                    list = db.EntityItemList<T>(TableName);
+                }
+                if (EntityPro.EnableCache && list != null)
+                {
+                    //CacheAdd(key,GetSession(AccountId), (List<T>)list);
+                    WebCache.Insert(key, (List<T>)list);
+                }
+            }
+
+            return list;
+
+        }
         public static IEnumerable<T> ViewEntityList<T>(string GroupName,string TableName, int AccountId) where T : IEntityPro
         {
             string key = WebCache.GetKey(Settings.ProjectName, GroupName, AccountId, TableName);// GetKey(TableName, AccountId);
