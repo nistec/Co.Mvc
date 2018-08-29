@@ -120,7 +120,7 @@ namespace ProSystem.Data.Entities
                 ,"MailSender", v.MailSender
                 ,"SmsSender", v.SmsSender
                 ,"MemberId", v.MemberId
-                ,"EphoneId", v.EphoneId
+                ,"NetcellId", v.NetcellId
                 ,"EnableSync", EnableSync ? 1:0
             };
 
@@ -165,7 +165,7 @@ namespace ProSystem.Data.Entities
         public string Branch { get; set; }
         public string MailSender { get; set; }
         public string SmsSender { get; set; }
-        public int EphoneId { get; set; }
+        public int NetcellId { get; set; }
         public int MemberId { get; set; }
 
 

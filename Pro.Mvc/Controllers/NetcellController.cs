@@ -36,7 +36,7 @@ namespace Pro.Mvc.Controllers
         [HttpGet]
         public ActionResult Contacts()
         {
-            ContactQuery query = new ContactQuery(Request.QueryString, 1);
+            ContactQuery query = new ContactQuery(Request.QueryString, 11);
             var su = GetSignedUser(false);
             if (su == null)
             {
@@ -53,7 +53,7 @@ namespace Pro.Mvc.Controllers
         [ActionName("Contacts")]
         public ActionResult ContactsPost()
         {
-            ContactQuery query = new ContactQuery(Request.Form, 0);
+            ContactQuery query = new ContactQuery(Request.Form, 11);
             var su = GetSignedUser(false);
             if (su == null)
             {
@@ -145,19 +145,19 @@ namespace Pro.Mvc.Controllers
 
         public ActionResult MailTargets()
         {
-            ContactQuery query = new ContactQuery(Request.Form, 22);
+            ContactQuery query = new ContactQuery(Request.Form, 13);
             query.AccountId = GetAccountId();
             query.UserId = GetUser();
-            query.QueryType = 22;
+            query.QueryType = 13;
             return View(query);
         }
 
         public ActionResult ContactsExport()
         {
-            ContactQuery query = new ContactQuery(Request.Form, 20);
+            ContactQuery query = new ContactQuery(Request.Form, 12);
             query.AccountId = GetAccountId();
             query.UserId = GetUser();
-            query.QueryType = 20;
+            query.QueryType = 12;
             query.Normelize();
             var d = ContactsContext.ListQueryDataView(query);
             return CsvActionResult.ExportToCsv(d, "Targets");
@@ -278,9 +278,9 @@ namespace Pro.Mvc.Controllers
                 //int totalRows = row == null ? 0 : row.TotalRows;
                 return QueryPagerServer<ContactListView>(list, su.UserId);//, totalRows);//, query.PageSize, query.PageNum);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Json(null, JsonRequestBehavior.AllowGet);
+                return Json(GetFormResult(-1, "הצגת אנשי קשר", ex.Message, 0), JsonRequestBehavior.AllowGet);
 
             }
         }

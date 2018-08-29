@@ -33,10 +33,10 @@ namespace ProNetcell.Data.Entities
         {
         }
 
-        public ContactsContext(int RecordId)
+        public ContactsContext(int ContactId)
             : base()
         {
-            SetByParam("RecordId", RecordId);
+            SetByParam("ContactId", ContactId);
         }
 
         #endregion
@@ -86,13 +86,13 @@ namespace ProNetcell.Data.Entities
 
             var parameters = DataParameter.GetSqlList(args);
             parameters[0].Direction = System.Data.ParameterDirection.InputOutput;
-            //using (var db = DbContext.Create<DbPro>())
+            //using (var db = DbContext.Create<DbNetcell>())
             //{
             //    var res = db.ExecuteCommandOutput("sp_Contact_Save_v1", parameters.ToArray(), System.Data.CommandType.StoredProcedure);
-            //    v.RecordId = res.GetValue<int>("RecordId");
+            //    v.ContactId = res.GetValue<int>("ContactId");
             //}
 
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 int res = db.ExecuteCommandNonQuery("sp_Contacts_Items_Register", parameters.ToArray(), System.Data.CommandType.StoredProcedure);
                 v.ContactId = Types.ToInt(parameters[0].Value);
@@ -140,14 +140,14 @@ namespace ProNetcell.Data.Entities
         //    return parameters.GetParameterValue<int>("Result");
         //}
 
-        public static int DoDelete(int RecordId, int AccountId)
+        public static int DoDelete(int ContactId, int AccountId)
         {
             var parameters = DataParameter.GetSqlWithDirection(
                 "AccountId", AccountId, 0,
-                "RecordId", RecordId, 0,
+                "ContactId", ContactId, 0,
                 "Result", 0, 2
                 );
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 int res = db.ExecuteCommandNonQuery("sp_Contact_Remove_v1", parameters, CommandType.StoredProcedure);
                 return parameters.GetParameterValue<int>("Result");
@@ -158,14 +158,14 @@ namespace ProNetcell.Data.Entities
         {
             //var parameters = DataParameter.GetSqlList("AccountId", AccountId, "Category", Category);
             //DataParameter.AddOutputParameter(parameters, "Result", SqlDbType.Int, 4);
-            //using (var db = DbContext.Create<DbPro>())
+            //using (var db = DbContext.Create<DbNetcell>())
             //{
             //    db.ExecuteCommandNonQuery("sp_Contacts_Delete", parameters.ToArray(), CommandType.StoredProcedure);
             //    var result = Types.ToInt(parameters[2].Value);
             //    return result;
             //}
 
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 var result = db.ExecuteReturnValue("sp_Contacts_Delete", 0, "AccountId", AccountId, "Category", Category);//, "Result", 0);
                 return result;
@@ -176,9 +176,9 @@ namespace ProNetcell.Data.Entities
 
         #region static
 
-        public static ContactItem Get(int RecordId)
+        public static ContactItem Get(int ContactId)
         {
-            using (ContactsContext context = new ContactsContext(RecordId))
+            using (ContactsContext context = new ContactsContext(ContactId))
             {
                 return context.Entity;
             }
@@ -192,27 +192,28 @@ namespace ProNetcell.Data.Entities
             }
         }
 
-        public static ContactInfo GetInfo(int RecordId, int AccountId)
+        public static ContactInfo GetInfo(int ContactId, int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
-                return db.EntityItemGet<ContactInfo>("vw_Contacts ", "RecordId", RecordId, "AccountId", AccountId);
+            using (var db = DbContext.Create<DbNetcell>())
+                return db.ExecuteSingle<ContactInfo>("sp_Contact_View ", "ContactId", ContactId, "AccountId", AccountId, "SourceType", 1);
+            //return db.EntityItemGet<ContactInfo>("vw_Contacts ", "ContactId", ContactId, "AccountId", AccountId);
         }
 
         //ContactCategoryView
-        public static ContactItem ViewOrNewContactItem(int RecordId, int AccountId)
+        public static ContactItem ViewOrNewContactItem(int ContactId, int AccountId)
         {
-            if (RecordId > 0)
+            if (ContactId > 0)
             {
-                using (var db = DbContext.Create<DbPro>())
-                    return db.ExecuteSingle<ContactItem>("sp_Contact_View ", "RId", RecordId, "AccountId", AccountId);
+                using (var db = DbContext.Create<DbNetcell>())
+                    return db.ExecuteSingle<ContactItem>("sp_Contact_View ", "ContactId", ContactId, "AccountId", AccountId, "SourceType", 1);
             }
             return new ContactItem() { AccountId = AccountId };
         }
 
-        public static string ViewContact(int RId, int AccountId)
+        public static string ViewContact(int ContactId, int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
-            return db.ExecuteJsonRecord("sp_Contact_View ", "RId", RId, "AccountId", AccountId);
+            using (var db = DbContext.Create<DbNetcell>())
+            return db.ExecuteJsonRecord("sp_Contact_View ", "ContactId", ContactId, "AccountId", AccountId);
         }
 
         //public static List<ContactItem> GetItems()
@@ -225,7 +226,7 @@ namespace ProNetcell.Data.Entities
 
         public static IEnumerable<ContactItem> View()
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.EntityItemList<ContactItem>(MappingName, null);
         }
         //public static IEnumerable<ContactItem> ViewByType(int ContactType)
@@ -285,7 +286,7 @@ namespace ProNetcell.Data.Entities
 
         public static IEnumerable<ContactListView> ListView(int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.EntityItemList<ContactListView>("vw_Contacts", "AccountId", AccountId);
         }
 
@@ -317,7 +318,7 @@ namespace ProNetcell.Data.Entities
            int AgeTo = 0,
            int ContactRule = 0)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 return db.ExecuteList<ContactListView>("sp_Contacts_Query_v1", "QueryType", QueryType, "PageSize", PageSize, "PageNum", PageNum, "AccountId", AccountId,
                     "ContactId", ContactId,
@@ -359,7 +360,7 @@ namespace ProNetcell.Data.Entities
 
         public static IEnumerable<ContactListView> ListQueryView(ContactQuery q)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
 
                 return db.ExecuteList<ContactListView>("sp_Contacts_Query", "QueryType", q.QueryType, "PageSize", q.PageSize, "PageNum", q.PageNum, "AccountId", q.AccountId,
@@ -391,7 +392,7 @@ namespace ProNetcell.Data.Entities
 
         public static DataTable ListQueryDataView(ContactQuery q)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 return db.ExecuteCommand<DataTable>("sp_Contacts_Query", DataParameter.GetSql("QueryType", q.QueryType, "PageSize", q.PageSize, "PageNum", q.PageNum, "AccountId", q.AccountId,
                     "ContactId", q.ContactId,
@@ -422,7 +423,7 @@ namespace ProNetcell.Data.Entities
 
         public static int ListQueryTargetsView(ContactQuery q)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 return db.ExecuteScalar<int>("sp_Contacts_Query_Targets_v2", 0, "QueryType", q.QueryType, "AccountId", q.AccountId, "UserId", q.UserId,
                     "ContactId", q.ContactId,
@@ -455,7 +456,7 @@ namespace ProNetcell.Data.Entities
 #if(false)
         public static IEnumerable<ContactListView> ListQueryView(ContactQuery q)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 return db.ExecuteList<ContactListView>("sp_Contacts_Query_v1", "QueryType", q.QueryType, "PageSize", q.PageSize, "PageNum", q.PageNum, "AccountId", q.AccountId,
                     "ContactId", q.ContactId,
@@ -486,7 +487,7 @@ namespace ProNetcell.Data.Entities
 
         public static DataTable ListQueryDataView(ContactQuery q)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 return db.ExecuteCommand<DataTable>("sp_Contacts_Query_v1", DataParameter.GetSql("QueryType", q.QueryType, "PageSize", q.PageSize, "PageNum", q.PageNum, "AccountId", q.AccountId,
                     "ContactId", q.ContactId,
@@ -515,7 +516,7 @@ namespace ProNetcell.Data.Entities
 
         public static int ListQueryTargetsView(ContactQuery q)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 return db.ExecuteScalar<int>("sp_Contacts_Query_Targets", 0, "QueryType", q.QueryType, "AccountId", q.AccountId, "UserId", q.UserId,
                     "ContactId", q.ContactId,
@@ -546,7 +547,7 @@ namespace ProNetcell.Data.Entities
         #endregion
     }
 
-    public class ContactsContext<T> : EntityContext<DbPro, T> where T : IEntityItem
+    public class ContactsContext<T> : EntityContext<DbNetcell, T> where T : IEntityItem
     {
         public static void Refresh(int AccountId)
         {
@@ -559,12 +560,17 @@ namespace ProNetcell.Data.Entities
         }
         public IList<T> GetList()
         {
-            return DbContextCache.EntityList<DbPro, T>(CacheKey, null);
+            return DbContextCache.EntityList<DbNetcell, T>(CacheKey, null);
         }
         public IList<T> GetList(int accountId)
         {
-            return DbContextCache.EntityList<DbPro, T>(CacheKey, new object[] { "AccountId", accountId });
+            return DbContextCache.EntityList<DbNetcell, T>(CacheKey, new object[] { "AccountId", accountId });
         }
+        //protected override ContactIde void OnChanged(ProcedureType commandType)
+        //{
+        //    DbContextCache.Remove(CacheKey);
+        //}
+
         protected override void OnChanged(ProcedureType commandType)
         {
             DbContextCache.Remove(CacheKey);
@@ -576,66 +582,65 @@ namespace ProNetcell.Data.Entities
 
     }
 
-    public class ContactListView : IEntityItem,IEntityListItem
+    public class ContactListView : ContactItem, IEntityItem, IEntityListItem
     {
+        public int TotalRows { get; set; }
 
         //public const string MappingName = "vw_Contacts";
 
 
-        [EntityProperty(EntityPropertyType.Key)]
-        public string Identifier { get; set; }
-        public string ExId { get; set; }
-        public string ContactId { get; set; }
-        [EntityProperty(EntityPropertyType.Key)]
-        public int AccountId { get; set; }
-        public string Address { get; set; }
-        public DateTime JoiningDate { get; set; }
-        public string CellPhone { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public string Birthday { get; set; }
-        public string Note { get; set; }
-        [EntityProperty(EntityPropertyType.Identity)]
-        public int RecordId { get; set; }
+        //[EntityProperty(EntityPropertyType.Key)]
+        //public string Identifier { get; set; }
+        //public string ExId { get; set; }
+        //public string ContactId { get; set; }
+        //[EntityProperty(EntityPropertyType.Key)]
+        //public int AccountId { get; set; }
+        //public string Address { get; set; }
+        //public DateTime JoiningDate { get; set; }
+        //public string CellPhone { get; set; }
+        //public string Phone { get; set; }
+        //public string Email { get; set; }
+        //public string Birthday { get; set; }
+        //public string Note { get; set; }
+        //[EntityProperty(EntityPropertyType.Identity)]
+        //public int ContactId { get; set; }
 
 
         #region view
-        public string CompanyName { get; set; }
+        //public string CompanyName { get; set; }
 
-        public string ContactName { get; set; }
-        public string CityName { get; set; }
-        public string BranchName { get; set; }
- 
-        [EntityProperty(EntityPropertyType.View)]
-        public DateTime LastUpdate { get; set; }
-        public string RegionName { get; set; }
-        public string GenderName { get; set; }
-        public string ExEnumName1 { get; set; }
-        public string ExEnumName2 { get; set; }
-        public string ExEnumName3 { get; set; }
-        
-        public int TotalRows { get; set; }
+        //public string ContactName { get; set; }
+        //public string CityName { get; set; }
+        //public string BranchName { get; set; }
+
+        //[EntityProperty(EntityPropertyType.View)]
+        //public DateTime LastUpdate { get; set; }
+        //public string RegionName { get; set; }
+        //public string GenderName { get; set; }
+        //public string ExEnumName1 { get; set; }
+        //public string ExEnumName2 { get; set; }
+        //public string ExEnumName3 { get; set; }
 
         #endregion
     }
 
-  
+
     [EntityMapping("vw_Contacts")]
     public class ContactInfo : ContactItem
     {
-        public string CityName { get; set; }
-        public string BranchName { get; set; }
-        public string GenderName { get; set; }
-        public string ExEnumName1 { get; set; }
-        public string ExEnumName2 { get; set; }
-        public string ExEnumName3 { get; set; }
+        //public string CityName { get; set; }
+        //public string BranchName { get; set; }
+        //public string GenderName { get; set; }
+        //public string ExEnumName1 { get; set; }
+        //public string ExEnumName2 { get; set; }
+        //public string ExEnumName3 { get; set; }
     }
 
      [EntityMapping("vw_Contact_Display")]
     public class ContactDisplay : IEntityItem
     {
         [EntityProperty(EntityPropertyType.Identity)]
-        public int RecordId { get; set; }
+        public int ContactId { get; set; }
         public int AccountId { get; set; }
         public string DisplayName { get; set; }
     }
@@ -697,7 +702,7 @@ namespace ProNetcell.Data.Entities
             public DateTime LastUpdate { get; set; }
 
             [EntityProperty(EntityPropertyType.Identity)]
-            public int RecordId	{ get; set; }
+            public int ContactId	{ get; set; }
 
             public string ExField1 { get; set; }
             public string ExField2 { get; set; }
@@ -829,32 +834,31 @@ namespace ProNetcell.Data.Entities
             //if (QueryType == 1)
             //{
             ContactId = Types.ToInt(Request["ContactId"]);
-            ExKey = Request["ExKey"];
-            Email = Request["Email"];
-            CellNumber = Request["CellNumber"];
-            Category = Request["Category"];
+            ExKey = Types.NZorEmpty(Request["ExKey"]);
+            Email = Types.NZorEmpty(Request["Email"]);
+            CellNumber = Types.NZorEmpty(Request["CellNumber"]);
+            Category = Types.NZorEmpty(Request["Category"]);
             //Branch = Request["Branch"];
             //}
             //else
             //{
 
-            Name = Request["Name"];
-            Address = Request["Address"];
-            City = Request["City"];
+            Name = Types.NZorEmpty(Request["Name"]);
+            Address = Types.NZorEmpty(Request["Address"]);
+            City = Types.NZorEmpty(Request["City"]);
             //Region = Types.ToInt(Request["Region"]);
-            Category = Request["Category"];
             //Branch = Request["Branch"];
-            ExText1 = Request["ExText1"];
-            ExText2 = Request["ExText2"];
-            ExText3 = Request["ExText3"];
-            ExDate1 = Request["ExDate1"];
-            ExDate2 = Request["ExDate2"];
-            ExDate3 = Request["ExDate3"];
+            ExText1 = Types.NZorEmpty(Request["ExText1"]);
+            ExText2 = Types.NZorEmpty(Request["ExText2"]);
+            ExText3 = Types.NZorEmpty(Request["ExText3"]);
+            ExDate1 = Types.NZorEmpty(Request["ExDate1"]);
+            ExDate2 = Types.NZorEmpty(Request["ExDate2"]);
+            ExDate3 = Types.NZorEmpty(Request["ExDate3"]);
 
             BirthdayMonth = Types.ToInt(Request["BirthdayMonth"]);
             DateType = Types.ToInt(Request["DateType"]);
-            JoinedDateFrom = Types.ToDateTime(Request["JoinedDateFrom"]);
-            JoinedDateTo = Types.ToDateTime(Request["JoinedDateTo"]);
+            JoinedDateFrom = Types.ToNullableDateIso(Request["JoinedDateFrom"]);
+            JoinedDateTo = Types.ToNullableDateIso(Request["JoinedDateTo"]);
             AgeFrom = Types.ToInt(Request["AgeFrom"]);
             AgeTo = Types.ToInt(Request["AgeTo"]);
             ContactRule = Types.ToInt(Request["ContactRule"]);
@@ -878,20 +882,23 @@ namespace ProNetcell.Data.Entities
 
         public ContactQuery(NameValueCollection Request, int queryType)
         {
+
+            QueryType = queryType;
+
             if (Request.Count == 0)
                 return;
 
             //string query_type = Request["query_type"];
-            QueryType = queryType;// Types.ToInt(Request["QueryType"]);
+            // Types.ToInt(Request["QueryType"]);
             //ExType = Types.ToInt(Request["ExType"]);
 
             if (queryType == 1)
             {
                 ContactId = Types.ToInt(Request["ContactId"]);
-                ExKey = Request["ExKey"];
-                Email = Request["Email"];
-                CellNumber = Request["CellNumber"];
-                Category = Request["Category"];
+                ExKey = Types.NZorEmpty(Request["ExKey"]);
+                Email = Types.NZorEmpty(Request["Email"]);
+                CellNumber = Types.NZorEmpty(Request["CellNumber"]);
+                Category = Types.NZorEmpty(Request["Category"]);
                 //Branch = Request["Branch"];
             }
             else
@@ -975,8 +982,8 @@ namespace ProNetcell.Data.Entities
                 AgeTo = Types.ToInt(Request["AgeTo"]);
 
                 DateType = Types.ToInt(Request["DateType"]);
-                JoinedDateFrom = Types.ToDateTime(Request["JoinedDateFrom"]);
-                JoinedDateTo = Types.ToDateTime(Request["JoinedDateTo"]);
+                JoinedDateFrom = Types.ToNullableDateIso(Request["JoinedDateFrom"]);
+                JoinedDateTo = Types.ToNullableDateIso(Request["JoinedDateTo"]);
 
                 //signup query
                 //string listItems = Request["Items"];
@@ -1049,7 +1056,7 @@ namespace ProNetcell.Data.Entities
 //public int PageNum i{get;set;}
 //public int AccountId i{get;set;}
 public int ContactId { get; set; }
-//--public string MemberId { get; set; }
+//--public string MembeContactId { get; set; }
 public string ExKey { get; set; }
 public string CellNumber { get; set; }
 public string Email { get; set; }

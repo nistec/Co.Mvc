@@ -48,7 +48,7 @@ namespace ProNetcell.Data
     #endregion
 
     #region DbContext
-    [DbContext("cnn_netcell")]
+    [DbContext("netcell_db")]
     [Serializable]
     public partial class DbNetcell : DbContext
     {
@@ -64,7 +64,7 @@ namespace ProNetcell.Data
 
         public static string Cnn
         {
-            get { return NetConfig.ConnectionString("cnn_netcell"); }
+            get { return NetConfig.ConnectionString("netcell_db"); }
         }
 
         public DbNetcell()

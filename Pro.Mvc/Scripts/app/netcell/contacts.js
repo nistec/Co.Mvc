@@ -90,7 +90,7 @@ class app_contacts_grid {
                 ],
             id: 'ContactId',
                 type: 'POST',
-                url: '/Main/GetContactsGrid',
+                url: '/Netcell/GetContactsGrid',
                 //data:{},
                 //pagenum: 0,
                 pagesize: 20,
@@ -115,7 +115,7 @@ class app_contacts_grid {
         this.DataSource.data = {
             "QueryType": Model.QueryType,
             "AccountId": Model.AccountId,
-            "ContactId", Model.ContactId,
+            "ContactId": Model.ContactId,
             "ExKey": Model.ExKey,
             "CellNumber": Model.CellNumber,
             "Email": Model.Email,
@@ -129,7 +129,7 @@ class app_contacts_grid {
             "ExDate1": Model.ExDate1,
             "ExDate2": Model.ExDate2,
             "ExDate3": Model.ExDate3,
-            "BirthdayMonth": Model.BirthdayMonth,
+            "BirthDateMonth": Model.BirthDateMonth,
             "JoinedDateFrom": Model.JoinedDateFrom,
             "JoinedDateTo": Model.JoinedDateTo,
             "AgeFrom": Model.AgeFrom,
@@ -139,7 +139,7 @@ class app_contacts_grid {
             "Filter": Model.Filter
         };
 
-        this.DataAdapter = new $.jqx.dataAdapter(this.DataSource: {
+        this.DataAdapter = new $.jqx.dataAdapter(this.DataSource, {
             loadComplete: function (data) {
                 //source.totalrecords = getTotalRows(data);
             },
@@ -227,7 +227,7 @@ class app_contacts_grid {
                 datatype: "json",
                 //id: 'SignupId',
                 type: 'POST',
-                url: '/Main/GetContactSignupHistory',
+                url: '/Netcell/GetContactSignupHistory',
                 data: { 'rcdid': id }
             }
             _slf.NContainer.SginupGrid[index] = nastedcontainer;
@@ -294,7 +294,7 @@ class app_contacts_grid {
                 datatype: "json",
                 id: 'PropId',
                 type: 'POST',
-                url: '/Main/GetContactCategories',
+                url: '/Netcell/GetContactCategories',
                 data: { 'rcdid': id }
             }
             _slf.NContainer.CategoriesGrid[index] = nastedcontainer;
@@ -346,7 +346,7 @@ class app_contacts_grid {
                 var tabaction = tabsdiv.find('.action');
 
                 var memid = datarecord.ContactId;//parseInt(datarecord.ContactId);
-                var rcdid = datarecord.RecordId;//parseInt(datarecord.ContactId);
+                var rcdid = datarecord.ContactId;//parseInt(datarecord.ContactId);
 
                 var title = tabsdiv.find('.title');
                 title.html('<span style="margin:10px"> ' + datarecord.ContactName + ' </span><a title="עריכת מנוי" href="javascript:contacts_grid.edit(' + rcdid + ');" >@</a>');
@@ -370,7 +370,7 @@ class app_contacts_grid {
                 var divRight = $("<div style='margin: 10px;'><b>דואל:</b> " + datarecord.Email + "</div>" +
                     "<div style='margin: 10px;'><b>טלפון:</b> " + datarecord.Phone + "</div>" +
                     //"<div style='margin: 10px;'><b>ארץ לידה:</b> " + datarecord.PlaceName + "</div>" +
-                    "<div style='margin: 10px;'><b>תאריך לידה:</b> " + datarecord.Birthday + "</div>" +
+                    "<div style='margin: 10px;'><b>תאריך לידה:</b> " + datarecord.BirthDate + "</div>" +
                     "<div style='margin: 10px;'><b>מגדר:</b> " + datarecord.GenderName + "</div>" +
                     "<div style='margin: 10px;'><b>ת.ז:</b> " + datarecord.ContactId + "</div>");
 
@@ -459,7 +459,7 @@ class app_contacts_grid {
                 //var selectedrowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
                 //if (selectedrowindex < 0)
                 //    return;
-                //var rcdid = $('#jqxgrid').jqxGrid('getrowdata', selectedrowindex).RecordId;
+                //var rcdid = $('#jqxgrid').jqxGrid('getrowdata', selectedrowindex).ContactId;
                 _slf.remove();//app_contacts_grid.contactDelete(rcdid);
 
             });
@@ -471,7 +471,7 @@ class app_contacts_grid {
                 $("#jqxgrid").jqxGrid('clearfilters');
             });
             queryButton.click(function (event) {
-                app.redirectTo('/Main/ContactsQuery');
+                app.redirectTo('/Netcell/ContactsQuery');
             });
 
             // search for a record.
@@ -526,7 +526,7 @@ class app_contacts_grid {
                 //},
                 columns: [
                     //{
-                    //    text: 'מס.סידורי', dataField: 'RecordId', filterable: false, width: 100, cellsalign: 'right', align: 'center'
+                    //    text: 'מס.סידורי', dataField: 'ContactId', filterable: false, width: 100, cellsalign: 'right', align: 'center'
                     //    //cellsrenderer: function (row, columnfield, value, defaulthtml, columnproperties) {
                     //     //    var link = '<div style="text-align:center"><a href="#" onclick="contactEdit(' + value + ')" >הצג</a>';
                     //     //    if (_slf.AllowEdit == 1) {
@@ -647,7 +647,7 @@ class app_contacts_grid {
         if (confirm("האם להסיר מנוי " + rcdid + " מקבוצת סיווג " + id)) {
             $.ajax({
                 type: "POST",
-                url: '/Main/DeleteContactCategories',
+                url: '/Netcell/DeleteContactCategories',
                 data: { 'rcdid': rcdid, 'propId': id },
                 //contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -676,7 +676,7 @@ class app_contacts_grid {
         this.DataSource.data = {
             "QueryType": Model.QueryType,
             "AccountId": Model.AccountId,
-            "ContactId", Model.ContactId,
+            "ContactId": Model.ContactId,
             "ExKey": Model.ExKey,
             "CellNumber": Model.CellNumber,
             "Email": Model.Email,
@@ -690,7 +690,7 @@ class app_contacts_grid {
             "ExDate1": Model.ExDate1,
             "ExDate2": Model.ExDate2,
             "ExDate3": Model.ExDate3,
-            "BirthdayMonth": Model.BirthdayMonth,
+            "BirthDateMonth": Model.BirthDateMonth,
             "JoinedDateFrom": Model.JoinedDateFrom,
             "JoinedDateTo": Model.JoinedDateTo,
             "AgeFrom": Model.AgeFrom,
@@ -718,9 +718,9 @@ class app_contacts_grid {
             'QueryType': 0,
             'AccountId': accid,
             'ContactId': "",
-            'ExId': "",
+            'ExKey': "",
             'ExType': extype,
-            'CellPhone': "",
+            'CellNumber': "",
             'Email': "",
             'Name': "",
             'Address': "",
@@ -731,7 +731,7 @@ class app_contacts_grid {
             'ExEnum1': "",
             'ExEnum2': "",
             'ExEnum3': "",
-            'BirthdayMonth': "",
+            'BirthDateMonth': "",
             'JoinedFrom': "",
             'JoinedTo': "",
             'AgeFrom': "",
@@ -781,9 +781,9 @@ class app_contacts_grid {
     }
 
     query() {
-        //app.redirectTo('/Main/ContactsQuery');
+        //app.redirectTo('/Netcell/ContactsQuery');
         if (!wizard.existsIframe(3)) {
-            wizard.appendIframe(3, app.appPath() + "/Main/_ContactsQuery", "100%", "680px", true, "#loader");
+            wizard.appendIframe(3, app.appPath() + "/Netcell/_ContactsQuery", "100%", "680px", true, "#loader");
         }
         wizard.displayStep(3);
     }
@@ -791,7 +791,7 @@ class app_contacts_grid {
     add() {
         $('#contact-item-update').show();
         $("#contact-item-update-plus").show();
-        //wizard.appendIframe(2, app.appPath() + "/Main/_ContactAdd", "100%", "620px", true, "#loader");
+        //wizard.appendIframe(2, app.appPath() + "/Netcell/_ContactAdd", "100%", "620px", true, "#loader");
         wizard.displayStep(2);
         this.showControl(0, 'a');
     }
@@ -803,7 +803,7 @@ class app_contacts_grid {
             $('#contact-item-update').show();
             wizard.displayStep(2);
             this.showControl(id, 'e');
-            //wizard.appendIframe(2, app.appPath() + "/Main/_ContactEdit?id=" + id, "100%", "620px", true, "#loader");
+            //wizard.appendIframe(2, app.appPath() + "/Netcell/_ContactEdit?id=" + id, "100%", "620px", true, "#loader");
         }
     }
 
@@ -815,7 +815,7 @@ class app_contacts_grid {
             wizard.displayStep(2);
             this.showControl(id, 'g');
             //$('#contact-item-update').hide();
-            //wizard.appendIframe(2, app.appPath() + "/Main/_ContactEdit?id=" + id, "100%", "620px", true, "#loader");
+            //wizard.appendIframe(2, app.appPath() + "/Netcell/_ContactEdit?id=" + id, "100%", "620px", true, "#loader");
         }
     }
 
@@ -849,7 +849,7 @@ class app_contacts_grid {
         if (id === undefined) id = this.getrowId();
         if (id > 0) {
             if (confirm('האם למחוק את המנוי ' + id)) {
-                app_query.doPost(app.appPath() + "/Main/ContactDelete", { 'RecordId': id }, this.end_internal);
+                app_query.doPost(app.appPath() + "/Netcell/ContactDelete", { 'ContactId': id }, this.end_internal);
             }
         }
     }
@@ -890,7 +890,7 @@ class app_contacts_grid {
         //wizard.removeIframe(2);
         app_messenger.Post(data);
         if (data && data.Status > 0) {
-            wizard.changeIframe(app.appPath() + "/Main/_ContactAdd");
+            wizard.changeIframe(app.appPath() + "/Netcell/_ContactAdd");
         }
     }
 
@@ -1007,10 +1007,10 @@ class app_contacts_def_control {
 
     init(dataModel, userInfo, extype) {
 
-        this.wizControl;
-        this.dataSource;
+        this.wizControl=null;
+        this.dataSource=null;
 
-        this.RecordId = dataModel.Id;
+        this.ContactId = dataModel.Id;
         this.UserInfo = userInfo;
         this.AccountId = userInfo.AccountId;
         this.ExType = extype;
@@ -1020,28 +1020,29 @@ class app_contacts_def_control {
         this.dataSource =
             {
                 datatype: "json",
-                id: 'RecordId',
-                data: { 'id': this.RecordId },
+                id: 'ContactId',
+                data: { 'id': this.ContactId },
                 type: 'POST',
-                url: '/Main/GetContactEdit'
+                url: '/Netcell/GetContactEdit'
             };
         var pasive = dataModel.Option == "a" ? " pasive" : "";
         var html =
             '<div id="fcWindow">' +
             '<div id="fcBody">' +
-            '<form class="fcForm" id="fcForm" method="post" action="/Main/ContactUpdate">' +
+            '<form class="fcForm" id="fcForm" method="post" action="/Netcell/ContactUpdate">' +
             '<div style="direction: rtl; text-align: right;">' +
             '<input type="hidden" id="ExType" />' +
-            '<input type="hidden" id="RecordId" name="RecordId" value="0" />' +
+            '<input type="hidden" id="ContactId" name="ContactId" value="0" />' +
             '<input type="hidden" id="AccountId" name="AccountId" value="' + userInfo.AccountId + '" />' +
             '<input type="hidden" id="Categories" name="Categories" value="" />' +
             '<div class="tab-container">' +
+
             '<div id="tab-personal" class="tab-group-1">' +
             '<h3 class="panel-area-title">פרטים אישיים</h3>' +
-            '<div class="form-group-inline">' +
-            '<div class="field">תעודת זהות :</div>' +
-            '<input id="ContactId" name="ContactId" type="text" class="text-mid" />' +
-            '</div>' +
+            //'<div class="form-group-inline">' +
+            //'<div class="field">תעודת זהות :</div>' +
+            //'<input id="ContactId" name="ContactId" type="text" class="text-mid" />' +
+            //'</div>' +
             '<div class="form-group-inline">' +
             '<div class="field">שם פרטי :</div>' +
             '<input id="FirstName" name="FirstName" type="text" class="text-mid" />' +
@@ -1056,12 +1057,12 @@ class app_contacts_def_control {
             '</div>' +
             '<div class="form-group-inline">' +
             '<div class="field">עיר :</div>' +
-            '<div id="City" name="City"></div>' +
+            '<input id="City" name="City" type="text" class="text-mid"/>' +
             '</div>' +
             '<br/>' +
             '<div class="form-group-inline">' +
             '<div class="field">טלפון נייד:</div>' +
-            '<input id="CellPhone" name="CellPhone" type="text" class="text-mid" />' +
+            '<input id="CellNumber" name="CellNumber" type="text" class="text-mid" />' +
             '</div>' +
             '<div class="form-group-inline">' +
             '<div class="field">טלפון:</div>' +
@@ -1071,94 +1072,100 @@ class app_contacts_def_control {
             '<div class="field">דאר אלקטרוני:</div>' +
             '<input id="Email" name="Email" type="text" class="text-mid" />' +
             '</div>' +
+            '<br/>' +
+
             '<div class="form-group-inline">' +
             '<div class="field">מגדר:</div>' +
-            '<div id="Gender" name="Gender"></div>' +
+            '<select id="Sex" name="Sex">'+
+            '<option value="U">לא ידוע</option>' +
+            '<option value="M">זכר</option>' +
+            '<option value="F">נקבה</option>' +
+            '</select >' +
             '</div>' +
             '<div class="form-group-inline">' +
             '<div class="field">תאריך לידה:</div>' +
-            '<div id="Birthday" name="Birthday" data-type="date"></div>' +
+            '<div id="BirthDate" name="BirthDate" data-type="date"></div>' +
             '</div>' +
             '</div>' +
+
             '<div id="tab-general" class="tab-group-1">' +
             '<h3 class="panel-area-title">פרטים כלליים</h3>' +
+
             '<div class="form-group-inline">' +
             '<div class="field">חברה\ארגון :</div>' +
-            '<input id="CompanyName" name="CompanyName" type="text" class="text-mid" />' +
+            '<input id="Company" name="Company" type="text" class="text-mid" />' +
             '</div>' +
-            '<div class="form-group-inline">' +
-            '<div class="field">סניף :</div>' +
-            '<div id="Branch" name="Branch"></div>' +
-            '</div>' +
+            //'<div class="form-group-inline">' +
+            //'<div class="field">סניף :</div>' +
+            //'<div id="Branch" name="Branch"></div>' +
+            //'</div>' +
             '<br/>' +
             '<div class="form-group-inline">' +
             '<div class="field">סווג :</div>' +
             '<div id="listCategory" name="listCategory" style="padding: 10px" data-type="checklist"></div>' +
             '</div>' +
+            
+            '<div id="divExKey" class="form-group-inline field-ex">' +
+            '<div id="lblExKey" class="field"> מזהה:' +
+            '</div>' +
+            '<input type="text" id="ExKey" name="ExKey" class="text-mid" maxlength="50" />' +
+            '</div>' +
+
             '<br/>' +
-            '<div id="divExId" class="form-group-inline field-ex">' +
-            '<div id="lblExId" class="field">' +
+
+            '<div id="divExText1" class="form-group-inline field-ex">' +
+            '<div id="lblExText1" class="field">טקסט 1:' +
             '</div>' +
-            '<input type="text" id="ExId" name="ExId" class="text-mid" maxlength="50" />' +
+            '<input type="text" id="ExText1" name="ExText1" />' +
             '</div>' +
-            '<br/>' +
-            '<div id="divExEnum1" class="form-group-inline field-ex">' +
-            '<div id="lblExEnum1" class="field">' +
+
+            '<div id="divExText2" class="form-group-inline field-ex">' +
+            '<div id="lblExText2" class="field">טקסט 2:' +
             '</div>' +
-            '<div id="ExEnum1" name="ExEnum1"></div>' +
+            '<input type="text" id="ExText2" name="ExText2" />' +
             '</div>' +
-            '<div id="divExEnum2" class="form-group-inline field-ex">' +
-            '<div id="lblExEnum2" class="field">' +
+
+            '<div id="divExText3" class="form-group-inline field-ex">' +
+            '<div id="lblExText3" class="field">טקסט 3:' +
             '</div>' +
-            '<div id="ExEnum2" name="ExEnum2"></div>' +
-            '</div>' +
-            '<div id="divExEnum3" class="form-group-inline field-ex">' +
-            '<div id="lblExEnum3" class="field">' +
-            '</div>' +
-            '<div id="ExEnum3" name="ExEnum3"></div>' +
-            '</div>' +
-            '<br/>' +
-            '<div id="divExField1" class="form-group-inline field-ex">' +
-            '<div id="lblExField1" class="field">' +
-            '</div>' +
-            '<input type="text" id="ExField1" name="ExField1" class="text-mid" maxlength="250" />' +
-            '</div>' +
-            '<div id="divExField2" class="form-group-inline field-ex">' +
-            '<div id="lblExField2" class="field">' +
-            '</div>' +
-            '<input type="text" id="ExField2" name="ExField2" class="text-mid" maxlength="250" />' +
-            '</div>' +
-            '<div id="divExField3" class="form-group-inline field-ex">' +
-            '<div id="lblExField3" class="field">' +
-            '</div>' +
-            '<input type="text" id="ExField3" name="ExField3" class="text-mid" maxlength="250" />' +
+            '<input type="text" id="ExText3" name="ExText3" />' +
+
             '</div>' +
             '<br/>' +
-            '<div id="divExRef1" class="form-group-inline field-ex">' +
-            '<div id="lblExRef1" class="field">' +
+
+            '<div id="divExDate1" class="form-group-inline field-ex">' +
+            '<div id="lblExDate1" class="field">תאריך 1:' +
             '</div>' +
-            '<input type="number" id="ExRef1" name="ExRef1" />' +
+            '<input type="text" id="ExDate1" name="ExDate1" class="text-mid" maxlength="250" />' +
             '</div>' +
-            '<div id="divExRef2" class="form-group-inline field-ex">' +
-            '<div id="lblExRef2" class="field">' +
+
+            '<div id="divExDate2" class="form-group-inline field-ex">' +
+            '<div id="lblExDate2" class="field">תאריך 2:' +
             '</div>' +
-            '<input type="number" id="ExRef2" name="ExRef2" />' +
+            '<input type="text" id="ExDate2" name="ExDate2" class="text-mid" maxlength="250" />' +
             '</div>' +
-            '<div id="divExRef3" class="form-group-inline field-ex">' +
-            '<div id="lblExRef3" class="field">' +
+
+            '<div id="divExDate3" class="form-group-inline field-ex">' +
+            '<div id="lblExDate3" class="field">תאריך 3:' +
             '</div>' +
-            '<input type="number" id="ExRef3" name="ExRef3" />' +
+            '<input type="text" id="ExDate3" name="ExDate3" class="text-mid" maxlength="250" />' +
             '</div>' +
+            '<br/>' +
+  
             '</div>' +
             '<div id="tab-notes" class="tab-group-1">' +
             '<h3 class="panel-area-title">הערות</h3>' +
             '<div class="form-group">' +
             '<div class="field">הערות:</div>' +
-            '<textarea id="Note" name="Note" style="width:99%;height:60px"></textarea>' +
+            '<textarea id="Details" name="Details" style="width:99%;height:60px"></textarea>' +
+            '</div>' +
+            '<div class="form-group-inline ' + pasive + '">' +
+            '<div class="field">מועד רישום בעמוד:</div>' +
+            '<input id="RegisterDate" name="RegisterDate" type="text" class="text-mid" readonly="readonly" />' +
             '</div>' +
             '<div class="form-group-inline ' + pasive + '">' +
             '<div class="field">מועד הצטרפות:</div>' +
-            '<input id="JoiningDate" name="JoiningDate" type="text" class="text-mid" readonly="readonly" />' +
+            '<input id="CreationDate" name="CreationDate" type="text" class="text-mid" readonly="readonly" />' +
             '</div>' +
             '<div class="form-group-inline ' + pasive + '">' +
             '<div class="field">מועד עדכון:</div>' +
@@ -1184,19 +1191,19 @@ class app_contacts_def_control {
             this.wizControl = new wiz_control("contact_def", this.TagWindow);
             this.wizControl.init(html, this.ExType, function (data) {
 
-                $('#Birthday').val('');
-                $('#Birthday').jqxDateTimeInput({ width: '150px', rtl: true });
+                $('#BirthDate').val('');
+                $('#BirthDate').jqxDateTimeInput({ width: '150px', rtl: true });
 
 
-                app_jqx_list.enum1ComboAdapter();
-                app_jqx_list.enum2ComboAdapter();
-                app_jqx_list.enum3ComboAdapter();
-                app_contacts.displayContactFields();
+                //app_jqx_list.enum1ComboAdapter();
+                //app_jqx_list.enum2ComboAdapter();
+                //app_jqx_list.enum3ComboAdapter();
+                //app_contacts.displayContactFields();
 
-                app_jqx_list.branchComboAdapter();
-                app_jqx_list.cityComboAdapter();
-                app_jqx_list.genderComboAdapter();
-                app_jqx_list.categoryCheckListAdapter();
+                //app_jqx_list.branchComboAdapter();
+                //app_jqx_list.cityComboAdapter();
+                //app_jqx_list.genderComboAdapter();
+                //app_jqx_list.categoryCheckListAdapter();
                 //app_jqx_list.chargeComboAdapter('ChargeType');
 
 
@@ -1214,7 +1221,7 @@ class app_contacts_def_control {
                     //},
                     { input: '#Email', message: 'אימייל לא תקין!', action: 'keyup', rule: 'email' },
                     {
-                        input: '#CellPhone', message: 'טלפון נייד אינו תקין!', action: 'valuechanged, blur', rule:
+                        input: '#CellNumber', message: 'טלפון נייד אינו תקין!', action: 'valuechanged, blur', rule:
                         function (input, commit) {
                             var val = input.val();
                             var re = /^(|\()(0|972)(\d{1}|\d{2})(|[\)\/\.-])([0-9]{7})$/
@@ -1233,11 +1240,11 @@ class app_contacts_def_control {
                 if (exType == 0)
                     input_rules.push({ input: '#ContactId', message: 'חובה לציין ת.ז!', action: 'keyup, blur', rule: 'required' });
                 if (exType == 1)
-                    input_rules.push({ input: '#CellPhone', message: 'חובה לציין טלפון נייד!', action: 'keyup, blur', rule: 'required' });
+                    input_rules.push({ input: '#CellNumber', message: 'חובה לציין טלפון נייד!', action: 'keyup, blur', rule: 'required' });
                 if (exType == 2)
                     input_rules.push({ input: '#Email', message: 'חובה לציין דאר אלקטרוני!', action: 'keyup, blur', rule: 'required' });
                 if (exType == 3)
-                    input_rules.push({ input: '#Exid', message: 'חובה לציין מזהה!', action: 'keyup, blur', rule: 'required' });
+                    input_rules.push({ input: '#ExKey', message: 'חובה לציין מזהה!', action: 'keyup, blur', rule: 'required' });
 
                 $('#fcForm').jqxValidator({
                     rtl: true,
@@ -1259,13 +1266,13 @@ class app_contacts_def_control {
         $(this.TagWindow).show();
         $("#ExType").val(this.ExType);
 
-        if (this.RecordId > 0) {
+        if (this.ContactId > 0) {
             this.wizControl.load("fcForm", this.dataSource, function (record) {
 
-                app_jqxform.loadDataForm("fcForm", record);//, true, ["Birthday"]);
+                app_form.loadDataForm("fcForm", record);//, true, ["BirthDate"]);
 
-                //if (record.Birthday)
-                //    $("#Birthday").val(record.Birthday)
+                //if (record.BirthDate)
+                //    $("#BirthDate").val(record.BirthDate)
 
                 app_jqxcombos.selectCheckList("listCategory", record.Categories);
 
@@ -1275,7 +1282,7 @@ class app_contacts_def_control {
         }
         else {
             $("#AccountId").val(this.AccountId);
-            $("#RecordId").val(0);
+            $("#ContactId").val(0);
         }
     }
 
@@ -1303,7 +1310,7 @@ class app_contacts_def_control {
                     //else {
                     //    app.refresh();
                     //}
-                    //$('#RecordId').val(data.OutputId);
+                    //$('#ContactId').val(data.OutputId);
                 }
             }
         );
@@ -1333,9 +1340,9 @@ class app_contacts_def_control {
 
 class app_contact_def {
 
-    constructor(recordId, userInfo, isdialog) {
+    constructor(ContactId, userInfo, isdialog) {
 
-        this.RecordId = recordId;
+        this.ContactId = ContactId;
         this.AccountId = userInfo.AccountId;
         this.UserRole = userInfo.UserRole;
         this.AllowEdit = (this.UserRole > 4) ? 1 : 0;
@@ -1371,10 +1378,10 @@ class app_contact_def {
                 //        { name: 'ZipCode', type: 'string' },
                 //        { name: 'Details', type: 'string' }
                 //],
-                id: 'RecordId',
-                data: { 'id': _slf.RecordId },
+                id: 'ContactId',
+                data: { 'id': _slf.ContactId },
                 type: 'POST',
-                url: '/Main/GetContactEdit'
+                url: '/Netcell/GetContactEdit'
             };
 
         this.viewAdapter = new $.jqx.dataAdapter(view_source, {
@@ -1388,7 +1395,7 @@ class app_contact_def {
             }
         });
 
-        if (this.RecordId > 0) {
+        if (this.ContactId > 0) {
             this.viewAdapter.dataBind();
         }
     }
@@ -1414,7 +1421,7 @@ class app_contact_def {
                             else {
                                 app.refresh();
                             }
-                            //$('#RecordId').val(data.OutputId);
+                            //$('#ContactId').val(data.OutputId);
                         }
                     },
                     error: function (jqXHR, status, error) {
@@ -1440,8 +1447,8 @@ class app_contact_def {
 
     loadControls() {
 
-        $('#Birthday').jqxDateTimeInput({ showCalendarButton: true, width: '150px', rtl: true });
-        $('#Birthday').val('');
+        $('#BirthDate').jqxDateTimeInput({ showCalendarButton: true, width: '150px', rtl: true });
+        $('#BirthDate').val('');
 
         app_jqx_list.enum1ComboAdapter();
         app_jqx_list.enum2ComboAdapter();
@@ -1472,7 +1479,7 @@ class app_contact_def {
             //},
             { input: '#Email', message: 'אימייל לא תקין!', action: 'keyup', rule: 'email' },
             {
-                input: '#CellPhone', message: 'טלפון נייד אינו תקין!', action: 'valuechanged, blur', rule:
+                input: '#CellNumber', message: 'טלפון נייד אינו תקין!', action: 'valuechanged, blur', rule:
                 function (input, commit) {
                     var val = input.val();
                     var re = /^(|\()(0|972)(\d{1}|\d{2})(|[\)\/\.-])([0-9]{7})$/
@@ -1488,14 +1495,14 @@ class app_contact_def {
                 }
             }
         ];
-        if (exType == 0)
-            input_rules.push({ input: '#ContactId', message: 'חובה לציין ת.ז!', action: 'keyup, blur', rule: 'required' });
+        //if (exType == 0)
+        //    input_rules.push({ input: '#ContactId', message: 'חובה לציין ת.ז!', action: 'keyup, blur', rule: 'required' });
         if (exType == 1)
-            input_rules.push({ input: '#CellPhone', message: 'חובה לציין טלפון נייד!', action: 'keyup, blur', rule: 'required' });
+            input_rules.push({ input: '#CellNumber', message: 'חובה לציין טלפון נייד!', action: 'keyup, blur', rule: 'required' });
         if (exType == 2)
             input_rules.push({ input: '#Email', message: 'חובה לציין דאר אלקטרוני!', action: 'keyup, blur', rule: 'required' });
         if (exType == 3)
-            input_rules.push({ input: '#Exid', message: 'חובה לציין מזהה!', action: 'keyup, blur', rule: 'required' });
+            input_rules.push({ input: '#ExKey', message: 'חובה לציין מזהה!', action: 'keyup, blur', rule: 'required' });
 
         $('#fcForm').jqxValidator({
             rtl: true,
@@ -1562,7 +1569,7 @@ class app_contacts_query {
         //$("#exp-2").jqxExpander({ width: 'auto', rtl: true, expanded: false });
         //$("#exp-3").jqxExpander({ width: 'auto', rtl: true, expanded: false });
         //$("#exp-4").jqxExpander({ width: 'auto', rtl: true, expanded: false });
-
+        /*
         var branchAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "listBranch", '/Common/GetBranchView', 240, 120, true);
         $('#listBranch').on('change', function (event) {
             app_jqxcombos.comboBoxToInput("listBranch", "Branch", "allBranch");
@@ -1652,7 +1659,7 @@ class app_contacts_query {
         //$("#listCharge").jqxListBox('insertAt', { label: "בחר הכל", value: "-1" }, 1);
         //$("#listCity").jqxListBox('insertAt', { label: "בחר הכל", value: "-1" }, 1);
         //$("#listPlace").jqxListBox('insertAt', { label: "בחר הכל", value: "-1" }, 1);
-
+        */
 
         //$('#submit').on('click', function () {
         //    var action = $("#form").find('input[name=op]:checked').val();
@@ -1690,22 +1697,22 @@ class app_contacts_query {
                 else
                     deataModel.ContactRule = 0;
 
-                deataModel.BirthdayMonth = 0;
-                var allBirthday = deataModel.allBirthday == "on";
-                if (allBirthday)
-                    deataModel.BirthdayMonth = DateTime.Now.Month;
+                deataModel.BirthDateMonth = 0;
+                var allBirthDate = deataModel.allBirthDate == "on";
+                if (allBirthDate)
+                    deataModel.BirthDateMonth = DateTime.Now.Month;
 
 
                 window.parent.triggerWizControlQuery(deataModel);
             }
             else {
-                var action = '/Main/Contacts';
+                var action = '/Netcell/Contacts';
                 $("#form").attr('action', app.appPath() + action);
                 $("#form").submit();
             }
         });
         $('#submitExport').on('click', function () {
-            var action = '/Main/ContactsExport';
+            var action = '/Netcell/ContactsExport';
             $("#QueryType").val(20);
             $("#form").attr('action', app.appPath() + action);
             $("#form").submit();
