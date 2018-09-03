@@ -23,8 +23,8 @@ namespace Pro.Lib.Upload
 
          public static UploadManager Get(string UploadKey)
         {
-            using (var db = DbContext.Create<DbPro>())
-            return db.ExecuteSingle<UploadManager>("sp_Upload_Proc", "UploadKey", UploadKey);
+            using (var db = DbContext.Create<DbStg>())
+            return db.ExecuteSingle<UploadManager>("sp_sb_Upload_Proc", "UploadKey", UploadKey);
         }
 
         //public static int Insert(UploadManager item)

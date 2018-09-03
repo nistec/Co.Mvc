@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Nistec.Data.Entities;
-using Pro.Data;
+using Pro.Lib.Upload.Data;
 using Nistec.Data;
 using Nistec;
 using Pro.Lib;
 using System.Data;
 
-namespace Pro.Data.Entities
+namespace Pro.Lib.Upload.Members
 {
 
 
@@ -18,8 +18,8 @@ namespace Pro.Data.Entities
 
         public static IEnumerable<UploadMembersView> ViewUploaded(int accountId, string uploadKey)
         {
-            using (var db = DbContext.Create<DbPro>())
-                return db.EntityItemList<UploadMembersView>("sb_Upload_Members", "AccountId", accountId, "UploadKey", uploadKey);
+            using (var db = DbContext.Create<DbStg>())
+                return db.EntityItemList<UploadMembersView>("Members_Upload_Stg", "AccountId", accountId, "UploadKey", uploadKey);
         }
 
         public string UploadKey { get; set; }

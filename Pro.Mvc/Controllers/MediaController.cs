@@ -17,6 +17,8 @@ using Pro.Lib.Upload;
 using Pro.Data;
 using ProSystem.Data.Entities;
 using Nistec.Data.Entities;
+using Pro.Lib.Upload.Members;
+using Pro.Lib.Upload.Data;
 
 namespace Pro.Mvc.Controllers
 {
@@ -126,7 +128,7 @@ namespace Pro.Mvc.Controllers
         }
         #endregion
 
-        #region file import upload
+        #region  upload members
         private string GetAllowedType(string extension)
         {
             if (extension == null)
@@ -193,7 +195,7 @@ namespace Pro.Mvc.Controllers
 
                 userPostedFile.SaveAs(fullname);
 
-                var sum = UploadStg.DoUpload(new DbPro(), accountId, fullname, upddateExists);
+                var sum = UploadStg.DoUpload(new DbStg(), accountId, fullname, upddateExists);
                 string columns= Nistec.Serialization.JsonSerializer.Serialize(sum.Columns.ToArray());
 
                 model = new ResultModel() { Status = sum.Count, Message = sum.Message, Title = "upload file", Args = fullname, Target = columns };
@@ -250,7 +252,7 @@ namespace Pro.Mvc.Controllers
                 string fullname = serverpath + "\\" + filename;
 
                 userPostedFile.SaveAs(fullname);
-                var sum = UploadMembers.DoUpload(new DbPro(), accountId, fullname, upddateExists, ContactsUploadMethod.Stg);
+                var sum = UploadMembers.DoUpload(new DbStg(), accountId, fullname, upddateExists, ContactsUploadMethod.Stg);
 
                 result = sum.ToHtml();
 

@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{81B5FBD9-1D2F-4482-AC96-AB6801325884}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Pro.Lib</RootNamespace>
+    <AssemblyName>Pro.Upload</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebMatrix.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Db\DbNetcell.cs" />
+    <Compile Include="Db\DbStgCo.cs" />
+    <Compile Include="Db\DbStg.cs" />
+    <Compile Include="Db\DbLogs.cs" />
+    <Compile Include="Db\DbProxy.cs" />
+    <Compile Include="Upload\FieldsMap.cs" />
+    <Compile Include="Upload\IntegrationFields.cs" />
+    <Compile Include="Upload\Contacts\ContactsItem.cs" />
+    <Compile Include="Upload\Contacts\UploadMap.cs" />
+    <Compile Include="Upload\Contacts\UploadContacts.cs" />
+    <Compile Include="Upload\Contacts\UploadContactsView.cs" />
+    <Compile Include="Upload\Members\MemberItem.cs" />
+    <Compile Include="Upload\_stg\ColumnStg.cs" />
+    <Compile Include="Upload\UploadManager.cs" />
+    <Compile Include="Upload\_stg\ColumnMap.cs" />
+    <Compile Include="Upload\Members\UploadMap.cs" />
+    <Compile Include="Upload\IntegrationStg.cs" />
+    <Compile Include="Upload\Members\UploadMembersView.cs" />
+    <Compile Include="Upload\Members\UploadMembers.cs" />
+    <Compile Include="Upload\UploadException.cs" />
+    <Compile Include="Upload\UploadSumarize.cs" />
+    <Compile Include="Upload\UploadReader.cs" />
+    <Compile Include="Upload\UploadFiles.cs" />
+    <Compile Include="Db\DbConfig.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Upload\_stg\UploadStg.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="_Exclude\_ex\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Channels\Nistec.Channels\Nistec.Channels.csproj">
+      <Project>{0839a364-a34d-4143-ad4c-aef4c7b232ac}</Project>
+      <Name>Nistec.Channels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Data\Nistec.Data\Nistec.Data.csproj">
+      <Project>{d5fd6c68-86ea-48bf-8f6d-29ce57419500}</Project>
+      <Name>Nistec.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Imex\Nistec.Imex.csproj">
+      <Project>{d88a851b-a6d6-4f42-85d4-b1caf36fdacc}</Project>
+      <Name>Nistec.Imex</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Lib\Nistec.Lib.csproj">
+      <Project>{54f52ed5-aecd-47c6-93d8-7b3358ba7f8c}</Project>
+      <Name>Nistec.Lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Logger\Nistec.Logger.csproj">
+      <Project>{e510dd2c-859c-476c-9901-60edfc5e71f1}</Project>
+      <Name>Nistec.Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Web\Nistec.Web.csproj">
+      <Project>{8c4cff01-180e-41a1-9234-0c1b1e207ae5}</Project>
+      <Name>Nistec.Web</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

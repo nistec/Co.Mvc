@@ -2586,6 +2586,10 @@
       <Project>{08ee976c-6767-40d0-9c07-b6c5afb9dba1}</Project>
       <Name>Pro.System</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Lib\Pro.Upload\Pro.Upload.csproj">
+      <Project>{81b5fbd9-1d2f-4482-ac96-ab6801325884}</Project>
+      <Name>Pro.Upload</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

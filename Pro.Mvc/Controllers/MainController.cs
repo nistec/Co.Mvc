@@ -512,15 +512,57 @@ namespace Pro.Mvc.Controllers
             var list = TargetView.ViewList(accountId, uid);
             return TargetView.ToJson(list, isPrsonal);
         }
-        #endregion 
+        #endregion
 
-        #region Members
+        #region Members Upload
 
         [HttpGet]
         public ActionResult MembersUpload()
         {
             return View(true);
         }
+
+        //public ActionResult UploadProc(string uk)
+        //{
+        //    //Response.AddHeader("Refresh", "30");
+        //    return View();//new UploadProcModel() { UploadKey=uk });
+        //}
+
+        public ActionResult _UploadProc(string uk)
+        {
+            return PartialView();
+        }
+
+        [HttpPost]
+        public ActionResult DoUploadProc(string uploadKey)
+        {
+            ResultModel model = null;
+            try
+            {
+                if (string.IsNullOrEmpty(uploadKey))
+                {
+                    return RedirectToFinal("אירעה שגיאה בתהליך הטעינה,לא נמצא מזהה רשימה");
+                }
+
+                var mnger = UploadManager.Get(uploadKey);
+                var html = mnger.ToHtml();
+                model = new ResultModel() { Status = mnger.Status, Message = html, Title = "upload process", Args = uploadKey };
+
+
+            }
+            catch (Exception ex)
+            {
+                var msg = "אירעה שגיאה בתהליך הטעינה " + ex.Message;
+                model = new ResultModel() { Status = -1, Message = msg, Title = "upload process", Args = uploadKey };
+            }
+
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+
+        #endregion
+
+        #region Members
 
         [HttpGet]
         public ActionResult MembersRemove()
@@ -753,45 +795,6 @@ namespace Pro.Mvc.Controllers
                  return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
              }
          }
-
-
-         //public ActionResult UploadProc(string uk)
-         //{
-         //    //Response.AddHeader("Refresh", "30");
-         //    return View();//new UploadProcModel() { UploadKey=uk });
-         //}
-
-         public ActionResult _UploadProc(string uk)
-         {
-             return PartialView();
-         }
-
-        [HttpPost]
-        public ActionResult DoUploadProc(string uploadKey)
-        {
-            ResultModel model = null;
-            try
-            {
-                if (string.IsNullOrEmpty(uploadKey))
-                {
-                    return RedirectToFinal("אירעה שגיאה בתהליך הטעינה,לא נמצא מזהה רשימה");
-                }
-
-                var mnger = UploadManager.Get(uploadKey);
-                var html = mnger.ToHtml();
-                model = new ResultModel() { Status = mnger.Status, Message = html, Title = "upload process", Args = uploadKey };
-
-               
-            }
-            catch (Exception ex)
-            {
-                var msg = "אירעה שגיאה בתהליך הטעינה " + ex.Message;
-                model = new ResultModel() { Status = -1, Message = msg, Title = "upload process", Args = uploadKey };
-            }
-
-            return Json(model, JsonRequestBehavior.AllowGet);
-        }
-
 
         #endregion
 

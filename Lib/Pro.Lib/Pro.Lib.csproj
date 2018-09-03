@@ -117,19 +117,6 @@
     <Compile Include="Query\SignupQuery.cs" />
     <Compile Include="Registry\CmsContext.cs" />
     <Compile Include="Registry\InputFieldsCreator.cs" />
-    <Compile Include="Upload\FieldsMap.cs" />
-    <Compile Include="Upload\IntegrationFields.cs" />
-    <Compile Include="Upload\_stg\ColumnStg.cs" />
-    <Compile Include="Upload\UploadManager.cs" />
-    <Compile Include="Upload\_stg\ColumnMap.cs" />
-    <Compile Include="Upload\UploadMap.cs" />
-    <Compile Include="Upload\IntegrationStg.cs" />
-    <Compile Include="Upload\UploadMembersView.cs" />
-    <Compile Include="Upload\UploadMembers.cs" />
-    <Compile Include="Upload\UploadException.cs" />
-    <Compile Include="Upload\UploadSumarize.cs" />
-    <Compile Include="Upload\UploadReader.cs" />
-    <Compile Include="Upload\UploadFiles.cs" />
     <Compile Include="Entities\Props\GenderView.cs" />
     <Compile Include="Query\MemberQuery.cs" />
     <Compile Include="Db\DalTrace.cs" />
@@ -152,7 +139,6 @@
     <Compile Include="Entities\EntityPro.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TraceHelper.cs" />
-    <Compile Include="Upload\_stg\UploadStg.cs" />
     <Compile Include="Web\RouteInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +155,7 @@
     <Folder Include="Media\" />
     <Folder Include="obj\" />
     <Folder Include="Upload\_ex\" />
+    <Folder Include="Upload\_stg\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Payments\Member flow.txt" />
