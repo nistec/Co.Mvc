@@ -827,6 +827,7 @@
     <Content Include="Scripts\app\cms\cms_content-def.js" />
     <Content Include="Scripts\app\lol-framework.js" />
     <Content Include="Scripts\app\lol-js.js" />
+    <Content Include="Scripts\app\main\uploader.js" />
     <Content Include="Scripts\app\main\members.js" />
     <Content Include="Scripts\app\main\sms.js" />
     <Content Include="Scripts\app\model\generic\task-entity-def.js" />
@@ -2425,6 +2426,7 @@
     <Content Include="Views\Netcell\Contacts.cshtml" />
     <Content Include="Views\Shared\_ViewNetcell.cshtml" />
     <Content Include="Views\Netcell\NetcellBoard.cshtml" />
+    <Content Include="Views\Media\_UploadProc.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\camera.css" />

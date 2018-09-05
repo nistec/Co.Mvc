@@ -46,7 +46,7 @@
 @section scripts {
     <script type="text/javascript">
 
-    var time_refresh = 20000;
+    var time_refresh = 2000;
 
     $(document).ready(function () {
 
@@ -85,7 +85,7 @@
             var uploadKey = '@uk';
             retry = 0;
             $.ajax({
-                url: '@Url.Action("DoUploadProc", "Media")',
+                url: '@Url.Action("DoUploadProc", "Main")',
                 type: "POST",
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",

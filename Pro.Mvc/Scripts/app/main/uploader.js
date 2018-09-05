@@ -1,83 +1,25 @@
-﻿@model Pro.Mvc.Models.UploadFileModel
-@{
-    Layout = "~/Views/Shared/_ViewMain.cshtml";
-    Page.Title = "MembersUpload";
-}
-@section head {
+﻿'use strict';
 
-    @Scripts.Render("~/bundles/jqx")
-    @Scripts.Render("~/bundles/jqxgrid")
-    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
-    <script type="text/javascript" src="~/Scripts/plagins/uploader/js/jquery.iframe-transport.js"></script>
-    <script type="text/javascript" src="~/Scripts/plagins/uploader/js/jquery.fileupload.js"></script>
-    <link type="text/css" href="~/Scripts/plagins/uploader/css/jquery.fileupload.css" rel="stylesheet" />
-    <script src="~/Scripts/app/main/uploader.js"></script>
-    <script type="text/javascript" src="~/Scripts/app/dateFormat.js"></script>
-@*<script src="~/Scripts/app/app-uploads.js"></script>*@
+class app_uploader {
 
-    <style type="text/css">
-        input {
-            direction: rtl;
-            text-align: right;
-        }
+    constructor() {
+ 
+    }
 
-        /*#divInputUpload {
-            width: 100px;
-            height: 25px;
-            text-align: center;
-            border: solid 1px #C7C7C7;
-            background-color: #15C8D8;
-        }*/
+    ///////////////////////////// uploader
 
-        .styledTable {
-            direction: rtl;
-            text-align: right;
-        }
+    init() {
+        var _self = this;
 
-        .styledTableHeader {
-            background-color: #0094ff;
-            color: #fff;
-            padding-left: 20px;
-            text-align: right;
-        }
-
-        .styledTableHeader {
-            background-color: #0094ff;
-            color: #fff;
-            text-align: right;
-        }
-
-        .styledRowKey {
-            padding-left: 20px;
-            text-align: right;
-        }
-
-        .styledRowValue {
-            text-align: right;
-        }
-    </style>
-}
-
-@section scripts {
-    <script type="text/javascript">
-
-    $(document).ready(function () {
-        JSON.useDateParser();
-        var theme = 'Arctic';
-        var app = new app_uploader();
-        app.init();
-
-        @*
-        ///////////////////////////// uploader
         $("#loader").hide();
         var wait_message = 'נא להמתין להודעת סיום,לאחר מכן יש ללחוץ על הבא.';
         var hint_message = 'לטעינת מנויים יש ללחוץ על טעינת קובץ,להמתין להודעת סיום,לאחר מכן יש ללחוץ על הבא.';
-        var categoryAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "listCategory", '@Url.Action("GetValidCategoriesView", "Common")', 200, 120, false);
+        var categoryAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "listCategory", '/Common/GetValidCategoriesView', 200, 120, false);
 
 
         $('#fileupload').fileupload({
             maxFileSize: 10000000,
-            url: '@Url.Action("FileUpload", "Media")',
+            url: '/Media/FileUpload',
             //formData: {
             //    param1: $('#updateExists').val()
             //    //param2: $('#uploadUid').val(),
@@ -95,9 +37,9 @@
                 $("#uploadKey").val(data.result.Args);
                 $("#TotalCount").val(data.result.Status);
                 //connectUploadedGrid();
-                if(data.result.Status>0)
-                {
+                if (data.result.Status > 0) {
                     wizard.next();
+                    _self.initMembersGrid(data.result.Args);
                 }
                 //$.each(data.result.files, function (index, file) {
                 //    $('<p/>').text(file.name).appendTo('#files');
@@ -116,17 +58,17 @@
                 $("#loader").show();
             }
         }).prop('disabled', !$.support.fileInput)
-             .parent().addClass($.support.fileInput ? undefined : 'disabled')
-             .bind('fileuploadsubmit', function (e, data) {
-                 $("#loader").hide();
-                 resetPprogress();
-                 //fileuuid = generateUUID('16');
-                 //data.formData = {
-                 //    param1: $('#uploadBid').val(),
-                 //    param2: $('#uploadUid').val(),
-                 //    param3: $('#uploadPt').val()
-                 //};
-             });
+            .parent().addClass($.support.fileInput ? undefined : 'disabled')
+            .bind('fileuploadsubmit', function (e, data) {
+                $("#loader").hide();
+                resetPprogress();
+                //fileuuid = generateUUID('16');
+                //data.formData = {
+                //    param1: $('#uploadBid').val(),
+                //    param2: $('#uploadUid').val(),
+                //    param3: $('#uploadPt').val()
+                //};
+            });
 
         //}).prop('disabled', !$.support.fileInput)
         //    .parent().addClass($.support.fileInput ? undefined : 'disabled');
@@ -151,11 +93,11 @@
             var category = $("#listCategory").val();
             var uploadKey = $("#uploadKey").val();
             $.ajax({
-                url: '@Url.Action("ExecUploadAsync", "Media")',
+                url: '/Media/ExecUploadAsync',
                 type: "POST",
                 dataType: 'json',
                 //contentType: "application/json; charset=utf-8",
-                data: {'category':  category  ,'uploadKey':'' + uploadKey + '', 'updateExists' : updateExists },
+                data: { 'category': category, 'uploadKey': '' + uploadKey + '', 'updateExists': updateExists },
                 success: function (data) {
                     if (data) {
                         if (data.Status < 0)
@@ -166,12 +108,13 @@
                             wizard.upload(uploadKey);
 
                             //$("#final").html(data.Message);
-                           
+
                         };
                     }
 
                 },
                 error: function (jqXHR, status, error) {
+                    $("#loader").hide();
                     alert(error);
                 }
             });
@@ -310,128 +253,107 @@
         $('#btnUpload').click(function () {
             doUploadSync();
         });
-        *@
-    });
+
+        $('#members-upload-refresh').click(function () {
+            var uploadKey=$("#uploadKey").val();
+            _self.initMembersGrid(uploadKey);
+        });
 
 
+    }
 
-    </script>
+    initMembersGrid(uploadKey) {
+
+        var _slf = this;
+
+        var dataSource =
+            {
+                datatype: "json",
+                //async: false,
+                datafields: [
+                    { name: 'MemberId', type: 'string' },
+                    { name: 'MemberName', type: 'string' },
+                    { name: 'Address', type: 'string' },
+                    { name: 'City', type: 'string' },
+                    { name: 'JoiningDate', type: 'date' },
+                    { name: 'CompanyName', type: 'string' },
+                    { name: 'Branch', type: 'string' },
+                    { name: 'CellPhone', type: 'string' },
+                    { name: 'Phone', type: 'string' },
+                    { name: 'Email', type: 'string' },
+                    { name: 'LastUpdate', type: 'date' },
+                    { name: 'Gender', type: 'string' },
+                    { name: 'Note', type: 'string' },
+                    { name: 'Birthday', type: 'string' },
+                    { name: 'RecordId', type: 'number' },
+                    { name: 'TotalRows', type: 'number' }
+                ],
+                id: 'RecordId',
+                type: 'POST',
+                url: '/Media/LoadUploadedMembers',
+                data: { 'uploadkey': uploadKey},
+                //pagenum: 0,
+                pagesize: 10
+               
+            }
+
+
+        var dataAdapter = new $.jqx.dataAdapter(dataSource, {
+            loadComplete: function (data) {
+                //source.totalrecords = getTotalRows(data);
+            },
+            loadError: function (xhr, status, error) {
+                app_dialog.alert(' status: ' + status + '\n error ' + error)
+            }
+        });
+
+        // create Tree Grid
+        $("#jqxgrid").jqxGrid(
+            {
+                width: '100%',
+                autoheight: true,
+                rtl: true,
+                source: dataAdapter,
+                localization: getLocalization('he'),
+                rendergridrows: function (obj) {
+                    return _slf.DataAdapter.records;
+                },
+                columnsresize: true,
+                pageable: true,
+                pagermode: 'simple',
+                sortable: true,
+                rowdetails: false,
+                columns: [
+                    {
+                        text: 'מס.סידורי', dataField: 'RecordId', filterable: false, width: 100, cellsalign: 'right', align: 'center'
+                    },
+
+                    {
+                        text: 'ת.ז', dataField: 'MemberId', width: 100, cellsalign: 'right', align: 'center'
+                    },
+                    {
+                        text: 'שם מלא', dataField: 'MemberName', width: 160, cellsalign: 'right', align: 'center'
+                    },
+                    {
+                        text: 'שם חברה', dataField: 'CompanyName', width: 160, cellsalign: 'right', align: 'center'
+                    },
+                    {
+                        text: ' עיר   ', dataField: 'CityName', cellsalign: 'right', align: 'center'
+                    },
+                    {
+                        text: ' כתובת ', dataField: 'Address', cellsalign: 'right', align: 'center'
+                    },
+                    {
+                        text: 'טלפון נייד', dataField: 'CellPhone', cellsalign: 'right', align: 'center'
+                    },
+                    {
+                        text: 'דואר אלקטרוני', dataField: 'Email', cellsalign: 'right', align: 'center'
+                    },
+                    {
+                        text: 'מועד הצטרפות', type: 'date', dataField: 'JoiningDate', cellsformat: 'd', cellsalign: 'right', align: 'center'
+                    }
+                ]
+            });
+    }
 
 }
-
-<!--breadcrumb-->
-<div class="breadcrumbs">
-</div>
-
-<div class="global-view">
-    <div class="container-box">
-
-        <div id="hTitle" class="panel-page-header rtl">
-            <span id="hTitle-text" style="margin:10px">קליטת מנויים מקובץ</span>
-        </div>
-
-        <div class="rtl">
-            <a href="javascript:location.reload();" id="btnRefresh">חדש</a> | 
-            <a href="~/_Doc/members.xls">תבנית לטעינה</a>
-        </div>
-        <input type="hidden" id="uploadKey" />
-        <div style="height: 10px;">
-        </div>
-        <div id="tag-form" class="panel-area">
-
-            <input id="uploadFile" type="hidden" />
-            <div id="wizard">
-                <ul>
-                    <li><a href="#tab-1">1</a></li>
-                    <li><a href="#tab-2">2</a></li>
-                    <li><a href="#tab-3">3</a></li>
-                    <li><a href="#tab-4">4</a></li>
-                </ul>
-                <div id="tab-1" class="ui-tabs-panel rtl">
-                    <h3>טעינת קובץ</h3>
-                    <div style="margin:10px">
-                        <div id="divInputUpload">
-                            <span class="btn-sm btn-success fileinput-button">
-                                <i class="glyphicon glyphicon-plus"><span>בחירת קובץ</span></i>
-                                <input id="fileupload" type="file" name="files[]" multiple>
-                            </span><span>&nbsp;</span>
-                        </div>
-                        <br>
-                        <br>
-                        <div id="hint-0" class="hint"></div>
-                        <!-- The global progress bar -->
-                        <div id="progress" class="progress">
-                            <div class="progress-bar progress-bar-success"></div>
-                        </div>
-                        <!-- The container for the uploaded files -->
-                        <div id="files" class="files"></div>
-                        <div id="loader">
-                            <img src="~/Content/css/images/loading.gif" />
-                        </div>
-                        <p class="rtl"> ניתן לטעון קבצים בפורמט Csv </p>
-                    </div>
-                </div>
-
-                <div id="tab-2" class="ui-tabs-panel">
-                    <h3 class="rtl">רשימת מנויים שנקלטו</h3>
-                    <input type="hidden" id="TotalCount" readonly />
-
-                    <p id="divUploadResult" style="text-align:right;margin:20px"></p>
-
-                    <p style="text-align:center">לקליטה נא ללחוץ על הבא</p>
-
-                    <div class="grid-wrap rtl">
-                        <div class="rtl">
-                           תצוגה  לדוגמא:  <a id="members-upload-refresh" href="#">רענון</a>
-                        </div>
-                        <div id="jqxWidget">
-                            <div id="jqxgrid" style="position:relative;z-index:1;"></div>
-                            <div>תצוגה מוקדמת ל 10 רשומות ראשונות שנקלטו</div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div id="tab-3" class="ui-tabs-panel">
-                    <h3 class="rtl">קליטת מנויים</h3>
-                    <div id="orderContainer" style="float:right; direction:rtl">
-
-                        <label class="headline">סיווג</label>
-                        <br />
-                        <div id="listCategory" name="listCategory"></div>
-                        <br />
-                        <input type="checkbox" id="updateExists" name="updateExists" /> <span>האם לעדכן רשומות קיימות</span>
-                        <br />
-                        <br />
-                        <input type="button" id="btnUpload" value="טעינת מנויים למאגר קבוע" />
-                    </div>
-                </div>
-
-                <div id="tab-4" class="ui-tabs-panel">
-                    <h3 class="rtl">טעינה וסנכרון נתונים</h3>
-
-                    <div id="proc_iframe" style="float: right; direction:rtl">
-
-                    </div>
-                    <div style="margin:20px">
-                        <div id="final" style="text-align:right; font-size:18px"></div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <div class="panel-area" id="wizard-steps1">
-            <a href="#" class="btn-tab prev-tab ">הקודם</a>
-            <a href="#" class="btn-tab  next-tab">הבא</a>
-            <a id="submit" href="javascript:location.reload();" class="btn-tab  end-tab">סיום</a>
-            <input type="text" id="wizard-validation" class="label" readonly />
-        </div>
-    </div>
-</div>
-
-<!--end of content-wrapper-->
-<script type="text/javascript">
-    app_menu.activeLayoutMenu("liMain");
-    app_menu.breadcrumbs("Main", "MemberUpload", 'en');
-</script>
-

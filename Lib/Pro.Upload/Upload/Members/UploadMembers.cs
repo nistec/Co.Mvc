@@ -240,6 +240,9 @@ namespace Pro.Lib.Upload.Members
                     case "text":
                         return UploadReader.ReadValidTextField(dr, fm.SourceField, (string)fm.DefaultValue, fm.FieldLength);
                     case "date":
+                        if(fm.IsNullable)
+                            return UploadReader.ReadNullableDateField(dr, fm.SourceField, Types.ToDateTime(fm.DefaultValue));
+
                         return UploadReader.ReadValidDateField(dr, fm.SourceField, Types.ToDateTime(fm.DefaultValue));
                     case "sdate":
                         return UploadReader.ReadValidStrDateField(dr, fm.SourceField, fm.DefaultValue);
@@ -484,6 +487,7 @@ namespace Pro.Lib.Upload.Members
             sumarize = new UploadSumarize();
             dtMembers = UploadMap.DbTableUploadStgSchema();
 
+
             sumarize.WrongItems = dtFile.Clone();
 
             int count = 0;
@@ -501,7 +505,7 @@ namespace Pro.Lib.Upload.Members
                     foreach (var fm in map)
                     {
                         FieldsMap fmi = fm.Value;
-
+                       
                         switch (fmi.FieldName)
                         {
                             case "AccountId":
@@ -618,7 +622,7 @@ namespace Pro.Lib.Upload.Members
             {
                 db.ExecuteNonQuery("sp_Upload_Manager_Add",
                   "UploadKey", uploadKey,
-                  "UploadType", "stg",
+                  "UploadType", "stg-members",
                   "AccountId", accountId,
                   "UpdateExists", updateExists,
                   "UploadCategory", category,

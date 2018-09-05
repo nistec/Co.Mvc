@@ -28,7 +28,7 @@ namespace Pro.Lib.Upload
         public int FieldOrder { get; set; }
         public string DefaultValue { get; set; }
         public bool Require { get; set; }
-
+        public bool IsNullable { get; set; }
         [EntityProperty(EntityPropertyType.NA)]
         public string SourceField { get; set; }
 

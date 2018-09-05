@@ -333,7 +333,7 @@ namespace Pro.Mvc.Controllers
                 var su = GetSignedUser(true);
                 int accountId = su.AccountId;
                 //int userId = su.UserId;
-                 model = UploadMembersView.ViewUploaded(accountId, uploadKey);
+                 model = UploadMembersView.ViewUploadedTop(accountId, uploadKey);
              }
              catch (Exception ex)
              {
@@ -412,6 +412,37 @@ namespace Pro.Mvc.Controllers
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
+
+        public ActionResult _UploadProc(string uk)
+        {
+            return PartialView();
+        }
+
+        [HttpPost]
+        public ActionResult DoUploadProc(string uploadKey)
+        {
+            ResultModel model = null;
+            try
+            {
+                if (string.IsNullOrEmpty(uploadKey))
+                {
+                    return RedirectToFinal("אירעה שגיאה בתהליך הטעינה,לא נמצא מזהה רשימה");
+                }
+
+                var mnger = UploadManager.Get(uploadKey);
+                var html = mnger.ToHtml();
+                model = new ResultModel() { Status = mnger.Status, Message = html, Title = "upload process", Args = uploadKey };
+
+
+            }
+            catch (Exception ex)
+            {
+                var msg = "אירעה שגיאה בתהליך הטעינה " + ex.Message;
+                model = new ResultModel() { Status = -1, Message = msg, Title = "upload process", Args = uploadKey };
+            }
+
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
 
         #endregion
 

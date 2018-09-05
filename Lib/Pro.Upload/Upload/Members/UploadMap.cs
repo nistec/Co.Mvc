@@ -145,8 +145,10 @@ namespace Pro.Lib.Upload.Members
         public static DataTable DbTableUploadStgSchema()
         {
             using (var db = DbContext.Create<DbStg>())
-            return db.QueryDataTable("select * from Members_Upload_Stg where 1=0");
-
+            {
+                db.AddWithKey = true;
+                return db.QueryDataTable("select * from Members_Upload_Stg where 1=0");
+            }
             //DataTable dt = new DataTable("Upload_STG");
 
             //dt.Columns.Add("AccountId", typeof(int));

@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace Pro.Lib.Upload.Members
 {
-    [EntityMapping("Members")]
+    [EntityMapping("Members_Upload_Stg")]
     public class MemberItem : IEntityItem
     {
+
         [EntityProperty(EntityPropertyType.Key)]
         public string Identifier { get; set; }
 
@@ -43,7 +44,7 @@ namespace Pro.Lib.Upload.Members
         [EntityProperty(EntityPropertyType.View)]
         public DateTime LastUpdate { get; set; }
 
-        [EntityProperty(EntityPropertyType.Identity)]
+        //[EntityProperty(EntityPropertyType.Identity)]
         public int RecordId { get; set; }
 
         public string ExField1 { get; set; }
@@ -55,7 +56,6 @@ namespace Pro.Lib.Upload.Members
         public int ExEnum3 { get; set; }
         public bool? EnableNews { get; set; }
 
-        public string DataSource { get; set; }
         public int DataSourceType { get; set; }
         public int MemberType { get; set; }
         public string CompanyName { get; set; }

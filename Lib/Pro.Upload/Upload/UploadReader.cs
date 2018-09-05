@@ -395,6 +395,35 @@ namespace Pro.Lib.Upload
             }
         }
 
+        public static DateTime? ReadNullableDateField(IDictionary<string, object> dr, string field, DateTime? defaultValue)
+        {
+            try
+            {
+                object o = dr[field];
+                if (o == null)
+                    return  defaultValue;
+                return DateHelper.ToNullableDateTime(o.ToString(), defaultValue);
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+        public static DateTime? ReadNullableDateField(DataRow dr, string field, DateTime? defaultValue)
+        {
+            try
+            {
+                object o = dr[field];
+                if (o == null)
+                    return defaultValue;
+                return DateHelper.ToNullableDateTime(o.ToString(), defaultValue);
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
         public static DateTime ReadValidDateField(IDictionary<string, object> dr, string field, DateTime defaultValue)
         {
             try
@@ -670,8 +699,6 @@ namespace Pro.Lib.Upload
                         default:
                             return false;
                     }
- 
-                return defaultValue;
             }
             catch
             {
