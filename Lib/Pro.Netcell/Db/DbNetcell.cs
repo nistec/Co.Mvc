@@ -11,7 +11,7 @@ using Nistec.Generic;
 using ProNetcell.Data.Entities;
 using System.Data;
 using Nistec.Web.Controls;
-using Pro.Netcell;
+using ProNetcell;
 
 namespace ProNetcell.Data
 {
@@ -37,7 +37,7 @@ namespace ProNetcell.Data
             //init by config key
             //base.Init(CurrentCulture(), "ProNetcell.Data.Resources.Pro_Crm");
             //or
-            base.Init("ProNetcell.Data.Resources.Pro.Netcell");
+            base.Init("ProNetcell.Data.Resources.ProNetcell");
             //or
             //base.Init(Nistec.Sys.NetResourceManager.GetResourceManager("Pro,Data.Resources.Pro_Crm", this.GetType()));
             //or
@@ -55,9 +55,9 @@ namespace ProNetcell.Data
         #region static
 
         public const bool EnableCache = true;
-        //private static readonly DbPro _instance = new DbPro();
+        //private static readonly ProNetcell _instance = new ProNetcell();
 
-        //public static DbPro Instance
+        //public static ProNetcell Instance
         //{
         //    get { return _instance; }
         //}
@@ -77,7 +77,7 @@ namespace ProNetcell.Data
 
         protected override void EntityBind()
         {
-            //base.SetConnection("cnn_pro");//, Cnn, DBProvider.SqlServer);
+            //base.SetConnection("cnn_pro");//, Cnn, ProNetcellvider.SqlServer);
             //base.Items.SetEntity("Contact", "Person.Contact", EntitySourceType.Table, new EntityKeys("ContactID"));
             //base.SetEntity<ActiveContact>();
         }
@@ -150,7 +150,7 @@ namespace ProNetcell.Data
 
         public static void DbRefresh(ListsTypes entity, int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 db.ExecuteNonQuery("sp_Entity_Refresh", "Entity", Lists.GetListsType(entity), "AccountId", AccountId);
             }
@@ -189,7 +189,7 @@ namespace ProNetcell.Data
              //    list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
              //if (list == null || list.Count() == 0)
              //{
-             //    using (var db = DbContext.Create<DbPro>())
+             //    using (var db = DbContext.Create<ProNetcell>())
              //    {
              //        list = db.EntityList<T>("AccountId", AccountId);
              //    }
@@ -214,7 +214,7 @@ namespace ProNetcell.Data
              //    list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
              //if (list == null || list.Count() == 0)
              //{
-             //    using (var db = DbContext.Create<DbPro>())
+             //    using (var db = DbContext.Create<ProNetcell>())
              //    {
              //        list = db.EntityItemList<T>(TableName, "AccountId", AccountId, "EnumType", EnumType);
              //    }

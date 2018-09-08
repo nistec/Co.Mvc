@@ -2,7 +2,7 @@
 using Nistec.Data.Entities;
 using Nistec.Web.Controls;
 using ProNetcell.Data.Entities;
-using Pro.Netcell;
+using ProNetcell;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,9 +33,9 @@ namespace ProNetcell.Data
             switch(type)
             {
                 case "member_display":
-                    return EntityListContext<DbPro, int>.GetList("RecordId", "DisplayName", "vw_Member_Display", "AccountId", accountId);
+                    return EntityListContext<DbNetcell, int>.GetList("RecordId", "DisplayName", "vw_Member_Display", "AccountId", accountId);
                 default:
-                    return EntityListContext<DbPro, int>.GetList("Value", "Label", type, "AccountId", accountId);
+                    return EntityListContext<DbNetcell, int>.GetList("Value", "Label", type, "AccountId", accountId);
 
             }
         }
@@ -47,7 +47,7 @@ namespace ProNetcell.Data
         }
         public static IList<EntityListItem<int>> DisplayList(string valueField, string displayField, string mappingName, int accountId)
         {
-            return EntityListContext<DbPro, int>.GetList(valueField, displayField, mappingName, "AccountId", accountId);
+            return EntityListContext<DbNetcell, int>.GetList(valueField, displayField, mappingName, "AccountId", accountId);
         }
 
 
@@ -60,7 +60,7 @@ namespace ProNetcell.Data
                 list = (IEnumerable<EntityListItem<int>>)WebCache.Get<List<EntityListItem<int>>>(key);
             if (list == null || list.Count() == 0)
             {
-                list = EntityListContext<DbPro, int>.GetList(valueField, displayField, mappingName, "AccountId", accountId);
+                list = EntityListContext<DbNetcell, int>.GetList(valueField, displayField, mappingName, "AccountId", accountId);
                 if (EntityPro.EnableCache && list != null)
                 {
                     //CacheAdd(key,GetSession(AccountId), (List<T>)list);
@@ -80,7 +80,7 @@ namespace ProNetcell.Data
                 list = (IEnumerable<EntityListItem<int>>)WebCache.Get<List<EntityListItem<int>>>(key);
             if (list == null || list.Count() == 0)
             {
-                list = EntityListContext<DbPro, int>.GetList(valueField, displayField, mappingName, "AccountId", accountId);
+                list = EntityListContext<DbNetcell, int>.GetList(valueField, displayField, mappingName, "AccountId", accountId);
                 if (EntityPro.EnableCache && list != null)
                 {
                     //CacheAdd(key,GetSession(AccountId), (List<T>)list);
@@ -100,7 +100,7 @@ namespace ProNetcell.Data
                 list = (IEnumerable<EntityListItem<int>>)WebCache.Get<List<EntityListItem<int>>>(key);
             if (list == null || list.Count() == 0)
             {
-                list = EntityListContext<DbPro, int>.GetList("PropId", "PropName", "Enum", "AccountId", accountId, "EnumType",enumType);
+                list = EntityListContext<DbNetcell, int>.GetList("PropId", "PropName", "Enum", "AccountId", accountId, "EnumType",enumType);
                 if (EntityPro.EnableCache && list != null)
                 {
                     //CacheAdd(key,GetSession(AccountId), (List<T>)list);
@@ -113,16 +113,16 @@ namespace ProNetcell.Data
 
         //public static IList<EntityListItem<int>> Member_DisplayList(int accountId)
         //{
-        //    return EntityListContext<DbPro, int>.GetList("RecordId", "DisplayName", "vw_Member_Display", "AccountId", accountId);
+        //    return EntityListContext<ProNetcell, int>.GetList("RecordId", "DisplayName", "vw_Member_Display", "AccountId", accountId);
         //}
 
         public static string Member_Display(string field,params object[] keyvalueParameters)
         {
-            return DbContext.Lookup<DbPro>(field, "vw_Member_Display", null, keyvalueParameters);
+            return DbContext.Lookup<DbNetcell>(field, "vw_Member_Display", null, keyvalueParameters);
         }
         public static string UserProfile(string field, params object[] keyvalueParameters)
         {
-            return DbContext.Lookup<DbPro>(field, "Ad_UserProfile", null, keyvalueParameters);
+            return DbContext.Lookup<DbNetcell>(field, "Ad_UserProfile", null, keyvalueParameters);
         }
 
     }

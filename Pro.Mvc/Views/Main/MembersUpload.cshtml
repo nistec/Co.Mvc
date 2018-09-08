@@ -64,7 +64,7 @@
     $(document).ready(function () {
         JSON.useDateParser();
         var theme = 'Arctic';
-        var app = new app_uploader();
+        var app = new app_uploader('members');
         app.init();
 
         @*
@@ -322,7 +322,7 @@
 <!--breadcrumb-->
 <div class="breadcrumbs">
 </div>
-
+<div style="height:10px"></div>
 <div class="global-view">
     <div class="container-box">
 
@@ -400,7 +400,13 @@
                         <br />
                         <div id="listCategory" name="listCategory"></div>
                         <br />
-                        <input type="checkbox" id="updateExists" name="updateExists" /> <span>האם לעדכן רשומות קיימות</span>
+                        <span>האם לעדכן רשומות קיימות:</span>
+                        <select id="updateExists" name="updateExists">
+                            <option value="0" selected>לא לעדכון</option>
+                            <option value="1">לעדכן</option>
+                            <option value="2">לסנכרן</option>
+                        </select>
+                        @*<input type="checkbox" id="updateExists" name="updateExists" /> <span>האם לעדכן רשומות קיימות</span>*@
                         <br />
                         <br />
                         <input type="button" id="btnUpload" value="טעינת מנויים למאגר קבוע" />

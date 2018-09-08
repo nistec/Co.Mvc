@@ -44,26 +44,22 @@
 </style>
 }
 @section scripts {
-    <script type="text/javascript">
+<script type="text/javascript">
 
-    var time_refresh = 2000;
+    var time_refresh = 5000;
 
     $(document).ready(function () {
 
         $("#report").hide();
-        doUploadProc();
- 
-    });
 
         var showUploadProc = function () {
             var uploadKey = '@uk';
             $.ajax({
-                url: '@Url.Action("DoUploadProc", "Main")',
+                url: '@Url.Action("DoUploadProc", "Media")',
                 type: "POST",
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",
                 data: "{'uploadKey':'" + uploadKey + "'}",
-                //data: { "uploadKey": "" + uploadKey + "" },
                 success: function (data) {
                     if (data) {
                         $("#dataTable").html(data.Message);
@@ -85,12 +81,11 @@
             var uploadKey = '@uk';
             retry = 0;
             $.ajax({
-                url: '@Url.Action("DoUploadProc", "Main")',
+                url: '@Url.Action("DoUploadProc", "Media")',
                 type: "POST",
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",
                 data: "{'uploadKey':'" + uploadKey + "'}",
-                //data: { "uploadKey": "" + uploadKey + "" },
                 success: function (data) {
                     if (data) {
                         $("#dataTable").html(data.Message);
@@ -104,17 +99,19 @@
                             else {
                                 retry++;
                                 $("#procState").html("נא להמתין");
-                                timedRefresh(time_refresh)
+                                timedRefresh(time_refresh);
                             }
                         }
                         else if (data.Status == 10) {
                             $("#procState").html("הסתיים");
                             $("#loader").hide();
+                            progsStep(10)
                         }
                         else {
                             retry = 0;
                             $("#procState").html("נא להמתין");
-                            timedRefresh(time_refresh)
+                            timedRefresh(time_refresh);
+                            progsStep(data.OutputId)
                         }
                     }
                 },
@@ -126,15 +123,33 @@
         };
 
         function timedRefresh(timeoutPeriod) {
+
             setTimeout(function () {
                 location.reload(true);
             }, timeoutPeriod);
         }
 
+       
+
+        function progsStep(step) {
+            var elem = document.getElementById("progs_bar");
+             var width = step*10;
+             if (width > 100)
+                width = 100;
+              elem.style.width = width + '%';
+        }
+
+
         $("#report_btn").click(function () {
             showUploadProc();
           
         });
+
+        doUploadProc();
+ 
+    });
+
+
 
 </script>
     }
@@ -146,17 +161,20 @@
                             <span>סטאטוס טעינה</span>
                             <span> - </span>
                             <span id="procState"></span>
-                            <span id="loader">
-                                <img src="~/Content/css/images/loading.gif" />
-                            </span>
+                            
                             <span id="report">
                                 <a id="report_btn" href="#">הצג דוח</a>
-                             </span>
+                            </span>
                         </h4>
                         <div id="dataTable"></div>
-                        
-                        
-                   </div>
+                        <div style="width: 100%;background-color: #ddd;">
+                            <div id="progs_bar" style="width: 1%;height: 30px;background-color: #4CAF50;">
+                                <span id="loader" style="margin-right:50%">
+                                    <img src="~/Content/css/images/loading.gif" />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                </div>
             </div>
 

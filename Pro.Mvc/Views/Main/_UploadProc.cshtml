@@ -46,7 +46,7 @@
 @section scripts {
     <script type="text/javascript">
 
-    var time_refresh = 20000;
+    var time_refresh = 2000;
 
     $(document).ready(function () {
 
@@ -126,6 +126,7 @@
         };
 
         function timedRefresh(timeoutPeriod) {
+            //alert(timeoutPeriod);
             setTimeout(function () {
                 location.reload(true);
             }, timeoutPeriod);

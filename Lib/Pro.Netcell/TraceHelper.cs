@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Pro.Netcell
+namespace ProNetcell
 {
     public class TraceHelper
     {
@@ -38,7 +38,7 @@ namespace Pro.Netcell
 
         public static int Log(string folder, string Action, string LogText, string clientIp,string referrer, int LogType = 0)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.ExecuteNonQuery("sp_Log", "Folder", folder, "Action", Action, "LogText", LogText, "Client", clientIp, "Referrer", referrer, "LogType", LogType);
         }
 
@@ -57,7 +57,7 @@ namespace Pro.Netcell
             //    if (request.UrlReferrer != null)
             //        referrer = request.UrlReferrer.AbsoluteUri;
             //}
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.ExecuteNonQuery("sp_Log", "Folder", folder, "Action", Action, "LogText", LogText, "Client", clientIp, "Referrer", referrer, "LogType", LogType);
         }
         public static int Log(string folder, string Action, string LogText, HttpRequest request, int LogType = 0)
@@ -70,7 +70,7 @@ namespace Pro.Netcell
             //    if (request.UrlReferrer != null)
             //        referrer = request.UrlReferrer.AbsoluteUri;
             //}
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.ExecuteNonQuery("sp_Log", "Folder", folder, "Action", Action, "LogText", LogText, "Client", clientIp, "Referrer", referrer, "LogType", LogType);
         }
 

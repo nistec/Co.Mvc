@@ -20,9 +20,11 @@ namespace Pro.Lib.Upload.Contacts
 
     public class UploadContacts : UploadFiles, IDisposable
     {
-        //const string MappingName = "Members_Upload";
-        //const string ProcName = "sp_Upload_Members";
-        const string ProcUploadCatName = "sp_Contacts_Upload_Cat";
+        const string ProcUploadAsync = "sp_Contacts_Upload_Stg_Async";
+        const string ProcUploadSync = "sp_Contacts_Upload_Stg_Sync";
+        const string ProcUploadManager = "sp_Upload_Manager_Add";
+        const string TableUpload_Stg = "Contacts_Upload_Stg";
+
         public const int MaxPersonalFields = 5;
         public const int MinContactsUploadAsync = 100;
         public static DateTime NullDate { get { return new DateTime(1900, 1, 1); } }
@@ -305,23 +307,16 @@ namespace Pro.Lib.Upload.Contacts
 
                 count = dtContacts.Rows.Count;
 
-
-                if (method == ContactsUploadMethod.Stg)
+                switch (method)
                 {
-                    using (DbBulkCopy bulkCopy = new DbBulkCopy(Db))
-                    {
-                        bulkCopy.BulkInsert(dtContacts, "Contacts_Upload_Stg", null);
-                    }
-                }
-                else //if (method != ContactsUploadMethod.Preload)
-                {
-                    throw new NotSupportedException(method.ToString());
-
-                    //using (DbBulkCopy bulkCopy = new DbBulkCopy(Db))
-                    //{
-                    //    bulkCopy.BulkInsert(dtContacts, "Members", null);
-                    //}
-
+                    case ContactsUploadMethod.Stg:
+                        using (DbBulkCopy bulkCopy = new DbBulkCopy(Db))
+                        {
+                            bulkCopy.BulkInsert(dtContacts, TableUpload_Stg, null);
+                        }
+                        break;
+                    default:
+                        throw new NotSupportedException(method.ToString());
                 }
 
                 sumarize.Ok = count;
@@ -613,32 +608,75 @@ namespace Pro.Lib.Upload.Contacts
             }
         }
         */
-        public static void ExecUploadContactAsync(int accountId, int category, string uploadKey, int updateExists)
+
+        public static void ExecUploadMemberStg(int accountId, int category, string uploadKey, int updateExists, bool isAsync)
         {
-            using (var db = DbContext.Create<DbStg>())
+            if (isAsync)
             {
-                db.ExecuteNonQuery("sp_Upload_Manager_Add",
-                  "UploadKey", uploadKey,
-                  "UploadType", "stg",
-                  "AccountId", accountId,
-                  "UpdateExists", updateExists,
-                  "UploadCategory", category,
-                  "MaxSteps", 10
-                  );
+                using (var db = DbContext.Create<DbStg>())
+                {
+                    db.ExecuteNonQuery(ProcUploadManager,
+                      "UploadKey", uploadKey,
+                      "UploadType", isAsync ? "stg-contacts" : "preload-contacts",
+                      "AccountId", accountId,
+                      "UpdateExists", updateExists,
+                      "UploadCategory", category,
+                      "MaxSteps", 10
+                      );
+                }
             }
+            else
+            {
+                var db = DbContext.Create<DbStg>();
+                {
+                    db.OwnsConnection = true;
 
-            //DbServices.Instance.ExecuteNonQuery("sp_Admin_Task_Add", 
-            //            "CommandType", "proc",
-            //            "CommandText", "netcell_sb.dbo.sp_Upload_Contacts_Cat_Stg_Async",
-            //            "Arguments", uploadKey,
-            //            "DbName", "Netcell_SB",
-            //            "ExecTime", DateTime.Now,
-            //            "Expiration", 60,
-            //            "Sender", "Party application");
+                    db.ExecuteNonQuery(ProcUploadManager,
+                      "UploadKey", uploadKey,
+                      "UploadType", isAsync ? "stg-contacts" : "preload-contacts",
+                      "AccountId", accountId,
+                      "UpdateExists", updateExists,
+                      "UploadCategory", category,
+                      "MaxSteps", 10
+                      );
 
+                    var parameters = DataParameter.GetSqlList("AccountId", accountId, "Category", category, "UploadKey", uploadKey, "UpdateExists", updateExists);
+                    //DataParameter.AddOutputParameter(parameters, "Result", SqlDbType.VarChar, 250);
+
+                    db.OwnsConnection = false;
+                    Task.Factory.StartNew(() => db.ExecuteCommandNonQuery(ProcUploadSync, parameters.ToArray(), CommandType.StoredProcedure));
+
+                }
+            }
         }
 
-        public static MembersUploadSumarize ExecUploadContactCatProcedure(IDbContext db, int accountId, int category, string uploadKey, int updateExists)
+
+        //public static void ExecUploadContactAsync(int accountId, int category, string uploadKey, int updateExists)
+        //{
+        //    using (var db = DbContext.Create<DbStg>())
+        //    {
+        //        db.ExecuteNonQuery("sp_Upload_Manager_Add",
+        //          "UploadKey", uploadKey,
+        //          "UploadType", "stg-contacts",
+        //          "AccountId", accountId,
+        //          "UpdateExists", updateExists,
+        //          "UploadCategory", category,
+        //          "MaxSteps", 10
+        //          );
+        //    }
+
+        //    //DbServices.Instance.ExecuteNonQuery("sp_Admin_Task_Add", 
+        //    //            "CommandType", "proc",
+        //    //            "CommandText", "netcell_sb.dbo.sp_Upload_Contacts_Cat_Stg_Async",
+        //    //            "Arguments", uploadKey,
+        //    //            "DbName", "Netcell_SB",
+        //    //            "ExecTime", DateTime.Now,
+        //    //            "Expiration", 60,
+        //    //            "Sender", "Party application");
+
+        //}
+
+        public static MembersUploadSumarize ExecUploadSync(int accountId, int category, string uploadKey, int updateExists)
         {
 
             MembersUploadSumarize result = null;
@@ -662,20 +700,26 @@ namespace Pro.Lib.Upload.Contacts
             //    UploadState = 0,
             //    UploadType = "Upload_Members"
             //});
-            db.ExecuteNonQuery("sp_Upload_Manager_Add",
+
+            using (var db = DbContext.Create<DbStg>())
+            {
+                db.OwnsConnection = true;
+
+                db.ExecuteNonQuery(ProcUploadManager,
               "UploadKey", uploadKey,
-              "UploadType", "preload",
+              "UploadType", "preload-contacts",
               "AccountId", accountId,
               "UpdateExists", updateExists,
               "UploadCategory", category,
               "MaxSteps", 10
               );
-            var parameters = DataParameter.GetSqlList("AccountId", accountId, "Category", category, "UploadKey", uploadKey, "UpdateExists", updateExists);
-            DataParameter.AddOutputParameter(parameters, "Result", SqlDbType.VarChar, 250);
+                var parameters = DataParameter.GetSqlList("AccountId", accountId, "Category", category, "UploadKey", uploadKey, "UpdateExists", updateExists);
+                DataParameter.AddOutputParameter(parameters, "Result", SqlDbType.VarChar, 250);
 
-            db.ExecuteCommandNonQuery(ProcUploadCatName, parameters.ToArray(), CommandType.StoredProcedure);
-            result = new MembersUploadSumarize(parameters[4].Value);
-            return result;
+                db.ExecuteCommandNonQuery(ProcUploadSync, parameters.ToArray(), CommandType.StoredProcedure);
+                result = new MembersUploadSumarize(parameters[4].Value);
+                return result;
+            }
 
             //using(var task=Task.Factory.StartNew(() => db.ExecuteNonQuery(ProcUploadCatName,parameters, CommandType.StoredProcedure)))//"AccountId",accountId,"Category", category, "UploadKey", uploadKey, "UpdateExists", updateExists)))
             //{

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pro.Netcell.Query
+namespace ProNetcell.Query
 {
     public abstract class QueryBase
     {

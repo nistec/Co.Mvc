@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
-namespace Pro.Netcell.Query
+namespace ProNetcell.Query
 {
     [Serializable]
     public class MemberQuery:QueryBase

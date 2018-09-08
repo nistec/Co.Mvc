@@ -7,7 +7,7 @@ using Nistec.Generic;
 using Nistec.Web.Controls;
 using ProNetcell.Data;
 using ProNetcell.Data.Entities;
-using Pro.Netcell;
+using ProNetcell;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +33,7 @@ namespace ProNetcell.Data.Entities.PropsEnum
                 list = (IEnumerable<T>)WebCache.Get<List<T>>(key);// EntityPro.CacheGet<List<T>>(key);
             if (list == null)
             {
-                using (var db = DbContext.Create<DbPro>())
+                using (var db = DbContext.Create<DbNetcell>())
                 {
                     list = db.EntityItemList<T>(TableName, "PropType", PropType, "AccountId", AccountId);
                     if (EntityPro.EnableCache && list != null)
@@ -51,7 +51,7 @@ namespace ProNetcell.Data.Entities.PropsEnum
         {
             string key = WebCache.GetKey(Settings.ProjectName, EntityGroups.Enums, AccountId, PropType);// GetKey("Enums", PropType, AccountId);
             WebCache.Remove(key);// EntityPro.CacheRemove(key);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 return db.ExecuteNonQuery("sp_Enums_Update", "Op", (int)command, "AccountId", AccountId, "PropType", PropType, "PropId", PropId, "PropName", PropName);
             }

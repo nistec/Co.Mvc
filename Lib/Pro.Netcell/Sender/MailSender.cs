@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Pro.Netcell.Sender
+namespace ProNetcell.Sender
 {
 
     public class MailSender
@@ -113,7 +113,7 @@ namespace Pro.Netcell.Sender
 
         public static IEnumerable<Target> GetTargetList(int AccountId, int UserId, bool IsPersonal)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.ExecuteList<Target>("sp_Targets_Get", "AccountId", AccountId, "UserId", UserId, "IsPersonal", IsPersonal);
         }
 
@@ -123,7 +123,7 @@ namespace Pro.Netcell.Sender
             {
                 throw new ArgumentException("Invalid CategoryId");
             }
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 if (IsAll)
                     return db.ExecuteList<Target>("sp_Targets_Category", "AccountId", AccountId, "IsPersonal", IsPersonal, "Platform", 2, "CategoryId", 0, "IsAll", true);
@@ -140,13 +140,13 @@ namespace Pro.Netcell.Sender
             }
             if (IsAll)
                 Categories = null;
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.ExecuteList<Target>("sp_Targets_Category_v1", "AccountId", AccountId, "Categories", Categories, "Platform", 2, "PersonalFields", PersonalFields, "IsPersonal", IsPersonal, "IsAll", true);//IsMultimedia
         }
 
         public static IEnumerable<Target> GetTargetsAll(int AccountId, bool IsPersonal)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.ExecuteList<Target>("sp_Targets_Category", "AccountId", AccountId, "IsPersonal", IsPersonal, "Platform", 2, "CategoryId", 0, "IsAll", true);
         }
     }

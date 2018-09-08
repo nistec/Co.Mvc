@@ -61,6 +61,7 @@
     <Compile Include="Upload\Contacts\UploadContacts.cs" />
     <Compile Include="Upload\Contacts\UploadContactsView.cs" />
     <Compile Include="Upload\Members\MemberItem.cs" />
+    <Compile Include="Upload\UploadSettings.cs" />
     <Compile Include="Upload\_stg\ColumnStg.cs" />
     <Compile Include="Upload\UploadManager.cs" />
     <Compile Include="Upload\_stg\ColumnMap.cs" />

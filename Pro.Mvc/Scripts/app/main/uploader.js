@@ -2,8 +2,21 @@
 
 class app_uploader {
 
-    constructor() {
- 
+    constructor(uploadType) {
+        this.UploadType = uploadType;
+
+        this.UploadProcUrl = '/Media/_UploadProc?uk=';
+
+        if (uploadType == 'contacts') {
+            this.FileUploadUrl = '/Media/ContactsFileUpload';
+            this.ExecUploadUrl = '/Media/ContactsExecUploadAsync';
+            this.LoadUploadedUrl = '/Media/ContactsLoadUploaded';
+        }
+        else {
+            this.FileUploadUrl= '/Media/MembersFileUpload';
+            this.ExecUploadUrl = '/Media/MembersExecUploadAsync';
+            this.LoadUploadedUrl = '/Media/MembersLoadUploaded';
+        }
     }
 
     ///////////////////////////// uploader
@@ -14,12 +27,18 @@ class app_uploader {
         $("#loader").hide();
         var wait_message = 'נא להמתין להודעת סיום,לאחר מכן יש ללחוץ על הבא.';
         var hint_message = 'לטעינת מנויים יש ללחוץ על טעינת קובץ,להמתין להודעת סיום,לאחר מכן יש ללחוץ על הבא.';
-        var categoryAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "listCategory", '/Common/GetValidCategoriesView', 200, 120, false);
+        var categoryAdapter = null;// app_jqxcombos.createComboAdapter("PropId", "PropName", "listCategory", '/Common/GetValidCategoriesView', 200, 120, false);
+
+        if (this.UploadType == 'contacts') 
+            var categoryAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "listCategory", '/Common/GetValidCategoriesView', 200, 120, false);
+        else
+            var categoryAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "listCategory", '/Common/GetValidCategoriesView', 200, 120, false);
+
 
 
         $('#fileupload').fileupload({
             maxFileSize: 10000000,
-            url: '/Media/FileUpload',
+            url: _self.FileUploadUrl,//'/Media/MembersFileUpload',
             //formData: {
             //    param1: $('#updateExists').val()
             //    //param2: $('#uploadUid').val(),
@@ -86,18 +105,23 @@ class app_uploader {
             );
         };
 
-        var doUploadSync = function () {
+        var doUploadSync = function (slf) {
+            
             //var updateExists = $("#updateExists").val();
             var updateExists = $('#updateExists').is(":checked");
 
             var category = $("#listCategory").val();
             var uploadKey = $("#uploadKey").val();
+            var count = $("#TotalCount").val();
+
+            //wizard.upload(uploadKey);
+
             $.ajax({
-                url: '/Media/ExecUploadAsync',
+                url: slf.ExecUploadUrl,//'/Media/MembersExecUploadAsync',
                 type: "POST",
                 dataType: 'json',
                 //contentType: "application/json; charset=utf-8",
-                data: { 'category': category, 'uploadKey': '' + uploadKey + '', 'updateExists': updateExists },
+                data: { 'category': category, 'uploadKey': '' + uploadKey + '', 'updateExists': updateExists, 'count': count  },
                 success: function (data) {
                     if (data) {
                         if (data.Status < 0)
@@ -155,7 +179,7 @@ class app_uploader {
                 },
                 upload: function (uploadKey) {
                     wizard.goto(3);
-                    var src = '_UploadProc?uk=' + uploadKey;
+                    var src = _self.UploadProcUrl + uploadKey;// '/Media/_UploadProc?uk=' + uploadKey;
                     app_iframe.appendIframe("proc_iframe", src, "500px", "300px", "yes");
                 },
                 showHint: function (message, selector) {
@@ -251,7 +275,7 @@ class app_uploader {
         //end wizard =====================================
 
         $('#btnUpload').click(function () {
-            doUploadSync();
+            doUploadSync(_self);
         });
 
         $('#members-upload-refresh').click(function () {
@@ -290,7 +314,7 @@ class app_uploader {
                 ],
                 id: 'RecordId',
                 type: 'POST',
-                url: '/Media/LoadUploadedMembers',
+                url: _slf.LoadUploadedUrl,//'/Media/LoadUploadedMembers',
                 data: { 'uploadkey': uploadKey},
                 //pagenum: 0,
                 pagesize: 10

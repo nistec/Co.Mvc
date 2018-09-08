@@ -15,14 +15,14 @@ using Nistec.Generic;
 
 namespace Pro.Lib.Upload.Members
 {
-
-
-
+    
     public class UploadMembers : UploadFiles, IDisposable
     {
-        //const string MappingName = "Members_Upload";
-        //const string ProcName = "sp_Upload_Members";
-        const string ProcUploadCatName = "sp_Members_Upload_Cat";
+        const string ProcUploadAsync = "sp_Members_Upload_Stg_Async";
+        const string ProcUploadSync = "sp_Members_Upload_Stg_Sync";
+        const string ProcUploadManager = "sp_Upload_Manager_Add";
+        const string TableUpload_Stg = "Members_Upload_Stg";
+
         public const int MaxPersonalFields = 5;
         public const int MinContactsUploadAsync = 100;
         public static DateTime NullDate { get { return new DateTime(1900, 1, 1); } }
@@ -121,7 +121,6 @@ namespace Pro.Lib.Upload.Members
         #region ui methods
         
         Dictionary<string, int> listCity = null;
-        //Dictionary<string, int> listPlace = null;
         Dictionary<string, int> listCharge = null;
         Dictionary<string, int> listBranch = null;
         Dictionary<string, int> listStatus = null;
@@ -134,11 +133,9 @@ namespace Pro.Lib.Upload.Members
             {
 
                 listCity = UploadReader.ReadLookup(cmd, "Cities", filter, "CityName", "CityId");
-                //listPlace = UploadReader.ReadLookup(cmd, "PlaceOfBirth", filter, "PlaceName", "PlaceId");
                 listCharge = UploadReader.ReadLookup(cmd, "Charge", filter, "ChargeName", "ChargeId");
                 listBranch = UploadReader.ReadLookup(cmd, "Branch", filter, "BranchName", "BranchId");
                 listStatus = UploadReader.ReadLookup(cmd, "Enums", filter + " and PropType='Status'", "PropName", "PropId");
-                //listRegion = UploadReader.ReadLookup(cmd, "Enums", filter + " and PropType='Region'", "PropName", "PropId");
                 listRegion = UploadReader.ReadLookup(cmd, "Region", filter, "RegionName", "RegionId");
             }
         }
@@ -169,8 +166,6 @@ namespace Pro.Lib.Upload.Members
                                     return UploadReader.ReadValidLookupField(dr, field, (int)defaultValue, listCity);
                                 case "listGender":
                                     return UploadReader.ReadValidSexField(dr, field, (string)defaultValue);
-                                //case "listPlace":
-                                //    return UploadReader.ReadValidLookupField(dr, field, (int)defaultValue, listPlace);
                                 case "listRegion":
                                     return UploadReader.ReadValidLookupField(dr, field, (int)defaultValue, listRegion);
                                 case "listStatus":
@@ -270,8 +265,6 @@ namespace Pro.Lib.Upload.Members
                 case "listCity":
                     return UploadReader.ReadLookupField(dr, field, defaultValue, listCity);
                 case "listGender":
-                //case "listPlace":
-                //    return UploadReader.ReadLookupField(dr, field, defaultValue, listPlace);
                 case "listRegion":
                     return UploadReader.ReadLookupField(dr, field, defaultValue, listRegion);
                 case "listStatus":
@@ -288,15 +281,7 @@ namespace Pro.Lib.Upload.Members
             {
                 CreateUploadTableStg(dtCustomer, updateExists);
 
-                //switch (method)
-                //{
-                //    case ContactsUploadMethod.Stg:
-                //        CreateUploadTableStg(dtCustomer, updateExists);
-                //        break;
-                //    default:
-                //        CreateUploadTableMap(dtCustomer, updateExists);
-                //        break;
-                //}
+               
 
                 if ((dtMembers == null) || (dtMembers.Rows.Count == 0))
                 {
@@ -308,22 +293,16 @@ namespace Pro.Lib.Upload.Members
 
                 count = dtMembers.Rows.Count;
 
-
-                if (method == ContactsUploadMethod.Stg)
+                switch (method)
                 {
-                    using (DbBulkCopy bulkCopy = new DbBulkCopy(Db))
-                    {
-                        bulkCopy.BulkInsert(dtMembers, "Members_Upload_Stg", null);
-                    }
-                }
-                else //if (method != ContactsUploadMethod.Preload)
-                {
-                    throw new NotSupportedException(method.ToString());
-                    //using (DbBulkCopy bulkCopy = new DbBulkCopy(Db))
-                    //{
-                    //    bulkCopy.BulkInsert(dtMembers, "Upload_Members", null);
-                    //}
-
+                    case ContactsUploadMethod.Stg:
+                        using (DbBulkCopy bulkCopy = new DbBulkCopy(Db))
+                        {
+                            bulkCopy.BulkInsert(dtMembers, TableUpload_Stg, null);
+                        }
+                        break;
+                    default:
+                        throw new NotSupportedException(method.ToString());
                 }
 
                 sumarize.Ok = count;
@@ -335,148 +314,7 @@ namespace Pro.Lib.Upload.Members
                 throw new UploadException(exception2);
             }
         }
-        /*
-        internal int CreateUploadTables(DataTable dtFile, bool updateExists)//, ContactsUploadMethod method)
-        {
-
-            if ((dtFile == null) || (dtFile.Rows.Count == 0))
-            {
-                throw new UploadException("Invalid data file");
-            }
-            sumarize = new UploadSumarize();
-            dtMembers = UploadMap.DbTableUploadSchema();
-            //dtCategories = TableUploadCategoriesSchema();
-            sumarize.WrongItems = dtFile.Clone();
-            //dt.Constraints.Add("IX_Contacts_Upload", new DataColumn[] { dt.Columns["AccountId"], dt.Columns["CellPhone"], dt.Columns["Email"] }, false);
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
-            Dictionary<string, string> dictionary2 = new Dictionary<string, string>();
-            Dictionary<string, string> dictionary3 = new Dictionary<string, string>();
-            
-            int count = 0;
-            string key = "";
-            //string str2 = "";
-            //string str3 = "";
-            int colCount = dtMembers.Columns.Count;
-
-            FillLLookups();
-
-            DateTime Now = DateTime.Now;
-            foreach (DataRow row in dtFile.Rows)
-            {
-                try
-                {
-                    object[] values = new object[colCount];
-
-                    string memberId = UploadReader.ReadTextField(row, "MemberId", null,15);
-                    if (string.IsNullOrEmpty(memberId))
-                    {
-                        sumarize.Add(UploadState.WrongItem);
-                        sumarize.WrongItems.Rows.Add(row.ItemArray);
-                        continue;
-                    }
-                    string cellNumber = UploadReader.ReadMobileField(row, "CellPhone", null);
-                    string email = UploadReader.ReadEmailField(row, "Email", null);
-
-                    ContactRule rule = UploadReader.ValidateContactRule(ref cellNumber,ref email);//.GetContactRule(cellNumber, email);
-                    if (rule == ContactRule.None)
-                    {
-                        sumarize.Add(UploadState.WrongItem);
-                        sumarize.WrongItems.Rows.Add(row.ItemArray);
-                        continue;
-                    }
-                    key =  MemberKey(AccountId, memberId);
-                    bool flagExists = false;
-                    if (dictionary.ContainsKey(key))
-                    {
-                        flagExists = true;
-                    }
-                    //else if ((cellNumber != "*") && dictionary2.ContainsKey(str2))
-                    //{
-                    //    flagExists = true;
-                    //}
-                    //else if ((email != "*") && dictionary3.ContainsKey(str3))
-                    //{
-                    //    flagExists = true;
-                    //}
-                    if (flagExists)
-                    {
-                        sumarize.Add(UploadState.Duplicate);
-                        sumarize.WrongItems.Rows.Add(row.ItemArray);
-                        continue;
-                    }
-
-                    //string categories = null;// UploadReader.ReadCommaListField(row, "Categories", "0", 50);
-
-                    count++;
-                    values[0] = AccountId;
-                    values[1] = memberId;
-                    values[2] = UploadReader.ReadField(row, "FirstName", null);
-                    values[3] = UploadReader.ReadField(row, "LastName", null);
-                    values[4] = UploadReader.ReadField(row, "FatherName", null);
-                    values[5] = UploadReader.ReadField(row, "Address", null);
-                    values[6] = UploadReader.ReadLookupField(row, "City", 0, listCity);
-                    values[7] = 0;// UploadReader.ReadLookupField(row, "PlaceOfBirth", 0, listPlace);
-                    values[8] = UploadReader.ReadStrDateField(row, "Birthday", "");
-                    values[9] = UploadReader.ReadSexField(row, "Gender", "U");
-                    values[10] = cellNumber;// UploadReader.ReadMobileField(row, "CellPhone", null);
-                    values[11] = UploadReader.ReadPhoneField(row, "Phone", null);
-                    values[12] = email;// UploadReader.ReadEmailField(row, "Email", null);
-                    values[13] = UploadReader.ReadDateField(row, "JoiningDate", Now);
-                    values[14] = UploadReader.ReadLookupField(row, "ChargeType", 0, listCharge);
-                    values[15] = UploadReader.ReadLookupField(row, "Branch", 0, listBranch);
-                    values[16] = UploadReader.ReadLookupField(row, "Status", 0, listStatus);
-                    //values[20] = categories;
-                    values[17] = UploadReader.ReadLookupField(row, "Region", 0, listRegion);
-                    values[18] = UploadReader.ReadTextField(row, "Note", null,500);
-                    values[19] = Now;
-                    values[20] = UploadReader.ReadPhoneField(row, "Fax", null);
-                    values[21] = UploadReader.ReadPhoneField(row, "WorkPhone", null);
-                    values[22] = UploadReader.ReadField(row, "ZipCode", null);
-
-                    values[23] = (int)rule;
-                    values[24] = count;
-                    values[25] = UploadKey;
-                    values[26] = 0;
-
-                    //values[24] = updateExists ? 1 : 0;
-
-
-                    dtMembers.Rows.Add(values);
-                    dictionary[key] = memberId;
-
-                    
-                    //if(categories!=null){
-                    //    var seprator=new char[]{','};
-                    //    string[] categoryList=categories.Split(seprator,StringSplitOptions.RemoveEmptyEntries);
-                    //    foreach(string s in categoryList)
-                    //    {
-                    //        int propid=Types.ToInt(s);
-                    //        if(propid>0)
-                    //        dtCategories.Rows.Add(memberId,Types.ToInt(s),AccountId,UploadKey,0);
-                    //    }
-                    //}
-
-                    //dictionary2[str2] = cellNumber;
-                    //dictionary3[str3] = email;
-                }
-                catch (Exception exception)
-                {
-                    sumarize.WrongItems.Rows.Add(row.ItemArray);
-                    this.errs.Add(exception.Message);
-                }
-            }
-            if ((this.errs.Count > 0) && (count <= 0))
-            {
-                throw new Exception("Contacts list not define correctly");
-            }
-            if (count <= 0)
-            {
-                throw new Exception("No Contacts inserted");
-            }
- 
-            return count;
-        }
-        */
+  
         internal int CreateUploadTableStg(DataTable dtFile, bool updateExists)//, ContactsUploadMethod method)
         {
 
@@ -534,7 +372,6 @@ namespace Pro.Lib.Upload.Members
                                 values[fmi.FieldOrder] = fieldVal;
                                 break;
                         }
-
                     }
 
                     if (!isValid)
@@ -546,9 +383,7 @@ namespace Pro.Lib.Upload.Members
 
                     count++;
 
-                 
                     dtMembers.Rows.Add(values);
-
                 }
                 catch (Exception exception)
                 {
@@ -567,81 +402,122 @@ namespace Pro.Lib.Upload.Members
 
             return count;
         }
-        /*
-        private void ExecUpload(ContactsUploadMethod method, string uploadKey, int count, bool updateExists)
+
+        public static void ExecUploadMemberStg(int accountId, int category, string uploadKey, int updateExists, bool isAsync)
         {
-            //if (method == ContactsUploadMethod.AsyncDbCmd)
-            //    dal.App_AsyncCmd_Insert("sp_Contacts_Upload", uploadKey.ToString());
 
-            if (method == ContactsUploadMethod.QueueCommand)
+            if (isAsync)
             {
-                //RemoteApi.Instance.ExecuteQueueCommand("contacts_upload", uploadKey, 0);
-            }
-            else if (method == ContactsUploadMethod.Auto)
-            {
-
-                if (!updateExists || count <= MinContactsUploadAsync)
+                using (var db = DbContext.Create<DbStg>())
                 {
-                    // go to Contacts_Upload_Exec
-                }
-                else
-                {
-                    //try
-                    //{
-                    //    RemoteApi.Instance.ExecuteQueueCommand("contacts_upload", uploadKey.ToString(), 0);
-                    //    return;
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    TraceException.Trace(TraceStatus.NetworkError, ex);
-                    //}
+                    db.ExecuteNonQuery(ProcUploadManager,
+                      "UploadKey", uploadKey,
+                      "UploadType", isAsync ? "stg-members" : "preload-members",
+                      "AccountId", accountId,
+                      "UpdateExists", updateExists,
+                      "UploadCategory", category,
+                      "MaxSteps", 10
+                      );
                 }
             }
             else
             {
-                Task.Factory.StartNew(() => Db.ExecuteNonQuery(ProcName, "UploadKey", UploadKey, "UpdateExists", updateExists));
-            }
-        }
-
-        public static int ExecUploadProcedure(IDbContext db,string uploadKey, int updateExists)
-        {
-            using(var task=Task.Factory.StartNew(() => db.ExecuteNonQuery(ProcName, "UploadKey", uploadKey, "UpdateExists", updateExists)))
-            {
-                task.Wait();
-                if(task.IsCompleted)
+                var db = DbContext.Create<DbStg>();
                 {
-                    //return task.Result;
+                    db.OwnsConnection = true;
+
+                    db.ExecuteNonQuery(ProcUploadManager,
+                      "UploadKey", uploadKey,
+                      "UploadType", isAsync ? "stg-members" : "preload-members",
+                      "AccountId", accountId,
+                      "UpdateExists", updateExists,
+                      "UploadCategory", category,
+                      "MaxSteps", 10
+                      );
+
+                    var parameters = DataParameter.GetSqlList("AccountId", accountId, "Category", category, "UploadKey", uploadKey, "UpdateExists", updateExists);
+                    //DataParameter.AddOutputParameter(parameters, "Result", SqlDbType.VarChar, 250);
+
+                    db.OwnsConnection = false;
+                    Task.Factory.StartNew(() => db.ExecuteCommandNonQuery(ProcUploadSync, parameters.ToArray(), CommandType.StoredProcedure));
+
+                    //var task = Task.Factory.StartNew(() => db.ExecuteCommandNonQuery(ProcUploadSync, parameters.ToArray(), CommandType.StoredProcedure));
+                    //var aw = task.GetAwaiter();
+                    //aw.OnCompleted(() => {
+                    //    if (db != null)
+                    //    {
+                    //        db.OwnsConnection = false;
+                    //        //db.Connection.Close();
+                    //        db.Dispose();
+                    //    }
+                    //});
+
                 }
-                return task.Result;
-            }
-        }
-        */
-        public static void ExecUploadMemberAsync(int accountId, int category, string uploadKey, int updateExists)
-        {
-            using (var db = DbContext.Create<DbStg>())
-            {
-                db.ExecuteNonQuery("sp_Upload_Manager_Add",
-                  "UploadKey", uploadKey,
-                  "UploadType", "stg-members",
-                  "AccountId", accountId,
-                  "UpdateExists", updateExists,
-                  "UploadCategory", category,
-                  "MaxSteps", 10
-                  );
             }
 
-            //DbServices.Instance.ExecuteNonQuery("sp_Admin_Task_Add", 
-            //            "CommandType", "proc",
-            //            "CommandText", "netcell_sb.dbo.sp_Upload_Members_Cat_Stg_Async",
-            //            "Arguments", uploadKey,
-            //            "DbName", "Netcell_SB",
-            //            "ExecTime", DateTime.Now,
-            //            "Expiration", 60,
-            //            "Sender", "Party application");
+            //using (var db = DbContext.Create<DbStg>())
+            //{
+            //    db.OwnsConnection = isAsync == false;
+
+            //    db.ExecuteNonQuery(ProcUploadManager,
+            //      "UploadKey", uploadKey,
+            //      "UploadType", isAsync ? "stg-members" : "preload-members",
+            //      "AccountId", accountId,
+            //      "UpdateExists", updateExists,
+            //      "UploadCategory", category,
+            //      "MaxSteps", 10
+            //      );
+
+            //    if (!isAsync)
+            //    {
+            //        var parameters = DataParameter.GetSqlList("AccountId", accountId, "Category", category, "UploadKey", uploadKey, "UpdateExists", updateExists);
+            //        //DataParameter.AddOutputParameter(parameters, "Result", SqlDbType.VarChar, 250);
+
+            //        var task=Task.Factory.StartNew(() => db.ExecuteCommandNonQuery(ProcUploadSync, parameters.ToArray(), CommandType.StoredProcedure));
+            //        var aw = task.GetAwaiter();
+            //        aw.OnCompleted(()=> {
+
+            //            db.OwnsConnection = false;
+            //            db.Connection.Close();
+            //            db.Dispose();
+
+            //        });
+                        
+            //        //db.ExecuteCommandNonQuery(ProcUploadSync, parameters.ToArray(), CommandType.StoredProcedure);
+            //        //result = new MembersUploadSumarize(parameters[4].Value);
+            //        //return result;
+            //    }
+            //}
+
 
         }
 
-        public static MembersUploadSumarize ExecUploadMemberCatProcedure(IDbContext db, int accountId, int category, string uploadKey, int updateExists)
+        //public static void ExecUploadMemberAsync(int accountId, int category, string uploadKey, int updateExists)
+        //{
+        //    using (var db = DbContext.Create<DbStg>())
+        //    {
+        //        db.ExecuteNonQuery(ProcUploadManager,
+        //          "UploadKey", uploadKey,
+        //          "UploadType", "stg-members",
+        //          "AccountId", accountId,
+        //          "UpdateExists", updateExists,
+        //          "UploadCategory", category,
+        //          "MaxSteps", 10
+        //          );
+        //    }
+
+        //    //DbServices.Instance.ExecuteNonQuery("sp_Admin_Task_Add", 
+        //    //            "CommandType", "proc",
+        //    //            "CommandText", "netcell_sb.dbo.sp_Upload_Members_Cat_Stg_Async",
+        //    //            "Arguments", uploadKey,
+        //    //            "DbName", "Netcell_SB",
+        //    //            "ExecTime", DateTime.Now,
+        //    //            "Expiration", 60,
+        //    //            "Sender", "Party application");
+
+        //}
+
+        public static MembersUploadSumarize ExecUploadSync(int accountId, int category, string uploadKey, int updateExists)
         {
 
             MembersUploadSumarize result = null;
@@ -665,20 +541,26 @@ namespace Pro.Lib.Upload.Members
             //    UploadState = 0,
             //    UploadType = "Upload_Members"
             //});
-            db.ExecuteNonQuery("sp_Upload_Manager_Add",
+
+            using (var db = DbContext.Create<DbStg>())
+            {
+                db.OwnsConnection = true;
+
+                db.ExecuteNonQuery(ProcUploadManager,
               "UploadKey", uploadKey,
-              "UploadType", "preload",
+              "UploadType", "preload-members",
               "AccountId", accountId,
               "UpdateExists", updateExists,
               "UploadCategory", category,
               "MaxSteps", 10
               );
-            var parameters = DataParameter.GetSqlList("AccountId", accountId, "Category", category, "UploadKey", uploadKey, "UpdateExists", updateExists);
-            DataParameter.AddOutputParameter(parameters, "Result", SqlDbType.VarChar, 250);
+                var parameters = DataParameter.GetSqlList("AccountId", accountId, "Category", category, "UploadKey", uploadKey, "UpdateExists", updateExists);
+                DataParameter.AddOutputParameter(parameters, "Result", SqlDbType.VarChar, 250);
 
-            db.ExecuteCommandNonQuery(ProcUploadCatName, parameters.ToArray(), CommandType.StoredProcedure);
-            result = new MembersUploadSumarize(parameters[4].Value);
-            return result;
+                db.ExecuteCommandNonQuery(ProcUploadSync, parameters.ToArray(), CommandType.StoredProcedure);
+                result = new MembersUploadSumarize(parameters[4].Value);
+                return result;
+            }
 
             //using(var task=Task.Factory.StartNew(() => db.ExecuteNonQuery(ProcUploadCatName,parameters, CommandType.StoredProcedure)))//"AccountId",accountId,"Category", category, "UploadKey", uploadKey, "UpdateExists", updateExists)))
             //{
@@ -704,9 +586,8 @@ namespace Pro.Lib.Upload.Members
                 var result = Types.ToInt(parameters[2].Value);
                 return result;
             }
-
-
         }
+
         #endregion
 
   

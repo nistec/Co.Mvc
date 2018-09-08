@@ -6,7 +6,7 @@ using Nistec.Data.Entities;
 using ProNetcell.Data;
 using Nistec.Data;
 using Nistec;
-using Pro.Netcell;
+using ProNetcell;
 using System.Data;
 using Nistec.Web.Controls;
 using ProNetcell.Data.Entities;
@@ -47,13 +47,13 @@ namespace ProNetcell.Data.Registry
 
         public static string GetPath(int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.QueryScalar<string>("select Path from AccountProperty where AccountId=@AccountId","", "AccountId", AccountId);
         }
 
         public static RegistryPage GetRegistryPage(string Folder, string PageType)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 var rp = db.ExecuteSingle<RegistryPage>("sp_Cms_Page_Get", "Folder", Folder, "PageType", PageType);
                 if (rp != null)
@@ -63,7 +63,7 @@ namespace ProNetcell.Data.Registry
         }
         public static RegistryHead GetRegistryHead(string Folder)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 var rp = db.ExecuteSingle<RegistryHead>("sp_Cms_Page_Get", "Folder", Folder, "PageType", "Head");
                 if (rp != null)
@@ -73,7 +73,7 @@ namespace ProNetcell.Data.Registry
         }
         public static CreditPage GetRegistryPageCredit(string Folder, string PageType)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 var rp = db.ExecuteSingle<CreditPage>("sp_Cms_Page_Get", "Folder", Folder, "PageType", PageType);
                 if (rp != null)
@@ -84,13 +84,13 @@ namespace ProNetcell.Data.Registry
 
         public static IEnumerable<RegistryMessages> GetRegistryMessages(int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.EntityItemList<RegistryMessages>("Cms_Messages", "AccountId", AccountId);
         }
 
         public static IEnumerable<PageHead> GetRegistryPagesList(int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.Query<PageHead>("select AccountId,PageType from Cms_Head where AccountId=@AccountId", "AccountId", AccountId);
         }
         //public static IEnumerable<RegistryMessages> GetRegistryMessages(string path)
@@ -100,7 +100,7 @@ namespace ProNetcell.Data.Registry
 
         public static string GetRegistryMessageText(int AccountId,string MessageId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.QueryScalar<string>("Select MessageText from Cms_Messages where AccountId=@AccountId and MessageId=@MessageId","", "AccountId", AccountId, "MessageId", MessageId);
         }
         public static string GetRegistryMessageText(int AccountId, int status)

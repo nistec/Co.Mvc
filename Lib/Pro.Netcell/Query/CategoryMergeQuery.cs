@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
-namespace Pro.Netcell.Query
+namespace ProNetcell.Query
 {
 
 #if(false)
@@ -309,7 +309,7 @@ IsClean bit=0,
 IsDebug bit=1
 */
 
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<ProNetcell>())
             {
                 TotalRows = db.ExecuteScalar<int>("sp_Category_Merge_v1", 0, "MergeType", MergeType, "CategoryTo", categoryTo, "UserId", UserId, "AccountId", AccountId,
                     "City", City,
@@ -599,7 +599,7 @@ IsDebug bit=1
             string Place = null;
             int Status = 0;
             int TotalRows = 0;
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 TotalRows = db.ExecuteScalar<int>("sp_Category_Merge", 0, "MergeType", MergeType, "CategoryTo", categoryTo, "QueryType", QueryType, "AccountId", AccountId,
                     "City", City,

@@ -19,6 +19,7 @@ using ProSystem.Data.Entities;
 using Nistec.Data.Entities;
 using Pro.Lib.Upload.Members;
 using Pro.Lib.Upload.Data;
+using Pro.Lib.Upload.Contacts;
 
 namespace Pro.Mvc.Controllers
 {
@@ -129,6 +130,430 @@ namespace Pro.Mvc.Controllers
         #endregion
 
         #region  upload members
+      
+         public JsonResult MembersFileUpload()
+        {
+            
+            string result = "";
+            ResultModel model= null;
+            try
+            {
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+
+                var parm = Request.Params;
+                bool upddateExists = false;// (parm == null) ? false : Types.ToBool(parm["param1"], false);
+                int category = 0;// Types.ToInt(parm["param2"], 0);
+
+                HttpFileCollectionBase uploadedFiles = Request.Files;
+
+                if (uploadedFiles.Count <= 0)
+                {
+                    throw new Exception("File not found");
+                }
+
+                HttpPostedFileBase userPostedFile = uploadedFiles[0];
+
+                string src = userPostedFile.FileName;
+                string extension = Path.GetExtension(src);
+                string mediaType = GetAllowedType(extension);
+                if (mediaType == "none")
+                {
+                    throw new Exception("File not allowed : " + extension);
+                }
+
+                string newfilename = UUID.NewId();
+                string serverpath = Server.MapPath("~/_files/" + mediaType);
+
+                if (!System.IO.Directory.Exists(serverpath))
+                {
+                    System.IO.Directory.CreateDirectory(serverpath);
+                }
+
+                string filename = newfilename + extension;
+                string fullname = serverpath + "\\" + filename;
+
+                userPostedFile.SaveAs(fullname);
+
+                var sum = UploadMembers.DoUpload(new DbStg(), accountId, fullname, upddateExists, ContactsUploadMethod.Stg);
+
+                result = sum.ToHtml();
+
+                model =new ResultModel() { Status = sum.Ok , Message = result, Title = "upload file", Args=sum.UploadKey};
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = -1, Message = ex.Message, Title = "file upload error" };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+         public JsonResult MembersFileUploadIntegration()
+         {
+
+             string result = "";
+             ResultModel model = null;
+             try
+             {
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+
+                var parm = Request.Params;
+                 bool upddateExists = false;// (parm == null) ? false : Types.ToBool(parm["param1"], false);
+                 int caregory = 0;// Types.ToInt(parm["param2"], 0);
+
+                 HttpFileCollectionBase uploadedFiles = Request.Files;
+
+                 if (uploadedFiles.Count <= 0)
+                 {
+                     throw new Exception("File not found");
+                 }
+
+                 HttpPostedFileBase userPostedFile = uploadedFiles[0];
+
+                 string src = userPostedFile.FileName;
+                 string extension = Path.GetExtension(src);
+                 string mediaType = GetAllowedType(extension);
+                 if (mediaType == "none")
+                 {
+                     throw new Exception("File not allowed : " + extension);
+                 }
+
+                 string newfilename = UUID.NewId();
+                 string serverpath = Server.MapPath("~/_files/" + mediaType);
+
+                 if (!System.IO.Directory.Exists(serverpath))
+                 {
+                     System.IO.Directory.CreateDirectory(serverpath);
+                 }
+
+                 string filename = newfilename + extension;
+                 string fullname = serverpath + "\\" + filename;
+
+                 userPostedFile.SaveAs(fullname);
+
+                 var sum = IntegrationStg.DoUpload(new DbStg(), accountId, fullname, upddateExists, ContactsUploadMethod.Integration);
+
+                 result = sum.ToHtml();
+
+                 model = new ResultModel() { Status = sum.Ok, Message = result, Title = "upload file", Args = sum.UploadKey };
+             }
+             catch (Exception ex)
+             {
+                 model = new ResultModel() { Status = -1, Message = ex.Message, Title = "file upload error" };
+             }
+             return Json(model, JsonRequestBehavior.AllowGet);
+         }
+
+        [HttpPost]
+         public JsonResult MembersLoadUploaded(string uploadKey)//LoadUploadedMembers
+        {
+             IEnumerable<UploadMembersView> model = null;
+             try
+             {
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                //int userId = su.UserId;
+                 model = UploadMembersView.ViewUploadedTop(accountId, uploadKey);
+             }
+             catch (Exception ex)
+             {
+                 string err = ex.Message;
+             }
+            return Json(model, JsonRequestBehavior.AllowGet);
+         }
+
+        //public JsonResult ExecUploadSync(string uploadKey, string updateExists)
+        //{
+        //    ResultModel model = null;
+        //    try
+        //    {
+        //        int accountId = GetAccountId();
+        //        bool update_exists = Types.ToBool(updateExists, false);
+        //        int op = update_exists ? 1 : 0;
+        //        int res = UploadMembers.ExecUploadProcedure(DbPro.Instance, uploadKey, op);
+        //        model= new ResultModel() { Status = res, Message = "טעינת המנויים בתהליך סנכרון ותסתיים בעוד מספר דקות", Title = "upload completed" };
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        model= new ResultModel() { Status = -1, Message = ex.Message, Title = "Upload error" };
+        //    }
+        //    return Json(model, JsonRequestBehavior.AllowGet);
+        //}
+
+        public ActionResult MembersExecUploadAsync()
+        {
+            ResultModel model = null;
+            try
+            {
+
+                int category = Types.ToInt(Request["category"]);
+                string uploadKey = Request["uploadKey"];
+                int updateExists = Types.ToInt(Request["updateExists"]);
+                int totalCount = Types.ToInt(Request["count"]);
+
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                //int userId = su.UserId;
+
+                //int op = updateExists ? 1 : 0;
+                bool isAsync = totalCount > UploadSettings.MaxUploadSync;
+
+                UploadMembers.ExecUploadMemberStg(accountId, category, uploadKey, updateExists, isAsync);
+
+                //return RedirectToAction("UploadProc", "Main", new { uk = uploadKey });
+
+                model = new ResultModel() { Status = 0, Message = "ok" };
+
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = -1, Message = ex.Message, Title = "Upload error" };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult MembersExecUploadSync(int category, string uploadKey, bool updateExists)
+        {
+            ResultModel model = null;
+            try
+            {
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                //int userId = su.UserId;
+                //bool update_exists = Types.ToBool(updateExists, false);
+                int op = updateExists ? 1 : 0;
+                var res = UploadMembers.ExecUploadSync(accountId, category, uploadKey, op);
+                //model = new ResultModel() { Status = res.Status, Message = "טעינת המנויים בתהליך סנכרון ותסתיים בעוד מספר דקות", Title = "upload completed" };
+                model = new ResultModel() { Status = res.Status, Message = res.ToHtml() };
+
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = -1, Message = ex.Message, Title = "Upload error" };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+        #region  upload contacts
+
+        public JsonResult ContactsFileUpload()
+        {
+
+            string result = "";
+            ResultModel model = null;
+            try
+            {
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+
+                var parm = Request.Params;
+                bool upddateExists = false;// (parm == null) ? false : Types.ToBool(parm["param1"], false);
+                int category = 0;// Types.ToInt(parm["param2"], 0);
+
+                HttpFileCollectionBase uploadedFiles = Request.Files;
+
+                if (uploadedFiles.Count <= 0)
+                {
+                    throw new Exception("File not found");
+                }
+
+                HttpPostedFileBase userPostedFile = uploadedFiles[0];
+
+                string src = userPostedFile.FileName;
+                string extension = Path.GetExtension(src);
+                string mediaType = GetAllowedType(extension);
+                if (mediaType == "none")
+                {
+                    throw new Exception("File not allowed : " + extension);
+                }
+
+                string newfilename = UUID.NewId();
+                string serverpath = Server.MapPath("~/_files/" + mediaType);
+
+                if (!System.IO.Directory.Exists(serverpath))
+                {
+                    System.IO.Directory.CreateDirectory(serverpath);
+                }
+
+                string filename = newfilename + extension;
+                string fullname = serverpath + "\\" + filename;
+
+                userPostedFile.SaveAs(fullname);
+
+                var sum = UploadContacts.DoUpload(new DbStg(), accountId, fullname, upddateExists, ContactsUploadMethod.Stg);
+
+                result = sum.ToHtml();
+
+                model = new ResultModel() { Status = sum.Ok, Message = result, Title = "upload file", Args = sum.UploadKey };
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = -1, Message = ex.Message, Title = "file upload error" };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public JsonResult ContactsFileUploadIntegration()
+        {
+
+            string result = "";
+            ResultModel model = null;
+            try
+            {
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                int userId = su.UserId;
+
+                var parm = Request.Params;
+                bool upddateExists = false;// (parm == null) ? false : Types.ToBool(parm["param1"], false);
+                int caregory = 0;// Types.ToInt(parm["param2"], 0);
+
+                HttpFileCollectionBase uploadedFiles = Request.Files;
+
+                if (uploadedFiles.Count <= 0)
+                {
+                    throw new Exception("File not found");
+                }
+
+                HttpPostedFileBase userPostedFile = uploadedFiles[0];
+
+                string src = userPostedFile.FileName;
+                string extension = Path.GetExtension(src);
+                string mediaType = GetAllowedType(extension);
+                if (mediaType == "none")
+                {
+                    throw new Exception("File not allowed : " + extension);
+                }
+
+                string newfilename = UUID.NewId();
+                string serverpath = Server.MapPath("~/_files/" + mediaType);
+
+                if (!System.IO.Directory.Exists(serverpath))
+                {
+                    System.IO.Directory.CreateDirectory(serverpath);
+                }
+
+                string filename = newfilename + extension;
+                string fullname = serverpath + "\\" + filename;
+
+                userPostedFile.SaveAs(fullname);
+
+                var sum = IntegrationStg.DoUpload(new DbStg(), accountId, fullname, upddateExists, ContactsUploadMethod.Integration);
+
+                result = sum.ToHtml();
+
+                model = new ResultModel() { Status = sum.Ok, Message = result, Title = "upload file", Args = sum.UploadKey };
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = -1, Message = ex.Message, Title = "file upload error" };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ContactsLoadUploaded(string uploadKey)//LoadUploadedMembers
+        {
+            IEnumerable<UploadContactsView> model = null;
+            try
+            {
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                //int userId = su.UserId;
+                model = UploadContactsView.ViewUploadedTop(accountId, uploadKey);
+            }
+            catch (Exception ex)
+            {
+                string err = ex.Message;
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+        //public JsonResult ExecUploadSync(string uploadKey, string updateExists)
+        //{
+        //    ResultModel model = null;
+        //    try
+        //    {
+        //        int accountId = GetAccountId();
+        //        bool update_exists = Types.ToBool(updateExists, false);
+        //        int op = update_exists ? 1 : 0;
+        //        int res = UploadMembers.ExecUploadProcedure(DbPro.Instance, uploadKey, op);
+        //        model= new ResultModel() { Status = res, Message = "טעינת המנויים בתהליך סנכרון ותסתיים בעוד מספר דקות", Title = "upload completed" };
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        model= new ResultModel() { Status = -1, Message = ex.Message, Title = "Upload error" };
+        //    }
+        //    return Json(model, JsonRequestBehavior.AllowGet);
+        //}
+
+        public ActionResult ContactsExecUploadAsync()
+        {
+            ResultModel model = null;
+            try
+            {
+
+                int category = Types.ToInt(Request["category"]);
+                string uploadKey = Request["uploadKey"];
+                int updateExists = Types.ToInt(Request["updateExists"]);
+                int totalCount = Types.ToInt(Request["count"]);
+
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                //int userId = su.UserId;
+
+                //int op = updateExists ? 1 : 0;
+                bool isAsync = totalCount > UploadSettings.MaxUploadSync;
+
+                UploadContacts.ExecUploadMemberStg(accountId, category, uploadKey, updateExists, isAsync);
+
+                //return RedirectToAction("UploadProc", "Main", new { uk = uploadKey });
+
+                model = new ResultModel() { Status = 0, Message = "ok" };
+
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = -1, Message = ex.Message, Title = "Upload error" };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult ContactsExecUploadSync(int category, string uploadKey, bool updateExists)
+        {
+            ResultModel model = null;
+            try
+            {
+                var su = GetSignedUser(true);
+                int accountId = su.AccountId;
+                //int userId = su.UserId;
+                //bool update_exists = Types.ToBool(updateExists, false);
+                int op = updateExists ? 1 : 0;
+                var res = UploadContacts.ExecUploadSync(accountId, category, uploadKey, op);
+                //model = new ResultModel() { Status = res.Status, Message = "טעינת המנויים בתהליך סנכרון ותסתיים בעוד מספר דקות", Title = "upload completed" };
+                model = new ResultModel() { Status = res.Status, Message = res.ToHtml() };
+
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = -1, Message = ex.Message, Title = "Upload error" };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+        #region Upload manager
+
         private string GetAllowedType(string extension)
         {
             if (extension == null)
@@ -182,7 +607,7 @@ namespace Pro.Mvc.Controllers
                     throw new Exception("File not allowed : " + extension);
                 }
 
-                string newfilename =accountId.ToString()+"_"+ UUID.NewId();
+                string newfilename = accountId.ToString() + "_" + UUID.NewId();
                 string serverpath = Server.MapPath("~/_files/" + mediaType);
 
                 if (!System.IO.Directory.Exists(serverpath))
@@ -196,218 +621,13 @@ namespace Pro.Mvc.Controllers
                 userPostedFile.SaveAs(fullname);
 
                 var sum = UploadStg.DoUpload(new DbStg(), accountId, fullname, upddateExists);
-                string columns= Nistec.Serialization.JsonSerializer.Serialize(sum.Columns.ToArray());
+                string columns = Nistec.Serialization.JsonSerializer.Serialize(sum.Columns.ToArray());
 
                 model = new ResultModel() { Status = sum.Count, Message = sum.Message, Title = "upload file", Args = fullname, Target = columns };
             }
             catch (Exception ex)
             {
                 model = new ResultModel() { Status = -1, Message = ex.Message, Title = "file upload error" };
-            }
-            return Json(model, JsonRequestBehavior.AllowGet);
-        }
-
-
-         public JsonResult FileUpload()
-        {
-            
-            string result = "";
-            ResultModel model= null;
-            try
-            {
-                var su = GetSignedUser(true);
-                int accountId = su.AccountId;
-                int userId = su.UserId;
-
-                var parm = Request.Params;
-                bool upddateExists = false;// (parm == null) ? false : Types.ToBool(parm["param1"], false);
-                int category = 0;// Types.ToInt(parm["param2"], 0);
-
-                HttpFileCollectionBase uploadedFiles = Request.Files;
-
-                if (uploadedFiles.Count <= 0)
-                {
-                    throw new Exception("File not found");
-                }
-
-                HttpPostedFileBase userPostedFile = uploadedFiles[0];
-
-                string src = userPostedFile.FileName;
-                string extension = Path.GetExtension(src);
-                string mediaType = GetAllowedType(extension);
-                if (mediaType == "none")
-                {
-                    throw new Exception("File not allowed : " + extension);
-                }
-
-                string newfilename = UUID.NewId();
-                string serverpath = Server.MapPath("~/_files/" + mediaType);
-
-                if (!System.IO.Directory.Exists(serverpath))
-                {
-                    System.IO.Directory.CreateDirectory(serverpath);
-                }
-
-                string filename = newfilename + extension;
-                string fullname = serverpath + "\\" + filename;
-
-                userPostedFile.SaveAs(fullname);
-                var sum = UploadMembers.DoUpload(new DbStg(), accountId, fullname, upddateExists, ContactsUploadMethod.Stg);
-
-                result = sum.ToHtml();
-
-                model =new ResultModel() { Status = sum.Ok , Message = result, Title = "upload file", Args=sum.UploadKey};
-            }
-            catch (Exception ex)
-            {
-                model = new ResultModel() { Status = -1, Message = ex.Message, Title = "file upload error" };
-            }
-            return Json(model, JsonRequestBehavior.AllowGet);
-        }
-
-
-         public JsonResult FileUploadIntegration()
-         {
-
-             string result = "";
-             ResultModel model = null;
-             try
-             {
-                var su = GetSignedUser(true);
-                int accountId = su.AccountId;
-                int userId = su.UserId;
-
-                var parm = Request.Params;
-                 bool upddateExists = false;// (parm == null) ? false : Types.ToBool(parm["param1"], false);
-                 int caregory = 0;// Types.ToInt(parm["param2"], 0);
-
-                 HttpFileCollectionBase uploadedFiles = Request.Files;
-
-                 if (uploadedFiles.Count <= 0)
-                 {
-                     throw new Exception("File not found");
-                 }
-
-                 HttpPostedFileBase userPostedFile = uploadedFiles[0];
-
-                 string src = userPostedFile.FileName;
-                 string extension = Path.GetExtension(src);
-                 string mediaType = GetAllowedType(extension);
-                 if (mediaType == "none")
-                 {
-                     throw new Exception("File not allowed : " + extension);
-                 }
-
-                 string newfilename = UUID.NewId();
-                 string serverpath = Server.MapPath("~/_files/" + mediaType);
-
-                 if (!System.IO.Directory.Exists(serverpath))
-                 {
-                     System.IO.Directory.CreateDirectory(serverpath);
-                 }
-
-                 string filename = newfilename + extension;
-                 string fullname = serverpath + "\\" + filename;
-
-                 userPostedFile.SaveAs(fullname);
-
-                 var sum = IntegrationStg.DoUpload(new DbPro(), accountId, fullname, upddateExists, ContactsUploadMethod.Integration);
-
-                 result = sum.ToHtml();
-
-                 model = new ResultModel() { Status = sum.Ok, Message = result, Title = "upload file", Args = sum.UploadKey };
-             }
-             catch (Exception ex)
-             {
-                 model = new ResultModel() { Status = -1, Message = ex.Message, Title = "file upload error" };
-             }
-             return Json(model, JsonRequestBehavior.AllowGet);
-         }
-
-        [HttpPost]
-         public JsonResult LoadUploadedMembers(string uploadKey)
-         {
-             IEnumerable<UploadMembersView> model = null;
-             try
-             {
-                var su = GetSignedUser(true);
-                int accountId = su.AccountId;
-                //int userId = su.UserId;
-                 model = UploadMembersView.ViewUploadedTop(accountId, uploadKey);
-             }
-             catch (Exception ex)
-             {
-                 string err = ex.Message;
-             }
-            return Json(model, JsonRequestBehavior.AllowGet);
-         }
-
-        //public JsonResult ExecUploadSync(string uploadKey, string updateExists)
-        //{
-        //    ResultModel model = null;
-        //    try
-        //    {
-        //        int accountId = GetAccountId();
-        //        bool update_exists = Types.ToBool(updateExists, false);
-        //        int op = update_exists ? 1 : 0;
-        //        int res = UploadMembers.ExecUploadProcedure(DbPro.Instance, uploadKey, op);
-        //        model= new ResultModel() { Status = res, Message = "טעינת המנויים בתהליך סנכרון ותסתיים בעוד מספר דקות", Title = "upload completed" };
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        model= new ResultModel() { Status = -1, Message = ex.Message, Title = "Upload error" };
-        //    }
-        //    return Json(model, JsonRequestBehavior.AllowGet);
-        //}
-
-        public ActionResult ExecUploadAsync()
-        {
-            ResultModel model = null;
-            try
-            {
-
-                int category = Types.ToInt(Request["category"]);
-                string uploadKey = Request["uploadKey"];
-                bool updateExists = Types.ToBool(Request["updateExists"], false);
-
-                var su = GetSignedUser(true);
-                int accountId = su.AccountId;
-                //int userId = su.UserId;
-
-                int op = updateExists ? 1 : 0;
-                UploadMembers.ExecUploadMemberAsync(accountId, category, uploadKey, op);
-
-                //return RedirectToAction("UploadProc", "Main", new { uk = uploadKey });
-
-                model = new ResultModel() { Status = 0, Message = "ok" };
-
-            }
-            catch (Exception ex)
-            {
-                model = new ResultModel() { Status = -1, Message = ex.Message, Title = "Upload error" };
-            }
-            return Json(model, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult ExecUploadSync(int category, string uploadKey, bool updateExists)
-        {
-            ResultModel model = null;
-            try
-            {
-                var su = GetSignedUser(true);
-                int accountId = su.AccountId;
-                //int userId = su.UserId;
-                //bool update_exists = Types.ToBool(updateExists, false);
-                int op = updateExists ? 1 : 0;
-                var res = UploadMembers.ExecUploadMemberCatProcedure(new DbPro(), accountId, category, uploadKey, op);
-                //model = new ResultModel() { Status = res.Status, Message = "טעינת המנויים בתהליך סנכרון ותסתיים בעוד מספר דקות", Title = "upload completed" };
-                model = new ResultModel() { Status = res.Status, Message = res.ToHtml() };
-
-            }
-            catch (Exception ex)
-            {
-                model = new ResultModel() { Status = -1, Message = ex.Message, Title = "Upload error" };
             }
             return Json(model, JsonRequestBehavior.AllowGet);
         }
@@ -431,7 +651,7 @@ namespace Pro.Mvc.Controllers
 
                 var mnger = UploadManager.Get(uploadKey);
                 var html = mnger.ToHtml();
-                model = new ResultModel() { Status = mnger.Status, Message = html, Title = "upload process", Args = uploadKey };
+                model = new ResultModel() { Status = mnger.Status, OutputId=mnger.Step, Message = html, Title = "upload process", Args = uploadKey };
 
 
             }

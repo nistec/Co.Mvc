@@ -6,7 +6,7 @@ using Nistec.Data.Entities;
 using ProNetcell.Data;
 using Nistec.Data;
 using System.Data;
-using Pro.Netcell.Sender;
+using ProNetcell.Sender;
 
 namespace ProNetcell.Data.Entities
 {
@@ -16,7 +16,7 @@ namespace ProNetcell.Data.Entities
 
         public static IEnumerable<TargetListView> ViewList(int PageSize, int PageNum, int AccountId, int UserId, string targetFilter, string personalFilter)
         {
-            using (var db=DbContext.Create<DbPro>())
+            using (var db=DbContext.Create<DbNetcell>())
             return db.ExecuteList<TargetListView>("sp_Targets_View", "@PageSize", PageSize, "PageNum", PageNum, "AccountId", AccountId, "UserId", UserId, "TargetFilter", targetFilter, "PersonalFilter", personalFilter);
         }
         public int TotalRows { get; set; }
@@ -27,30 +27,30 @@ namespace ProNetcell.Data.Entities
 
         public static IList<TargetView>   ViewList(int AccountId,int UserId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.EntityItemList<TargetView>("Targets", "AccountId", AccountId, "UserId", UserId);
         }
  
         public static IList<TargetView> ViewSmsListByCategories(int AccountId, string Categories, bool isAll)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.ExecuteList<TargetView>("sp_Targets_ViewByCategories", "TotalCount", 0,"AccountId", AccountId, "Categories", Categories, "Platform", 1, "IsCount", false);
         }
         public static IList<TargetView> ViewEmailListByCategories(int AccountId, string Categories, bool isAll)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.ExecuteList<TargetView>("sp_Targets_ViewByCategories", "TotalCount", 0, "AccountId", AccountId, "Categories", Categories, "Platform", 2, "IsCount", false);
         }
 
 
         //public static IList<TargetView> ViewSmsListByCategory(int AccountId, int CategoryId, bool isAll)
         //{
-        //    using (var db = DbContext.Create<DbPro>())
+        //    using (var db = DbContext.Create<ProNetcell>())
         //        return db.ExecuteList<TargetView>("sp_Targets_ViewByCategory", "AccountId", AccountId, "CategoryId", CategoryId, "Platform", 1, "IsAll", isAll, "IsCount", false, "TotalCount", 0);
         //}
         //public static IList<TargetView> ViewEmailListByCategory(int AccountId, int CategoryId, bool isAll)
         //{
-        //    using (var db = DbContext.Create<DbPro>())
+        //    using (var db = DbContext.Create<ProNetcell>())
         //        return db.ExecuteList<TargetView>("sp_Targets_ViewByCategory", "AccountId", AccountId, "CategoryId", CategoryId, "Platform", 2, "IsAll", isAll, "IsCount", false, "TotalCount", 0);
         //}
 
@@ -58,7 +58,7 @@ namespace ProNetcell.Data.Entities
         {
             var parameters = DataParameter.GetSqlWithDirection(
                 "AccountId", AccountId, 0, "CategoryId", CategoryId, 0, "Platform", 1, 0, "IsAll", isAll, 0, "IsCount", true, 0, "TotalCount", 0, 2);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 var res = db.ExecuteCommandNonQuery("sp_Targets_ViewByCategory", parameters, CommandType.StoredProcedure);
                 return parameters.GetParameterValue<int>("TotalCount");
@@ -68,7 +68,7 @@ namespace ProNetcell.Data.Entities
         {
             var parameters = DataParameter.GetSqlWithDirection(
                 "AccountId", AccountId, 0, "CategoryId", CategoryId, 0, "Platform", 2, 0, "IsAll", isAll, 0, "IsCount", true, 0, "TotalCount", 0, 2);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 var res = db.ExecuteCommandNonQuery("sp_Targets_ViewByCategory", parameters, CommandType.StoredProcedure);
                 return parameters.GetParameterValue<int>("TotalCount");
@@ -81,7 +81,7 @@ namespace ProNetcell.Data.Entities
 
             var parameters = DataParameter.GetSqlWithDirection(
                 "TotalCount", 0, 2, "AccountId", AccountId, 0, "Categories", Categories, 0, "Platform", 1, 0, "IsCount", true, 0);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 var res = db.ExecuteCommandNonQuery("sp_Targets_ViewByCategories", parameters, CommandType.StoredProcedure);
                 return parameters.GetParameterValue<int>("TotalCount");
@@ -93,7 +93,7 @@ namespace ProNetcell.Data.Entities
                 Categories = "-ALL-";
             var parameters = DataParameter.GetSqlWithDirection(
                 "TotalCount", 0, 2, "AccountId", AccountId, 0, "Categories", Categories, 0, "Platform", 1, 0, "IsCount", true, 0);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 var res = db.ExecuteCommandNonQuery("sp_Targets_ViewByCategories", parameters, CommandType.StoredProcedure);
                 return parameters.GetParameterValue<int>("TotalCount");
@@ -104,7 +104,7 @@ namespace ProNetcell.Data.Entities
 
         public static DataTable ViewData(int AccountId, int UserId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.ExecuteCommand<DataTable>("select Target,Personal from Targets where AccountId=@AccountId and UserId=@UserId", DataParameter.GetSql("AccountId",AccountId,"UserId",UserId));
         }
 

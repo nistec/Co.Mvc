@@ -19,14 +19,14 @@ namespace ProNetcell.Data
     
     [DbContext("cnn_proxy")]
     [Serializable]
-    public partial class DbProxy : DbContext
+    public partial class ProNetcellxy : DbContext
     {
         #region static
 
         public const bool EnableCache = true;
-        //private static readonly DbProxy _instance = new DbProxy();
+        //private static readonly ProNetcellxy _instance = new ProNetcellxy();
 
-        //public static DbProxy Instance
+        //public static ProNetcellxy Instance
         //{
         //    get { return _instance; }
         //}
@@ -36,7 +36,7 @@ namespace ProNetcell.Data
             get { return NetConfig.ConnectionString("cnn_proxy"); }
         }
 
-        public DbProxy()
+        public ProNetcellxy()
         {
         }
 
@@ -46,7 +46,7 @@ namespace ProNetcell.Data
 
         protected override void EntityBind()
         {
-            //base.SetConnection("cnn_pro");//, Cnn, DBProvider.SqlServer);
+            //base.SetConnection("cnn_pro");//, Cnn, ProNetcellvider.SqlServer);
             //base.Items.SetEntity("Contact", "Person.Contact", EntitySourceType.Table, new EntityKeys("ContactID"));
             //base.SetEntity<ActiveContact>();
         }
@@ -55,7 +55,7 @@ namespace ProNetcell.Data
         {
             get
             {
-                return base.GetLocalizer<ProLocalizer>();
+                return base.GetLocalizer<NetcellLocalizer>();
             }
         }
 

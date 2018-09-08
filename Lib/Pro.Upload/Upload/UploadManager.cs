@@ -15,13 +15,14 @@ namespace Pro.Lib.Upload
     public class UploadManager : IEntityItem
     {
         public const string MappingName = "Upload_Manager";
+        
 
         //public static UploadManager Get(string UploadKey)
         //{
         //    return db.EntityItemGet<UploadManager>(MappingName, "UploadKey", UploadKey);
         //}
 
-         public static UploadManager Get(string UploadKey)
+        public static UploadManager Get(string UploadKey)
         {
             using (var db = DbContext.Create<DbStg>())
             return db.ExecuteSingle<UploadManager>("sp_Upload_Proc", "UploadKey", UploadKey);

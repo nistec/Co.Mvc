@@ -1,7 +1,7 @@
 ﻿using Nistec.Data.Entities;
 using Nistec.Web.Controls;
 using ProNetcell.Data;
-using Pro.Netcell;
+using ProNetcell;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,13 +94,13 @@ namespace ProNetcell.Data.Entities
 
         public static string GetList(ListsTypes type)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.ExecuteJson("sp_GetLists", "ListType", (int)type);
         }
 
         public static IList<T> GetList<T>(ListsTypes type)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.ExecuteList<T>("sp_GetLists", "ListType", (int)type);
         }
 

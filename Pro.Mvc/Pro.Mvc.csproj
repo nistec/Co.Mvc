@@ -2427,6 +2427,8 @@
     <Content Include="Views\Shared\_ViewNetcell.cshtml" />
     <Content Include="Views\Netcell\NetcellBoard.cshtml" />
     <Content Include="Views\Media\_UploadProc.cshtml" />
+    <Content Include="Views\Netcell\ContactsUpload.cshtml" />
+    <Content Include="Views\Netcell\Members.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\camera.css" />
@@ -2546,6 +2548,7 @@
     <Folder Include="Views\Main\_exclude\" />
     <Folder Include="Views\Main\_ex\" />
     <Folder Include="Views\Main\_upload\" />
+    <Folder Include="Views\Netcell\_ex\" />
     <Folder Include="Views\System\_ex\" />
     <Folder Include="Views\System\_v-0\" />
     <Folder Include="Views\System\_v-1\" />

@@ -22,8 +22,8 @@ namespace Pro.Lib.Upload
         Sync,
         QueueCommand,
         Auto,
-        Preload,
         Stg,
+        //StgAsync,
         Integration
     }
     public struct UploadSumarize

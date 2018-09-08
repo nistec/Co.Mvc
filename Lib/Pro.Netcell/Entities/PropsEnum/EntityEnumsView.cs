@@ -10,7 +10,7 @@ using Nistec.Channels.RemoteCache;
 namespace ProNetcell.Data.Entities.PropsEnum
 {
 
-    public abstract class EntityEnumView : EntityItem<DbPro>, IEntityEnum
+    public abstract class EntityEnumView : EntityItem<DbNetcell>, IEntityEnum
     {
         public const string TableName = "Enums";
  
@@ -50,7 +50,7 @@ namespace ProNetcell.Data.Entities.PropsEnum
 
         public T Get<T>(int PropId, string PropType, int AccountId) where T : IEntityItem
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.EntityItemGet<T>(TableName, "PropId", PropId, "PropType", PropType, "AccountId", AccountId);
         }
 
@@ -77,7 +77,7 @@ namespace ProNetcell.Data.Entities.PropsEnum
 
         public static StatusView View(int PropId,int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.EntityItemGet<StatusView>(TableName, PropId, EnumType, AccountId);
         }
 
@@ -176,7 +176,7 @@ namespace ProNetcell.Data.Entities.PropsEnum
 
         public static RoleView View(int PropId, int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.EntityItemGet<RoleView>(TableName, PropId, EnumType, AccountId);
         }
 

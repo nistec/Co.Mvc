@@ -50,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Db\DbNetcell.cs" />
-    <Compile Include="Entities\Contacts\Contacts.cs" />
     <Compile Include="Db\AppSettings.cs" />
     <Compile Include="Db\DbLogs.cs" />
     <Compile Include="Db\DbLookups.cs" />
@@ -61,17 +60,13 @@
     <Compile Include="Entities\Admin\AccountsView.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\Contacts\MemberCategories.cs" />
+    <Compile Include="Entities\Contacts\Members.cs" />
     <Compile Include="Entities\EntityCacheGroups.cs" />
     <Compile Include="Entities\Props\CategoryView.cs" />
     <Compile Include="Entities\Reports.cs" />
     <Compile Include="Entities\MembersFields.cs" />
     <Compile Include="Entities\PropsEnum\IEntityEnum.cs" />
-    <Compile Include="Entities\Props\CampaignView.cs" />
-    <Compile Include="Entities\Props\ExEnums.cs" />
-    <Compile Include="Entities\Props\PriceView.cs" />
-    <Compile Include="Entities\Props\RegionView.cs" />
-    <Compile Include="Entities\Props\StatusView.cs" />
-    <Compile Include="Entities\Props\RoleView.cs" />
     <Compile Include="Entities\Contacts\TargetView.cs" />
     <Compile Include="Entities\Lists.cs" />
     <Compile Include="Query\CategoryMergeQuery.cs" />
@@ -82,8 +77,6 @@
     <Compile Include="Sender\DataContract\RequestContract.cs" />
     <Compile Include="Sender\DataContract\SmsMessageContract.cs" />
     <Compile Include="Query\QueryBase.cs" />
-    <Compile Include="Query\SendReportQuery.cs" />
-    <Compile Include="Query\PaymentQuery.cs" />
     <Compile Include="Query\ReportQuery.cs" />
     <Compile Include="Registry\CmsRegistry.cs" />
     <Compile Include="Sender\ApiResult.cs" />
@@ -92,36 +85,14 @@
     <Compile Include="Sender\MailSender.cs" />
     <Compile Include="Sender\ProcSender.cs" />
     <Compile Include="Sender\SmsSender.cs" />
-    <Compile Include="Query\SignupQuery.cs" />
     <Compile Include="Registry\CmsContext.cs" />
     <Compile Include="Registry\InputFieldsCreator.cs" />
-    <Compile Include="Upload\FieldsMap.cs" />
-    <Compile Include="Upload\IntegrationFields.cs" />
-    <Compile Include="Upload\_stg\ColumnStg.cs" />
-    <Compile Include="Upload\UploadManager.cs" />
-    <Compile Include="Upload\_stg\ColumnMap.cs" />
-    <Compile Include="Upload\UploadMap.cs" />
-    <Compile Include="Upload\IntegrationStg.cs" />
-    <Compile Include="Upload\UploadContactsView.cs" />
-    <Compile Include="Upload\UploadContacts.cs" />
-    <Compile Include="Upload\UploadException.cs" />
-    <Compile Include="Upload\UploadSumarize.cs" />
-    <Compile Include="Upload\UploadReader.cs" />
-    <Compile Include="Upload\UploadFiles.cs" />
-    <Compile Include="Entities\Props\GenderView.cs" />
     <Compile Include="Query\MemberQuery.cs" />
     <Compile Include="Db\DalTrace.cs" />
     <Compile Include="Db\DalPro.cs" />
     <Compile Include="Db\DbConfig.cs" />
     <Compile Include="Entities\PropsEnum\EntityEnumsView.cs" />
-    <Compile Include="Entities\Props\BranchView.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Entities\Props\ChargeView.cs" />
-    <Compile Include="Entities\Props\CityView.cs" />
     <Compile Include="Entities\PropsEnum\EntityEnum.cs" />
-    <Compile Include="Entities\Contacts\ContactCategories.cs" />
-    <Compile Include="Db\DbPro.cs" />
     <Compile Include="Entities\IEntityProp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Pro.Lib.en.Designer.cs" />
@@ -129,7 +100,6 @@
     <Compile Include="Entities\EntityPro.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TraceHelper.cs" />
-    <Compile Include="Upload\_stg\UploadStg.cs" />
     <Compile Include="Web\RouteInfo.cs" />
     <Compile Include="_Assist\Assist\AckEnum.cs" />
     <Compile Include="_Assist\Assist\AssistsException.cs" />
@@ -243,9 +213,9 @@
   <ItemGroup>
     <Folder Include="Api\_Ex\" />
     <Folder Include="Common\" />
-    <Folder Include="Media\" />
+    <Folder Include="Entities\Contacts\_ex\" />
+    <Folder Include="Entities\Props\_ex\" />
     <Folder Include="obj\" />
-    <Folder Include="Upload\_ex\" />
     <Folder Include="_MControl\" />
     <Folder Include="_Remoting\App\Registry\" />
   </ItemGroup>

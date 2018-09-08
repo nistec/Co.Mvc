@@ -10,7 +10,7 @@ using Nistec.Web.Controls;
 using ProNetcell.Data;
 using ProNetcell.Data.Entities;
 using ProNetcell.Data.Entities.Props;
-using Pro.Netcell;
+using ProNetcell;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,12 +30,6 @@ namespace ProNetcell.Data.Entities
         public const string Registry = "Registry";
     }
 
-    //public enum EntityGroups2
-    //{
-    //    Enums,
-    //    Reports,
-    //    Registry,
-    //}
     public class EntityPro
     {
 
@@ -44,18 +38,12 @@ namespace ProNetcell.Data.Entities
 
             switch (type)
             {
-                //case ListsTypes.Accounts:
-                //    AccountsView.Refresh(accountId);
+                //case ListsTypes.Branch:
+                //    BranchView.Refresh(accountId);
                 //    break;
-                case ListsTypes.Branch:
-                    BranchView.Refresh(accountId);
-                    break;
                 case ListsTypes.Categories:
                     CategoryView.Refresh(accountId);
                     break;
-                //case ListsTypes.Users:
-                //    UserView.Refresh(accountId);
-                //    break;
             }
 
         }
@@ -205,7 +193,7 @@ namespace ProNetcell.Data.Entities
                 list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
             if (list == null || list.Count()==0)
             {
-                using (var db = DbContext.Create<DbPro>())
+                using (var db = DbContext.Create<DbNetcell>())
                 {
                     list = db.EntityItemList<T>(TableName, "AccountId", AccountId);
                 }
@@ -229,7 +217,7 @@ namespace ProNetcell.Data.Entities
                 list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
             if (list == null || list.Count() == 0)
             {
-                using (var db = DbContext.Create<DbPro>())
+                using (var db = DbContext.Create<DbNetcell>())
                 {
                     list = db.EntityItemList<T>(TableName, "AccountId", AccountId, "EnumType", EnumType);
                 }
@@ -306,7 +294,7 @@ namespace ProNetcell.Data.Entities
         {
             var parameters = DataParameter.GetSqlList("PropType", "campaign", "PropId", PropId, "Replacement", 0, "AccountId", AccountId);
             DataParameter.AddOutputParameter(parameters, "Result", System.Data.SqlDbType.Int, 4);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 db.ExecuteCommandNonQuery("sp_Property_Remove", parameters.ToArray(), System.Data.CommandType.StoredProcedure);
             }
@@ -323,7 +311,7 @@ namespace ProNetcell.Data.Entities
 
             var parameters = DataParameter.GetSqlList("PropType", PropType, "PropId", PropId, "Replacement", Replacement, "AccountId", AccountId);
             DataParameter.AddOutputParameter(parameters, "Result", System.Data.SqlDbType.Int, 4);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 db.ExecuteCommandNonQuery("sp_Property_Remove", parameters.ToArray(), System.Data.CommandType.StoredProcedure);
             }
@@ -339,28 +327,26 @@ namespace ProNetcell.Data.Entities
         {
             switch (entity)
             {
-                case "branch":
-                    return BranchView.TableName;
-                case "charge":
-                    return ChargeView.TableName;
-                case "city":
-                    return CityView.TableName;
-                //case "place":
-                //    return PlaceView.TableName;
-                case "region":
-                    return RegionView.TableName;
-                case "category":
-                    return CategoryView.TableName;
-                case "status":
-                    return StatusView.TableName;
-                case "role":
-                    return RoleView.TableName;
-                case "exenum1":
-                    return EnumView.TableName + "1";
-                case "exenum2":
-                    return EnumView.TableName + "2";
-                case "exenum3":
-                    return EnumView.TableName + "3";
+                //case "branch":
+                //    return BranchView.TableName;
+                //case "charge":
+                //    return ChargeView.TableName;
+                //case "city":
+                //    return CityView.TableName;
+                //case "region":
+                //    return RegionView.TableName;
+                //case "category":
+                //    return CategoryView.TableName;
+                //case "status":
+                //    return StatusView.TableName;
+                //case "role":
+                //    return RoleView.TableName;
+                //case "exenum1":
+                //    return EnumView.TableName + "1";
+                //case "exenum2":
+                //    return EnumView.TableName + "2";
+                //case "exenum3":
+                //    return EnumView.TableName + "3";
                 default:
                     return "";
             }

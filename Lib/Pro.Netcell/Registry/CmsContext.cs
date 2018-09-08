@@ -6,7 +6,7 @@ using Nistec.Data.Entities;
 using ProNetcell.Data;
 using Nistec.Data;
 using Nistec;
-using Pro.Netcell;
+using ProNetcell;
 using System.Data;
 using Nistec.Web.Controls;
 using ProNetcell.Data.Entities;
@@ -66,7 +66,7 @@ namespace ProNetcell.Data.Registry
                 ,"FacebookCompletedCode", cs.FacebookCompletedCode
             };
             var parameters = DataParameter.GetSql(args);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 int res = db.ExecuteCommandNonQuery("sp_Cms_Page_Settings_Update_v1", parameters, System.Data.CommandType.StoredProcedure);
                 return res;
@@ -82,7 +82,7 @@ namespace ProNetcell.Data.Registry
                 ,"Content", Content
             };
             var parameters = DataParameter.GetSql(args);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 int res = db.ExecuteCommandNonQuery("sp_Cms_Content_Update", parameters, System.Data.CommandType.StoredProcedure);
                 return res;
@@ -98,7 +98,7 @@ namespace ProNetcell.Data.Registry
                 ,"Content", v.Content
             };
             var parameters = DataParameter.GetSql(args);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 int res = db.ExecuteCommandNonQuery("sp_Cms_Content_Update", parameters, System.Data.CommandType.StoredProcedure);
                 return res;
@@ -119,7 +119,7 @@ namespace ProNetcell.Data.Registry
                 ,"Script", builder.FieldScript
             };
             var parameters = DataParameter.GetSql(args);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 int res = db.ExecuteCommandNonQuery("sp_Registry_Fields_Update", parameters, System.Data.CommandType.StoredProcedure);
                 return res;
@@ -132,7 +132,7 @@ namespace ProNetcell.Data.Registry
 
         public static CmsPageSettings GetPageSettings(int AccountId, string PageType)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 var cs = db.ExecuteSingle<CmsPageSettings>("sp_Cms_Settings_Get", "AccountId", AccountId, "PageType", PageType);
                 if (cs == null)
@@ -158,12 +158,12 @@ namespace ProNetcell.Data.Registry
         }
         public static CmsRegistryPage GetRegistryPage(string Folder, string PageType)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.ExecuteSingle<CmsRegistryPage>("sp_Cms_Page_Get", "Folder", Folder, "PageType", PageType, "IsCms", true);
         }
         public static CmsRegistryHead GetRegistryHead(string Folder)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.ExecuteSingle<CmsRegistryHead>("sp_Cms_Page_Get", "Folder", Folder, "PageType", "Head");
         }
 
@@ -178,7 +178,7 @@ namespace ProNetcell.Data.Registry
                 ,"PageType", ext[1]
                 ,"Section", ext[2]
             };
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 return db.ExecuteSingle<CmsContent>("sp_Cms_Content_Get", args);
             }
@@ -190,7 +190,7 @@ namespace ProNetcell.Data.Registry
                 ,"PageType", PageType
                 ,"Section", Section
             };
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 return db.ExecuteSingle<CmsContent>("sp_Cms_Content_Get", args);
             }
@@ -203,7 +203,7 @@ namespace ProNetcell.Data.Registry
 
         public static IEnumerable<CmsContentSectionInfo> GetContentList(int AccountId, string PageType)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.ExecuteList<CmsContentSectionInfo>("sp_Cms_Content_List", "AccountId", AccountId, "PageType", PageType);
         }
         //public static IEnumerable<CmsPageItem> GetContentList(int AccountId)
@@ -218,7 +218,7 @@ namespace ProNetcell.Data.Registry
                 "AccountId", AccountId
                 ,"PageType", "Registry_Fields"
             };
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 return db.ExecuteList<RegistryInputField>("sp_Cms_Content_List", args);
             }
@@ -226,7 +226,7 @@ namespace ProNetcell.Data.Registry
 
         public static IEnumerable<RegistryInputFieldTemplate> GetInputFieldsTemplate(int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.EntityItemList<RegistryInputFieldTemplate>("Registry_Fields_Template", "AccountId", AccountId);
         }
         #endregion

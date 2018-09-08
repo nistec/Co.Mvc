@@ -45,7 +45,7 @@ namespace ProNetcell.Data
 
         protected override void EntityBind()
         {
-            //base.SetConnection("cnn_pro");//, Cnn, DBProvider.SqlServer);
+            //base.SetConnection("cnn_pro");//, Cnn, ProNetcellvider.SqlServer);
             //base.Items.SetEntity("Contact", "Person.Contact", EntitySourceType.Table, new EntityKeys("ContactID"));
             //base.SetEntity<ActiveContact>();
         }
@@ -54,7 +54,7 @@ namespace ProNetcell.Data
         {
             get
             {
-                return base.GetLocalizer<ProLocalizer>();
+                return base.GetLocalizer<NetcellLocalizer>();
             }
         }
 

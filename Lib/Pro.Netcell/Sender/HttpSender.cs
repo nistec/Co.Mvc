@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 
-namespace Pro.Netcell.Sender
+namespace ProNetcell.Sender
 {
     //public class SenderResponse
     //{

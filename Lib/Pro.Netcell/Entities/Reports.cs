@@ -6,9 +6,9 @@ using Nistec.Data.Entities;
 using ProNetcell.Data;
 using Nistec.Data;
 using Nistec;
-using Pro.Netcell;
+using ProNetcell;
 using System.Data;
-using Pro.Netcell.Query;
+using ProNetcell.Query;
 
 namespace ProNetcell.Data.Entities
 {
@@ -21,12 +21,12 @@ namespace ProNetcell.Data.Entities
 
         public static DataTable DoReport(int AccountId, string ReportType)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.ExecuteDataTable("sp_Report", "AccountId", AccountId, "ReportType", ReportType);
         }
         public static string DoStatisticReport(StatisticReportQuery q)//int AccountId, string ReportType, int Campaign)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.ExecuteDataTable("sp_Report", "AccountId", q.AccountId, "ReportType", q.ReportType, "Campaign", q.Campaign, "SignupDateFrom", q.SignupDateFrom, "SignupDateTo", q.SignupDateTo).ToCSV(false, false);
         }
         public static string Dashbord_Members(int AccountId)
@@ -41,12 +41,12 @@ namespace ProNetcell.Data.Entities
 
         public static DataTable SendReportData(int AuthAccount, int Platform, DateTime DateFrom, DateTime DateTo, int BatchId = 0, string Target = null, bool EnableNotif = false)
         {
-            using (var db = DbContext.Create<DbProxy>())
+            using (var db = DbContext.Create<ProNetcellxy>())
             return db.ExecuteDataTable("sp_Trans_Items_Report", "AccountId", AuthAccount, "Platform", Platform, "DateFrom", DateFrom, "DateTo", DateTo, "BatchId", BatchId, "Target", Target);
         }
         public static string SendReport(int AuthAccount, int Platform, DateTime DateFrom, DateTime DateTo, int BatchId = 0, string Target = null, bool EnableNotif = false)
         {
-            using (var db = DbContext.Create<DbProxy>())
+            using (var db = DbContext.Create<ProNetcellxy>())
             return db.ExecuteJson("sp_Trans_Items_Report", "AccountId", AuthAccount, "Platform", Platform, "DateFrom", DateFrom, "DateTo", DateTo, "BatchId", BatchId, "Target", Target);
         }
 
@@ -75,12 +75,12 @@ namespace ProNetcell.Data.Entities
 
         public static SendMessageView BatchContentView(int BatchId)
         {
-            using (var db = DbContext.Create<DbProxy>())
+            using (var db = DbContext.Create<ProNetcellxy>())
             return db.ExecuteSingle<SendMessageView>("sp_Batch_Message_View", "BatchId", BatchId);
         }
         //public static string BatchContentView(int BatchId)
         //{
-        //    return DbProxy.Instance.ExecuteJson("sp_Batch_Message_View", "BatchId", BatchId);
+        //    return ProNetcellxy.Instance.ExecuteJson("sp_Batch_Message_View", "BatchId", BatchId);
         //}
 /*
 [BatchId]

@@ -7,7 +7,7 @@ using ProNetcell.Data;
 using Nistec.Data;
 using Nistec.Channels.RemoteCache;
 using Nistec.Web.Controls;
-using Pro.Netcell;
+using ProNetcell;
 
 namespace ProNetcell.Data.Entities
 {
@@ -16,12 +16,12 @@ namespace ProNetcell.Data.Entities
     {
         //public static string LookupAccountFolder(int AccountId)
         //{
-        //    using (var db = DbContext.Create<DbPro>())
+        //    using (var db = DbContext.Create<ProNetcell>())
         //        return db.QueryScalar<string>("select Path from Ad_Account where AccountId=@AccountId", null, "AccountId", AccountId);
         //}
         //public static int LookupAccountFolder(string folder)
         //{
-        //    using (var db = DbContext.Create<DbPro>())
+        //    using (var db = DbContext.Create<ProNetcell>())
         //        return db.QueryScalar<int>("select AccountId from Ad_Account where Path=@Path", 0, "Path", folder);
         //}
 
@@ -64,7 +64,7 @@ namespace ProNetcell.Data.Entities
                 "BlockCms",v.BlockCms,
                 "Design",v.Design 
                 };
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 result = db.ExecuteNonQuery("sp_Account_Register", args);
 
             return result;
@@ -130,7 +130,7 @@ namespace ProNetcell.Data.Entities
 
 
     [EntityMapping("AccountProperty")]
-    public class AccountsView : EntityItem<DbPro>, IEntityPro
+    public class AccountsView : EntityItem<DbNetcell>, IEntityPro
     {
         #region override
 
@@ -168,19 +168,19 @@ namespace ProNetcell.Data.Entities
 
         public static string AccountsList()
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.QueryJson(TableName);
         }
 
         public static IEnumerable<AccountsView> ViewList()
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.EntityItemList<AccountsView>(TableName);
         }
 
         public static AccountsView View(int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.EntityItemGet<AccountsView>(TableName, "AccountId", AccountId);
         }
 
@@ -227,7 +227,7 @@ namespace ProNetcell.Data.Entities
 
         public T Get<T>(int PropId) where T : IEntityItem
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.EntityItemGet<T>(TableName, "AccountId", PropId);
         }
 
@@ -265,7 +265,7 @@ namespace ProNetcell.Data.Entities
                 //"RecieptEvent",v.RecieptEvent,
                 //"RecieptAddress",v.RecieptAddress
                 };
-                using (var db = DbContext.Create<DbPro>())
+                using (var db = DbContext.Create<DbNetcell>())
                 result = db.ExecuteNonQuery("sp_Account_Property_Save", args);
             }
 
@@ -291,7 +291,7 @@ namespace ProNetcell.Data.Entities
     }
   
     [EntityMapping("AccountProperty")]
-    public class AccountsCreditView : EntityItem<DbPro>, IEntityPro
+    public class AccountsCreditView : EntityItem<DbNetcell>, IEntityPro
     {
         #region override
 
@@ -315,7 +315,7 @@ namespace ProNetcell.Data.Entities
 
         public static AccountsCreditView View(int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.EntityItemGet<AccountsCreditView>(TableName, "AccountId", AccountId);
         }
 
@@ -345,7 +345,7 @@ namespace ProNetcell.Data.Entities
 
         public T Get<T>(int PropId) where T : IEntityItem
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.EntityItemGet<T>(TableName, "AccountId", PropId);
         }
 
@@ -363,7 +363,7 @@ namespace ProNetcell.Data.Entities
                 "RecieptEvent",v.RecieptEvent,
                 "RecieptAddress",v.RecieptAddress
                 };
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 result = db.ExecuteNonQuery("sp_Account_Property_Credit_Save", args);
 

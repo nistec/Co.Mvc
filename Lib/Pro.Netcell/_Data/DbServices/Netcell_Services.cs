@@ -56,7 +56,7 @@ namespace Netcell.Data.DbServices
 
         protected override void EntityBind()
         { 
-            //base.SetConnection("AdventureWorks", Cnn, DBProvider.SqlServer);
+            //base.SetConnection("AdventureWorks", Cnn, ProNetcellvider.SqlServer);
             //base.SetEntity("Contact", "Person.Contact", new EntityKeys("ContactID"));
             //base.SetEntity<ActiveContact>();
         }

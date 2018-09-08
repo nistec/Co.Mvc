@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Pro.Netcell.Sender
+namespace ProNetcell.Sender
 {
     public class ApiRequest
     {
@@ -55,7 +55,7 @@ namespace Pro.Netcell.Sender
                 );
             parameters[0].Direction = System.Data.ParameterDirection.Output;
             
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 int res = db.ExecuteCommandNonQuery("sp_Targets_SendByCategory", parameters, System.Data.CommandType.StoredProcedure);
                 SentCount = Types.ToInt(parameters[0].Value);
@@ -297,7 +297,7 @@ namespace Pro.Netcell.Sender
         }
         public static MsgTarget[] GetTargetList(int AccountId, int UserId, bool IsPersonal)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 var targets = db.ExecuteList<MsgTarget>("sp_Targets_Get", "AccountId", AccountId, "UserId", UserId, "IsPersonal", IsPersonal);
                 return targets == null ? null : targets.ToArray();
@@ -309,7 +309,7 @@ namespace Pro.Netcell.Sender
             {
                 throw new ArgumentException("Invalid CategoryId");
             }
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             {
                 if (IsAll)
                     return db.ExecuteList<Target>("sp_Targets_Category", "AccountId", AccountId, "IsPersonal", IsPersonal, "Platform", 1, "CategoryId", 0, "IsAll", true);
@@ -325,12 +325,12 @@ namespace Pro.Netcell.Sender
             }
             if (IsAll)
                 Categories = null;
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.ExecuteList<Target>("sp_Targets_Category_v1", "AccountId", AccountId, "Categories", Categories, "Platform", 1, "PersonalFields", PersonalFields, "IsPersonal", IsPersonal, "IsAll", true);//IsMultimedia
         }
         public static IEnumerable<Target> GetTargetsAll(int AccountId, bool IsPersonal)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
                 return db.ExecuteList<Target>("sp_Targets_Category", "AccountId", AccountId, "IsPersonal", IsPersonal, "Platform", 1, "CategoryId", 0, "IsAll", true);
         }
         #endregion

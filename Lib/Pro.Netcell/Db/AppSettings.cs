@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ProNetcell.Data
 {
-    public class AppSettingsContext: DbProContext<AppSettings>
+    public class AppSettingsContext: DbNetcellContext<AppSettings>
     {
         public static V GetValue<V>(string key, V defaultValue)
         {

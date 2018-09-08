@@ -38,7 +38,7 @@ namespace Netcell.Data
 
         //public static IDbCmd GetDbCmd
         //{
-        //    get { return DbFactory.Create(DBRule.CnnNetcell, DBProvider.SqlServer); }
+        //    get { return DbFactory.Create(DBRule.CnnNetcell, ProNetcellvider.SqlServer); }
         //}
 
         //public static DataRow GetEntity(string tableName, string where, params object[] parameters)

@@ -7,12 +7,12 @@ using ProNetcell.Data;
 using Nistec.Data;
 using Nistec.Channels.RemoteCache;
 using Nistec.Web.Controls;
-using ProNetcell;
+using Pro.Netcell;
 
 namespace ProNetcell.Data.Entities.Props
 {
     [EntityMapping("Categories", "vw_Categories")]
-    public class CategoryView : EntityItem<DbNetcell>, IEntityPro
+    public class CategoryView : EntityItem<DbPro>, IEntityPro
     {
         #region override
 
@@ -43,9 +43,9 @@ namespace ProNetcell.Data.Entities.Props
             CacheRemove(AccountId);
             if(dbRefresh)
             {
-                DbNetcellContext<CategoryView>.DbRefresh(ListsTypes.Categories, AccountId);
+                DbProContext<CategoryView>.DbRefresh(ListsTypes.Categories, AccountId);
 
-                //using(var db=DbContext.Create<ProNetcell>())
+                //using(var db=DbContext.Create<DbPro>())
                 //{
                 //    db.ExecuteNonQuery("sp_Entity_Refresh","Entity",Lists.GetListsType(ListsTypes.Categories), "AccountId", AccountId);
                 //}
@@ -54,7 +54,7 @@ namespace ProNetcell.Data.Entities.Props
 
         public static CategoryView View(int ItemId)
         {
-            using (var db = DbContext.Create<DbNetcell>())
+            using (var db = DbContext.Create<DbPro>())
                 return db.EntityItemGet<CategoryView>(TableName, "CategoryId", ItemId);
         }
 
@@ -89,13 +89,13 @@ namespace ProNetcell.Data.Entities.Props
 
         public T Get<T>(int PropId) where T : IEntityItem
         {
-            using (var db = DbContext.Create<DbNetcell>())
+            using (var db = DbContext.Create<DbPro>())
                 return db.EntityItemGet<T>(ViewName, "CategoryId", PropId);
         }
 
         public static int DoDelete(int PropId, int AccountId)
         {
-            using (var db = DbContext.Create<DbNetcell>())
+            using (var db = DbContext.Create<DbPro>())
             {
                 int result = 0;
                 result = db.EntityItemDelete(CategoryView.TableName,new object[]{"CategoryId", PropId});

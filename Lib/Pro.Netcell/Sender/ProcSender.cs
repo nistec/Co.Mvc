@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pro.Netcell.Sender
+namespace ProNetcell.Sender
 {
     public class ProcSender
     {
@@ -40,7 +40,7 @@ namespace Pro.Netcell.Sender
                 "TimeStart", (a.ScheduleType == ScheduleTypes.Parts) ? a.SchedulerParts.TimeStart : null,
                 "TimeEnd", (a.ScheduleType == ScheduleTypes.Parts) ? a.SchedulerParts.TimeEnd : null
                 );
-            using (var db = DbContext.Create<DbProxy>())
+            using (var db = DbContext.Create<ProNetcellxy>())
             {
                 var res = db.ExecuteCommand<ApiResult>("sp_Send_Message_Co", parameters, System.Data.CommandType.StoredProcedure);
                 return res;
@@ -78,7 +78,7 @@ namespace Pro.Netcell.Sender
 
                 );
 
-            using (var db = DbContext.Create<DbProxy>())
+            using (var db = DbContext.Create<ProNetcellxy>())
             {
                 var res = db.ExecuteCommand<ApiResult>("sp_Send_Message_Co", parameters, System.Data.CommandType.StoredProcedure);
                 return res;

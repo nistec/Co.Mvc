@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pro.Netcell.Sender
+namespace ProNetcell.Sender
 {
     public class ApiResult : IEntityItem
     {

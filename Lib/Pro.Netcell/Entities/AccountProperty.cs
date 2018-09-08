@@ -20,7 +20,7 @@ namespace ProNetcell.Data.Entities
 
         public static bool ValidateRule(int AccountId, AccountsRules rule)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.QueryScalar<bool>("select " + rule.ToString() + " from AccountProperty where AccountId=@AccountId", false, "AccountId", AccountId);
         }
     }
@@ -30,18 +30,18 @@ namespace ProNetcell.Data.Entities
 
         public static AccountProperty View(int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.EntityItemGet<AccountProperty>("AccountProperty", "AccountId", AccountId);
         }
 
         public static int LookupAuthAccount(int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.QueryScalar<int>("select AuthAccount from AccountProperty where AccountId=@AccountId",0, "AccountId", AccountId);
         }
         public static string LookupAccountFolder(int AccountId)
         {
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<DbNetcell>())
             return db.QueryScalar<string>("select Path from AccountProperty where AccountId=@AccountId", null, "AccountId", AccountId);
         }
         #region properties
