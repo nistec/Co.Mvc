@@ -1,6 +1,4 @@
-﻿//using Pro.Data;
-//using Pro.Data.Entities;
-using Nistec;
+﻿using Nistec;
 using Nistec.Generic;
 using Nistec.Data;
 using Nistec.Data.Entities;
@@ -12,12 +10,9 @@ using System.Web;
 using System.Web.Mvc;
 using Pro.Mvc.Models;
 using System.Data;
-//using Pro.Lib;
-//using Pro.Lib.Upload;
-//using Pro.Lib.Sender;
-//using Pro.Lib.Query;
 using ProNetcell.Data.Entities;
 using Pro.Lib.Upload;
+using ProNetcell.Query;
 
 namespace Pro.Mvc.Controllers
 {
@@ -30,7 +25,193 @@ namespace Pro.Mvc.Controllers
             return View(true);
         }
 
+        #region Contacts query
 
+        [HttpGet]
+        public ActionResult Contacts()
+        {
+            MemberQuery query = new MemberQuery(Request.QueryString, 11);
+            var su = GetSignedUser(false);
+            if (su == null)
+            {
+                return RedirectToLogin();
+            }
+            query.AccountId = su.AccountId;
+            query.UserId = su.UserId;
+            query.ExType = su.GetDataValue<int>("ExType");
+            //query.QueryType = 1;
+            return View(true, query);
+        }
+
+        [HttpPost]
+        [ActionName("Contacts")]
+        public ActionResult ContactsPost()
+        {
+            MemberQuery query = new MemberQuery(Request.Form, 11);
+            var su = GetSignedUser(false);
+            if (su == null)
+            {
+                return RedirectToLogin();
+            }
+            query.AccountId = su.AccountId;
+            query.UserId = su.UserId;
+            query.ExType = su.GetDataValue<int>("ExType");
+            //query.QueryType = 0;
+            return View(true, query);
+        }
+
+
+
+        [HttpPost]
+        public JsonResult GetContactsTargets(
+           int QueryType,
+           int AccountId,
+           int UserId,
+           string ContactId,
+           string ExKey,
+           string CellNumber,
+           string Email,
+           string Name,
+           string Address,
+           string City,
+           string Category,
+           //int Region,
+           //string Place,
+           //string Branch,
+           string ExText1,
+           string ExText2,
+           string ExText3,
+           //int Status,
+           int BirthdayMonth,
+           DateTime? JoinedDateFrom,
+           DateTime? JoinedDateTo,
+           int AgeFrom,
+           int AgeTo)
+        {
+            ResultModel model = null;
+            try
+            {
+
+                string key = string.Format("GetTargets_{0}_{1}", AccountId, UserId);
+                CacheRemove(key);
+
+                MemberQuery query = new MemberQuery()
+                {
+                    AccountId = AccountId,
+                    UserId = UserId,
+                    Address = Address,
+                    AgeFrom = AgeFrom,
+                    AgeTo = AgeTo,
+                    BirthdayMonth = BirthdayMonth,
+                    //Branch = Branch,
+                    Category = Category,
+                    City = City,
+                    //ContactRule = ContactRule,
+                    
+                    //JoinedDateFrom = JoinedDateFrom,
+                    //JoinedDateTo = JoinedDateTo,
+                    ////ContactId = ContactId,
+                    //ExKey = ExKey,
+                    //CellNumber = CellNumber,
+                    //Email = Email,
+                    //Name = Name,
+                    //QueryType = QueryType,
+                    //ExField1 = ExText1,
+                    //ExField2 = ExText2,
+                    //ExField3 = ExText3,
+                    PageNum = 0,
+                    PageSize = 999999999
+                };
+                query.Normelize();
+                var totalRows = MemberContext.ListQueryTargetsView(query);
+                ViewBag.TargetsCount = totalRows;
+
+                model = new ResultModel() { Status = totalRows, Title = "איתור נמענים", Message = string.Format("אותרו {0} נמענים", totalRows), Link = null, OutputId = totalRows };
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = -1, Title = "איתור נמענים", Message = "Error: " + ex.Message, Link = null, OutputId = 0 };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public ActionResult MailTargets()
+        {
+            MemberQuery query = new MemberQuery(Request.Form, 13);
+            query.AccountId = GetAccountId();
+            query.UserId = GetUser();
+            query.QueryType = 13;
+            return View(query);
+        }
+
+        public ActionResult ContactsExport()
+        {
+            MemberQuery query = new MemberQuery(Request.Form, 12);
+            query.AccountId = GetAccountId();
+            query.UserId = GetUser();
+            query.QueryType = 12;
+            query.Normelize();
+            var d = MemberContext.ListQueryDataView(query);
+            return CsvActionResult.ExportToCsv(d, "Targets");
+
+            //return View(query);
+        }
+        [HttpPost]
+        public ActionResult DoContactsExport(string q)
+        {
+            //ContactQuery query = new ContactQuery(Request.Form);
+            //query.AccountId = GetAccountId();
+            //query.UserId = GetUser();
+            //query.QueryType = 20;
+            //query.Normelize();
+            if (q != null)
+            {
+                MemberQuery query = MemberQuery.Deserialize(q);
+                ViewBag.ContactQuery = null;
+                var d = MemberContext.ListQueryDataView(query);
+                return CsvActionResult.ExportToCsv(d, "Targets");
+            }
+            else
+            {
+                ViewBag.Message = "אירעה שגיאה לא הופקו נתונים לקובץ";
+                return null;
+            }
+        }
+
+        public ActionResult ExportTargets()
+        {
+            int uid = GetUser();
+            int accountId = GetAccountId();
+            var d = TargetView.ViewData(accountId, uid);
+            return CsvActionResult.ExportToCsv(d, "Targets");
+        }
+
+        protected DataTable GetTargetsData()
+        {
+            int uid = GetUser();
+            int accountId = GetAccountId();
+            return TargetView.ViewData(accountId, uid);
+        }
+        protected IList<TargetView> GetTargetsList()
+        {
+            int uid = GetUser();
+            int accountId = GetAccountId();
+            return TargetView.ViewList(accountId, uid);
+        }
+
+        protected string GetTargetsJson(bool isPrsonal)
+        {
+            int uid = GetUser();
+            int accountId = GetAccountId();
+            var list = TargetView.ViewList(accountId, uid);
+            return TargetView.ToJson(list, isPrsonal);
+        }
+        #endregion
+
+
+
+#if (false)
         #region Contacts query
 
         [HttpGet]
@@ -214,7 +395,7 @@ namespace Pro.Mvc.Controllers
             var list = TargetView.ViewList(accountId, uid);
             return TargetView.ToJson(list, isPrsonal);
         }
-        #endregion 
+        #endregion
 
         #region Contacts
 
@@ -497,5 +678,6 @@ namespace Pro.Mvc.Controllers
 
         #endregion
 
+#endif
     }
 }
