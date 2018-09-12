@@ -100,7 +100,8 @@ class app_accounts_grid {
 
                     { name: 'AccTypeName', type: 'string' },
                     { name: 'AccountCategoryName', type: 'string' },
-                   
+                    { name: 'Ephone_Id', type: 'number' },
+                    { name: 'Member_Id', type: 'number' },
                     { name: 'TotalRows', type: 'number' }
                 ],
                 id: 'AccountId',
@@ -238,11 +239,16 @@ class app_accounts_grid {
                 var divLeft = $(//"<div style='margin: 10px;'><b>קוד חיוב:</b> " + datarecord.ChargeName + "</div>" +
                     "<div style='margin: 10px;'><b>נתיב:</b> " + datarecord.Path + "</div>" +
                     "<div style='margin: 10px;'><b>סניף:</b> " + datarecord.Branch + "</div>" +
-                    "<div style='margin: 10px;'><b>מועד עדכון:</b> " + datarecord.LastUpdate.toLocaleDateString() + "</div>");
+                    "<div style='margin: 10px;'><b>חשבון תקשורת:</b> " + datarecord.Ephone_Id + "</div>" +
+                    "<div style='margin: 10px;'><b>מועד הצטרפות:</b> " + app.toLocalDateTimeString(datarecord.CreationDate) + "</div>" +
+                    "<div style='margin: 10px;'><b>מועד עדכון:</b> " + app.toLocalDateTimeString(datarecord.LastUpdate) + "</div>");
 
                 divLeft.rtl = true;
-                var divRight = $("<div style='margin: 10px;'><b>דואל:</b> " + datarecord.Email + "</div>" +
-                    "<div style='margin: 10px;'><b>טלפון:</b> " + datarecord.Phone + "</div>" +
+                var divRight = $(
+                    "<div style='margin: 10px;'><b>איש קשר:</b> " + datarecord.ContactName + "</div>" +
+                    "<div style='margin: 10px;'><b>דואל:</b> " + app.toEmailLink(datarecord.Email) + "</div>" +
+                    "<div style='margin: 10px;'><b>טלפון:</b> " + app.toPhoneLink(datarecord.Phone) + "</div>" +
+                    "<div style='margin: 10px;'><b>מנוי:</b> " + app.toPhoneLink(datarecord.Member_Id) + "</div>" +
                     "<div style='margin: 10px;'><b>ת.ז:</b> " + datarecord.IdNumber + "</div>");
 
 
@@ -297,7 +303,7 @@ class app_accounts_grid {
 
 
                 initLabelsGrid(labels, index, rcdid, _slf.NContainer, "#jqxgrid-panel");
-                initUsersGrid(users, index, rcdid, _slf.NContainer, "#jqxgrid-panel", slf.UInfo);
+                initUsersGrid(users, index, rcdid, _slf.NContainer, "#jqxgrid-panel", _slf.UInfo);
                 initPricesGrid(prices, index, rcdid, _slf.NContainer, "#jqxgrid-panel");
                 initCreditGrid(credit, index, rcdid, _slf.NContainer, "#jqxgrid-panel");
                 
@@ -363,15 +369,15 @@ class app_accounts_grid {
                          //    //return '<div style="text-align:center"><a href="#" onclick="memberEdit(' + value + ')" >הצג</a></div>';
                          //}
                     },
+                    //{
+                    //    text: 'ת.ז', dataField: 'IdNumber', width: 100, cellsalign: 'right', align: 'center',
+                    //    filtertype: "custom",
+                    //    createfilterpanel: function (datafield, filterPanel) {
+                    //        app_jqxgrid.buildFilterPanel(filterPanel, datafield);
+                    //    }
+                    //},
                     {
-                        text: 'ת.ז', dataField: 'IdNumber', width: 100, cellsalign: 'right', align: 'center',
-                        filtertype: "custom",
-                        createfilterpanel: function (datafield, filterPanel) {
-                            app_jqxgrid.buildFilterPanel(filterPanel, datafield);
-                        }
-                    },
-                    {
-                        text: 'שם לקוח', dataField: 'AccountName', width: 160, cellsalign: 'right', align: 'center',
+                        text: 'שם לקוח', dataField: 'AccountName', width: 200, cellsalign: 'right', align: 'center',
                         filtertype: "custom",
                         createfilterpanel: function (datafield, filterPanel) {
                             app_jqxgrid.buildFilterPanel(filterPanel, datafield);

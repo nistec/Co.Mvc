@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pro.Netcell", "Lib\Pro.Netc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pro.Upload", "Lib\Pro.Upload\Pro.Upload.csproj", "{81B5FBD9-1D2F-4482-AC96-AB6801325884}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pro.Ad", "Lib\Pro.Ad\Pro.Ad.csproj", "{6D7C1DF9-8921-4C37-B91D-EBBF91464595}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{81B5FBD9-1D2F-4482-AC96-AB6801325884}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81B5FBD9-1D2F-4482-AC96-AB6801325884}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81B5FBD9-1D2F-4482-AC96-AB6801325884}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D7C1DF9-8921-4C37-B91D-EBBF91464595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D7C1DF9-8921-4C37-B91D-EBBF91464595}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D7C1DF9-8921-4C37-B91D-EBBF91464595}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D7C1DF9-8921-4C37-B91D-EBBF91464595}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,6 +116,7 @@ Global
 		{14363797-B532-4D77-9B48-CF8614076079} = {5FC1F255-405A-4B34-BF33-D90FB65A696C}
 		{D47586C0-2543-4DE0-B1B2-129D61ECB006} = {47838BA7-F45D-4328-B853-14D29E020FD5}
 		{81B5FBD9-1D2F-4482-AC96-AB6801325884} = {47838BA7-F45D-4328-B853-14D29E020FD5}
+		{6D7C1DF9-8921-4C37-B91D-EBBF91464595} = {47838BA7-F45D-4328-B853-14D29E020FD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D5A13451-8663-4248-A05B-CEA95F5E1AAB}

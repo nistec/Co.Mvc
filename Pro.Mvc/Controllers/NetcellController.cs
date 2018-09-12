@@ -24,11 +24,10 @@ namespace Pro.Mvc.Controllers
         {
             return View(true);
         }
-
-        #region Contacts query
+        #region Members query
 
         [HttpGet]
-        public ActionResult Contacts()
+        public ActionResult Members()
         {
             MemberQuery query = new MemberQuery(Request.QueryString, 11);
             var su = GetSignedUser(false);
@@ -44,8 +43,8 @@ namespace Pro.Mvc.Controllers
         }
 
         [HttpPost]
-        [ActionName("Contacts")]
-        public ActionResult ContactsPost()
+        [ActionName("Members")]
+        public ActionResult MembersPost()
         {
             MemberQuery query = new MemberQuery(Request.Form, 11);
             var su = GetSignedUser(false);
@@ -63,65 +62,72 @@ namespace Pro.Mvc.Controllers
 
 
         [HttpPost]
-        public JsonResult GetContactsTargets(
-           int QueryType,
-           int AccountId,
-           int UserId,
-           string ContactId,
-           string ExKey,
-           string CellNumber,
-           string Email,
-           string Name,
-           string Address,
-           string City,
-           string Category,
-           //int Region,
-           //string Place,
-           //string Branch,
-           string ExText1,
-           string ExText2,
-           string ExText3,
-           //int Status,
-           int BirthdayMonth,
-           DateTime? JoinedDateFrom,
-           DateTime? JoinedDateTo,
-           int AgeFrom,
-           int AgeTo)
+        public JsonResult GetMembersTargets()
         {
+            //int QueryType,
+            //int AccountId,
+            //int UserId,
+            //string MemberId,
+            //string ExKey,
+            //string CellNumber,
+            //string Email,
+            //string Name,
+            //string Address,
+            //string City,
+            //string Category,
+            ////int Region,
+            ////string Place,
+            ////string Branch,
+            //string ExText1,
+            //string ExText2,
+            //string ExText3,
+            ////int Status,
+            //int BirthdayMonth,
+            //DateTime? JoinedDateFrom,
+            //DateTime? JoinedDateTo,
+            //int AgeFrom,
+            //int AgeTo)
+
             ResultModel model = null;
             try
             {
 
-                string key = string.Format("GetTargets_{0}_{1}", AccountId, UserId);
+                var su = GetSignedUser(true);
+
+                string key = string.Format("GetTargets_{0}_{1}", su.AccountId, su.UserId);
                 CacheRemove(key);
 
-                MemberQuery query = new MemberQuery()
-                {
-                    AccountId = AccountId,
-                    UserId = UserId,
-                    Address = Address,
-                    AgeFrom = AgeFrom,
-                    AgeTo = AgeTo,
-                    BirthdayMonth = BirthdayMonth,
-                    //Branch = Branch,
-                    Category = Category,
-                    City = City,
-                    //ContactRule = ContactRule,
-                    
-                    //JoinedDateFrom = JoinedDateFrom,
-                    //JoinedDateTo = JoinedDateTo,
-                    ////ContactId = ContactId,
-                    //ExKey = ExKey,
-                    //CellNumber = CellNumber,
-                    //Email = Email,
-                    //Name = Name,
-                    //QueryType = QueryType,
-                    //ExField1 = ExText1,
-                    //ExField2 = ExText2,
-                    //ExField3 = ExText3,
-                    PageNum = 0,
-                    PageSize = 999999999
-                };
+                MemberQuery query = new MemberQuery(Request);
+                query.AccountId = su.AccountId;
+                query.UserId = su.UserId;
+
+                //MemberQuery query = new MemberQuery()
+                //{
+                //    AccountId = AccountId,
+                //    UserId = UserId,
+                //    Address = Address,
+                //    AgeFrom = AgeFrom,
+                //    AgeTo = AgeTo,
+                //    BirthdayMonth = BirthdayMonth,
+                //    //Branch = Branch,
+                //    Category = Category,
+                //    City = City,
+                //    //MemberRule = MemberRule,
+
+                //    //JoinedDateFrom = JoinedDateFrom,
+                //    //JoinedDateTo = JoinedDateTo,
+                //    ////MemberId = MemberId,
+                //    //ExKey = ExKey,
+                //    //CellNumber = CellNumber,
+                //    //Email = Email,
+                //    //Name = Name,
+                //    //QueryType = QueryType,
+                //    //ExField1 = ExText1,
+                //    //ExField2 = ExText2,
+                //    //ExField3 = ExText3,
+                //    PageNum = 0,
+                //    PageSize = 999999999
+                //};
                 query.Normelize();
                 var totalRows = MemberContext.ListQueryTargetsView(query);
                 ViewBag.TargetsCount = totalRows;
@@ -145,7 +151,7 @@ namespace Pro.Mvc.Controllers
             return View(query);
         }
 
-        public ActionResult ContactsExport()
+        public ActionResult MembersExport()
         {
             MemberQuery query = new MemberQuery(Request.Form, 12);
             query.AccountId = GetAccountId();
@@ -158,9 +164,9 @@ namespace Pro.Mvc.Controllers
             //return View(query);
         }
         [HttpPost]
-        public ActionResult DoContactsExport(string q)
+        public ActionResult DoMembersExport(string q)
         {
-            //ContactQuery query = new ContactQuery(Request.Form);
+            //MemberQuery query = new MemberQuery(Request.Form);
             //query.AccountId = GetAccountId();
             //query.UserId = GetUser();
             //query.QueryType = 20;
@@ -168,7 +174,7 @@ namespace Pro.Mvc.Controllers
             if (q != null)
             {
                 MemberQuery query = MemberQuery.Deserialize(q);
-                ViewBag.ContactQuery = null;
+                ViewBag.MemberQuery = null;
                 var d = MemberContext.ListQueryDataView(query);
                 return CsvActionResult.ExportToCsv(d, "Targets");
             }
@@ -209,6 +215,286 @@ namespace Pro.Mvc.Controllers
         }
         #endregion
 
+        #region Members
+
+        [HttpGet]
+        public ActionResult MembersUpload()
+        {
+            return View(true);
+        }
+
+        [HttpGet]
+        public ActionResult MembersRemove()
+        {
+            return View(true);
+        }
+
+        [HttpGet]
+        public ActionResult MembersAdd()
+        {
+            return View(true);
+        }
+        [HttpGet]
+        public ActionResult MemberEdit()
+        {
+            return View(true);
+        }
+        //[HttpGet]
+        //public ActionResult MemberDef(int id, int acctype)
+        //{
+        //    //var av= AccountView.Get(id);
+        //    //return Authenticate(av);
+        //    return View();
+        //}
+
+
+        //public ActionResult MembersGrid()
+        //{
+        //    return View(true);
+        //}
+
+        public ActionResult MembersQuery()
+        {
+            return View(true);
+        }
+
+        public ActionResult _MembersQuery()
+        {
+            return PartialView(true);
+        }
+
+        public JsonResult GetMembersGrid()
+        {
+            try
+            {
+                MemberQuery query = new MemberQuery(Request);
+                query.Normelize();
+                var su = GetSignedUser(true);
+                query.AccountId = su.AccountId;
+
+                var list = MemberContext.ListQueryView(query);
+                //var row = list.FirstOrDefault<MemberListView>();
+                //int totalRows = row == null ? 0 : row.TotalRows;
+                return QueryPagerServer<MemberListView>(list, su.UserId);//, totalRows);//, query.PageSize, query.PageNum);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, "הצגת אנשי קשר", ex.Message, 0), JsonRequestBehavior.AllowGet);
+
+            }
+        }
+
+
+        #endregion
+
+        #region Member edit
+
+        [HttpGet]
+        public ActionResult _MemberAdd()
+        {
+            return PartialView(true, "_MemberEdit", new EditModel() { Option = "a" });
+        }
+        [HttpGet]
+        public ActionResult _MemberEdit(int id)
+        {
+            return PartialView(true, "_MemberEdit", new EditModel() { Id = id, Option = "e" });
+        }
+        [HttpGet]
+        public ActionResult _MemberView(int id)
+        {
+            return PartialView("_MemberEdit", new EditModel() { Id = id, Option = "g" });
+        }
+        [HttpPost]
+        public JsonResult GetMemberEdit()
+        {
+            int id = Types.ToInt(Request["id"]);
+            int accountId = GetAccountId();
+            var item = MemberContext.ViewOrNewMemberItem(id, accountId);
+
+            return Json(item, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult MemberUpdate()
+        {
+            //MemberCategoryView
+            int res = 0;
+            string action = "הגדרת מנוי";
+            MemberItem a = null;
+            ResultModel model = null;
+            try
+            {
+                var usr = GetSignedUser(true);
+                a = EntityContext.Create<MemberItem>(Request.Form);
+                a.AccountId = usr.AccountId;
+                var exType = usr.GetDataValue<int>("ExType");
+                EntityValidator validator = EntityValidator.ValidateEntity(a, "הגדרת מנוי", "he");//, new object[] { "@ExType", exType });
+                if (!validator.IsValid)
+                {
+                    return Json(GetFormResult(-1, action, validator.Result, 0), JsonRequestBehavior.AllowGet);
+
+                }
+
+                res = MemberContext.DoSave(a, true, "", DataSourceTypes.CoSystem);
+                if (res == -1)
+                    model = new ResultModel() { Message = "המנוי קיים במערכת", Status = -1, Title = action };
+                else
+                    model = GetFormResult(res, action, null, a.RecordId);
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                string err = ex.Message;
+                return Json(GetFormResult(-1, action, "אירעה שגיאה, המנוי לא עודכן", 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult MemberDelete()
+        {
+            //MemberCategoryView
+            int res = 0;
+            string action = "הסרת מנוי";
+            MemberItem a = null;
+            try
+            {
+                int RecordId = Types.ToInt(Request["RecordId"]);
+                int accountId = GetAccountId();
+                res = MemberContext.DoDelete(RecordId, accountId);
+                string message = "";
+                switch (res)
+                {
+                    case -2:
+                        message = "אירעה שגיאה (Invalid Arguments Account) אנא פנה לתמיכה"; break;
+                    case -1:
+                        message = "המנוי אינו קיים"; break;
+                    case 1:
+                        message = "המנוי הוסר מרשימת החברים"; break;
+                    default:
+                        message = "המנוי לא הוסר"; break;
+                }
+
+                var model = new ResultModel() { Status = res, Title = "הסרת מנוי", Message = message, Link = null, OutputId = 0 };
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
+        #region Members Nested
+
+
+
+        [HttpPost]
+        public JsonResult GetMemberCategories(int rcdid)
+        {
+            int accountId = GetAccountId();
+            var list = MemberCategoriesView.View(rcdid, accountId);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        //[HttpPost]
+        //public JsonResult GetMemberSignupHistory(int rcdid)
+        //{
+        //    int accountId = GetAccountId();
+        //    var list = SignupContext.MemberSignupHistory(rcdid);
+        //    return Json(list, JsonRequestBehavior.AllowGet);
+        //}
+
+
+
+        [HttpPost]
+        public JsonResult DeleteMemberCategories(int rcdid, int propId)
+        {
+            int res = 0;
+            int accountId = GetAccountId();
+            ResultModel model = null;
+            try
+            {
+                res = MemberCategoriesView.DeleteCategory(rcdid, propId, accountId);
+                model = new ResultModel() { Status = res, Title = "עדכון סווג", Message = "סווג הוסר למנוי " + rcdid, Link = null, OutputId = propId };
+            }
+            catch (Exception ex)
+            {
+                model = new ResultModel() { Status = res, Title = "עדכון סווג", Message = ex.Message, Link = null, OutputId = propId };
+            }
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        public JsonResult UpdateMemberCategories()
+        {
+            int res = 0;
+            int accountId = GetAccountId();
+            string action = "הגדרת סווג";
+            try
+            {
+                int rcdid = Types.ToInt(Request.Form["MemberRecord"]);
+                string proptypes = Request.Form["Categories"];
+                if (rcdid <= 0)
+                {
+                    return Json(GetFormResult(-1, action, "נדרש ת.ז", 0), JsonRequestBehavior.AllowGet);
+                }
+
+                res = MemberCategoriesView.AddCategory(rcdid, proptypes, accountId);
+                return Json(GetFormResult(res, action, null, 0), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(GetFormResult(-1, action, ex.Message, 0), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        //public ActionResult UploadProc(string uk)
+        //{
+        //    //Response.AddHeader("Refresh", "30");
+        //    return View();//new UploadProcModel() { UploadKey=uk });
+        //}
+
+        public ActionResult _UploadProc(string uk)
+        {
+            return PartialView();
+        }
+
+        [HttpPost]
+        public ActionResult DoUploadProc(string uploadKey)
+        {
+            ResultModel model = null;
+            try
+            {
+                if (string.IsNullOrEmpty(uploadKey))
+                {
+                    return RedirectToFinal("אירעה שגיאה בתהליך הטעינה,לא נמצא מזהה רשימה");
+                }
+
+                var mnger = UploadManager.Get(uploadKey);
+                var html = mnger.ToHtml();
+                model = new ResultModel() { Status = mnger.Status, Message = html, Title = "upload process", Args = uploadKey };
+
+
+            }
+            catch (Exception ex)
+            {
+                var msg = "אירעה שגיאה בתהליך הטעינה " + ex.Message;
+                model = new ResultModel() { Status = -1, Message = msg, Title = "upload process", Args = uploadKey };
+            }
+
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
+
+        #endregion
 
 
 #if (false)

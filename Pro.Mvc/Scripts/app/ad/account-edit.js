@@ -275,6 +275,39 @@ class app_account_def {
        
     }
 
+    doSubmit() {
+        //e.preventDefault();
+        var actionurl = $('#fcForm').attr('action');
+        app_jqxcombos.renderCheckList("listCategory", "Categories");
+        var validationResult = function (isValid) {
+            if (isValid) {
+                $.ajax({
+                    url: actionurl,
+                    type: 'post',
+                    dataType: 'json',
+                    data: $('#fcForm').serialize(),
+                    success: function (data) {
+                        app_dialog.alert(data.Message);
+                        //if (data.Status >= 0) {
+                        //    if (_slf.IsDialog) {
+                        //        window.parent.triggerMemberComplete(data.OutputId);
+                        //        //$('#fcForm').reset();
+                        //    }
+                        //    else {
+                        //        app.refresh();
+                        //    }
+                        //    //$('#RecordId').val(data.OutputId);
+                        //}
+                    },
+                    error: function (jqXHR, status, error) {
+                        app_dialog.alert(error);
+                    }
+                });
+            }
+        }
+        $('#fcForm').jqxValidator('validate', validationResult);
+    }
+
     doCancel() {
 
         app.redirectTo(app_account_def.getReferrer());
@@ -286,20 +319,20 @@ class app_account_def {
         var referrer = document.referrer;
         if (referrer) {
 
-            if (referrer.match(/System\/AccountUser/gi))
-                return "/System/AccountUser";
-            else if (referrer.match(/System\/ReportAccounts/gi))
-                return "/System/ReportAccounts";
-            else if (referrer.match(/System\/ReportSubAccount/gi))
-                return "/System/ReportSubAccount";
-            else if (referrer.match(/System\/ReportTopics/gi))
-                return "/System/ReportTopics";
+            if (referrer.match(/Admin\/UsersDef/gi))
+                return "/Admin/UsersDef";
+            //else if (referrer.match(/Admin\/ReportAccounts/gi))
+            //    return "/Admin/ReportAccounts";
+            //else if (referrer.match(/Admin\/ReportSubAccount/gi))
+            //    return "/Admin/ReportSubAccount";
+            //else if (referrer.match(/Admin\/ReportTopics/gi))
+            //    return "/Admin/ReportTopics";
             else {
-                return "/System/AccountUser";
+                return "/Admin/Accounts";
             }
         }
         else {
-            return "/System/AccountUser";
+            return "/Admin/Accounts";
         }
         //return this;
     }
@@ -355,6 +388,13 @@ class app_account_def {
     loadEvents() {
 
         var _slf = this;
+        //exp-0
+        $("#exp-0-Submit").on('click', function () {
+            _slf.doSubmit();
+        });
+        $("#exp-0-Cancel").on('click', function () {
+           _slf.doCancel();
+        });
         //jqxgrid3
         $("#jqxgrid3-add").on('click', function () {
             if (_slf.Labels)

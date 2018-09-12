@@ -911,7 +911,7 @@ class app_account_label_control {
 
             '<div id="tab-content" class="tab-content" dir="rtl">' +
             '<input type="hidden" id="label-AccountId" name="AccountId"/>' +
-            '<input type="hidden" id="label-LabelId" name="LabelId"/>' +
+            '<input type="hidden" id="label-LabelId" name="LabelId" value="0"/>' +
             '<div class="form-group">' +
             '<div class="field">שדה:</div>' +
             '<input type="text" id="label-Label" name="Label" autocomplete="off" class="text-content-mid"/>' +

@@ -572,8 +572,23 @@ var app = {
         $(tag+ " option").not(':selected').each(function (index) {
             $(this).prop('disabled', true);
         });
+    },
+    toLink: function (val, title) {
+        if (val) {
+            return '<a href="' + val + ' title="' + title || val + '">' + val + '</a>'
+        }
+        return val;
+    },
+    toEmailLink: function (val) {
+        if (val)
+            return '<a href="mailto:"' + val + '>' + val + '</a>'
+        return val;
+    },
+    toPhoneLink: function (val) {
+        if (val && app.IsMobile())
+            return '<a href="tel:"' + val + '>' + val + '</a>'
+        return val;
     }
-   
 };
 
 

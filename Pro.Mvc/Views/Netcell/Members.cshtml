@@ -1,6 +1,6 @@
-﻿@model Pro.Lib.Query.MemberQuery
+﻿@model ProNetcell.Query.MemberQuery
 @{
-    Layout = "~/Views/Shared/_ViewMain.cshtml";
+    Layout = "~/Views/Shared/_ViewNetcell.cshtml";
     ViewBag.Title = "Members";
     //int acctype = Nistec.Types.ToInt(Request.QueryString["acctype"]);
     var dataModel = @Html.Raw(Json.Encode(Model));
@@ -15,7 +15,7 @@
     <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxloader.js"></script>
     <script type="text/javascript" src="~/jqwidgets/jqxtooltip.js"></script>
-    <script type="text/javascript" src="~/Scripts/app/main/members.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/netcell/members.js"></script>
     <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
     <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
     <style type="text/css">
@@ -174,6 +174,6 @@
 </div>
     <script type="text/javascript">
         app_menu.activeLayoutMenu("liMain");
-        app_menu.breadcrumbs("Main", "Members", 'en');
+        app_menu.breadcrumbs("Netcell", "Members", 'en');
     </script>
 

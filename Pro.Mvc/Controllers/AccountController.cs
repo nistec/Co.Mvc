@@ -16,6 +16,7 @@ using ProSystem;
 using System.Threading.Tasks;
 using CaptchaMvc.HtmlHelpers;
 using CaptchaMvc.Attributes;
+using ProAd.Data.Entities;
 
 namespace Pro.Mvc.Controllers
 {

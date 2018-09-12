@@ -23,6 +23,8 @@ using ProSystem.Query;
 using System.Data;
 using Nistec.Web.Controls;
 using ProSystem.Data;
+using ProAd.Data.Entities;
+using ProAd.Query;
 
 namespace Pro.Mvc.Controllers
 {
@@ -1219,7 +1221,7 @@ namespace Pro.Mvc.Controllers
                 var su= GetSignedUser(UserRole.System, true);
 
                 var a = EntityContext.Create<Accounts_Label>(Request.Form);
-                EntityValidator validator = EntityValidator.ValidateEntity(a, action, "he");
+                EntityValidator validator = EntityValidator.ValidateEntity(a, action, "he",a.LabelId==0? EntityOperation.Insert: EntityOperation.Update );
                 if (!validator.IsValid)
                 {
                     return Json(GetFormResult(-1, action, validator.Result, 0), JsonRequestBehavior.AllowGet);
@@ -1417,6 +1419,51 @@ namespace Pro.Mvc.Controllers
             query.Normelize();
             var d = AccountPaymentContext.ListQueryDataView(query);
             return CsvActionResult.ExportToCsv(d, "PaymentTargets");
+
+            //return View(query);
+        }
+
+        #endregion
+
+        #region Credit
+
+        public ActionResult CreditReport()
+        {
+            return View(true, new QueryModel() { Layout="_ViewAdmin", Url= "/Admin/GetCreditsGrid" });
+        }
+        //public ActionResult Payments()
+        //{
+        //    PaymentQuery query = new PaymentQuery(Request.Form);
+        //    return View(true, query);
+        //}
+
+        public ContentResult GetCreditsGrid()
+        {
+            try
+            {
+                var su = GetSignedUser(UserRole.SubAdmin,true);
+
+                var model=QueryModel.GetModel(Request, "ActionType", "DateFrom", "DateTo");
+
+                var result = AdContext.CreditReportView(model);
+
+                //var result = AdContext.CreditReportJson(model);
+               
+                return new ContentResult() { Content = result.ToJson() };
+            }
+            catch (Exception ex)
+            {
+                TraceHelper.Log("Admin", "GetCreditsGrid", ex.Message, Request, -1);
+                return null;
+            }
+        }
+        public ActionResult CreditReportExport()
+        {
+            var su = GetSignedUser(UserRole.SubAdmin, true);
+
+            var model = QueryModel.GetModel(Request, "ActionType", "DateFrom", "DateTo");
+            var dt = AdContext.CreditReportTabel(model);
+            return CsvActionResult.ExportToCsv(dt, "CreditReport");
 
             //return View(query);
         }

@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{08EE976C-6767-40D0-9C07-B6C5AFB9DBA1}</ProjectGuid>
+    <ProjectGuid>{6D7C1DF9-8921-4C37-B91D-EBBF91464595}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ProSystem</RootNamespace>
-    <AssemblyName>Pro.System</AssemblyName>
+    <RootNamespace>ProAd</RootNamespace>
+    <AssemblyName>Pro.Ad</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -49,53 +49,24 @@
     <Reference Include="WebMatrix.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\ResultStatusModel.cs" />
-    <Compile Include="Data\Entities\CalendarBook.cs" />
-    <Compile Include="Data\Entities\Deals.cs" />
-    <Compile Include="Data\Entities\FormContext.cs" />
-    <Compile Include="Data\Entities\DocsContext.cs" />
-    <Compile Include="Data\Entities\EntityPro.cs" />
-    <Compile Include="Data\Entities\Budget.cs" />
-    <Compile Include="Data\Entities\Reminder.cs" />
-    <Compile Include="Data\Entities\TaskImport.cs" />
-    <Compile Include="Data\Enums\EnumStatus.cs" />
-    <Compile Include="Data\SystemStatusMessage.cs" />
-    <Compile Include="Data\DbLookups.cs" />
-    <Compile Include="Data\Entities\CategoryContext.cs" />
-    <Compile Include="Data\Entities\News.cs" />
-    <Compile Include="Data\DbProxy.cs" />
-    <Compile Include="Data\DbSystem.cs" />
-    <Compile Include="Data\Entities\MediaContext.cs" />
-    <Compile Include="Data\Entities\ProjectContext.cs" />
-    <Compile Include="Data\EntityResultModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Data\ProCommands.cs" />
-    <Compile Include="Data\DbServices.cs" />
-    <Compile Include="Data\Entities\TaskContext.cs" />
-    <Compile Include="Data\Entities\Lists.cs" />
-    <Compile Include="Data\DalTrace.cs" />
-    <Compile Include="Data\DalPro.cs" />
-    <Compile Include="Data\DbConfig.cs" />
-    <Compile Include="Data\Entities\IEntityProp.cs" />
-    <Compile Include="Data\Enums\EnumTypes.cs" />
+    <Compile Include="Data\Entities\Payment.cs" />
+    <Compile Include="Query\AccountsQuery.cs" />
+    <Compile Include="Data\Entities\Products.cs" />
+    <Compile Include="Data\Entities\AdContext.cs" />
+    <Compile Include="Data\Entities\UsersView.cs" />
+    <Compile Include="Data\Entities\LoginView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Query\ReminderQuery.cs" />
-    <Compile Include="Query\TaskQuery.cs" />
-    <Compile Include="Query\QueryBase.cs" />
-    <Compile Include="Resources\Pro.System.en.Designer.cs" />
-    <Compile Include="Resources\Pro.System.he-IL.Designer.cs" />
-    <Compile Include="Data\Entities\EntityProCache.cs" />
+    <Compile Include="Resources\Pro.Ad.en.Designer.cs" />
+    <Compile Include="Resources\Pro.Ad.he-IL.Designer.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TraceHelper.cs" />
-    <Compile Include="Web\RouteInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Pro.System.en.resx" />
-    <EmbeddedResource Include="Resources\Pro.System.he-IL.resx" />
+    <EmbeddedResource Include="Resources\Pro.Ad.en.resx" />
+    <EmbeddedResource Include="Resources\Pro.Ad.he-IL.resx" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\Enums\PropsEnum\" />
+    <Folder Include="Common\" />
     <Folder Include="obj\" />
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +93,10 @@
     <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Web\Nistec.Web.csproj">
       <Project>{8c4cff01-180e-41a1-9234-0c1b1e207ae5}</Project>
       <Name>Nistec.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pro.System\Pro.System.csproj">
+      <Project>{08ee976c-6767-40d0-9c07-b6c5afb9dba1}</Project>
+      <Name>Pro.System</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

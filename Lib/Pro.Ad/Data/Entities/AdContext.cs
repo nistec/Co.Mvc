@@ -9,8 +9,13 @@ using Nistec.Web.Controls;
 using ProSystem;
 using ProSystem.Query;
 using Nistec;
+using ProSystem.Data;
+using ProSystem.Data.Entities;
+using ProAd.Query;
+using System.Data;
+using Nistec.Serialization;
 
-namespace ProSystem.Data.Entities
+namespace ProAd.Data.Entities
 {
     
     public class AdContext<T> : EntityContext<DbSystem, T> where T : IEntityItem
@@ -132,6 +137,49 @@ namespace ProSystem.Data.Entities
                 v.AccountId = res;
                 return res;
             }
+        }
+
+        public static DataTable CreditReportTabel(QueryModel model)//int PageSize,int PageNum, int AccountId, int ActionType,DateTime? DateFrom, DateTime? DateTo)
+        {
+
+            using (var db = DbContext.Create<DbSystem>())
+            {
+                return db.ExecuteDataTable("sp_Accounts_Credit_Report", "PageSize", model.PageSize, "PageNum", model.PageNum,
+                   "AccountId", model.AccountId,
+                   "ActionType", model.Args.Get<int>("ActionType"),
+                    "DateFrom", model.Args.Get<DateTime?>("DateFrom"),
+                    "DateTo", model.Args.Get<DateTime?>("DateTo")
+                    );
+            }
+        }
+        public static KeyValueResult CreditReportView(QueryModel model)
+        {
+            KeyValueList dt;
+            using (var db = DbContext.Get<DbSystem>())
+            {
+                dt= db.ExecuteKeyValueList("sp_Accounts_Credit_Report", "PageSize", model.PageSize, "PageNum", model.PageNum,
+                   "AccountId", model.AccountId,
+                   "ActionType", model.Args.Get<int>("ActionType"),
+                    "DateFrom", model.Args.Get<DateTime?>("DateFrom"),
+                    "DateTo", model.Args.Get<DateTime?>("DateTo")
+                    );
+            }
+            return new KeyValueResult() { Result= dt };
+        }
+
+        public static JsonResults CreditReportJson(QueryModel model)
+        {
+            JsonResults dt;
+            using (var db = DbContext.Get<DbSystem>())
+            {
+                dt = db.ExecuteJsonResult("sp_Accounts_Credit_Report", "PageSize", model.PageSize, "PageNum", model.PageNum,
+                   "AccountId", model.AccountId,
+                   "ActionType", model.Args.Get<int>("ActionType"),
+                    "DateFrom", model.Args.Get<DateTime?>("DateFrom"),
+                    "DateTo", model.Args.Get<DateTime?>("DateTo")
+                    );
+            }
+            return dt;
         }
     }
 

@@ -1036,7 +1036,8 @@ namespace Pro.Mvc.Controllers
             }
             return collection;
         }
-         protected JsonResult QueryPagerServer<T>(IEnumerable<T> list, int totalRows, int userId)//,int pagesize, int pagenum)
+        
+        protected JsonResult QueryPagerServer<T>(IEnumerable<T> list, int totalRows, int userId)//,int pagesize, int pagenum)
          {
              //int agentId = GetUser();
 

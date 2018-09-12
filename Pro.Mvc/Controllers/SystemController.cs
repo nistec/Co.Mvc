@@ -20,6 +20,7 @@ using ProSystem.Data;
 using Nistec.Web.Controls;
 using ProSystem.Query;
 using ProSystem.Data.Enums;
+using ProAd.Data.Entities;
 
 namespace Pro.Mvc.Controllers
 {
@@ -886,6 +887,7 @@ namespace Pro.Mvc.Controllers
                 return Json(FormResult.GetTrace<DbSystem>(ex, action, Request), JsonRequestBehavior.AllowGet);
             }
         }
+        
         #endregion
 
         #region AdTeam

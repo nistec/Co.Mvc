@@ -18,6 +18,8 @@ namespace ProSystem.Query
         public int UserId { get; set; }
         public int AccountId { get; set; }
         public int TotalRows { get; private set; }
+        public string Layout { get; set; }
+        public string Url { get; set; }
 
         public void SetTotalRows<T>(IList<T> list) where T : IEntityListItem
         {
@@ -75,6 +77,22 @@ namespace ProSystem.Query
             {
                 return keyValueParameters;
             }
+        }
+
+        public static QueryModel GetModel(System.Web.HttpRequestBase Request, params string[] keys)
+        {
+            var model=new QueryModel();
+            model.PageSize = Types.ToInt(Request["pagesize"], 20);
+            model.PageNum = Types.ToInt(Request["pagenum"]);
+            model.AccountId = Types.ToInt(Request["AccountId"]);
+            model.UserId= Types.ToInt(Request["UserId"]);
+
+            foreach (string key in keys)
+            {
+                model.Args[key] = Request[key];
+            }
+
+            return model;
         }
 
         public static QueryModel GetSortAndFilter(System.Web.HttpRequestBase Request)
