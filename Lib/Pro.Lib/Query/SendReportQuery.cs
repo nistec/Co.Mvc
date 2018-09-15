@@ -39,7 +39,7 @@ namespace Pro.Lib.Query
             DateTo = Types.ToNullableDate(Request["SendDateTo"]);
             Platform = Types.ToInt(Request["Platform"]);
 
-            LoadSortAndFilter(Request);
+            LoadSortAndFilter(Request,"");
         }
         public void Normelize()
         {

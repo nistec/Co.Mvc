@@ -110,7 +110,7 @@ namespace Pro.Lib.Query
                 HasSignup = Types.ToInt(Request["HasSignup"]);// == "on";
 
             //}
-            LoadSortAndFilter(Request);
+            LoadSortAndFilter(Request,"");
         }
 
         public  MemberQuery(NameValueCollection Request, int queryType)

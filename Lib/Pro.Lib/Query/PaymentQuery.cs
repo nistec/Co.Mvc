@@ -151,7 +151,7 @@ namespace Pro.Lib.Query
             PriceTo = Types.ToDecimal(Request["PriceTo"], 0);
             ContactRule = Types.ToInt(Request["ContactRule"]);
 
-            LoadSortAndFilter(Request);
+            LoadSortAndFilter(Request,"");
         }
 
         public void Normelize()
