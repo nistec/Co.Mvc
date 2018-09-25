@@ -8,6 +8,9 @@ using Nistec.Channels.RemoteCache;
 using Nistec.Web.Controls;
 using ProSystem.Data;
 using ProSystem.Data.Entities;
+using Pro.Data;
+using Pro;
+using Pro.Data.Entities;
 
 namespace ProSystem.Data.Enums
 {
@@ -38,7 +41,7 @@ namespace ProSystem.Data.Enums
         public static IList<EnumTypes> ViewList(int AccountId, string TaskMode)
         {
             string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId,0, ViewName, TaskMode);
-            return WebCache.GetOrCreateList<EnumTypes>(key, () => ViewDbList(AccountId, TaskMode), EntityProCache.DefaultCacheTtl);
+            return WebCache.GetOrCreateList<EnumTypes>(key, () => ViewDbList(AccountId, TaskMode), EntityPro.DefaultCacheTtl);
         }
 
         public static IList<EnumTypes> ViewDbList(int AccountId, string TypeModel)

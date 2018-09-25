@@ -1,6 +1,7 @@
 ﻿using Nistec;
 using Nistec.Data;
 using Nistec.Serialization;
+using Pro.Query;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -48,7 +49,7 @@ namespace ProSystem.Query
             UserMode = Types.ToBool(Request["UserMode"], false);
 
             if (enableFilter)
-                LoadSortAndFilter(Request);
+                LoadSortAndFilter(Request,"");
         }
 
 

@@ -1,5 +1,8 @@
 ﻿using Nistec.Data.Entities;
 using Nistec.Web.Controls;
+using Pro;
+using Pro.Data;
+using Pro.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +10,7 @@ using System.Text;
 
 namespace ProSystem.Data.Entities
 {
-    public enum ListsTypes
+    public enum SystemListsTypes
     {
 
         Ad_Account = 1,
@@ -65,22 +68,22 @@ namespace ProSystem.Data.Entities
         //}
 
     }
-    public class Lists
+    public class SystemLists
     {
 
-        public static string GetList(ListsTypes type, int AccountId)
+        public static string GetList(SystemListsTypes type, int AccountId)
         {
             using (var db = DbContext.Create<DbSystem>())
             return db.ExecuteJson("sp_GetLists", "ListType", (int)type, "AccountId", AccountId);
         }
 
-        public static IList<T> GetList<T>(ListsTypes type, int AccountId)
+        public static IList<T> GetList<T>(SystemListsTypes type, int AccountId)
         {
             using (var db = DbContext.Create<DbSystem>())
                 return db.ExecuteList<T>("sp_GetLists", "ListType", (int)type, "AccountId", AccountId);
         }
 
-        public static IList<SelectItem> ExecListSelect(int AccountId, ListsTypes type, bool enableCache = true)
+        public static IList<SelectItem> ExecListSelect(int AccountId, SystemListsTypes type, bool enableCache = true)
         {
             if (enableCache)
             {
@@ -89,7 +92,7 @@ namespace ProSystem.Data.Entities
                 {
                     var context = new DbSystemContext<SelectItem>(EntityCacheGroups.Enums, AccountId, 0);
                     return context.ExecList("AccountId", AccountId, "ListType", (int)type);
-                }, EntityProCache.DefaultCacheTtl);
+                }, EntityPro.DefaultCacheTtl);
             }
             else
             {
@@ -98,7 +101,7 @@ namespace ProSystem.Data.Entities
             }
         }
 
-        public static string ExecListTags(int AccountId, ListsTypes type, bool enableCache = true)
+        public static string ExecListTags(int AccountId, SystemListsTypes type, bool enableCache = true)
         {
             if (enableCache)
             {
@@ -107,7 +110,7 @@ namespace ProSystem.Data.Entities
                 {
                     var context = DbContext.Get<DbSystem>();
                     return context.ExecuteJsonArray("sp_GetListsTags", "AccountId", AccountId, "ListType", (int)type);
-                }, EntityProCache.DefaultCacheTtl);
+                }, EntityPro.DefaultCacheTtl);
             }
             else
             {

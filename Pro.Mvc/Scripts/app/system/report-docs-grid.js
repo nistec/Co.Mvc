@@ -348,7 +348,7 @@
                     $("#jqxgrid").jqxGrid('clearfilters');
                 });
                 queryButton.click(function (event) {
-                    app.redirectTo('/Main/DocsQuery');
+                    app.redirectTo('/Co/DocsQuery');
                 });
 
                 // search for a record.

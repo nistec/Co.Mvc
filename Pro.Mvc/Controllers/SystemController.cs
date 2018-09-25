@@ -21,6 +21,8 @@ using Nistec.Web.Controls;
 using ProSystem.Query;
 using ProSystem.Data.Enums;
 using ProAd.Data.Entities;
+using Pro.Query;
+using Pro.Data.Entities;
 
 namespace Pro.Mvc.Controllers
 {
@@ -393,7 +395,7 @@ namespace Pro.Mvc.Controllers
         public JsonResult GetListsSelect(int model)
         {
             int accountId = GetAccountId();
-            var list = Lists.ExecListSelect(accountId, (ListsTypes)model);
+            var list = SystemLists.ExecListSelect(accountId, (SystemListsTypes)model);
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
@@ -402,7 +404,7 @@ namespace Pro.Mvc.Controllers
         public JsonResult GetListsTags(int model)
         {
             int accountId = GetAccountId();
-            var list = Lists.ExecListTags(accountId, (ListsTypes)model);
+            var list = SystemLists.ExecListTags(accountId, (SystemListsTypes)model);
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
@@ -418,15 +420,15 @@ namespace Pro.Mvc.Controllers
             switch (entity)
             {
                 case "task_type":
-                    return Json(EntityPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, ListsTypes.Task_Types), JsonRequestBehavior.AllowGet);
+                    return Json(EntitySystemPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, SystemListsTypes.Task_Types), JsonRequestBehavior.AllowGet);
                 case "topic_type":
-                    return Json(EntityPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, ListsTypes.Topic_Types), JsonRequestBehavior.AllowGet);
+                    return Json(EntitySystemPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, SystemListsTypes.Topic_Types), JsonRequestBehavior.AllowGet);
                 case "ticket_type":
-                    return Json(EntityPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, ListsTypes.Ticket_Types), JsonRequestBehavior.AllowGet);
+                    return Json(EntitySystemPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, SystemListsTypes.Ticket_Types), JsonRequestBehavior.AllowGet);
                 case "doc_type":
-                    return Json(EntityPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, ListsTypes.Doc_Types), JsonRequestBehavior.AllowGet);
+                    return Json(EntitySystemPro.ViewEntityList<EnumTypes>(EntityGroups.Enums, EnumTypes.TableName, accountId, SystemListsTypes.Doc_Types), JsonRequestBehavior.AllowGet);
                 //case "tags":
-                //    return Json(EntityPro.ViewEntityList<string>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, ListsTypes.Tags), JsonRequestBehavior.AllowGet);
+                //    return Json(EntitySystemPro.ViewEntityList<string>(EntityGroups.Enums, TaskTypeEntity.TableName, accountId, SystemListsTypes.Tags), JsonRequestBehavior.AllowGet);
                 default:
                     return Json(null, JsonRequestBehavior.AllowGet);
             }
@@ -498,7 +500,7 @@ namespace Pro.Mvc.Controllers
 
                 if ((UpdateCommandType)command == UpdateCommandType.Delete)
                 {
-                    result = EntityPro.DoDelete(EnumTypes.TableName, EntityType, PropId, 0, accountId);
+                    result = EntitySystemPro.DoDelete(EnumTypes.TableName, EntityType, PropId, 0, accountId);
                 }
                 else
                 {
@@ -506,15 +508,15 @@ namespace Pro.Mvc.Controllers
                     switch (EntityType)
                     {
                         case "task_type":
-                            result = EntityPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "T" }, ListsTypes.Task_Types, (UpdateCommandType)command); break;
+                            result = EntitySystemPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "T" }, SystemListsTypes.Task_Types, (UpdateCommandType)command); break;
                         case "topic_type":
-                            result = EntityPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "P" }, ListsTypes.Topic_Types, (UpdateCommandType)command); break;
+                            result = EntitySystemPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "P" }, SystemListsTypes.Topic_Types, (UpdateCommandType)command); break;
                         case "ticket_type":
-                            result = EntityPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "E" }, ListsTypes.Ticket_Types, (UpdateCommandType)command); break;
+                            result = EntitySystemPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "E" }, SystemListsTypes.Ticket_Types, (UpdateCommandType)command); break;
                         case "doc_type":
-                            result = EntityPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "D" }, ListsTypes.Doc_Types, (UpdateCommandType)command); break;
+                            result = EntitySystemPro.DoSave<EnumTypes>(new EnumTypes() { PropId = PropId, PropName = PropName, AccountId = accountId, TyprModel = "D" }, SystemListsTypes.Doc_Types, (UpdateCommandType)command); break;
                         //case "tags":
-                        //    result = EntityPro.DoSave<TaskTypeEntity>(PropId, PropName, accountId, (UpdateCommandType)command); break;
+                        //    result = EntitySystemPro.DoSave<TaskTypeEntity>(PropId, PropName, accountId, (UpdateCommandType)command); break;
                     }
                 }
                 rm = new ResultModel(result);
@@ -573,7 +575,7 @@ namespace Pro.Mvc.Controllers
         //        case "city":
         //            return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "CityId", "CityName", "Cities", accountId), JsonRequestBehavior.AllowGet);
         //        //case "place":
-        //        //    return Json(EntityPro.ViewEntityList<PlaceView>(EntityGroups.Enums, PlaceView.TableName, accountId), JsonRequestBehavior.AllowGet);
+        //        //    return Json(EntitySystemPro.ViewEntityList<PlaceView>(EntityGroups.Enums, PlaceView.TableName, accountId), JsonRequestBehavior.AllowGet);
         //        case "region":
         //            return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "RegionId", "RegionName", "Region", accountId), JsonRequestBehavior.AllowGet);
         //        case "category":

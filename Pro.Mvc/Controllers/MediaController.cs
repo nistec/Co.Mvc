@@ -13,13 +13,12 @@ using Pro.Data.Entities;
 using System.IO;
 using Pro.Mvc.Models;
 using Pro.Lib;
-using Pro.Lib.Upload;
+using Pro.Upload;
 using Pro.Data;
 using ProSystem.Data.Entities;
 using Nistec.Data.Entities;
-using Pro.Lib.Upload.Members;
-using Pro.Lib.Upload.Data;
-using Pro.Lib.Upload.Contacts;
+using Pro.Upload.Members;
+using Pro.Upload.Contacts;
 
 namespace Pro.Mvc.Controllers
 {
@@ -304,7 +303,7 @@ namespace Pro.Mvc.Controllers
 
                 UploadMembers.ExecUploadMemberStg(accountId, category, uploadKey, updateExists, isAsync);
 
-                //return RedirectToAction("UploadProc", "Main", new { uk = uploadKey });
+                //return RedirectToAction("UploadProc", "Co", new { uk = uploadKey });
 
                 model = new ResultModel() { Status = 0, Message = "ok" };
 
@@ -516,7 +515,7 @@ namespace Pro.Mvc.Controllers
 
                 UploadContacts.ExecUploadMemberStg(accountId, category, uploadKey, updateExists, isAsync);
 
-                //return RedirectToAction("UploadProc", "Main", new { uk = uploadKey });
+                //return RedirectToAction("UploadProc", "Co", new { uk = uploadKey });
 
                 model = new ResultModel() { Status = 0, Message = "ok" };
 

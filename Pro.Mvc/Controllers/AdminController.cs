@@ -25,6 +25,7 @@ using Nistec.Web.Controls;
 using ProSystem.Data;
 using ProAd.Data.Entities;
 using ProAd.Query;
+using Pro.Query;
 
 namespace Pro.Mvc.Controllers
 {
@@ -47,7 +48,7 @@ namespace Pro.Mvc.Controllers
         public ActionResult Manager()
         {
             if (!IsSignedUser(UserRole.SubAdmin, false)) //(IsAdmin())
-                return RedirectToAction("Main", "Admin");
+                return RedirectToAction("Co", "Admin");
             return View();
         }
         public ActionResult LogonGrid()
@@ -120,9 +121,9 @@ namespace Pro.Mvc.Controllers
                 current.SetUserDataEx();
                 //FormsAuth.Instance.SetAuthenticatedUserForRequest(current);
                 FormsAuth.Instance.SignIn(current, false);
-                return Json(new ResultModel() { Status = 1, Link = "/Main/Dashboard" });
+                return Json(new ResultModel() { Status = 1, Link = "/Co/Dashboard" });
 
-                //return RedirectToAction("Dashboard", "Main");
+                //return RedirectToAction("Dashboard", "Co");
             }
             catch (Exception ex)
             {
@@ -150,7 +151,7 @@ namespace Pro.Mvc.Controllers
                 current.SetUserDataEx();
                 FormsAuth.Instance.SignIn(current, false);
                 return Json( new ResultModel() { Status = 1, Link = "/Admin/Main" });
-                // RedirectToAction("Dashboard", "Main");
+                // RedirectToAction("Dashboard", "Co");
             }
             catch (Exception ex)
             {
@@ -1407,7 +1408,7 @@ namespace Pro.Mvc.Controllers
             }
             catch (Exception ex)
             {
-                TraceHelper.Log("Main", "GetPaymentsGrid", ex.Message, Request, -1);
+                TraceHelper.Log("Co", "GetPaymentsGrid", ex.Message, Request, -1);
                 return null;
             }
         }
@@ -1509,7 +1510,7 @@ namespace Pro.Mvc.Controllers
             }
             else
             {
-                return RedirectToAction("Main", "Admin");
+                return RedirectToAction("Co", "Admin");
             }
         }
 

@@ -84,23 +84,8 @@
 
         <nav class="nbr-nav">
             <ul class="nbr-top-nav">
-                @*<li class="nbr-has-children account">
-                        <a href="#0">
-                            <!--<img src="img/nbr-avatar.png" alt="avatar">-->
-                            <span>ViewBag.UserName</span>
-                        </a>
-                        <ul>
-                            <li>
-                                <a href="~/Common/DefUser">פרטים</a>
-                            </li>
-                            <li>
-                                <a href="~/Home/Logoff">יציאה</a>
-                            </li>
-                        </ul>
-                    </li>*@
-
-                <li><a href="~/Main/Main">ראשי</a></li>
-
+                <li><label class="nbr-label-text"><span>@ViewBag.AccountName</span><span>@@</span><span>@ViewBag.UserName</span></label></li>
+                <li><a href="~/Common/Dashboard">ראשי</a></li>
                 <li>
                     <a href="~/Home/Logoff">יציאה</a>
                 </li>
@@ -115,7 +100,6 @@
 
         <nav id="mainnav" class="nbr-side-nav">
             <ul style="direction:rtl">
-                <li class="nbr-label"><label class="nbr-label-text"><span>@ViewBag.AccountName</span><span>@@</span><span>@ViewBag.UserName</span></label></li>
                 <li id="liMain" class="nbr-has-children overview">
                     <a href="#0">לקוחות</a>
                     <ul class="submeunav">

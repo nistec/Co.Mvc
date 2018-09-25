@@ -83,7 +83,9 @@
                  loadtext: "Loading...",
                  clearstring: "נקה",
                 todaystring: "היום",
-                everpresentrowplaceholder:"הקלד\י-"
+                everpresentrowplaceholder: "הקלד\י-",
+                groupsheaderstring: "גרור עמודה ושחרר אותו כאן כדי לקבץ לפי עמודה זו"
+                //Drag a column and drop it here to group by that column
              }
             break;
         case "en":
@@ -198,6 +200,30 @@
                 todaystring: "Today"
             }
             break;
+    }
+    return localization;
+}
+
+
+    
+
+labelLocalization = function (culture) {
+    var localization = null;
+    switch (culture) {
+        case "he":
+            localization =
+                {
+                    '/': "/",
+                    ':': ":",
+                    BillingId: "מס-רישום",
+                    AccountId: "מס-לקוח",
+                    TransId: "מס-שליחה",
+                    CampaignId: "מס-קמפיין",
+                    UserId: "מס-משתמש",
+                    ActionName: "סוג פעולה",
+                    MethodName: "פריט"
+
+                }
     }
     return localization;
 }

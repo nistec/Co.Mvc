@@ -33,7 +33,7 @@ namespace Pro.Data.Entities.Props
 
         public static IEnumerable<ChargeView> ViewList(int AccountId)
         {
-            return EntityPro.ViewEntityList<ChargeView>(EntityGroups.Enums, TableName, AccountId);
+            return EntityLibPro.ViewEntityList<ChargeView>(EntityGroups.Enums, TableName, AccountId);
         }
 
         public static ChargeView View(int ChargeId)

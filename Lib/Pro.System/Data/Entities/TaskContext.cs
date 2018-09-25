@@ -12,6 +12,9 @@ using System.Web;
 using Nistec.Generic;
 using Nistec.Serialization;
 using ProSystem.Query;
+using Pro.Data;
+using Pro;
+using Pro.Data.Entities;
 
 namespace ProSystem.Data.Entities
 {
@@ -381,7 +384,7 @@ namespace ProSystem.Data.Entities
         public static IList<string> ViewTagsList(int AccountId)
         {
             string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, "Tags");
-            return WebCache.GetOrCreateList<string>(key, () => GetTagsList(AccountId), EntityProCache.DefaultCacheTtl);
+            return WebCache.GetOrCreateList<string>(key, () => GetTagsList(AccountId), EntityPro.DefaultCacheTtl);
         }
 
         public static IList<string> GetTagsList(int AccountId)
@@ -393,7 +396,7 @@ namespace ProSystem.Data.Entities
         public static string ViewTagsJson(int AccountId)
         {
             string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, AccountId, "Tags");
-            return WebCache.GetOrCreate<string>(key, () => GetTagsJson(AccountId), EntityProCache.DefaultCacheTtl);
+            return WebCache.GetOrCreate<string>(key, () => GetTagsJson(AccountId), EntityPro.DefaultCacheTtl);
         }
 
         public static string GetTagsJson(int AccountId)

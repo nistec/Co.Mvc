@@ -7,6 +7,9 @@ using Nistec.Data.Entities.Config;
 using Nistec.Generic;
 using Nistec.Serialization;
 using Nistec.Web.Controls;
+using Pro;
+using Pro.Data;
+using Pro.Data.Entities;
 using ProSystem.Data;
 using System;
 using System.Collections.Generic;
@@ -18,16 +21,16 @@ using System.Web.Caching;
 namespace ProSystem.Data.Entities
 {
 
-    public static class EntityGroups
-    {
-        public const string Enums = "Enums";
-        public const string Members = "Members";
-        public const string Tasks = "Tasks";
-        public const string Admin = "Admin";
-        public const string Settings = "Settings";
-        public const string Reports = "Reports";
-        public const string Registry = "Registry";
-    }
+    //public static class EntityGroups
+    //{
+    //    public const string Enums = "Enums";
+    //    public const string Members = "Members";
+    //    public const string Tasks = "Tasks";
+    //    public const string Admin = "Admin";
+    //    public const string Settings = "Settings";
+    //    public const string Reports = "Reports";
+    //    public const string Registry = "Registry";
+    //}
 
     //public enum EntityGroups2
     //{
@@ -35,10 +38,11 @@ namespace ProSystem.Data.Entities
     //    Reports,
     //    Registry,
     //}
-    public class EntityPro
+
+    public class EntitySystemPro
     {
 
-        public static void RefreshList(ListsTypes type, int accountId)
+        public static void RefreshList(SystemListsTypes type, int accountId)
         {
 
             //switch (type)
@@ -58,6 +62,7 @@ namespace ProSystem.Data.Entities
             //}
 
         }
+/*
         internal static string GetSession(int AccountId)
         {
             return string.Format("{0}_{1}", Settings.ProjectName, AccountId);
@@ -138,7 +143,7 @@ namespace ProSystem.Data.Entities
                 return _CacheProtocol;
             }
         }
-
+*/
         public static IEnumerable<T> ViewAdminEntityList<T>(string GroupName, string TableName) where T : IEntityPro
         {
             string key = WebCache.GetKey(Settings.ProjectName, GroupName, 0, TableName);// GetKey(TableName, AccountId);
@@ -185,7 +190,7 @@ namespace ProSystem.Data.Entities
             return list;
         }
 
-        public static IEnumerable<T> ViewEntityList<T>(string GroupName, string TableName, int AccountId, ListsTypes listType) where T : IEntityPro
+        public static IEnumerable<T> ViewEntityList<T>(string GroupName, string TableName, int AccountId, SystemListsTypes listType) where T : IEntityPro
         {
             string key = WebCache.GetKey(Settings.ProjectName, GroupName, AccountId, 0,TableName, listType.ToString());// GetKey(TableName, AccountId);
             IEnumerable<T> list = null;
@@ -194,7 +199,7 @@ namespace ProSystem.Data.Entities
                 list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
             if (list == null || list.Count() == 0)
             {
-                list =  Lists.GetList<T>(listType,AccountId);
+                list = SystemLists.GetList<T>(listType,AccountId);
                 
                 if (EntityPro.EnableCache && list != null)
                 {
@@ -230,7 +235,7 @@ namespace ProSystem.Data.Entities
             return list;
         }
 
-        public static int DoSave<T>(T newItem,ListsTypes listType,  UpdateCommandType command) where T : IEntityPro
+        public static int DoSave<T>(T newItem, SystemListsTypes listType,  UpdateCommandType command) where T : IEntityPro
         {
             int result = 0;
             //T newItem = Nistec.Runtime.ActivatorUtil.CreateInstance<T>();
@@ -348,7 +353,7 @@ namespace ProSystem.Data.Entities
         //    {
         //        db.ExecuteCommandNonQuery("sp_Property_Remove", parameters.ToArray(), System.Data.CommandType.StoredProcedure);
         //    }
-        //    int result = Types.ToInt( parameters[4].Value);
+        //    int result = Types.ToInt(parameters[4].Value);
 
         //    //CacheRemove(GetKey(GetTableName(PropType), AccountId));
         //    WebCache.Remove(WebCache.GetKey(Settings.ProjectName, EntityGroups.Enums, AccountId, GetTableName(PropType)));

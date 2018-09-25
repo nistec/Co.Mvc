@@ -2,7 +2,7 @@
 
     /* Default settings */
     var defaults = {
-        active: null,
+        active: 0,
         event: 'click',
         disabled: [],
         collapsible: 'accordion',
@@ -579,6 +579,20 @@
     //
 
     /*
+     This function activates a tab
+     $("#accordion").jcxTabs({ selectTab: 2 });
+     param {Integer} tabRef - Numeric tab reference
+     param {Boolean} stopRotation - Defines if the tab rotation should stop after activation
+    */
+    jcxTabs.prototype.selectTab = function (tabRef, stopRotation) {
+        //var e = jQuery.Event('tabs-activate');
+        var oTab = this._getTab(tabRef);
+        if (oTab && !oTab.disabled) {
+            this._openTab(this.options.event, oTab, true, stopRotation || true);
+        }
+    };
+
+    /*
       This function activates a tab
       param {Integer} tabRef - Numeric tab reference
       param {Boolean} stopRotation - Defines if the tab rotation should stop after activation
@@ -678,14 +692,23 @@
         var args = arguments;
         var instance;
 
+        if (options && options.hasOwnProperty("selectTab")) {
+            //&& Object.keys(options).length ==1
+            //if (options["selectTab"] !== undefined && typeof options["selectTab"] == 'number') {
+                instance = $.data(this[0], 'responsivetabs');
+                instance.selectTab(options["selectTab"]);
+            //}
+        }
+
         if (options === undefined || typeof options === 'object') {
             return this.each(function () {
                 if (!$.data(this, 'responsivetabs')) {
-                    $.data(this, 'responsivetabs', new jcxTabs( this, options ));
+                    $.data(this, 'responsivetabs', new jcxTabs(this, options));
                 }
             });
         } else if (typeof options === 'string' && options[0] !== '_' && options !== 'init') {
-            instance = $.data(this[0], 'responsivetabs');
+            if (instance === undefined)
+                instance = $.data(this[0], 'responsivetabs');
 
             // Allow instances to be destroyed via the 'destroy' method
             if (options === 'destroy') {
@@ -694,7 +717,7 @@
             }
 
             if (instance instanceof jcxTabs && typeof instance[options] === 'function') {
-                return instance[options].apply( instance, Array.prototype.slice.call( args, 1 ) );
+                return instance[options].apply(instance, Array.prototype.slice.call(args, 1));
             } else {
                 return this;
             }

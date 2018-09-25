@@ -33,7 +33,7 @@ namespace Pro.Data.Entities.Props
 
         public static IEnumerable<RegionView> ViewList(int AccountId)
         {
-            return EntityPro.ViewEntityList<RegionView>(EntityGroups.Enums, TableName, 0);
+            return EntityLibPro.ViewEntityList<RegionView>(EntityGroups.Enums, TableName, 0);
         }
 
         public static RegionView View(int RegionId)

@@ -58,7 +58,7 @@ namespace Pro.Data.Entities.Props
         #region static
         public static IEnumerable<EnumView> ViewList(int AccountId)
         {
-            return EntityPro.ViewEntityList<EnumView>(EntityGroups.Enums, TableName, AccountId);
+            return EntityLibPro.ViewEntityList<EnumView>(EntityGroups.Enums, TableName, AccountId);
         }
 
         public static EnumView View(int PropId)

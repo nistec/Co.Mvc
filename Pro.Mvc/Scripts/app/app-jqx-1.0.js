@@ -25,6 +25,7 @@ var app_jqxform = {
     },
 
     clearDataForm: function (form) {
+        form = form.replace("#", "");
         $('#' + form + ' input, #' + form + ' select, #' + form + ' textarea').each(function (index) {
             var input = $(this);
             var type = input.attr('type');
@@ -1003,7 +1004,24 @@ var app_jqx = {
         //srcAdapter.dataBind();
         return srcAdapter;
     },
-
+    createListAdapterAsync: function (valueMember, displayMember, tagList, url, data, width, height, callback, beforeLoadedwidth, output) {
+        var srcAdapter = app_jqx.createDataAdapterAsync(valueMember, displayMember, url, data, callback, beforeLoadedwidth);
+        $("#" + tagList.replace('#', '')).jqxListBox(
+            {
+                rtl: true,
+                source: srcAdapter,
+                width: width,
+                height: height,
+                displayMember: displayMember,
+                valueMember: valueMember
+            });
+        if (output) {
+            $("#" + tagList.replace('#', '')).on('change', function (event) {
+                listBoxToInput(tagList, output);
+            });
+        }
+        return srcAdapter;
+    },
     gridRowDelete: function (url, data, msgConfirm, async) {
 
         if (typeof async === 'undefined') { async = true; }

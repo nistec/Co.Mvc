@@ -12,6 +12,8 @@ using ProSystem.Query;
 using Nistec.Serialization;
 using System.Collections.Specialized;
 using ProSystem.Data;
+using Pro.Data;
+using Pro.Query;
 
 namespace ProAd.Data.Entities
 {
@@ -220,7 +222,7 @@ namespace ProAd.Data.Entities
             PriceTo = Types.ToDecimal(Request["PriceTo"], 0);
             IsFailure = Types.ToBool(Request["IsFailure"],false);
 
-            LoadSortAndFilter(Request);
+            LoadSortAndFilter(Request,"");
         }
 
         public void Normelize()

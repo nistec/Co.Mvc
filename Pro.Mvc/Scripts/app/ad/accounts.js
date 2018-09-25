@@ -625,7 +625,7 @@ class app_accounts_grid {
     }
 
     query() {
-        //app.redirectTo('/Main/MembersQuery');
+        //app.redirectTo('/Co/MembersQuery');
         if (!wizard.existsIframe(3)) {
             wizard.appendIframe(3, app.appPath() + "/Admin/_AccountsQuery", "100%", "680px", true, "#loader");
         }
@@ -635,7 +635,7 @@ class app_accounts_grid {
     add() {
         $('#member-item-update').show();
         $("#member-item-update-plus").show();
-        //wizard.appendIframe(2, app.appPath() + "/Main/_MemberAdd", "100%", "620px", true, "#loader");
+        //wizard.appendIframe(2, app.appPath() + "/Co/_MemberAdd", "100%", "620px", true, "#loader");
         wizard.displayStep(2);
         this.showControl(0, 'a');
     }
@@ -661,7 +661,7 @@ class app_accounts_grid {
             wizard.displayStep(2);
             this.showControl(id, 'g');
             //$('#member-item-update').hide();
-            //wizard.appendIframe(2, app.appPath() + "/Main/_MemberEdit?id=" + id, "100%", "620px", true, "#loader");
+            //wizard.appendIframe(2, app.appPath() + "/Co/_MemberEdit?id=" + id, "100%", "620px", true, "#loader");
         }
     }
 
@@ -736,7 +736,7 @@ class app_accounts_grid {
         //wizard.removeIframe(2);
         app_messenger.Post(data);
         if (data && data.Status > 0) {
-            wizard.changeIframe(app.appPath() + "/Main/_MemberAdd");
+            wizard.changeIframe(app.appPath() + "/Co/_MemberAdd");
         }
     }
 
@@ -1220,13 +1220,13 @@ class app_accounts_query {
                 window.parent.triggerWizControlQuery(deataModel);
             }
             else {
-                var action = '/Main/Members';
+                var action = '/Co/Members';
                 $("#form").attr('action', app.appPath() + action);
                 $("#form").submit();
             }
         });
         $('#submitExport').on('click', function () {
-            var action = '/Main/MembersExport';
+            var action = '/Co/MembersExport';
             $("#QueryType").val(20);
             $("#form").attr('action', app.appPath() + action);
             $("#form").submit();

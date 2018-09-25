@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/_ViewMain.cshtml";
+    Layout = "~/Views/Shared/_ViewCo.cshtml";
     Page.Title = "Members";
     var userRole = Nistec.Types.ToInt( ViewBag.UserRole);
     string exportClass = userRole < 5 ? "hide" : "show";
@@ -9,7 +9,7 @@
 
 
   @Scripts.Render("~/bundles/jqx")
-  <script type="text/javascript" src="~/Scripts/app/main/members-query.js"></script>
+  <script type="text/javascript" src="~/Scripts/app/Co/members-query.js"></script>
     <style type="text/css">
         /*table {
             direction: rtl;
@@ -236,7 +236,7 @@
             //$("#form").attr('action', app.appPath() + action);
             //$("#form").submit();
 
-            //var actionurl = '/Main/MembersExport';
+            //var actionurl = '/Co/MembersExport';
             //$("#form").attr('action', app.appPath() + action);
 
 
@@ -264,7 +264,7 @@
 
         });
         //$('#submitExport').on('click', function () {
-        //    var action = '/Main/MembersExport';
+        //    var action = '/Co/MembersExport';
         //    $("#form").attr('action', app.appPath() + action);
         //    $("#form").submit();
             //});

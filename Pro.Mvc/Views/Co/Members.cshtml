@@ -1,0 +1,54 @@
+﻿@model Pro.Lib.Query.MemberQuery
+@{
+    Layout = "~/Views/Shared/_ViewCo.cshtml";
+    ViewBag.Title = "Members";
+    //int acctype = Nistec.Types.ToInt(Request.QueryString["acctype"]);
+    var dataModel = @Html.Raw(Json.Encode(Model));
+    var userModel = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+    var userInfo = @Html.Raw(Json.Encode(userModel));
+
+}
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    @Scripts.Render("~/bundles/jqxgrid")
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxloader.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxtooltip.js"></script>
+    <script type="text/javascript" src="~/Scripts/models/co/members_model.js"></script>
+    <script type="text/javascript" src="~/Scripts/models/co/member_model.js"></script>
+
+    @*<script type="text/javascript" src="~/Scripts/app/Co/members.js"></script>*@
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+        /*.jqx-grid-cell {
+            border: none;
+        }*/
+
+    </style>
+}
+
+
+@section scripts {
+
+}
+
+<div class="breadcrumbs">
+</div>
+
+<div id="Members">
+
+</div>
+
+<script type="text/javascript">
+    var members_model;
+    var members_grid;
+    var wizard;
+    members_model = new model_members('#Members', JSON.parse('@userModel'));
+    members_model.init(JSON.parse('@dataModel'), JSON.parse('@userInfo'));
+</script>

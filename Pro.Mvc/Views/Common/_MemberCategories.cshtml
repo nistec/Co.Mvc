@@ -68,7 +68,7 @@
                     id: 'MemberId',
                     data: { 'rcdid': '@rcdid'},
                     type: 'POST',
-                    url: '@Url.Action("GetMemberCategories", "Main")'
+                    url: '@Url.Action("GetMemberCategories", "Co")'
                 };
 
                 var srcMemberType;
@@ -98,7 +98,7 @@
 
                 $('#categoriesSubmit').on('click', function (e) {
                     $.ajax({
-                        url: '@Url.Action("UpdateMemberCategories", "Main")',
+                        url: '@Url.Action("UpdateMemberCategories", "Co")',
                         type: 'post',
                         dataType: 'json',
                         data: $('#categoriesForm').serialize(),
@@ -136,7 +136,7 @@
             <div id="categoriesHeader">
             </div>
             <div id="categoriesBody">
-                <form class="categoriesForm" id="categoriesForm" method="post" action="/Main/UpdateMemberCategories">
+                <form class="categoriesForm" id="categoriesForm" method="post" action="/Co/UpdateMemberCategories">
                     <input type="hidden" id="Categories" name="Categories" />
                     <div style="direction: rtl; text-align: right">
                         <div class="form-group">

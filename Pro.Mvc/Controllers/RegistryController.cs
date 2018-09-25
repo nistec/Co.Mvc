@@ -13,7 +13,7 @@ using Pro.Data.Entities;
 using System.IO;
 using Pro.Mvc.Models;
 using Pro.Lib;
-using Pro.Lib.Upload;
+using Pro.Upload;
 using Pro.Data;
 using Nistec.Data.Entities;
 using Pro.Data.Entities.Props;
@@ -39,7 +39,7 @@ namespace Pro.Mvc.Controllers
         public JsonResult GetCityView()
         {
             //int accountId = GetAccountId();
-            var list = EntityPro.ViewEntityList<CityView>(EntityGroups.Enums, CityView.TableName, 0);
+            var list = EntityLibPro.ViewEntityList<CityView>(EntityGroups.Enums, CityView.TableName, 0);
             return Json(list.OrderBy(v => v.PropName).ToList(), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]

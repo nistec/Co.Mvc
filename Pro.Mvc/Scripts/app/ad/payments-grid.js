@@ -33,7 +33,7 @@ app_accounts_payments_grid = {
             ],
             id: 'PayId',//'SignupId',
             type: 'POST',
-            url: '/Main/GetPaymentsGrid',
+            url: '/Co/GetPaymentsGrid',
             //data:{},
             pagenum: 0,
             pagesize: 20,
@@ -193,7 +193,7 @@ app_accounts_payments_grid = {
                 $("#jqxgrid").jqxGrid('clearfilters');
             });
             queryButton.click(function (event) {
-                app.redirectTo('/Main/PaymentsQuery');
+                app.redirectTo('/Co/PaymentsQuery');
             });
 
             // search for a record.

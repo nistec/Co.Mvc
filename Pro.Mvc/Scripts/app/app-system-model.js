@@ -2573,7 +2573,7 @@ var app_system_model = {
     },
     personal_container: function (tag) {
 
-        var html = (function () {/*
+        var html = `
             <div id="personal-header" style="width:100%;height:30px;display:block;">
                 <label class="line-space-10"><a href="#" id="cmdReminder" title="שליחת הודעה"><i class="fa fa-send" style="font-size:20px;color:#60636b"></i></a></label>
                 <label class="line-space-10"><a href="#" id="cmdTicket" title="דיווח כרטיס"><i class="fa fa-ticket" style="font-size:20px;color:#ff6a00"></i></a></label>
@@ -2589,7 +2589,7 @@ var app_system_model = {
                 <div id="app_Notification" style="direction:rtl;position:relative;margin:5px  5px;"></div>
             </div>
             <div id="jqxNotification" style="direction:rtl;position:relative; display:none;">
-        </div>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
+        </div>`;
 
         $(tag).html(html);
 

@@ -13,7 +13,7 @@ using Pro.Data.Entities;
 using System.IO;
 using Pro.Mvc.Models;
 using Pro.Lib;
-using Pro.Lib.Upload;
+using Pro.Upload;
 using Pro.Data;
 
 namespace Pro.Mvc.Controllers

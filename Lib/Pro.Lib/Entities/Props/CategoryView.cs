@@ -36,14 +36,15 @@ namespace Pro.Data.Entities.Props
 
         public static IEnumerable<CategoryView> ViewList(int AccountId)
         {
-            return EntityPro.ViewEntityList<CategoryView>(EntityGroups.Enums, ViewName, AccountId);
+            return EntityLibPro.ViewEntityList<CategoryView>(EntityGroups.Enums, ViewName, AccountId);
         }
         public static void Refresh(int AccountId, bool dbRefresh=false)
         {
             CacheRemove(AccountId);
             if(dbRefresh)
             {
-                DbProContext<CategoryView>.DbRefresh(ListsTypes.Categories, AccountId);
+                //ListsTypes.Categories,
+                DbProContext<CategoryView>.DbRefresh(AccountId);
 
                 //using(var db=DbContext.Create<DbPro>())
                 //{

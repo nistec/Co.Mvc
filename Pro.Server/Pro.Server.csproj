@@ -92,6 +92,10 @@
       <Project>{e510dd2c-859c-476c-9901-60edfc5e71f1}</Project>
       <Name>Nistec.Logger</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Lib\Pro.Base\Pro.Base.csproj">
+      <Project>{b15f27d0-1443-4332-8106-0e0886add8d4}</Project>
+      <Name>Pro.Base</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lib\Pro.Lib\Pro.Lib.csproj">
       <Project>{b84526d5-435e-4d56-b323-dbffafe54940}</Project>
       <Name>Pro.Lib</Name>
@@ -103,10 +107,6 @@
     <ProjectReference Include="..\Lib\Pro.System\Pro.System.csproj">
       <Project>{08ee976c-6767-40d0-9c07-b6c5afb9dba1}</Project>
       <Name>Pro.System</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lib\Pro.Upload\Pro.Upload.csproj">
-      <Project>{81b5fbd9-1d2f-4482-ac96-ab6801325884}</Project>
-      <Name>Pro.Upload</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

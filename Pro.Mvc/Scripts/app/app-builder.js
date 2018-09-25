@@ -260,7 +260,7 @@ var app_form_BuilderSample = function (tag) {
 
     var builder = new app_form_Builder();
     builder.init('#formContainer');
-    builder.addItem(app_field_T.formBegin("form", "/Main/Test"));
+    builder.addItem(app_field_T.formBegin("form", "/Co/Test"));
     builder.addItem(app_field_T.sectionBegin("section1", "פרטים 1"));
     builder.addItem(app_field_T.itemInput("שם", "name"));
     builder.addItem(app_field_T.addItemInputwRule("תעודת זהות","text", "IdNumber","חובה לציין תעודת זהות"));

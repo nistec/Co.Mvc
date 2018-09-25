@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using Nistec;
 using System.Text.RegularExpressions;
-using Pro.Lib.Upload;
+using Pro.Upload;
 
 namespace Pro.Server.Integration
 {

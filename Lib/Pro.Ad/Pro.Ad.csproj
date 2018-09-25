@@ -49,6 +49,7 @@
     <Reference Include="WebMatrix.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Entities\AdUser.cs" />
     <Compile Include="Data\Entities\Payment.cs" />
     <Compile Include="Query\AccountsQuery.cs" />
     <Compile Include="Data\Entities\Products.cs" />
@@ -93,6 +94,10 @@
     <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Web\Nistec.Web.csproj">
       <Project>{8c4cff01-180e-41a1-9234-0c1b1e207ae5}</Project>
       <Name>Nistec.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pro.Base\Pro.Base.csproj">
+      <Project>{b15f27d0-1443-4332-8106-0e0886add8d4}</Project>
+      <Name>Pro.Base</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pro.System\Pro.System.csproj">
       <Project>{08ee976c-6767-40d0-9c07-b6c5afb9dba1}</Project>

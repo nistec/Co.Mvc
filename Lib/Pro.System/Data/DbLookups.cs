@@ -1,6 +1,9 @@
 ﻿using Nistec.Data; 
 using Nistec.Data.Entities;
 using Nistec.Web.Controls;
+using Pro;
+using Pro.Data;
+using Pro.Data.Entities;
 using ProSystem.Data.Entities;
 using System;
 using System.Collections.Generic;
@@ -55,12 +58,12 @@ namespace ProSystem.Data
             string key = WebCache.GetKey(Settings.ProjectName, cacheGroups, accountId, mappingName);
             IEnumerable<EntityListItem<int>> list = null;
 
-            if (EntityProCache.EnableCache)
+            if (EntityPro.EnableCache)
                 list = (IEnumerable<EntityListItem<int>>)WebCache.Get<List<EntityListItem<int>>>(key);
             if (list == null || list.Count() == 0)
             {
                 list = EntityListContext<DbSystem, int>.GetList(valueField, displayField, mappingName, "AccountId", accountId);
-                if (EntityProCache.EnableCache && list != null)
+                if (EntityPro.EnableCache && list != null)
                 {
                     //CacheAdd(key,GetSession(AccountId), (List<T>)list);
                     WebCache.Insert(key, (List<EntityListItem<int>>)list);
@@ -75,12 +78,12 @@ namespace ProSystem.Data
             string key = WebCache.GetKey(Settings.ProjectName, cacheGroups, accountId, mappingName + "_" + enumType.ToString());
             IEnumerable<EntityListItem<int>> list = null;
 
-            if (EntityProCache.EnableCache)
+            if (EntityPro.EnableCache)
                 list = (IEnumerable<EntityListItem<int>>)WebCache.Get<List<EntityListItem<int>>>(key);
             if (list == null || list.Count() == 0)
             {
                 list = EntityListContext<DbSystem, int>.GetList(valueField, displayField, mappingName, "AccountId", accountId);
-                if (EntityProCache.EnableCache && list != null)
+                if (EntityPro.EnableCache && list != null)
                 {
                     //CacheAdd(key,GetSession(AccountId), (List<T>)list);
                     WebCache.Insert(key, (List<EntityListItem<int>>)list);
@@ -95,12 +98,12 @@ namespace ProSystem.Data
             string key = WebCache.GetKey(Settings.ProjectName, EntityCacheGroups.Enums, accountId, "Enum_" + enumType.ToString());
             IEnumerable<EntityListItem<int>> list = null;
 
-            if (EntityProCache.EnableCache)
+            if (EntityPro.EnableCache)
                 list = (IEnumerable<EntityListItem<int>>)WebCache.Get<List<EntityListItem<int>>>(key);
             if (list == null || list.Count() == 0)
             {
                 list = EntityListContext<DbSystem, int>.GetList("PropId", "PropName", "Enum", "AccountId", accountId, "EnumType", enumType);
-                if (EntityProCache.EnableCache && list != null)
+                if (EntityPro.EnableCache && list != null)
                 {
                     //CacheAdd(key,GetSession(AccountId), (List<T>)list);
                     WebCache.Insert(key, (List<EntityListItem<int>>)list);

@@ -610,7 +610,7 @@ var app_jqxgrid = {
 
             if (rtl) {
                 containerSearch = $("<div style='margin: 5px;direction:rtl'></div>");
-                collist = $("<div id='tbgridFieldsOption' style='float:right; display:inline;' title='נא לבחור את השדה הרצוי לפיו יבוצע הסינון'></div>").jqxDropDownList({ source: columnsList, width: 120, height: 22, rtl: true, autoDropDownHeight: true, placeHolder: "בחר\\י שדה לסינון" });
+                collist = $("<div id='tbgridFieldsOption' style='float:right; display:inline;' title='נא לבחור את השדה הרצוי לפיו יבוצע הסינון'></div>").jqxDropDownList({ source: columnsList, width: 122, height: 22, rtl: true, autoDropDownHeight: true, placeHolder: "בחר\\י שדה לסינון" });
                 input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='tbgridSearchField' type='text' style='height: 22px; float: right; width: 160px;' />");
             }
             else {
@@ -728,7 +728,7 @@ var app_jqxgrid = {
             if (rtl) {
                 containerSearch = $("<div style='margin: 5px;direction:rtl'></div>");
                 input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='tbgridSearchField' type='text' style='height: 22px; float: right; width: 120px;' />");
-                collist = $("<div id='tbgridFieldsOption' style='float:right; display:inline;' title='נא לבחור את השדה הרצוי לפיו יבוצע הסינון'></div>").jqxDropDownList({ source: columnsList, width: 120, height: 22, rtl: true, autoDropDownHeight: true, placeHolder: "בחר\\י שדה לסינון" });
+                collist = $("<div id='tbgridFieldsOption' style='float:right; display:inline;' title='נא לבחור את השדה הרצוי לפיו יבוצע הסינון'></div>").jqxDropDownList({ source: columnsList, width: 122, height: 22, rtl: true, autoDropDownHeight: true, placeHolder: "בחר\\י שדה לסינון" });
                 searchbutton = $("<div style='float: right; margin-left: 5px;' title='סינון\\ביטול' ><img src='../scripts/app/images/search.gif'></div>");
             }
             else {
@@ -898,7 +898,7 @@ var app_jqxgrid = {
             if (rtl) {
                 containerSearch = $("<div style='margin: 5px;direction:rtl'></div>");
                 input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='tbgridSearchField' type='text' style='height: 22px; float: right; width: 120px;' />");
-                collist = $("<div id='tbgridFieldsOption' style='float:right; display:inline;' title='נא לבחור את השדה הרצוי לפיו יבוצע הסינון'></div>").jqxDropDownList({ source: columnsList, width: 120, height: 22, rtl: true, autoDropDownHeight: true, placeHolder: "בחר\\י שדה לסינון" });
+                collist = $("<div id='tbgridFieldsOption' style='float:right; display:inline;' title='נא לבחור את השדה הרצוי לפיו יבוצע הסינון'></div>").jqxDropDownList({ source: columnsList, width: 122, height: 22, rtl: true, autoDropDownHeight: true, placeHolder: "בחר\\י שדה לסינון" });
                 searchbutton = $("<div style='float: right; margin-left: 5px;' title='סינון\\ביטול' ><img src='../scripts/app/images/search.gif'></div>");
                 cancelbutton = $("<div style='float: right; margin-left: 5px;' title='ביטול סינון' ><img src='../scripts/app/images/filterRemove.gif'></div>");
             }
@@ -1190,6 +1190,25 @@ var app_jqxgrid = {
         if (tag_grid === undefined || tag_grid == null)
             tag_grid = "#jqxgrid";
         $(tag_grid).jqxGrid('collapseallgroups');
+    },
+    displayGridRecord: function (row, title, tag_grid) {
+        if (tag_grid === undefined || tag_grid == null)
+            tag_grid = '#jqxgrid';
+
+        var rowData = $(tag_grid).jqxGrid('getrowdata', row);
+        var labels = labelLocalization("he");
+        //rowData = JSON.parse(jsonText);
+        var html = '<div style="direction: rtl;margin:5px">';
+        var table = '';
+        table += '<table border="1" direction="rtl">'
+        for (x in rowData) {
+            var label = labels[x] || x;
+            table += '<tr><td>' + label + ': </td><td>' + rowData[x] + '</td></tr>';
+        }
+        table += '</table>'
+        html += table + '</div>';
+
+        app_dialog.dialogDiv(html, title, true);
     }
 };
 

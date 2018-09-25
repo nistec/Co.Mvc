@@ -8,6 +8,8 @@ using Nistec.Web.Controls;
 using Nistec.Data;
 using ProSystem.Data;
 using ProSystem.Data.Entities;
+using Pro.Data;
+using Pro.Data.Entities;
 
 namespace ProAd.Data.Entities
 {
@@ -131,85 +133,108 @@ namespace ProAd.Data.Entities
         }
        
     }
-/*
-    [EntityMapping("web_UserProfile")]
-    public class UserProfile : IEntityItem
+
+    public class SigendUserEx : Nistec.Web.Security.SignedUser
     {
-        //const string TableName = "web_UserProfile";
-        //public static IEnumerable<UsersView> GetUsersView()
-        //{
-        //    return db.EntityGetList<UsersView>(TableName, null);
-        //}
 
-
-        //public static UsersView GetUsersView(int userId)
-        //{
-        //    return db.EntityItemGet<UsersView>(TableName, userId);
-        //}
-
-        
-
-        #region properties
-
-        [EntityProperty(EntityPropertyType.Identity)]
-        public int UserId
+        public int ExType
         {
-            get;
-            set;
-        }
-        public string UserName
-        {
-            get;
-            set;
-        }
-        public string DisplayName
-        {
-            get;
-            set;
-        }
-        public DateTime Creation
-        {
-            get;
-            set;
-        }
-        public string Phone
-        {
-            get;
-            set;
-        }
-        public string Email
-        {
-            get;
-            set;
+            get
+            {
+                return base.GetDataValue<int>("ExType");
+            }
         }
 
-          public int UserRole
+        public void LoadClaims()
         {
-            get;
-            set;
+            var claims=AdContext.ListAdPermsItem(UserId);
+            Claims = new Nistec.Generic.NameValueArgs(claims);
         }
-            public int AccountId
-        {
-            get;
-            set;
-        }
-         public string Lang
-        {
-            get;
-            set;
-        }
-             public int Evaluation
-        {
-            get;
-            set;
-        }
-               public bool IsBlocked
-        {
-            get;
-            set;
-        }
-       #endregion
-      
+
+
     }
- */
+
+
+
+    /*
+        [EntityMapping("web_UserProfile")]
+        public class UserProfile : IEntityItem
+        {
+            //const string TableName = "web_UserProfile";
+            //public static IEnumerable<UsersView> GetUsersView()
+            //{
+            //    return db.EntityGetList<UsersView>(TableName, null);
+            //}
+
+
+            //public static UsersView GetUsersView(int userId)
+            //{
+            //    return db.EntityItemGet<UsersView>(TableName, userId);
+            //}
+
+
+
+            #region properties
+
+            [EntityProperty(EntityPropertyType.Identity)]
+            public int UserId
+            {
+                get;
+                set;
+            }
+            public string UserName
+            {
+                get;
+                set;
+            }
+            public string DisplayName
+            {
+                get;
+                set;
+            }
+            public DateTime Creation
+            {
+                get;
+                set;
+            }
+            public string Phone
+            {
+                get;
+                set;
+            }
+            public string Email
+            {
+                get;
+                set;
+            }
+
+              public int UserRole
+            {
+                get;
+                set;
+            }
+                public int AccountId
+            {
+                get;
+                set;
+            }
+             public string Lang
+            {
+                get;
+                set;
+            }
+                 public int Evaluation
+            {
+                get;
+                set;
+            }
+                   public bool IsBlocked
+            {
+                get;
+                set;
+            }
+           #endregion
+
+        }
+     */
 }

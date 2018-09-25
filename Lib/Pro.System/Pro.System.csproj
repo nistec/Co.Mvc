@@ -50,44 +50,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\ResultStatusModel.cs" />
+    <Compile Include="Data\DbLookups.cs" />
     <Compile Include="Data\Entities\CalendarBook.cs" />
     <Compile Include="Data\Entities\Deals.cs" />
+    <Compile Include="Data\Entities\EntityPro.cs" />
+    <Compile Include="Data\Entities\EntityProCache.cs" />
     <Compile Include="Data\Entities\FormContext.cs" />
     <Compile Include="Data\Entities\DocsContext.cs" />
-    <Compile Include="Data\Entities\EntityPro.cs" />
     <Compile Include="Data\Entities\Budget.cs" />
     <Compile Include="Data\Entities\Reminder.cs" />
     <Compile Include="Data\Entities\TaskImport.cs" />
     <Compile Include="Data\Enums\EnumStatus.cs" />
     <Compile Include="Data\SystemStatusMessage.cs" />
-    <Compile Include="Data\DbLookups.cs" />
     <Compile Include="Data\Entities\CategoryContext.cs" />
     <Compile Include="Data\Entities\News.cs" />
-    <Compile Include="Data\DbProxy.cs" />
-    <Compile Include="Data\DbSystem.cs" />
     <Compile Include="Data\Entities\MediaContext.cs" />
     <Compile Include="Data\Entities\ProjectContext.cs" />
     <Compile Include="Data\EntityResultModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\ProCommands.cs" />
-    <Compile Include="Data\DbServices.cs" />
     <Compile Include="Data\Entities\TaskContext.cs" />
     <Compile Include="Data\Entities\Lists.cs" />
-    <Compile Include="Data\DalTrace.cs" />
-    <Compile Include="Data\DalPro.cs" />
-    <Compile Include="Data\DbConfig.cs" />
-    <Compile Include="Data\Entities\IEntityProp.cs" />
     <Compile Include="Data\Enums\EnumTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query\ReminderQuery.cs" />
     <Compile Include="Query\TaskQuery.cs" />
-    <Compile Include="Query\QueryBase.cs" />
     <Compile Include="Resources\Pro.System.en.Designer.cs" />
     <Compile Include="Resources\Pro.System.he-IL.Designer.cs" />
-    <Compile Include="Data\Entities\EntityProCache.cs" />
-    <Compile Include="Settings.cs" />
-    <Compile Include="TraceHelper.cs" />
     <Compile Include="Web\RouteInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +111,10 @@
     <ProjectReference Include="..\..\..\..\..\Nistec\Git_4.0.2.0\Nistec.Web\Nistec.Web.csproj">
       <Project>{8c4cff01-180e-41a1-9234-0c1b1e207ae5}</Project>
       <Name>Nistec.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pro.Base\Pro.Base.csproj">
+      <Project>{b15f27d0-1443-4332-8106-0e0886add8d4}</Project>
+      <Name>Pro.Base</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

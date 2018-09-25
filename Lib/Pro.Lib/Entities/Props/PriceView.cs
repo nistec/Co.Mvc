@@ -36,7 +36,7 @@ namespace Pro.Data.Entities.Props
        
         public static IEnumerable<PriceView> ViewList(int AccountId)
         {
-            return EntityPro.ViewEntityList<PriceView>(EntityGroups.Enums, TableName, AccountId);
+            return EntityLibPro.ViewEntityList<PriceView>(EntityGroups.Enums, TableName, AccountId);
         }
 
         public static PriceView View(int ItemId)

@@ -7,6 +7,9 @@ using Nistec.Data.Entities.Config;
 using Nistec.Generic;
 using Nistec.Serialization;
 using Nistec.Web.Controls;
+using Pro;
+using Pro.Data;
+using Pro.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,9 +43,10 @@ namespace ProSystem.Data.Entities
     //    Reports,
     //    Registry
     //}
-
+#if(false)
     public class EntityProCache
     {
+/*
         public const int DefaultCacheTtl = 3;
        
         internal static string GetSession(int AccountId)
@@ -84,7 +88,7 @@ namespace ProSystem.Data.Entities
         {
             WebCache.Remove(key);
         }
-
+*/
         //public static IList<T> Get_List<T>(string tableName, Func<IList<T>> function,int expirationMinutes=0) where T : IEntityItem
         //{
         //    string key = EntityProCache.CacheKey(EntityCacheGroups.Enums, 0, tableName);
@@ -157,6 +161,8 @@ namespace ProSystem.Data.Entities
         //}
          */
 #endif
+
+ /*
         public static bool EnableCache
         {
             get 
@@ -196,20 +202,20 @@ namespace ProSystem.Data.Entities
                 return _CacheProtocol;
             }
         }
-
+*/
         public static IEnumerable<T> ViewEntityList<T>(string GroupName, string TableName) where T : IEntityPro
         {
             string key = WebCache.GetKey(Settings.ProjectName, GroupName, 0, TableName);// GetKey(TableName, AccountId);
             IEnumerable<T> list = null;
 
-            if (EntityProCache.EnableCache)
+            if (EntityPro.EnableCache)
                 list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
             if (list == null || list.Count() == 0)
             {
                 using (var db = DbContext.Create<DbSystem>())
                 {
                     list = db.EntityItemList<T>(TableName);
-                    if (EntityProCache.EnableCache && list != null)
+                    if (EntityPro.EnableCache && list != null)
                     {
                         //CacheAdd(key,GetSession(AccountId), (List<T>)list);
                         WebCache.Insert(key, (List<T>)list);
@@ -225,14 +231,14 @@ namespace ProSystem.Data.Entities
             string key = WebCache.GetKey(Settings.ProjectName, GroupName, AccountId, TableName);// GetKey(TableName, AccountId);
             IEnumerable<T> list = null;
 
-            if (EntityProCache.EnableCache)
+            if (EntityPro.EnableCache)
                 list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
             if (list == null || list.Count()==0)
             {
                 using (var db = DbContext.Create<DbSystem>())
                 {
                     list = db.EntityItemList<T>(TableName, "AccountId", AccountId);
-                    if (EntityProCache.EnableCache && list != null)
+                    if (EntityPro.EnableCache && list != null)
                     {
                         //CacheAdd(key,GetSession(AccountId), (List<T>)list);
                         WebCache.Insert(key, (List<T>)list);
@@ -249,14 +255,14 @@ namespace ProSystem.Data.Entities
             string key = WebCache.GetKey(Settings.ProjectName, GroupName, AccountId, EntiryName);// GetKey(TableName, AccountId);
             IEnumerable<T> list = null;
 
-            if (EntityProCache.EnableCache)
+            if (EntityPro.EnableCache)
                 list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
             if (list == null || list.Count() == 0)
             {
                 using (var db = DbContext.Create<DbSystem>())
                 {
                     list = db.EntityItemList<T>(TableName, "AccountId", AccountId, "EnumType", EnumType);
-                    if (EntityProCache.EnableCache && list != null)
+                    if (EntityPro.EnableCache && list != null)
                     {
                         //CacheAdd(key,GetSession(AccountId), (List<T>)list);
                         WebCache.Insert(key, (List<T>)list);
@@ -390,4 +396,5 @@ namespace ProSystem.Data.Entities
 
         }
     }
+#endif
 }

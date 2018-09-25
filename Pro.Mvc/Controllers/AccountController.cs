@@ -89,10 +89,15 @@ namespace Pro.Mvc.Controllers
             var RegReferrer = TraceHelper.GetReferrer(Request);
             var IsMobile = DeviceHelper.IsMobile(Request);
 
-            var status = FormsAuth.DoSignIn(model.UserName, model.Password, model.RememberMe, RegHostAddress, RegReferrer, Settings.AppName, IsMobile);
+            //var status = FormsAuth.DoSignIn(model.UserName, model.Password, model.RememberMe, RegHostAddress, RegReferrer, Settings.AppName, IsMobile);
+
+            var status = AdUser.DoSignIn(model.UserName, model.Password, model.RememberMe, RegHostAddress, RegReferrer, Settings.AppName, IsMobile);
+
             if (status== AuthState.Succeeded)
             {
-                return RedirectToAction("Main", "Main");// ("Dashboard", "Main");
+                //var aduser= AdUser.Get(Request.RequestContext.HttpContext);
+                //aduser.LoadDataAndClaims();
+                return RedirectToAction("Dashboard", "Common");
             }
             
             string msg = "שם משתמש ו או סיסמה אינם מוכרים במערכת";

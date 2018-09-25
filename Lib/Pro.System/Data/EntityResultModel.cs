@@ -1,7 +1,8 @@
 ﻿using Nistec.Data;
 using Nistec.Data.Entities;
 using Nistec.Web.Controls;
-using ProSystem.Data.Entities;
+using Pro;
+using Pro.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;

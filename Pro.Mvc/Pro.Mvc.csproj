@@ -828,9 +828,9 @@
     <Content Include="Scripts\app\cms\cms_content-def.js" />
     <Content Include="Scripts\app\lol-framework.js" />
     <Content Include="Scripts\app\lol-js.js" />
-    <Content Include="Scripts\app\main\uploader.js" />
-    <Content Include="Scripts\app\main\members.js" />
-    <Content Include="Scripts\app\main\sms.js" />
+    <Content Include="Scripts\app\co\uploader.js" />
+    <Content Include="Scripts\app\co\members.js" />
+    <Content Include="Scripts\app\co\sms.js" />
     <Content Include="Scripts\app\model\generic\task-entity-def.js" />
     <Content Include="Scripts\app\model\prop-def-def.js" />
     <Content Include="Scripts\app\model\generic\category-def.js" />
@@ -842,7 +842,7 @@
     <Content Include="Scripts\app\model\generic\entity-def.js" />
     <Content Include="Scripts\app\model\generic\price-def.js" />
     <Content Include="Scripts\app\model\media-files.js" />
-    <Content Include="Scripts\app\main\sendreport-grid.js" />
+    <Content Include="Scripts\app\co\sendreport-grid.js" />
     <Content Include="Scripts\app\netcell\contacts.js" />
     <Content Include="Scripts\app\netcell\members.js" />
     <Content Include="Scripts\app\registry\member-info.js" />
@@ -866,9 +866,9 @@
     <Content Include="Scripts\app\system\task-def.js" />
     <Content Include="Scripts\app\uploads-1.js" />
     <Content Include="Scripts\app\view\unpayed-grid.js" />
-    <Content Include="Scripts\app\main\signup-grid.js" />
+    <Content Include="Scripts\app\co\signup-grid.js" />
     <Content Include="Scripts\app\model\reports.js" />
-    <Content Include="Scripts\app\main\payments-grid.js" />
+    <Content Include="Scripts\app\co\payments-grid.js" />
     <Content Include="Scripts\app\registry\mifkad.js" />
     <Content Include="Scripts\app\registry\signup-def.js" />
     <Content Include="Scripts\app\app-jqx-1.0.js" />
@@ -1557,6 +1557,13 @@
     <Content Include="Scripts\jq\mobile\jquery.mobile-1.4.5.js" />
     <Content Include="Scripts\jq\mobile\jquery.mobile-1.4.5.min.css" />
     <Content Include="Scripts\jq\mobile\jquery.mobile-1.4.5.min.js" />
+    <Content Include="Scripts\models\ad\credit-mv.js" />
+    <Content Include="Scripts\models\co\dashboard-mv.js" />
+    <Content Include="Scripts\models\co\member-mv.js" />
+    <Content Include="Scripts\models\co\members-mv.js" />
+    <Content Include="Scripts\models\co\_navigator-mv.js" />
+    <Content Include="Scripts\models\main-mv.js" />
+    <Content Include="Scripts\models\template-mv.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\plagins\autocomplete\demo.html" />
     <Content Include="Scripts\plagins\autocomplete\easy-autocomplete.css" />
@@ -1900,6 +1907,7 @@
     <Content Include="Scripts\plagins\sidebar\js\modernizr.js" />
     <Content Include="Scripts\plagins\steps\jquery.steps.js" />
     <Content Include="Scripts\plagins\steps\jquery.steps.min.js" />
+    <Content Include="Scripts\plagins\tabs\jcxtabs.min-0.js" />
     <Content Include="Scripts\plagins\tabs\jcxwizard-light.css" />
     <Content Include="Scripts\plagins\tabs\jcxWizard.js" />
     <Content Include="Scripts\plagins\tabs\jcxtabs-light.min.css" />
@@ -1953,7 +1961,7 @@
     <Content Include="Uploads\mifkad\registry.js" />
     <Content Include="Uploads\mifkad\share.png" />
     <Content Include="Uploads\mifkad\style.css" />
-    <Content Include="Views\Main\MembersQuery.cshtml" />
+    <Content Include="Views\Co\MembersQuery.cshtml" />
     <Content Include="Views\Common\_MemberCategories.cshtml" />
     <Content Include="Views\Cms\CmsItems.cshtml" />
     <Content Include="Views\Common\DefEntity.cshtml" />
@@ -1961,14 +1969,14 @@
     <Content Include="Views\Common\_Upload.cshtml" />
     <Content Include="Views\Common\_Targets.cshtml" />
     <Content Include="Views\Common\DefEntityEnum.cshtml" />
-    <Content Include="Views\Main\MembersAdd.cshtml" />
-    <Content Include="Views\Main\ManagementGrid.cshtml" />
+    <Content Include="Views\Co\MembersAdd.cshtml" />
+    <Content Include="Views\Co\ManagementGrid.cshtml" />
     <Content Include="Views\Common\_ManagementEdit.cshtml" />
     <Content Include="Views\Common\DefCity.cshtml" />
-    <Content Include="Views\Main\MembersExport.cshtml" />
-    <Content Include="Views\Main\MembersRemove.cshtml" />
-    <Content Include="Views\Main\_UploadProc.cshtml" />
-    <Content Include="Views\Main\MemberEdit.cshtml" />
+    <Content Include="Views\Co\MembersExport.cshtml" />
+    <Content Include="Views\Co\MembersRemove.cshtml" />
+    <Content Include="Views\Co\_UploadProc.cshtml" />
+    <Content Include="Views\Co\MemberEdit.cshtml" />
     <Content Include="Views\Cms\CmsHtmlEdit.cshtml" />
     <Content Include="Views\Cms\CmsContentGrid.cshtml" />
     <Content Include="Views\Cms\CmsContentFields.cshtml" />
@@ -1977,16 +1985,16 @@
     <Content Include="Views\Home\Index.cshtml">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="Views\Main\PaymentsReport.cshtml" />
-    <Content Include="Views\Main\SignupQuery.cshtml" />
-    <Content Include="Views\Main\SignupExport.cshtml" />
-    <Content Include="Views\Main\SignupReport.cshtml" />
+    <Content Include="Views\Co\PaymentsReport.cshtml" />
+    <Content Include="Views\Co\SignupQuery.cshtml" />
+    <Content Include="Views\Co\SignupExport.cshtml" />
+    <Content Include="Views\Co\SignupReport.cshtml" />
     <Content Include="Views\Admin\DefAccount.cshtml" />
     <Content Include="Views\Admin\AccountDef-0.cshtml" />
-    <Content Include="Views\Main\SmsBroadcast.cshtml" />
-    <Content Include="Views\Main\EmailBroadcast.cshtml" />
+    <Content Include="Views\Co\SmsBroadcast.cshtml" />
+    <Content Include="Views\Co\EmailBroadcast.cshtml" />
     <Content Include="Content\mifkad\images\matza.pdf" />
-    <Content Include="Views\Main\Dashboard.cshtml" />
+    <Content Include="Views\Co\Dashboard.cshtml" />
     <Content Include="Uploads\mifkad\tofes.pdf" />
     <Content Include="Views\Cms\CmsTextEdit.cshtml" />
     <Content Include="Uploads\mifkad\matza.pdf" />
@@ -2006,7 +2014,7 @@
     <Content Include="Scripts\plagins\vex\_back\sass\vex.sass" />
     <Content Include="Scripts\plagins\vex\_back\sass\_keyframes.sass" />
     <Content Include="Scripts\plagins\vex\_back\sass\_mixins.sass" />
-    <Content Include="Views\Main\Members.cshtml" />
+    <Content Include="Views\Co\Members.cshtml" />
     <Content Include="Scripts\plagins\sidebar\.DS_Store" />
     <Content Include="Scripts\plagins\sidebar\js\.DS_Store" />
     <Content Include="Scripts\plagins\sidebar\js\README-menu-aim.md" />
@@ -2016,8 +2024,8 @@
     <Content Include="Scripts\plagins\sidebar\README.md" />
     <Content Include="Scripts\plagins\sidebar\scss\style.scss" />
     <Content Include="Views\System\DefUser.cshtml" />
-    <Content Include="Views\Main\SendQuery.cshtml" />
-    <Content Include="Views\Main\SendReport.cshtml" />
+    <Content Include="Views\Co\SendQuery.cshtml" />
+    <Content Include="Views\Co\SendReport.cshtml" />
     <Content Include="Views\Common\_BatchMessageView.cshtml" />
     <Content Include="Scripts\jq\jquery-ui-1.12.0\images\Thumbs.db" />
     <Content Include="Scripts\jq\jquery-ui-1.12.0\package.json" />
@@ -2033,8 +2041,8 @@
     <Content Include="Views\Cms\CmsMedia.cshtml" />
     <Content Include="Views\Cms\CmsPageSettings.cshtml" />
     <Content Include="Views\System\AdUsersDef.cshtml" />
-    <Content Include="Views\Main\PaymentsQuery.cshtml" />
-    <Content Include="Views\Main\PaymentsExport.cshtml" />
+    <Content Include="Views\Co\PaymentsQuery.cshtml" />
+    <Content Include="Views\Co\PaymentsExport.cshtml" />
     <Content Include="Views\Preview\css\html5reset-1.6.1.css" />
     <Content Include="Views\Preview\css\registry.css" />
     <Content Include="Views\Preview\css\style.css" />
@@ -2046,16 +2054,16 @@
     <Content Include="Views\Cms\CmsWizardHead.cshtml" />
     <Content Include="Views\Cms\CmsWizardPages.cshtml" />
     <Content Include="Views\Common\_View.cshtml" />
-    <Content Include="Views\Main\SmsMultimedia.cshtml" />
+    <Content Include="Views\Co\SmsMultimedia.cshtml" />
     <Content Include="_Doc\github.txt" />
     <Content Include="_Doc\ReadMe.txt" />
-    <Content Include="Views\Main\MembersUpload.cshtml" />
+    <Content Include="Views\Co\MembersUpload.cshtml" />
     <Content Include="Views\Common\CategoryQuery.cshtml" />
     <Content Include="Views\Common\DefCategory.cshtml" />
     <Content Include="Views\Home\ErrorUnauthorized.cshtml" />
     <Content Include="Scripts\jq\jquery-ui-1.12.1\package.json" />
-    <Content Include="Views\Main\Member.cshtml" />
-    <Content Include="Views\Main\_MemberEdit.cshtml" />
+    <Content Include="Views\Co\Member.cshtml" />
+    <Content Include="Views\Co\_MemberEdit.cshtml" />
     <Content Include="Scripts\app\app-control-1.0.js" />
     <Content Include="jqwidgets\styles\images\colorpicker\Thumbs.db" />
     <Content Include="jqwidgets\styles\images\darkness\Thumbs.db" />
@@ -2068,7 +2076,7 @@
     <Content Include="jqwidgets\styles\images\sunny\Thumbs.db" />
     <Content Include="jqwidgets\styles\images\Thumbs.db" />
     <Content Include="jqwidgets\styles\Thumbs.db" />
-    <Content Include="Views\Main\ReportQuery.cshtml" />
+    <Content Include="Views\Co\ReportQuery.cshtml" />
     <Content Include="Views\Home\Construction.cshtml" />
     <Content Include="Scripts\plagins\colorpicker\.gitignore" />
     <Content Include="Scripts\plagins\colorpicker\bower.json" />
@@ -2314,7 +2322,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
-    <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\CoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -2323,7 +2331,7 @@
     <Compile Include="Models\RequestModels.cs" />
     <Compile Include="Models\ResultModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="Views\Main\StatusMessage.cshtml">
+    <Content Include="Views\Co\StatusMessage.cshtml">
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Home\Error.cshtml" />
@@ -2334,7 +2342,7 @@
     <Content Include="Views\Shared\_View-Menu.cshtml">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="Views\Shared\_ViewAdmin2.cshtml" />
+    <Content Include="Views\Shared\_ex\_ViewAdmin2.cshtml" />
     <Content Include="Views\Admin\Manager.cshtml" />
     <Content Include="Views\Admin\Main.cshtml" />
     <Content Include="Views\Admin\UsersDef.cshtml" />
@@ -2398,7 +2406,7 @@
     <Content Include="Views\System\_TaskFormTemplate.cshtml" />
     <Content Include="Views\System\TaskUser.cshtml" />
     <Content Include="Views\System\Reminder.cshtml" />
-    <Content Include="Views\Main\_MembersQuery.cshtml" />
+    <Content Include="Views\Co\_MembersQuery.cshtml" />
     <Content Include="Views\System\TaskEdit.cshtml" />
     <Content Include="Views\System\TicketEdit.cshtml" />
     <Content Include="Views\System\TicketNew.cshtml" />
@@ -2413,17 +2421,17 @@
     <Content Include="Views\System\DocNew.cshtml" />
     <Content Include="Views\System\DocEdit.cshtml" />
     <Content Include="Views\System\DefEntity.cshtml" />
-    <Content Include="Views\Shared\_View2.cshtml" />
+    <Content Include="Views\Shared\_ex\_View2.cshtml" />
     <Content Include="Views\System\TaskNew2.cshtml" />
     <Content Include="Views\System\_DefUser.cshtml" />
     <Content Include="Views\System\DocInfo.cshtml" />
     <Content Include="Views\System\TopicInfo.cshtml" />
     <Content Include="Views\System\TicketInfo.cshtml" />
     <Content Include="Views\Shared\_ViewMng.cshtml" />
-    <Content Include="Views\Main\Main.cshtml" />
+    <Content Include="Views\Common\Dashboard.cshtml" />
     <Content Include="Views\Shared\_ViewSystem.cshtml" />
     <Content Include="Views\Shared\_ViewAdmin.cshtml" />
-    <Content Include="Views\Shared\_ViewMain.cshtml" />
+    <Content Include="Views\Shared\_ViewCo.cshtml" />
     <Content Include="Views\Admin\Payments.cshtml" />
     <Content Include="Views\Netcell\Contacts-0.cshtml" />
     <Content Include="Views\Shared\_ViewNetcell.cshtml" />
@@ -2432,6 +2440,8 @@
     <Content Include="Views\Netcell\MembersUpload.cshtml" />
     <Content Include="Views\Netcell\Members.cshtml" />
     <Content Include="Views\Admin\CreditReport.cshtml" />
+    <Content Include="Views\Co\Spa.cshtml" />
+    <Content Include="Views\Admin\CreditReport - Copy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\camera.css" />
@@ -2540,17 +2550,22 @@
     <Folder Include="Scripts\app\system\_ex\_v-0\" />
     <Folder Include="Scripts\app\system\_v-1\" />
     <Folder Include="Scripts\app\_old\" />
+    <Folder Include="Scripts\models\auto\" />
+    <Folder Include="Scripts\models\cms\" />
+    <Folder Include="Scripts\models\main\" />
+    <Folder Include="Scripts\models\netcell\" />
+    <Folder Include="Scripts\models\system\" />
     <Folder Include="Scripts\_exclude\" />
     <Folder Include="Views\Account\_ex\" />
     <Folder Include="Views\Admin\_Admin\" />
     <Folder Include="Views\Cms\_ex\" />
     <Folder Include="Views\Common\_defEntity\" />
     <Folder Include="Views\Common\_exclude\" />
+    <Folder Include="Views\Co\_exclude\" />
+    <Folder Include="Views\Co\_ex\" />
+    <Folder Include="Views\Co\_upload\" />
     <Folder Include="Views\Home\_exclude\_v-0\" />
     <Folder Include="Views\Home\_exclude\_v-1\" />
-    <Folder Include="Views\Main\_exclude\" />
-    <Folder Include="Views\Main\_ex\" />
-    <Folder Include="Views\Main\_upload\" />
     <Folder Include="Views\Netcell\_ex\" />
     <Folder Include="Views\System\_ex\" />
     <Folder Include="Views\System\_v-0\" />
@@ -2586,6 +2601,10 @@
       <Project>{6d7c1df9-8921-4c37-b91d-ebbf91464595}</Project>
       <Name>Pro.Ad</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Lib\Pro.Base\Pro.Base.csproj">
+      <Project>{b15f27d0-1443-4332-8106-0e0886add8d4}</Project>
+      <Name>Pro.Base</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lib\Pro.Lib\Pro.Lib.csproj">
       <Project>{b84526d5-435e-4d56-b323-dbffafe54940}</Project>
       <Name>Pro.Lib</Name>
@@ -2597,10 +2616,6 @@
     <ProjectReference Include="..\Lib\Pro.System\Pro.System.csproj">
       <Project>{08ee976c-6767-40d0-9c07-b6c5afb9dba1}</Project>
       <Name>Pro.System</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lib\Pro.Upload\Pro.Upload.csproj">
-      <Project>{81b5fbd9-1d2f-4482-ac96-ab6801325884}</Project>
-      <Name>Pro.Upload</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

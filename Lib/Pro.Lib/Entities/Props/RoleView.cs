@@ -32,7 +32,7 @@ namespace Pro.Data.Entities.Props
 
         public static IEnumerable<RoleView> ViewList(int AccountId)
         {
-            return EntityPro.ViewEntityList<RoleView>(EntityGroups.Enums, TableName, AccountId);
+            return EntityLibPro.ViewEntityList<RoleView>(EntityGroups.Enums, TableName, AccountId);
         }
 
         public static RoleView View(int RegionId)

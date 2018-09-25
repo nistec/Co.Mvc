@@ -1,6 +1,7 @@
 ﻿using Nistec;
 using Nistec.Data;
 using Nistec.Serialization;
+using Pro.Query;
 using ProSystem.Data.Entities;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace ProSystem.Query
             AssignBy = Types.ToInt(Request["AssignBy"]);
 
             if (enableFilter)
-                LoadSortAndFilter(Request);
+                LoadSortAndFilter(Request,"");
         }
 
 

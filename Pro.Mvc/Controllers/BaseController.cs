@@ -20,6 +20,7 @@ using Nistec.Runtime;
 using Pro.Data;
 using System.Threading.Tasks;
 using Nistec.Data.Entities;
+using ProAd.Data.Entities;
 
 namespace Pro.Mvc.Controllers
 {
@@ -41,13 +42,13 @@ namespace Pro.Mvc.Controllers
             }
         }
 
-        protected SignedUser LoadUserInfo()
+        protected AdUser LoadUserInfo()
         {
             //var signedUser = (SignedUser)ViewBag.UserInfo;
             //if (signedUser != null)
             //    return signedUser;
 
-            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
+            var signedUser = AdUser.Get(Request.RequestContext.HttpContext);
             if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsBlocked == false)
             {
                 ViewBag.UserInfo = signedUser;
@@ -89,7 +90,7 @@ namespace Pro.Mvc.Controllers
         //        isRedirect = true
         //    });
         //}
-        protected ActionResult View(SignedUser signedUser)
+        protected ActionResult View(AdUser signedUser)
         {
             if (signedUser == null)
             {
@@ -97,7 +98,7 @@ namespace Pro.Mvc.Controllers
             }
             return base.View();
         }
-        protected ActionResult View(SignedUser signedUser, object model)
+        protected ActionResult View(AdUser signedUser, object model)
         {
             if (signedUser == null)
             {
@@ -105,7 +106,7 @@ namespace Pro.Mvc.Controllers
             }
             return base.View(model);
         }
-        protected ActionResult View(SignedUser signedUser, string viewName, object model)
+        protected ActionResult View(AdUser signedUser, string viewName, object model)
         {
             if (signedUser == null)
             {
@@ -377,13 +378,13 @@ namespace Pro.Mvc.Controllers
          */
 
        
-        protected SignedUser GetSignedUser(bool enableException)
+        protected AdUser GetSignedUser(bool enableException)
         {
             //var signedUser = (SignedUser)ViewBag.UserInfo;
             //if (signedUser != null)
             //    return signedUser;
 
-            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
+            var signedUser = AdUser.Get(Request.RequestContext.HttpContext);
             if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsBlocked == false)
             {
                 return signedUser;
@@ -393,13 +394,13 @@ namespace Pro.Mvc.Controllers
             return null;
         }
 
-        protected SignedUser GetSignedUser(UserRole role,bool enableException)
+        protected AdUser GetSignedUser(UserRole role,bool enableException)
         {
             //var signedUser = (SignedUser)ViewBag.UserInfo;
             //if (signedUser != null)
             //    return signedUser;
 
-            var signedUser = SignedUser.Get(Request.RequestContext.HttpContext);
+            var signedUser = AdUser.Get(Request.RequestContext.HttpContext);
             if (signedUser != null && signedUser.IsAuthenticated && signedUser.IsBlocked == false)
             {
                 return signedUser;
@@ -802,7 +803,7 @@ namespace Pro.Mvc.Controllers
             }
             else
             {
-                return RedirectToAction("Dashboard", "Main");
+                return RedirectToAction("Dashboard", "Co");
             }
         }
 

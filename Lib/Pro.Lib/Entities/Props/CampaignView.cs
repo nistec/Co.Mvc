@@ -37,7 +37,7 @@ namespace Pro.Data.Entities.Props
 
         public static IEnumerable<CampaignView> ViewList(int AccountId)
         {
-            return EntityPro.ViewEntityList<CampaignView>(EntityGroups.Enums, TableName, AccountId);
+            return EntityLibPro.ViewEntityList<CampaignView>(EntityGroups.Enums, TableName, AccountId);
         }
 
         public static CampaignView View(int CampaignId)
@@ -90,7 +90,7 @@ namespace Pro.Data.Entities.Props
         //}
         public static int DoDelete(int PropId, int AccountId)
         {
-            return EntityPro.DoDelete(TableName, "campaign", PropId,0, AccountId);
+            return EntityLibPro.DoDelete(TableName, "campaign", PropId,0, AccountId);
             //int result = 0;
             //result = db.EntityDelete(CampaignView.TableName, "CampaignId", PropId);
             //WebCache.Remove(WebCache.GetKey(EntityPro.LibName, EntityGroups.Enums, AccountId, TableName));

@@ -1,0 +1,63 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Main";
+    var userInfo = ViewBag.UserInfo;
+    string UserName = userInfo.UserName;
+
+}
+
+@section head {
+
+    @Scripts.Render("~/bundles/jqx")
+    <link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">
+    <script src="~/Scripts/models/main-mv.js?v1001"></script>
+    @*<script type="text/javascript" src="~/Scripts/app/cms.js"></script>*@
+    <style type="text/css">
+        p {
+            font-family: Arial;
+        }
+
+        .title {
+            font-family: Arial;
+        }
+
+        span {
+            font-family: Arial;
+        }
+
+        .thumb-pad4 {
+            border: solid 1px #a09d9d;
+        }
+
+        .thumbnail {
+            background-color: #fff !important;
+            margin: 10px !important;
+        }
+    </style>
+}
+@section featured {
+
+}
+
+@section scripts {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            var vm = new model_main('#model_main');
+
+            @*if ('@userInfo.UserRole' > 5) {
+                var link = app_const.adminLink;
+                $('#mngr').append(link);
+            }*@
+        });
+    </script>
+}
+
+<div id="model_main">
+
+</div>
+
+

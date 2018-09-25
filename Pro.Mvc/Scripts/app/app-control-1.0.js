@@ -99,7 +99,7 @@ var app_rout = {
     },
 
     redirectToMembers: function () {
-        app.redirectTo("/Main/Members");
+        app.redirectTo("/Co/Members");
     }
 
 };
@@ -881,25 +881,25 @@ var app_member_edit = {
 	add: function (wizard,wizTab, updateTag) {
 		if (updateTag)
 			$(updateTag).show();
-		wizard.appendIframe(wizTab, app.appPath() + "/Main/_MemberAdd", "100%", "500px");
+		wizard.appendIframe(wizTab, app.appPath() + "/Co/_MemberAdd", "100%", "500px");
 	},
 	edit: function (wizard, recordId, wizTab, updateTag) {
 		if (updateTag)
 			$(updateTag).show();
 		if (recordId > 0)
-			wizard.appendIframe(wizTab, app.appPath() + "/Main/_MemberEdit?id=" + recordId, "100%", "500px");
+			wizard.appendIframe(wizTab, app.appPath() + "/Co/_MemberEdit?id=" + recordId, "100%", "500px");
 	},
 	view: function (wizard, recordId, wizTab, updateTag) {
 		if (updateTag)
 			$(updateTag).hide();
 		if (recordId > 0)
-			wizard.appendIframe(wizTab, app.appPath() + "/Main/_MemberView?id=" + id, "100%", "500px");
+			wizard.appendIframe(wizTab, app.appPath() + "/Co/_MemberView?id=" + id, "100%", "500px");
 	},
 	remove: function (gridTag) {
 		var id = app_member_edit.getrowId(gridTag);
 		if (id > 0) {
 			if (confirm('האם למחוק מנוי ' + id)) {
-				app_query.doPost(app.appPath() + "/Main/TaskAssignDelete", { 'id': id });
+				app_query.doPost(app.appPath() + "/Co/TaskAssignDelete", { 'id': id });
 				$('#jqxgrid2').jqxGrid('source').dataBind();
 			}
 		}
@@ -1046,7 +1046,7 @@ var app_menu = {
         if (lang === undefined || lang === 'en') {
             b.append($('<a href="/home/index">Home</a>'));
             b.append($('<span> >> </span>'));
-            b.append($('<a href="/main/dashboard">Dashboard</a>'));
+            b.append($('<a href="/Co/dashboard">Dashboard</a>'));
             b.append($('<span> >> </span>'));
             if (section.substr(0, 1) === '/') {
                 b.append($('<a href="' + section + '">' + apage + '</a>'));
@@ -1068,7 +1068,7 @@ var app_menu = {
         else {
             b.append($('<a href="/home/index">דף הבית</a>'));
             b.append($('<span> >> </span>'));
-            b.append($('<a href="/main/dashboard">ראשי</a>'));
+            b.append($('<a href="/Co/dashboard">ראשי</a>'));
             b.append($('<span> >> </span>'));
             if (section.substr(0, 1) === '/') {
                 b.append($('<a href="' + section + '">' + page + '</a>'));
@@ -1190,13 +1190,13 @@ var app_jqx_list = {
 
     entityEnumComboAdapter: function (tag) { return app_jqxcombos.createDropDownAdapter("FieldName", "FieldValue", tag === undefined ? "EntityEnumType" : tag, '/Common/GetMembersEnumFields', 0, 120, false) },
 
-    enum1ComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "ExEnum1" : tag, '/Common/GetEnum1View', 0, 120, false) },
-    enum2ComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "ExEnum2" : tag, '/Common/GetEnum2View', 0, 120, false) },
-    enum3ComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "ExEnum3" : tag, '/Common/GetEnum3View', 0, 120, false) },
-    userRoleComboAdapter: function (tag) { return app_jqxcombos.createDropDownAdapter("RoleId", "RoleName", tag === undefined ? "UserRole" : tag, '/Admin/GetUsersRoles', 0, 120, false) },
-    campaignComboAdapter: function (tag) { return app_jqxcombos.createDropDownAdapterTag("PropId", "PropName", tag === undefined ? "#Campaign" : tag, '/Common/GetCampaignView', 200, 0, false, 'נא לבחור קמפיין') },
+    enum1ComboAdapter: function (tag, async) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "ExEnum1" : tag, '/Common/GetEnum1View', 0, 120, async === undefined ? true: async) },
+    enum2ComboAdapter: function (tag, async) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "ExEnum2" : tag, '/Common/GetEnum2View', 0, 120, async === undefined ? true : async) },
+    enum3ComboAdapter: function (tag, async) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "ExEnum3" : tag, '/Common/GetEnum3View', 0, 120, async === undefined ? true : async) },
+    userRoleComboAdapter: function (tag, async) { return app_jqxcombos.createDropDownAdapter("RoleId", "RoleName", tag === undefined ? "UserRole" : tag, '/Admin/GetUsersRoles', 0, 120, async === undefined ? false : async) },
+    campaignComboAdapter: function (tag, async) { return app_jqxcombos.createDropDownAdapterTag("PropId", "PropName", tag === undefined ? "#Campaign" : tag, '/Common/GetCampaignView', 200, 0, async === undefined ? false : async, 'נא לבחור קמפיין') },
     //taskTypeComboAdapter: function (tag) { return app_jqxcombos.createComboAdapter("PropId", "PropName", tag === undefined ? "Task_Type" : tag, '/System/GetTaskTypeList', 0, 120, false) },
-    taskStatusComboAdapter: function (tag) { return app_jqxcombos.createDropDownAdapter("PropId", "PropName", tag === undefined ? "TaskStatus" : tag, '/System/GetTaskStatusList', 150, 120, false) }
+    taskStatusComboAdapter: function (tag, async) { return app_jqxcombos.createDropDownAdapter("PropId", "PropName", tag === undefined ? "TaskStatus" : tag, '/System/GetTaskStatusList', 150, 120, async === undefined ? false : async) }
 
 };
 
@@ -1304,12 +1304,12 @@ var app_jqx_combo_async = {
 var window_main_menu = {
 
     //var items = [
-    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
-    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
-    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
-    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
-    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
-    //    { label: '<li><a href="/Main/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //    { label: '<li><a href="/Co/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //    { label: '<li><a href="/Co/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //    { label: '<li><a href="/Co/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //    { label: '<li><a href="/Co/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //    { label: '<li><a href="/Co/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
+    //    { label: '<li><a href="/Co/Members" title="מנויים">' + icon + ' רשימת מנויים</a></li>' },
     //]
     //var array = [1, 1, 1, 0];
     //var ul = '<ul class="submeunav">';
@@ -1328,10 +1328,10 @@ var window_main_menu = {
       <li id="liMain" class="nbr-has-children overview">
         <a href="#0">מנויים</a>
         <ul class="submeunav">
-            <li><a href="/Main/Members" title="מנויים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> רשימת מנויים</a></li>
-            <li><a href="/Main/MembersAdd" title="הוספת מנוי"><i class="fa fa-angle-double-left" style="font-size:20px"></i> הוספת מנוי</a></li>
-            <li><a href="/Main/MembersUpload" title="קליטה מקובץ"><i class="fa fa-angle-double-left" style="font-size:20px"></i> קליטה מקובץ</a></li>
-            <li><a href="/Main/PaymentsQuery" title="תשלומים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> איתור תשלומים</a></li>
+            <li><a href="/Co/Members" title="מנויים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> רשימת מנויים</a></li>
+            <li><a href="/Co/MembersAdd" title="הוספת מנוי"><i class="fa fa-angle-double-left" style="font-size:20px"></i> הוספת מנוי</a></li>
+            <li><a href="/Co/MembersUpload" title="קליטה מקובץ"><i class="fa fa-angle-double-left" style="font-size:20px"></i> קליטה מקובץ</a></li>
+            <li><a href="/Co/PaymentsQuery" title="תשלומים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> איתור תשלומים</a></li>
         </ul>
     </li>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
 
@@ -1339,7 +1339,7 @@ var window_main_menu = {
       <li id="liPay" class="nbr-has-children overview">
         <a href="#0">תשלומים</a>
         <ul class="submeunav">
-            <li><a href="/Main/PaymentsQuery" title="תשלומים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> איתור תשלומים</a></li>
+            <li><a href="/Co/PaymentsQuery" title="תשלומים"><i class="fa fa-angle-double-left" style="font-size:20px"></i> איתור תשלומים</a></li>
             <li><a href="/Common/DefPrice" title="מחירון"><i class="fa fa-angle-double-left" style="font-size:20px"></i> מחירון</a></li>
             <li><a href="/Common/DefCampaign" title="קמפיין"><i class="fa fa-angle-double-left" style="font-size:20px"></i> קמפיין</a></li>
         </ul>
@@ -1349,9 +1349,9 @@ var window_main_menu = {
       <li id="liCom" class="nbr-has-children notifications">
         <a href="#0">תקשורת</a>
         <ul class="submeunav">
-            <li><a href="/Main/SmsBroadcast" title="שליחת מסרון"><i class="fa fa-angle-double-left" style="font-size:20px"></i> שליחת מסרון</a></li>
-            <li><a href="/Main/EmailBroadcast" title="שליחת דואר אלקטרוני"><i class="fa fa-angle-double-left" style="font-size:20px"></i> שליחת דואר אלקטרוני</a></li>
-            <li><a href="/Main/SendQuery" title="דוחות דיוור"><i class="fa fa-angle-double-left" style="font-size:20px"></i> דוחות דיוור</a></li>
+            <li><a href="/Co/SmsBroadcast" title="שליחת מסרון"><i class="fa fa-angle-double-left" style="font-size:20px"></i> שליחת מסרון</a></li>
+            <li><a href="/Co/EmailBroadcast" title="שליחת דואר אלקטרוני"><i class="fa fa-angle-double-left" style="font-size:20px"></i> שליחת דואר אלקטרוני</a></li>
+            <li><a href="/Co/SendQuery" title="דוחות דיוור"><i class="fa fa-angle-double-left" style="font-size:20px"></i> דוחות דיוור</a></li>
         </ul>
      </li>*/}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
 

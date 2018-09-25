@@ -25,6 +25,12 @@ namespace Pro.Mvc.Controllers
     public class CommonController : BaseController
     {
 
+        [HttpGet]
+        public ActionResult Dashboard()
+        {
+            return View(true);
+        }
+
         #region Lookups
 
         [HttpPost]
@@ -60,7 +66,7 @@ namespace Pro.Mvc.Controllers
                 case "city":
                     return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "CityId", "CityName", "Cities", accountId), JsonRequestBehavior.AllowGet);
                 //case "place":
-                //    return Json(EntityPro.ViewEntityList<PlaceView>(EntityGroups.Enums, PlaceView.TableName, accountId), JsonRequestBehavior.AllowGet);
+                //    return Json(EntityLibPro.ViewEntityList<PlaceView>(EntityGroups.Enums, PlaceView.TableName, accountId), JsonRequestBehavior.AllowGet);
                 case "region":
                     return Json(DbLookups.ViewEntityList(EntityGroups.Enums, "RegionId", "RegionName", "Region", accountId), JsonRequestBehavior.AllowGet);
                 case "category":
@@ -119,30 +125,30 @@ namespace Pro.Mvc.Controllers
             switch (entity)
             {
                 case "branch":
-                    return Json(EntityPro.ViewEntityList<BranchView>(EntityGroups.Enums, BranchView.TableName, accountId), JsonRequestBehavior.AllowGet);
+                    return Json(EntityLibPro.ViewEntityList<BranchView>(EntityGroups.Enums, BranchView.TableName, accountId), JsonRequestBehavior.AllowGet);
                 case "charge":
-                    return Json(EntityPro.ViewEntityList<ChargeView>(EntityGroups.Enums, ChargeView.TableName, accountId), JsonRequestBehavior.AllowGet);
+                    return Json(EntityLibPro.ViewEntityList<ChargeView>(EntityGroups.Enums, ChargeView.TableName, accountId), JsonRequestBehavior.AllowGet);
                 case "city":
-                    return Json(EntityPro.ViewEntityList<CityView>(EntityGroups.Enums, CityView.TableName, 0), JsonRequestBehavior.AllowGet);
+                    return Json(EntityLibPro.ViewEntityList<CityView>(EntityGroups.Enums, CityView.TableName, 0), JsonRequestBehavior.AllowGet);
                 //case "place":
-                //    return Json(EntityPro.ViewEntityList<PlaceView>(EntityGroups.Enums, PlaceView.TableName, accountId), JsonRequestBehavior.AllowGet);
+                //    return Json(EntityLibPro.ViewEntityList<PlaceView>(EntityGroups.Enums, PlaceView.TableName, accountId), JsonRequestBehavior.AllowGet);
                 case "region":
-                    return Json(EntityPro.ViewEntityList<RegionView>(EntityGroups.Enums, RegionView.TableName, 0), JsonRequestBehavior.AllowGet);
+                    return Json(EntityLibPro.ViewEntityList<RegionView>(EntityGroups.Enums, RegionView.TableName, 0), JsonRequestBehavior.AllowGet);
                 case "category":
-                    return Json(EntityPro.ViewEntityList<CategoryView>(EntityGroups.Enums, CategoryView.TableName, accountId), JsonRequestBehavior.AllowGet);
+                    return Json(EntityLibPro.ViewEntityList<CategoryView>(EntityGroups.Enums, CategoryView.TableName, accountId), JsonRequestBehavior.AllowGet);
                 case "role":
-                    return Json(EntityPro.ViewEntityList<RoleView>(EntityGroups.Enums, RoleView.TableName, accountId), JsonRequestBehavior.AllowGet);
+                    return Json(EntityLibPro.ViewEntityList<RoleView>(EntityGroups.Enums, RoleView.TableName, accountId), JsonRequestBehavior.AllowGet);
                 case "status":
-                    return Json(EntityPro.ViewEntityList<StatusView>(EntityGroups.Enums, StatusView.TableName, accountId), JsonRequestBehavior.AllowGet);
+                    return Json(EntityLibPro.ViewEntityList<StatusView>(EntityGroups.Enums, StatusView.TableName, accountId), JsonRequestBehavior.AllowGet);
                 case "enum1":
                 case "exenum1":
-                    return Json(EntityPro.ViewEntityList<EnumView>(EntityGroups.Enums, EnumView.TableName, accountId,1), JsonRequestBehavior.AllowGet);
+                    return Json(EntityLibPro.ViewEntityList<EnumView>(EntityGroups.Enums, EnumView.TableName, accountId,1), JsonRequestBehavior.AllowGet);
                 case "enum2":
                 case "exenum2":
-                    return Json(EntityPro.ViewEntityList<EnumView>(EntityGroups.Enums, EnumView.TableName, accountId,2), JsonRequestBehavior.AllowGet);
+                    return Json(EntityLibPro.ViewEntityList<EnumView>(EntityGroups.Enums, EnumView.TableName, accountId,2), JsonRequestBehavior.AllowGet);
                 case "enum3":
                 case "exenum3":
-                    return Json(EntityPro.ViewEntityList<EnumView>(EntityGroups.Enums, EnumView.TableName, accountId,3), JsonRequestBehavior.AllowGet);
+                    return Json(EntityLibPro.ViewEntityList<EnumView>(EntityGroups.Enums, EnumView.TableName, accountId,3), JsonRequestBehavior.AllowGet);
                 default:
                     return Json(null, JsonRequestBehavior.AllowGet);
             }
@@ -494,48 +500,49 @@ namespace Pro.Mvc.Controllers
 
                 if ((UpdateCommandType)command == UpdateCommandType.Delete)
                 {
-                    result = EntityPro.DoDelete(EntityType, PropId, 0, accountId);
+                    string tableName=EntityLibPro.GetTableName(EntityType);
+                    result = EntityLibPro.DoDelete(tableName,EntityType, PropId, 0, accountId);
                 }
                 else
                 {
                     switch (EntityType)
                     {
                         case "branch":
-                            result = EntityPro.DoSave<BranchView>(PropId, PropName, accountId, (UpdateCommandType)command);
+                            result = EntityLibPro.DoSave<BranchView>(PropId, PropName, accountId, (UpdateCommandType)command);
                             break;
                         case "charge":
-                            result = EntityPro.DoSave<ChargeView>(PropId, PropName, accountId, (UpdateCommandType)command);
+                            result = EntityLibPro.DoSave<ChargeView>(PropId, PropName, accountId, (UpdateCommandType)command);
                             break;
                         case "city":
-                            result = EntityPro.DoSave<CityView>(PropId, PropName, accountId, (UpdateCommandType)command);
+                            result = EntityLibPro.DoSave<CityView>(PropId, PropName, accountId, (UpdateCommandType)command);
                             break;
                         //case "place":
-                        //    result = EntityPro.DoSave<PlaceView>(PropId, PropName, accountId, (UpdateCommandType)command);
+                        //    result = EntityLibPro.DoSave<PlaceView>(PropId, PropName, accountId, (UpdateCommandType)command);
                         //    break;
                         case "region":
-                            result = EntityPro.DoSave<RegionView>(PropId, PropName, accountId, (UpdateCommandType)command);
+                            result = EntityLibPro.DoSave<RegionView>(PropId, PropName, accountId, (UpdateCommandType)command);
                             break;
                         case "category":
-                            result = EntityPro.DoSave<CategoryView>(PropId, PropName, accountId, (UpdateCommandType)command);
+                            result = EntityLibPro.DoSave<CategoryView>(PropId, PropName, accountId, (UpdateCommandType)command);
                             break;
                         case "status":
-                            result = EntityPro.DoSave<StatusView>(PropId, PropName, accountId, (UpdateCommandType)command);
+                            result = EntityLibPro.DoSave<StatusView>(PropId, PropName, accountId, (UpdateCommandType)command);
                             break;
                         case "enum1":
                         case "exenum1":
-                            result = EntityPro.DoSave<EnumView>(PropId, PropName, accountId, 1, (UpdateCommandType)command);
+                            result = EntityLibPro.DoSave<EnumView>(PropId, PropName, accountId, 1, (UpdateCommandType)command);
                             break;
                         case "enum2":
                         case "exenum2":
-                            result = EntityPro.DoSave<EnumView>(PropId, PropName, accountId, 2, (UpdateCommandType)command);
+                            result = EntityLibPro.DoSave<EnumView>(PropId, PropName, accountId, 2, (UpdateCommandType)command);
                             break;
                         case "enum3":
                         case "exenum3":
-                            result = EntityPro.DoSave<EnumView>(PropId, PropName, accountId, 3, (UpdateCommandType)command);
+                            result = EntityLibPro.DoSave<EnumView>(PropId, PropName, accountId, 3, (UpdateCommandType)command);
                             break;
 
                         //case "role":
-                        //    result = EntityPro.DoSave<RoleView>(PropId, PropName,accountId, (UpdateCommandType)command);
+                        //    result = EntityLibPro.DoSave<RoleView>(PropId, PropName,accountId, (UpdateCommandType)command);
                         //    break;
                     }
                 }
@@ -660,28 +667,28 @@ namespace Pro.Mvc.Controllers
         public JsonResult GetPriceListView()
         {
             int accountId = GetAccountId();
-            var list = EntityPro.ViewEntityList<PriceView>(EntityGroups.Enums, PriceView.TableName, accountId);
+            var list = EntityLibPro.ViewEntityList<PriceView>(EntityGroups.Enums, PriceView.TableName, accountId);
             return Json(list, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult GetCategoryListView()
         {
             int accountId = GetAccountId();
-            var list = EntityPro.ViewEntityList<CategoryView>(EntityGroups.Enums, CategoryView.ViewName, accountId);
+            var list = EntityLibPro.ViewEntityList<CategoryView>(EntityGroups.Enums, CategoryView.ViewName, accountId);
             return Json(list, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult GetCampaignView()
         {
             int accountId = GetAccountId();
-            var list = EntityPro.ViewEntityList<CampaignView>(EntityGroups.Enums, CampaignView.TableName, accountId);
+            var list = EntityLibPro.ViewEntityList<CampaignView>(EntityGroups.Enums, CampaignView.TableName, accountId);
             return Json(list.OrderBy(v => v.PropName).ToList(), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult GetCityView()
         {
             int accountId = 0;// GetAccountId();
-            var list = EntityPro.ViewEntityList<CityView>(EntityGroups.Enums, CityView.TableName, accountId);
+            var list = EntityLibPro.ViewEntityList<CityView>(EntityGroups.Enums, CityView.TableName, accountId);
             return Json(list.OrderBy(v => v.PropName).ToList(), JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
@@ -701,7 +708,7 @@ namespace Pro.Mvc.Controllers
         public JsonResult GetCityRegionView(int region)
         {
             int accountId = GetAccountId();
-            var list = EntityPro.ViewEntityList<CityView>(EntityGroups.Enums, CityView.TableName, 0);
+            var list = EntityLibPro.ViewEntityList<CityView>(EntityGroups.Enums, CityView.TableName, 0);
             if (region > 0)
             {
                 list = list.Where<CityView>(v => v.RegionId == region);
@@ -1242,7 +1249,7 @@ namespace Pro.Mvc.Controllers
         public JsonResult RefreshEntity(string entity)
         {
             int accountId=GetAccountId();
-            EntityPro.RefreshList(Lists.GetListsType(entity), accountId);
+            EntityLibPro.RefreshList(Lists.GetListsType(entity), accountId);
             return Json(1, JsonRequestBehavior.AllowGet);
         }
 

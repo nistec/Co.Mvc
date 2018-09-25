@@ -568,7 +568,7 @@
                     $("#jqxgrid").jqxGrid('clearfilters');
                 });
                 queryButton.click(function (event) {
-                    app.redirectTo('/Main/TasksQuery');
+                    app.redirectTo('/Co/TasksQuery');
                 });
 
                 // search for a record.

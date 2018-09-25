@@ -11,7 +11,7 @@ using System.Web.Mvc;
 using Pro.Mvc.Models;
 using System.Data;
 using ProNetcell.Data.Entities;
-using Pro.Lib.Upload;
+using Pro.Upload;
 using ProNetcell.Query;
 
 namespace Pro.Mvc.Controllers

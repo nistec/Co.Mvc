@@ -1,0 +1,88 @@
+﻿@{
+    Layout = "~/Views/Shared/_ViewCo.cshtml";
+    ViewBag.Title = "Co";
+    var userInfo = @Html.Raw(Json.Encode(ViewBag.UserInfo));
+}
+@section head {
+
+    @Scripts.Render("~/bundles/jqxgrid")
+
+    <script type="text/javascript" src="~/jqwidgets/jqxdata.export.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxloader.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxtooltip.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxbuttongroup.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxradiobutton.js"></script>
+
+    <script type="text/javascript" src="~/Scripts/models/co/members-mv.js"></script>
+    <script type="text/javascript" src="~/Scripts/models/co/member-mv.js"></script>
+    <script type="text/javascript" src="~/Scripts/models/co/_navigator-mv.js"></script>
+    <script type="text/javascript" src="~/Scripts/models/co/dashboard-mv.js"></script>
+    @*<script type="text/javascript" src="~/Scripts/app/co/members.js"></script>*@
+    <script type="text/javascript" src="~/Scripts/app/app-jqx-grid-1.0.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/app-wizard-1.0.js"></script>
+    <style type="text/css">
+        input {
+            direction: rtl;
+            text-align: right;
+        }
+        /*.jqx-grid-cell {
+            border: none;
+        }*/
+
+    </style>
+
+    <script type="text/javascript" src="~/jqwidgets/jqxdraw.js"></script>
+    <script type="text/javascript" src="~/jqwidgets/jqxchart.core.js"></script>
+    <script type="text/javascript" src="~/Scripts/app/model/reports.js"></script>
+    @*<style type="text/css">
+            p {
+                font-family: Arial;
+            }
+
+            .title {
+                font-family: Arial;
+            }
+
+            span {
+                font-family: Arial;
+            }
+
+            .chart-inner-text {
+                fill: #00BAFF;
+                color: #00BAFF;
+                font-size: 30px;
+                font-family: Verdana;
+            }
+        </style>*@
+}
+
+
+
+
+@section scripts {
+
+    <script type="text/javascript">
+
+        JSON.useDateParser();
+        var theme = 'nis_metro';
+
+        //$(document).ready(function () {
+        //    JSON.useDateParser();
+
+        //});
+
+    </script>
+}
+
+
+<div class="breadcrumbs">
+</div>
+
+<div id="SPA">
+
+</div>
+
+<script type="text/javascript">
+    var userInfo = JSON.parse('@userInfo');
+    navigator_mv.navigate('dashboard');
+</script>

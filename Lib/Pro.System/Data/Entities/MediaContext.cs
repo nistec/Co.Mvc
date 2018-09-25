@@ -7,6 +7,9 @@ using ProSystem.Data;
 using Nistec.Data;
 using Nistec.Web.Controls;
 using System.IO;
+using Pro.Data;
+using Pro;
+using Pro.Data.Entities;
 
 namespace ProSystem.Data.Entities
 {

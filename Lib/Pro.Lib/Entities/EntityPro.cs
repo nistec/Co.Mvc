@@ -21,14 +21,14 @@ using System.Web.Caching;
 namespace Pro.Data.Entities
 {
 
-    public static class EntityGroups
-    {
-        public const string Enums = "Enums";
-        public const string Members = "Members";
-        public const string Settings = "Settings";
-        public const string Reports = "Reports";
-        public const string Registry = "Registry";
-    }
+    //public static class EntityGroups
+    //{
+    //    public const string Enums = "Enums";
+    //    public const string Members = "Members";
+    //    public const string Settings = "Settings";
+    //    public const string Reports = "Reports";
+    //    public const string Registry = "Registry";
+    //}
 
     //public enum EntityGroups2
     //{
@@ -36,7 +36,7 @@ namespace Pro.Data.Entities
     //    Reports,
     //    Registry,
     //}
-    public class EntityPro
+    public class EntityLibPro
     {
 
         public static void RefreshList(ListsTypes type, int accountId)
@@ -59,6 +59,8 @@ namespace Pro.Data.Entities
             }
 
         }
+
+/*
         internal static string GetSession(int AccountId)
         {
             return string.Format("{0}_{1}", Settings.ProjectName, AccountId);
@@ -98,7 +100,7 @@ namespace Pro.Data.Entities
         {
             WebCache.Remove(key);
         }
-   
+ */  
 
 #if (CacheApi)
         public static string CacheGetJson(string key)
@@ -156,6 +158,8 @@ namespace Pro.Data.Entities
         //}
          */
 #endif
+
+/*
         public static bool EnableCache
         {
             get 
@@ -195,7 +199,7 @@ namespace Pro.Data.Entities
                 return _CacheProtocol;
             }
         }
-
+*/
         public static IEnumerable<T> ViewEntityList<T>(string GroupName,string TableName, int AccountId) where T : IEntityPro
         {
             string key = WebCache.GetKey(Settings.ProjectName, GroupName, AccountId, TableName);// GetKey(TableName, AccountId);

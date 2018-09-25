@@ -1,6 +1,7 @@
 ﻿using Nistec;
 using Nistec.Data;
 using Nistec.Serialization;
+using Pro.Query;
 using ProSystem.Query;
 using System;
 using System.Collections.Generic;
@@ -75,7 +76,7 @@ namespace ProAd.Query
             ContactRule = Types.ToInt(Request["ContactRule"]);
 
 
-            LoadSortAndFilter(Request);
+            LoadSortAndFilter(Request,"");
         }
 
         public AccountsQuery(NameValueCollection Request, int queryType)

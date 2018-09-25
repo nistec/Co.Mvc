@@ -1,0 +1,190 @@
+﻿@{ 
+    Layout = "~/Views/Shared/_ViewCo.cshtml";
+    Page.Title = "SignupQuery";
+    var userRole = Nistec.Types.ToInt(ViewBag.UserRole);
+    string exportClass = userRole < 5 ? "hide" : "shoe";
+}
+
+@section head {
+
+
+    @Scripts.Render("~/bundles/jqx")
+@*<link rel="stylesheet" href="~/Scripts/bootstrap/css/bootstrap.css">*@
+@*<script src="~/Scripts/bootstrap/bootstrap.min.js"></script>*@
+    <style type="text/css">
+        table {
+            direction: rtl;
+        }
+
+        td {
+            padding-top: 0px;
+            padding-bottom: 5px;
+        }
+
+        .headline {
+            color: #32A7C0;
+            font-weight: bold;
+        }
+    </style>
+    @*<script>
+        $(function () {
+            $('#tab-query li:eq(0) a').tab('show');
+        });
+    </script>*@
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            JSON.useDateParser();
+            var me = this;
+
+            $("#allItems").prop('checked', true);
+            $("#allCampaign").prop('checked', true);
+
+            $('#SignupDateFrom').jqxDateTimeInput({ showCalendarButton: true, width: '150px', rtl: true });
+            $('#SignupDateTo').jqxDateTimeInput({ showCalendarButton: true, width: '150px', rtl: true });
+
+            $('#SignupDateFrom').val('');
+            $('#SignupDateTo').val('');
+
+            $("#exp-1").jqxExpander({ width: 'auto', rtl: true, expanded: false });
+
+
+            var itemsAdapter = app_jqxcombos.createListAdapter("PropId", "PropName", "listItems", '@Url.Action("GetPriceListView", "Common")', 200, 100, true);
+            $('#listItems').jqxListBox({ multiple: true, rtl: true });
+            $('#listItems').on('change', function (event) {
+                app_jqxcombos.listBoxToInput("listItems", "Items", "allItems");
+            });
+
+            var campaignAdapter = app_jqxcombos.createComboAdapter("PropId", "PropName", "Campaign", '@Url.Action("GetCampaignView", "Common")', 200, 120, false);
+            $('#Campaign').on('change', function (event) {
+                $("#allCampaign").prop('checked', false);
+            });
+
+            $('#submit').on('click', function () {
+                var action = $("#form").find('input[name=op]:checked').val();
+
+                $("#form").attr('action', app.appPath() + action);
+            });
+            $("input[name=op]:radio").change(function () {
+                //$("#rdDefault, #rdSms", "#rdMail").change(function () {
+                var action = $("#form").find('input[name=op]:checked').val();
+                $("#form").attr('action', app.appPath() + action);
+            });
+            $('#reset').on('click', function () {
+                location.reload();
+            });
+
+            //$("#allCity").click(function () {
+
+            //    var items = $("#listCity").jqxListBox('getItems');
+            //    jQuery.each(items, function (i, item) {
+            //        $("#listCity").jqxListBox('selectItem', item);
+            //    });
+            //    listBoxToInput("listCity", "City");
+            //});
+            //$("#unselectAllCity").click(function () {
+            //    $("#listCity").jqxListBox('clearSelection');
+            //    $("#City").val("");
+            //});
+        });
+
+    </script>
+}
+
+<!--breadcrumb-->
+<div class="breadcrumbs">
+</div>
+
+<div class="top-space"></div>
+
+
+<div class="global-view">
+    <div class="container-box">
+
+        <h3 class="rtl">איתור נרשמים</h3>
+        
+            <form id="form" action="SignupReport" method="post">
+                <input type="hidden" id="Items" name="Items" />
+
+                <div id="tab-adv">
+
+                    <ul>
+                        <li class="headline">תעודת זהות</li>
+                        <li><input type="text" name="MemberId" style="width:120px" maxlength="10" /></li>
+                        @*<li class="headline">טלפון נייד</li>
+                        <li><input type="text" name="CellPhone" style="width:120px" maxlength="15" /></li>*@
+                    </ul>
+                </div>
+                <div id="exp-1" style="max-width:400px;">
+                    <div>
+                        איתור מתקדם
+                    </div>
+                    <div class="rtl">
+                        <ul style="margin-right:10px;">
+                            <li class="headline">קמפיין</li>
+                            <li>
+                                <div id="Campaign" name="Campaign"></div>
+                                <input type="checkbox" id="allCampaign" name="allCampaign" />&nbsp;<span>הצג הכל</span>
+                            </li>
+
+                            <li class="headline">פריטים-בחירה מרובה</li>
+                            <li>
+                                <div id="listItems" name="listItems"></div>
+                                <input type="checkbox" id="allItems" name="allItems" />&nbsp;<span>הצג הכל</span>
+                            </li>
+
+                            <li class="headline">מחיר</li>
+                            <li>
+                                <div style="vertical-align:top">
+                                    <span>מ:</span><br />
+                                    <input type="number" name="PriceFrom" step="any" /><br />
+                                    <span>עד:</span><br />
+                                    <input type="number" name="PriceTo" step="any" />
+                                </div>
+                            </li>
+
+                            <li class="headline">מועד רישום</li>
+                            <li>
+                                <div style="vertical-align:top">
+                                    <span>מ:</span><br />
+                                    <div id="SignupDateFrom" name="SignupDateFrom"></div><br />
+                                    <span>עד:</span><br />
+                                    <div id="SignupDateTo" name="SignupDateTo"></div>
+                                </div>
+                            </li>
+
+                            <li class="headline">ייתרת תוקף מעל</li>
+                            <li><input type="number" name="ValidityRemain" style="width:60px" /><span>חודשים</span></li>
+                            <li><input type="checkbox" id="isPayOnly" name="isPayOnly" />&nbsp;<span>הצג הרשמות הכוללות תשלום בלבד</span></li>
+
+                            <li class="headline">שונות</li>
+                            <li><input type="checkbox" id="allCell" name="allCell" />&nbsp;<span>תקשורת לסלולאר</span></li>
+                            <li><input type="checkbox" id="allEmail" name="allEmail" />&nbsp;<span>תקשורת למייל</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="height:10px"></div>
+                <div>
+                    <input type="radio" id="rdDefault" name="op" value="/Co/SignupReport" checked="checked" />&nbsp;<span>אתר נמענים להצגה למסך</span>
+                    <!--<input type="radio" id="rdSms" name="op" value="/Co/SmsEditor" />&nbsp;<span>אתר נמענים לשליחת מסרון</span>-->
+                    <!--<input type="radio" id="rdMail" name="op" value="MailTargets" />&nbsp;<span>אתר נמענים לשליחת דואל</span>-->
+                    <div class="@exportClass"><input type="radio" id="rdExport" name="op" value="/Co/SignupExport" />&nbsp;<span>ייצוא לקובץ</span></div>
+
+                </div>
+                <div style="height:10px"></div>
+                <div>
+                    <input type="submit" value="הצג" class="btn-default btn2" />
+                    <input type="reset" value="נקה" class="btn-default btn2" />
+                </div>
+            </form>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    app_menu.activeLayoutMenu("liMain");
+    app_menu.breadcrumbs("Main", "SignupQuery", 'en');
+</script>
+
+
+

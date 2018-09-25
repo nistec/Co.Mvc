@@ -84,23 +84,8 @@
 
         <nav class="nbr-nav">
             <ul class="nbr-top-nav">
-                @*<li class="nbr-has-children account">
-                        <a href="#0">
-                            <!--<img src="img/nbr-avatar.png" alt="avatar">-->
-                            <span>ViewBag.UserName</span>
-                        </a>
-                        <ul>
-                            <li>
-                                <a href="~/Common/DefUser">פרטים</a>
-                            </li>
-                            <li>
-                                <a href="~/Home/Logoff">יציאה</a>
-                            </li>
-                        </ul>
-                    </li>*@
-
-                <li><a href="~/Main/Dashboard">ראשי</a></li>
-
+                <li><label class="nbr-label-text"><span>@ViewBag.AccountName</span><span>@@</span><span>@ViewBag.UserName</span></label></li>
+                <li><a href="~/Common/Dashboard">ראשי</a></li>
                 <li>
                     <a href="~/Home/Logoff">יציאה</a>
                 </li>
@@ -115,29 +100,27 @@
 
         <nav id="mainnav" class="nbr-side-nav">
             <ul style="direction:rtl">
-                <li class="nbr-label"><label class="nbr-label-text"><span>@ViewBag.AccountName</span><span>@@</span><span>@ViewBag.UserName</span></label></li>
-
                 <li id="liMain" class="nbr-has-children overview">
                     <a href="#0">מנויים</a>
                     <ul class="submeunav">
 
                         <li>
-                            <a href="~/Main/Members" title="מנויים">
+                            <a href="~/Co/Members" title="מנויים">
                                 <i class="fa fa-angle-double-left" style="font-size:20px"></i> רשימת מנויים
                             </a>
                         </li>
                         <li>
-                            <a href="~/Main/MembersAdd" title="הוספת מנוי">
+                            <a href="~/Co/MembersAdd" title="הוספת מנוי">
                                 <i class="fa fa-angle-double-left" style="font-size:20px"></i> הוספת מנוי
                             </a>
                         </li>
                         <li>
-                            <a href="~/Main/MembersUpload" title="קליטה מקובץ">
+                            <a href="~/Co/MembersUpload" title="קליטה מקובץ">
                                 <i class="fa fa-angle-double-left" style="font-size:20px"></i> קליטה מקובץ
                             </a>
                         </li>
                         <li>
-                            <a href="~/Main/PaymentsQuery" title="תשלומים">
+                            <a href="~/Co/PaymentsQuery" title="תשלומים">
                                 <i class="fa fa-angle-double-left" style="font-size:20px"></i> איתור תשלומים
                             </a>
                         </li>
@@ -148,17 +131,17 @@
 
                     <ul class="submeunav">
                         <li>
-                            <a href="~/Main/SmsBroadcast">
+                            <a href="~/Co/SmsBroadcast">
                                 <i class="fa fa-angle-double-left" style="font-size:20px"></i> שליחת מסרון
                             </a>
                         </li>
                         <li>
-                            <a href="~/Main/EmailBroadcast">
+                            <a href="~/Co/EmailBroadcast">
                                 <i class="fa fa-angle-double-left" style="font-size:20px"></i> שליחת דואר אלקטרוני
                             </a>
                         </li>
                         <li>
-                            <a href="~/Main/SendQuery">
+                            <a href="~/Co/SendQuery">
                                 <i class="fa fa-angle-double-left" style="font-size:20px"></i> דוחות דיוור
                             </a>
                         </li>

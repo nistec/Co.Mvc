@@ -19,14 +19,14 @@ using System.Web.Caching;
 namespace Pro.Data.Entities
 {
 
-    public static class EntityGroups
-    {
-        public const string Enums = "Enums";
-        public const string Members = "Members";
-        public const string Settings = "Settings";
-        public const string Reports = "Reports";
-        public const string Registry = "Registry";
-    }
+    //public static class EntityGroups
+    //{
+    //    public const string Enums = "Enums";
+    //    public const string Members = "Members";
+    //    public const string Settings = "Settings";
+    //    public const string Reports = "Reports";
+    //    public const string Registry = "Registry";
+    //}
 
     //public enum EntityGroups2
     //{
@@ -36,8 +36,9 @@ namespace Pro.Data.Entities
     //}
     public class EntityPro
     {
+        public const int DefaultCacheTtl = 3;
 
-        internal static string GetSession(int AccountId)
+        public static string GetSession(int AccountId)
         {
             return string.Format("{0}_{1}", Settings.ProjectName, AccountId);
         }
@@ -173,8 +174,34 @@ namespace Pro.Data.Entities
                 return _CacheProtocol;
             }
         }
+        public static IEnumerable<T> ViewAdminEntityList<Dbc, T>(string GroupName, string TableName)
+            where T : IEntityProEnum
+            where Dbc : IDbContext
+        {
+            string key = WebCache.GetKey(Settings.ProjectName, GroupName, 0, TableName);// GetKey(TableName, AccountId);
+            IEnumerable<T> list = null;
 
-        public static IEnumerable<T> ViewEntityList<T>(string GroupName,string TableName, int AccountId) where T : IEntityPro
+            if (EntityPro.EnableCache)
+                list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
+            if (list == null || list.Count() == 0)
+            {
+                using (var db = DbContext.Create<Dbc>())
+                {
+                    list = db.EntityItemList<T>(TableName);
+                }
+                if (EntityPro.EnableCache && list != null)
+                {
+                    //CacheAdd(key,GetSession(AccountId), (List<T>)list);
+                    WebCache.Insert(key, (List<T>)list);
+                }
+            }
+
+            return list;
+
+        }
+        public static IEnumerable<T> ViewEntityList<Dbc, T>(string GroupName,string TableName, int AccountId)
+            where T : IEntityProEnum
+            where Dbc : IDbContext
         {
             string key = WebCache.GetKey(Settings.ProjectName, GroupName, AccountId, TableName);// GetKey(TableName, AccountId);
             IEnumerable<T> list = null;
@@ -183,7 +210,7 @@ namespace Pro.Data.Entities
                 list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
             if (list == null || list.Count()==0)
             {
-                using (var db = DbContext.Create<DbPro>())
+                using (var db = DbContext.Create<Dbc>())
                 {
                     list = db.EntityItemList<T>(TableName, "AccountId", AccountId);
                 }
@@ -197,7 +224,9 @@ namespace Pro.Data.Entities
             return list;
         }
 
-        public static IEnumerable<T> ViewEntityList<T>(string GroupName, string TableName, int AccountId,int EnumType) where T : IEntityProEnum
+        public static IEnumerable<T> ViewEntityList<Dbc,T>(string GroupName, string TableName, int AccountId,int EnumType) 
+            where T : IEntityProEnum
+            where Dbc: IDbContext
         {
             string EntiryName = TableName + EnumType.ToString();
             string key = WebCache.GetKey(Settings.ProjectName, GroupName, AccountId, EntiryName);// GetKey(TableName, AccountId);
@@ -207,7 +236,7 @@ namespace Pro.Data.Entities
                 list = (IEnumerable<T>)WebCache.Get<List<T>>(key);
             if (list == null || list.Count() == 0)
             {
-                using (var db = DbContext.Create<DbPro>())
+                using (var db = DbContext.Create<Dbc>())
                 {
                     list = db.EntityItemList<T>(TableName, "AccountId", AccountId, "EnumType", EnumType);
                 }
@@ -220,7 +249,7 @@ namespace Pro.Data.Entities
 
             return list;
         }
-
+        
         public static int DoSave<T>(int PropId, string PropName, int AccountId, UpdateCommandType command) where T : IEntityPro
         {
             int result = 0;
@@ -280,11 +309,11 @@ namespace Pro.Data.Entities
 
             return result;
         }
-        public static int DoDelete(string TableName, string PropType, int PropId, int Replacement, int AccountId)
+        public static int DoDelete<Dbc>(string TableName, string PropType, int PropId, int Replacement, int AccountId) where Dbc:IDbContext
         {
             var parameters = DataParameter.GetSqlList("PropType", "campaign", "PropId", PropId, "Replacement", 0, "AccountId", AccountId);
             DataParameter.AddOutputParameter(parameters, "Result", System.Data.SqlDbType.Int, 4);
-            using (var db = DbContext.Create<DbPro>())
+            using (var db = DbContext.Create<Dbc>())
             {
                 db.ExecuteCommandNonQuery("sp_Property_Remove", parameters.ToArray(), System.Data.CommandType.StoredProcedure);
             }
@@ -295,6 +324,6 @@ namespace Pro.Data.Entities
             }
             return result;
         }
-
+       
     }
 }

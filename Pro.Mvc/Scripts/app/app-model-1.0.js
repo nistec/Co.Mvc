@@ -336,7 +336,7 @@ var app = {
                 $(document.createElement('li')).text(array[i]['name'])
             );
             ul.append(
-            $(document.createElement('li')).text(array[i]['value'])
+                $(document.createElement('li')).text(array[i]['value'])
             );
         }
     },
@@ -372,12 +372,12 @@ var app = {
         //value = new Date(parseInt(value.replace("/Date(", "").replace(")/", ""), 10));
         //return new Date(value);
     },
-    jsonDateToString : function (value,addTime) {
+    jsonDateToString: function (value, addTime) {
         if (typeof value === 'string') {
             var strd = /^\/Date\((d|-|.*)\)[\/|\\]$/.exec(value);
             if (strd) {
                 var d = new Date(+strd[1]);
-                return app.dateToString(d,addTime);
+                return app.dateToString(d, addTime);
             }
         }
 
@@ -388,10 +388,10 @@ var app = {
     dateToString: function (d, addTime) {
 
         //if (d === typeof (Date)) {
-                if (addTime)
-                    return d.toLocaleString().replace(/[^T0-9\-/\:\. (am|pm)]/gi, "");
-                else
-                    return d.toLocaleDateString().replace(/[^T0-9\-/\:\. (am|pm)]/gi, "");
+        if (addTime)
+            return d.toLocaleString().replace(/[^T0-9\-/\:\. (am|pm)]/gi, "");
+        else
+            return d.toLocaleDateString().replace(/[^T0-9\-/\:\. (am|pm)]/gi, "");
         //}
 
         //return d;
@@ -461,7 +461,7 @@ var app = {
         //return app.dateToString(d);
     },
     formatDateTimeIso: function (date, format) {
-        return formatDateTimeString(date,'yyyy-mm-dd hh:mm:ss');
+        return formatDateTimeString(date, 'yyyy-mm-dd hh:mm:ss');
     },
     formatDateTimeString: function (date, format) {
 
@@ -473,7 +473,7 @@ var app = {
         //if (date === typeof (Date)) {
         //    return date.format(format);
         //}
-        if (date instanceof Date){// && typeof date.getMonth === 'function') {
+        if (date instanceof Date) {// && typeof date.getMonth === 'function') {
             return date.format(format);
         }
         else {//if (typeof date === 'string') {
@@ -481,7 +481,7 @@ var app = {
             var strdate = date.toString();
             if (strdate.indexOf('Date') != -1) {
                 var jdate = app.parseJsonDate(date);
-                if (jdate){// && jdate === typeof (Date)) {
+                if (jdate) {// && jdate === typeof (Date)) {
                     return jdate.format(format);
                 }
             }
@@ -502,7 +502,7 @@ var app = {
         }
     },
     formatDateString: function (date, format) {
-        
+
         if (format === undefined || format == null)
             format = 'dd/mm/yyyy';
         return app.formatDateTimeString(date, format);
@@ -569,7 +569,7 @@ var app = {
         }
     },
     disableSelect: function (tag) {
-        $(tag+ " option").not(':selected').each(function (index) {
+        $(tag + " option").not(':selected').each(function (index) {
             $(this).prop('disabled', true);
         });
     },
@@ -588,6 +588,25 @@ var app = {
         if (val && app.IsMobile())
             return '<a href="tel:"' + val + '>' + val + '</a>'
         return val;
+    },
+    displayGridRecord: function (row, title, tagGrid) {
+        if (tagGrid === undefined || tagGrid == null)
+            tagGrid = '#jqxgrid';
+
+        var rowData = $(tagGrid).jqxGrid('getrowdata', row);
+        var labels = labelLocalization("he");
+        //rowData = JSON.parse(jsonText);
+        var html = '<div style="direction: rtl;margin:5px">';
+        var table = '';
+        table += '<table border="1" direction="rtl">'
+        for (x in rowData) {
+            var label = labels[x] || x;
+            table += '<tr><td>' + label + ': </td><td>' + rowData[x] + '</td></tr>';
+        }
+        table += '</table>'
+        html += table + '</div>';
+
+        app_dialog.dialogDiv(html, title, true);
     }
 };
 
@@ -697,6 +716,143 @@ var app_perms = {
     isDelable: function (option) {
         return (option.indexOf('d') != -1);
         //return option === 'd';
+    },
+    validateRules: function (rules, html, replacement) {
+        if (replacement === undefined)
+            replacement = 'disabled';
+        if (rules.indexOf("r") == -1)
+            return "אין הרשאה לצפייה";
+        if (rules.indexOf("w") == -1) {
+            html = html.replace('#-w-#', replacement);
+            html = html.replace('#-a-#', replacement);
+        }
+        else {
+            html = html.replace('#-w-#', '');
+            html = html.replace('#-a-#', '');
+        }
+        if (rules.indexOf("d") == -1) 
+            html = html.replace('#-d-#', replacement);
+        else 
+            html = html.replace('#-d-#', '');
+     
+        if (rules.indexOf("x") == -1)
+            html = html.replace('#-x-#', replacement);
+        else
+            html = html.replace('#-x-#', '');
+
+        return html;
+    },
+    setEntityRule: function (rule, html, replacement) {
+        if (replacement === undefined)
+            replacement = 'disabled';
+
+        if (rule<=0)
+            return "אין הרשאה לצפייה";
+
+        if (rule<=1) {
+            html = html.replace('#-w-#', replacement);
+            html = html.replace('#-a-#', replacement);
+            html = html.replace('#-d-#', replacement);
+            html = html.replace('#-x-#', replacement);
+        }
+        else if (rule > 1 && rule <= 7) {
+            html = html.replace('#-w-#', '');
+            html = html.replace('#-a-#', '');
+            html = html.replace('#-d-#', replacement);
+            html = html.replace('#-x-#', replacement);
+        }
+        else {
+            html = html.replace('#-w-#', '');
+            html = html.replace('#-a-#', '');
+            html = html.replace('#-d-#', '');
+            html = html.replace('#-x-#', '');
+        }
+        return html;
+    },
+    renderRule: function (name,option) {
+
+        $('[data-rule]').hide();
+
+        var rule = app_perms.getRule(name);
+
+        if (rule == null || rule === undefined)
+            rule = 1
+
+        if (rule <= 0)
+            return "אין הרשאה לצפייה";
+
+        if (rule <= 1) {
+            $('[data-rule]').hide();
+            //$(".rule-w").hide();
+            //$(".rule-a").hide();
+            //$(".rule-d").hide();
+            //$(".rule-x").hide();
+        }
+        else if (rule > 1 && rule <= 7) {
+            if (option == "a") {
+                //$('*[data-rule="w"]').hide();
+                $('*[data-rule="e"]').hide();
+                $('*[data-rule="a"]').show();
+            }
+            else if (option == "e") {
+                //$('*[data-rule="w"]').show();
+                $('*[data-rule="e"]').show();
+                $('*[data-rule="a"]').hide();
+            }
+            else {
+                $('*[data-rule="e"]').show();
+                //$('*[data-rule="w"]').show();
+                $('*[data-rule="a"]').show();
+            }
+            $('*[data-rule="u"]').show();
+            $('*[data-rule="d"]').hide();
+            $('*[data-rule="x"]').hide();
+            //$(".rule-w").show();
+            //$(".rule-a").show();
+            //$(".rule-d").hide();
+            //$(".rule-x").hide();
+        }
+        else {
+            if (option == "a") {
+                //$('*[data-rule="w"]').hide();
+                $('*[data-rule="a"]').show();
+                $('*[data-rule="d"]').hide();
+                $('*[data-rule="x"]').hide();
+                $('*[data-rule="u"]').show();
+                $('*[data-rule="e"]').hide();
+
+            }
+            else if (option == "e") {
+                //$('*[data-rule="w"]').show();
+                $('*[data-rule="a"]').hide();
+                $('*[data-rule="d"]').show();
+                $('*[data-rule="x"]').show();
+                $('*[data-rule="u"]').show();
+                $('*[data-rule="e"]').show();
+
+            }
+            else {
+                $('[data-rule]').show();
+            }
+
+            //$(".rule-w").show();
+            //$(".rule-a").show();
+            //$(".rule-d").show();
+            //$(".rule-x").show();
+        }
+        return rule;
+        //return app_perms.setEntityRule(rule,html, replacement)
+    },
+    getRule: function (name) {
+
+        var rule = userInfo.DefaultRule;
+        var claims = userInfo.Claims;
+        if (claims) {
+            var r = $.grep(records, function (item) { return item["ItemName"] == name; });
+            if (r)
+                return r;
+        }
+        return rule;
     },
     //getPerm: function (option, perms) {
     //    //g-e-a-d-f
@@ -1413,6 +1569,8 @@ var app_dialog = {
             height: "auto",
             width: 350,
             modal: true,
+            show: 'fade',
+            hide: 'fade',
             dialogClass: 'ui-dialog-osx',
             buttons: {
                 "אישור": function () {
@@ -1571,7 +1729,7 @@ var app_dialog = {
         });
     },
 
-    dialogDiv: function (tag, title, scrolling) {
+    dialogDiv: function (tag, title, scrolling, onClose) {
         if (!scrolling)
             scrolling = 'no';
         if (app.IsMobile()) {
@@ -1581,20 +1739,23 @@ var app_dialog = {
         var dialog = $("<div class='bdialog'></div>").append(container).appendTo("body").dialog({
             autoOpen: false,
             modal: true,
+            show: 'fade',
+            hide: 'fade',
             resizable: false,
             width: "auto",
             height: "auto",
             title: title,
-            dialogClass: 'ui-dialog-osx'
+            dialogClass: 'ui-dialog-osx',
             //my: "center",
             //at: "center",
             //of: window
             //create: function (event, ui) {
             //    $(".ui-widget-header").hide();
             //},
-            //close: function () {
-            //    iframe.attr("src", "");
-            //}
+            close: function () {
+                if (onClose)
+                    onClose();
+            }
         });
 
         dialog.dialog("open");
@@ -1610,6 +1771,8 @@ var app_dialog = {
         var dialog = $("<div class='bdialog'></div>").append(iframe).appendTo("body").dialog({
             autoOpen: false,
             modal: true,
+            show: 'fade',
+            hide: 'fade',
             resizable: false,
             width: "auto",
             height: "auto",
@@ -1657,6 +1820,8 @@ var app_dialog = {
             height: "auto",
             width: 350,
             modal: true,
+            show: 'fade',
+            hide: 'fade',
             dialogClass: 'ui-dialog-osx',
             buttons: {
                 "כן": function () {
@@ -2252,16 +2417,20 @@ var app_panel = {
         if (doempty)
             $("#" + tag).empty();
     },
-    appendPanelAfter: function (parentName, content, title) {//width, height, scroll,
+    appendPanelAfter: function (parentName, content, title,width) {//width, height, scroll,
         parentName = parentName.replace("#", "");
         var tag = parentName + "-panel";
 
         if (content.startsWith("#")) {
             content = $(content).html();
         }
+       
+        var css = '';// 'margin:0 auto;box-shadow: 0 0 1em black;';
+        if (width)
+            css = css + 'max-width:' + width + ';'; 
 
         if ($("#" + tag).length == 0) {
-            $("#" + parentName).after('<div id="' + tag + '" class="panel-window"></div>');
+            $("#" + parentName).after('<div id="' + tag + '" class="panel-window" style="' + css + '"></div>');
         }
         else {
             $("#" + tag).empty();
@@ -2270,17 +2439,19 @@ var app_panel = {
         $("#" + tag).hide();
 
         //$("#" + parentName).hide();
-
+        
         //app_iframe.showPanel("#" + tag, src, width, height, scroll, title);
         $("#" + tag).empty();
-        var panel = $('<div class="panel-header"></div>');
-        panel.append('<span style="float:right">' + title + '</span>');
-        var close = $('<a href="#"><i class="fa fa-close" style="font-size:16px"></i></a>')
+        var panel = $('<div class="panel-page-header"></div>');
+        //var panel = $('<div class="panel-header"></div>');
+        panel.append('<span style="float:right;margin-right:5px">' + title + '</span>');
+        var close = $('<a href="#" style="float:left;margin-left:10px"><i class="fa fa-close" style="font-size:16px"></i></a>')
             .on("click", function (e) {
                 e.preventDefault();
-                $("#" + tag).hide();
-                $("#" + parentName).show();
-                $("#" + tag).empty();
+                app_panel.panelAfterClose("#" + parentName, true);
+                //$("#" + tag).hide();
+                //$("#" + parentName).show();
+                //$("#" + tag).empty();
             });
         panel.append(close);
         $("#" + tag).append(panel);
@@ -2289,7 +2460,9 @@ var app_panel = {
         //app_iframe.appendIframe(tag, src, width, height, scroll);
 
         //$("#" + tag).show();
-
+        //if (showAfter == true) {
+        //    app_panel.panelAfterShow("#" + parentName);
+        //}
         return $("#" + tag);
     },
     panelAfterShow: function (tagParent,tagAfter) {
@@ -2298,7 +2471,7 @@ var app_panel = {
         if (tagAfter === undefined || tagAfter == null) {
             tagAfter = tagParent + "-panel";
         }
-        $(tagAfter).show();
+        $(tagAfter).slideDown("slow");
     },
     panelAfterClose: function (tagParent, doempty) {
         if (doempty === undefined)
@@ -2309,6 +2482,85 @@ var app_panel = {
         if (doempty)
             $(tagAfter).empty();
     },
+
+
+    appendPanelDialog: function (parentName, content, title, width) {//width, height, scroll,
+        parentName = parentName.replace("#", "");
+        var tag = parentName + "-panel_dialog";
+
+        if (content.startsWith("#")) {
+            content = $(content).html();
+        }
+
+        var css = 'width:100%;margin:0 auto;position:absolute;top:10%;z-index:2;';
+        var cssContent = width ? 'max-width:' + width + ';' : '' + 'box-shadow: 0 0 1em black;';
+        var divContent = $('<div style="' + cssContent + '" class="panel-window"></div>');
+        //var css = width ? 'max-width:' + width + ';' : '' + 'margin:0 auto;position:absolute;top:10%;z-index:2;box-shadow: 0 0 1em black;';
+
+        if ($("#" + tag).length == 0) {
+            $("#" + parentName).after('<div id="' + tag + '" style="' + css + '"></div>');
+            //$("#" + parentName).after('<div id="' + tag + '" class="panel-window" style="' + css + '"></div>');
+        }
+        else {
+            $("#" + tag).empty();
+        }
+
+
+        $("#" + tag).hide();
+
+        //$("#" + parentName).hide();
+
+        //app_iframe.showPanel("#" + tag, src, width, height, scroll, title);
+        $("#" + tag).empty();
+        var panel = $('<div class="panel-page-header"></div>');
+        //var panel = $('<div class="panel-header"></div>');
+        panel.append('<span style="float:right;margin-right:5px">' + title + '</span>');
+        var close = $('<a href="#" style="float:left;margin-left:10px"><i class="fa fa-close" style="font-size:16px"></i></a>')
+            .on("click", function (e) {
+                e.preventDefault();
+                app_panel.panelDialogClose("#" + parentName,true);
+                //$("#" + tag).hide();
+                //$("#" + parentName).show();
+                //$("#" + tag).empty();
+            });
+        panel.append(close);
+        //$("#" + tag).append(panel);
+        divContent.append(panel);
+        divContent.append(content);
+        $("#" + tag).append(divContent);
+        //$("#" + tag).append(content);
+
+        //app_iframe.appendIframe(tag, src, width, height, scroll);
+
+        ////$("#" + tag).show();
+        //if (showAfter == true) {
+        //    app_panel.panelAfterShow("#" + parentName);
+        //}
+        return $("#" + tag);
+    },
+    panelDialogShow: function (tagParent, tagAfter) {
+
+        //$(tagParent).hide();
+        $(tagParent).css("opacity", 0.2);
+        if (tagAfter === undefined || tagAfter == null) {
+            tagAfter = tagParent + "-panel_dialog";
+        }
+        $(tagAfter).show();
+    },
+    panelDialogClose: function (tagParent, doempty) {
+        if (doempty === undefined)
+            doempty = true;
+        var tagAfter = tagParent + "-panel_dialog";
+        $(tagAfter).hide();
+        //$(tagParent).show();
+        $(tagParent).css("opacity", 1);
+        if (doempty)
+            $(tagAfter).empty();
+    },
+
+
+
+
     appendPanelSwitch: function (parentName, content, width, height, scroll, title) {
         parentName = parentName.replace("#", "");
         var tag = parentName + "-panel";
@@ -2411,7 +2663,7 @@ var app_panel = {
 var app_form = {
 
     loadDataForm: function (form, record, exclude,readonly) {
-
+        form = form.replace("#", "");
         $('#' + form + ' input, #' + form + ' select, #' + form + ' textarea').each(function (index) {
             var input = $(this);
             var tag = input.attr('name');
@@ -2616,14 +2868,23 @@ var app_form = {
             $("#progressbar").hide();
         }
     },
-    clearDataForm: function (form) {
+    clearDataForm: function (form, exclude) {
+        form = form.replace("#", "");
         $('#' + form + ' input, #' + form + ' select, #' + form + ' textarea').each(function (index) {
             var input = $(this);
-            var type = input.attr('type');
-            if (type == 'check' || type == 'radio')
-                input.checked = false;
-            else
-                input.val('');
+            var tag = input.attr('name');
+
+            if (!(tag == undefined || tag == null)) {
+
+                if (!(exclude && exclude.indexOf(tag) >= 0)) {
+
+                    var type = input.attr('type');
+                    if (type == 'check' || type == 'radio')
+                        input.checked = false;
+                    else if (type != 'button')
+                        input.val('');
+                }
+            }
         });
     },
     doFormPost: function (formTag, callback, preSubmit, validatorTag) {
@@ -2656,7 +2917,8 @@ var app_form = {
             }
         }
         $(formTag).jqxValidator('validate', validationResult);
-    },
+    }
+   
 };
 
 var app_control = {
@@ -3050,7 +3312,7 @@ var app_control = {
 //    },
 
 //    redirectToMembers: function () {
-//        app.redirectTo("/Main/Members");
+//        app.redirectTo("/Co/Members");
 //    },
 //};
 

@@ -1,6 +1,9 @@
 ﻿using Nistec.Data;
 using Nistec.Data.Entities;
 using Nistec.Web.Controls;
+using Pro;
+using Pro.Data;
+using Pro.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +38,7 @@ namespace ProSystem.Data.Entities
 
         public static IEnumerable<AccountsCategoryView> ViewList()
         {
-            return EntityPro.ViewAdminEntityList<AccountsCategoryView>(EntityGroups.Admin, ViewName);
+            return EntitySystemPro.ViewAdminEntityList<AccountsCategoryView>(EntityGroups.Admin, ViewName);
         }
         public static void Refresh(bool dbRefresh = false)
         {

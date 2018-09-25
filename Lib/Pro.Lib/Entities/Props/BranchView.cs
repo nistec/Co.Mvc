@@ -40,7 +40,7 @@ namespace Pro.Data.Entities.Props
         }
         public static IEnumerable<BranchView> ViewList(int AccountId)
         {
-            return EntityPro.ViewEntityList<BranchView>(EntityGroups.Enums, TableName, AccountId);
+            return EntityLibPro.ViewEntityList<BranchView>(EntityGroups.Enums, TableName, AccountId);
         }
 
         public static BranchView View(int PropId)
